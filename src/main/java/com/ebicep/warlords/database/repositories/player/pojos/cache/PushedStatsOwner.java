@@ -1,5 +1,7 @@
 package com.ebicep.warlords.database.repositories.player.pojos.cache;
 
+import com.ebicep.warlords.player.general.Classes;
+
 import java.util.Map;
 
 public interface PushedStatsOwner {
@@ -120,5 +122,20 @@ public interface PushedStatsOwner {
     default long pushedLongestTicksLived() {
         warmPushedStats();
         return pushedStats().getLongestTicksLived();
+    }
+
+    default int pushedFlagsCaptured() {
+        warmPushedStats();
+        return pushedStats().getFlagsCaptured();
+    }
+
+    default int pushedFlagsReturned() {
+        warmPushedStats();
+        return pushedStats().getFlagsReturned();
+    }
+
+    default long pushedClassExperience(com.ebicep.warlords.player.general.Classes classes) {
+        warmPushedStats();
+        return pushedStats().getClassExperience(classes);
     }
 }

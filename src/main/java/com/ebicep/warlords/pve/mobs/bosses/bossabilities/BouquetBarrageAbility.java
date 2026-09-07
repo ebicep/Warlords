@@ -1,5 +1,6 @@
 package com.ebicep.warlords.pve.mobs.bosses.bossabilities;
 
+import com.ebicep.warlords.effects.EffectUtils;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
 import com.ebicep.warlords.player.ingame.WarlordsNPC;
 import com.ebicep.warlords.player.ingame.instances.InstanceBuilder;
@@ -101,7 +102,7 @@ public class BouquetBarrageAbility {
                                 (impact.loc.getY() - src.getY()) + Math.sin(progress * Math.PI) * tossArcMaxY,
                                 (impact.loc.getZ() - src.getZ()) * progress
                         );
-                        src.getWorld().spawnParticle(trailParticle, mid, 3, 0.05, 0.05, 0.05, 0.0);
+                        EffectUtils.displayParticle(trailParticle, mid, 3, 0.05, 0.05, 0.05, 0.0);
 
                         // telegraph ring at impact (pink dust)
                         drawRingDust(impact.loc, bloomRadius, 20, telegraphDust);
@@ -121,8 +122,8 @@ public class BouquetBarrageAbility {
                 for (Impact impact : impacts) {
                     // SFX + particles
                     impact.loc.getWorld().playSound(impact.loc, bloomSfx, 2, 0.5f);
-                    impact.loc.getWorld().spawnParticle(bloomParticleA, impact.loc, 20, 0.4, 0.15, 0.4, 0.0);
-                    impact.loc.getWorld().spawnParticle(bloomParticleB, impact.loc, 30, 0.6, 0.3, 0.6, 0.05, bloomBlock);
+                    EffectUtils.displayParticle(bloomParticleA, impact.loc, 20, 0.4, 0.15, 0.4, 0.0);
+                    EffectUtils.displayParticle(bloomParticleB, impact.loc, 30, 0.6, 0.3, 0.6, 0.05, bloomBlock);
 
                     PlayerFilter.entitiesAround(impact.loc, bloomRadius, 3, bloomRadius)
                             .aliveEnemiesOf(source)
@@ -164,7 +165,7 @@ public class BouquetBarrageAbility {
             double x = center.getX() + Math.cos(angle) * radius;
             double z = center.getZ() + Math.sin(angle) * radius;
             Location p = new Location(center.getWorld(), x, center.getY(), z);
-            center.getWorld().spawnParticle(Particle.DUST, p, 1, dust);
+            EffectUtils.displayParticle(Particle.DUST, p, 1, dust);
         }
     }
 

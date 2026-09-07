@@ -33,7 +33,8 @@ public class SacrificialStand implements SpecBoostManager.SpecBoost<SacrificialS
                 ConfigManager.getAbilityConfigValue(DEFAULT_NAMESPACES, "sacrificialStand.radius", int.class),
                 ConfigManager.getAbilityConfigValue(DEFAULT_NAMESPACES, "sacrificialStand.tickDuration", int.class),
                 ConfigManager.getAbilityConfigValue(DEFAULT_NAMESPACES, "sacrificialStand.damageReductionPercent", int.class),
-                ConfigManager.getAbilityConfigValue(DEFAULT_NAMESPACES, "sacrificialStand.allyHealMultiplierPercent", int.class)
+                ConfigManager.getAbilityConfigValue(DEFAULT_NAMESPACES, "sacrificialStand.allyHealMultiplierPercent", int.class),
+                ConfigManager.getAbilityConfigValue(DEFAULT_NAMESPACES, "sacrificialStand.healingValues.castHealing.value", int.class)
         );
     }
 

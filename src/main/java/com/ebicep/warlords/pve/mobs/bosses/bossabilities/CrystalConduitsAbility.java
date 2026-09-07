@@ -157,7 +157,7 @@ public class CrystalConduitsAbility {
                     // Small cue at that crystal
                     World ww = hit.loc.getWorld();
                     if (ww != null) {
-                        ww.spawnParticle(Particle.TOTEM_OF_UNDYING, hit.loc, 10, 0.4, 0.4, 0.4, 0.02);
+                        EffectUtils.displayParticle(Particle.TOTEM_OF_UNDYING, hit.loc, 10, 0.4, 0.4, 0.4, 0.02);
                         Utils.playGlobalSound(hit.loc, Sound.ENTITY_PLAYER_LEVELUP, 500, 0.5f);
                     }
 
@@ -214,7 +214,7 @@ public class CrystalConduitsAbility {
 
                     drawRing(n.loc.clone().add(0, beaconYOffset, 0), 1.1, ringDust);
                     drawLink(world, c, n.loc, linkDust);
-                    world.spawnParticle(Particle.END_ROD, n.loc.clone().add(0, 0.35, 0), 1, 0, 0, 0, 0);
+                    EffectUtils.displayParticle(Particle.END_ROD, n.loc.clone().add(0, 0.35, 0), 1, 0, 0, 0, 0);
 
                     // Optional: highlight the currently expected target a bit more
                     int expectedIdx = order.get(expectIndex);
@@ -326,7 +326,7 @@ public class CrystalConduitsAbility {
             );
         }
         if (w != null) {
-            w.spawnParticle(Particle.EXPLOSION, center, 1, 0, 0, 0, 0);
+            EffectUtils.displayParticle(Particle.EXPLOSION, center, 1, 0, 0, 0, 0);
         }
     }
 
@@ -339,7 +339,7 @@ public class CrystalConduitsAbility {
         for (double a = 0; a < twoPi; a += angStep) {
             double x = center.getX() + Math.cos(a) * rad;
             double z = center.getZ() + Math.sin(a) * rad;
-            w.spawnParticle(Particle.DUST, x, y, z, 1, 0, 0, 0, 0.0, dust);
+            EffectUtils.displayParticle(Particle.DUST, new Location(w, x, y, z), 1, 0, 0, 0, 0.0, dust);
         }
     }
 
@@ -353,8 +353,8 @@ public class CrystalConduitsAbility {
         int samples = Math.max(1, (int) Math.ceil(len / 0.35));
         Location p = a.clone();
         for (int i = 0; i <= samples; i++) {
-            w.spawnParticle(Particle.DUST, p, 1, 0, 0, 0, 0.0, dust);
-            if ((i % 6) == 0) w.spawnParticle(Particle.ELECTRIC_SPARK, p, 1, 0, 0, 0, 0.0);
+            EffectUtils.displayParticle(Particle.DUST, p, 1, 0, 0, 0, 0.0, dust);
+            if ((i % 6) == 0) EffectUtils.displayParticle(Particle.ELECTRIC_SPARK, p, 1, 0, 0, 0, 0.0);
             p.add(dir);
         }
     }

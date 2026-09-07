@@ -19,6 +19,7 @@ import com.ebicep.warlords.database.repositories.games.pojos.pve.wavedefense.Dat
 import com.ebicep.warlords.database.repositories.games.pojos.pve.wavedefense.DatabaseGamePvEWaveDefense;
 import com.ebicep.warlords.database.repositories.masterworksfair.pojos.MasterworksFair;
 import com.ebicep.warlords.database.repositories.player.PlayersCollections;
+import com.ebicep.warlords.database.repositories.player.pojos.Stats;
 import com.ebicep.warlords.database.repositories.player.pojos.TracksAbilityStats;
 import com.ebicep.warlords.database.repositories.player.pojos.TracksMultiAbilityStats;
 import com.ebicep.warlords.database.repositories.player.pojos.cache.PushedMultiPvEStats;
@@ -40,6 +41,7 @@ import com.ebicep.warlords.game.option.pve.onslaught.PouchReward;
 import com.ebicep.warlords.guilds.Guild;
 import com.ebicep.warlords.guilds.GuildManager;
 import com.ebicep.warlords.guilds.GuildPlayer;
+import com.ebicep.warlords.player.general.Classes;
 import com.ebicep.warlords.player.general.CustomScoreboard;
 import com.ebicep.warlords.player.general.Specializations;
 import com.ebicep.warlords.pve.Currencies;
@@ -330,6 +332,11 @@ public class DatabasePlayerPvE implements MultiPvEStats<
                     MultiPvEStats.super.getMobAssists(),
                     MultiPvEStats.super.getMobDeaths()
             );
+            long[] classXp = new long[Classes.VALUES.length];
+            for (Classes classes : Classes.VALUES) {
+                classXp[classes.ordinal()] = MultiPvEStats.super.getStat(classes, Stats::getExperience, Long::sum, 0L);
+            }
+            pushedStats.fillClassExperience(classXp);
         });
     }
 
@@ -381,6 +388,11 @@ public class DatabasePlayerPvE implements MultiPvEStats<
     @Override
     public long getExperience() {
         return PushedMultiPvEStats.super.getExperience();
+    }
+
+    @Override
+    public long getClassExperience(Classes classes) {
+        return pushedClassExperience(classes);
     }
 
     @Override

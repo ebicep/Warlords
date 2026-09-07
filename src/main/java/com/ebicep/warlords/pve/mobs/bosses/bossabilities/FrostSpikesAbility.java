@@ -1,5 +1,6 @@
 package com.ebicep.warlords.pve.mobs.bosses.bossabilities;
 
+import com.ebicep.warlords.effects.EffectUtils;
 import com.ebicep.warlords.game.Game;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
 import com.ebicep.warlords.player.ingame.WarlordsNPC;
@@ -246,8 +247,8 @@ public class FrostSpikesAbility {
         for (int ri = 0; ri <= rows; ri++) {
             double y = at.getY() + ri * yStep;
             // snow + dust mix for a sharp icy look
-            w.spawnParticle(Particle.SNOWFLAKE, at.getX(), y, at.getZ(), 2, 0, 0, 0, 0.0);
-            w.spawnParticle(Particle.FLAME, at.getX(), y, at.getZ(), 1, 0, 0, 0, 0);
+            EffectUtils.displayParticle(Particle.SNOWFLAKE, new Location(w, at.getX(), y, at.getZ()), 2, 0, 0, 0, 0.0);
+            EffectUtils.displayParticle(Particle.FLAME, new Location(w, at.getX(), y, at.getZ()), 1, 0, 0, 0, 0);
             //w.spawnParticle(Particle.DUST, at.getX(), y, at.getZ(), 1, 0, 0, 0, 0.0, eruptDust);
         }
 
@@ -279,7 +280,7 @@ public class FrostSpikesAbility {
             double x = c.getX() + Math.cos(a) * radius;
             double z = c.getZ() + Math.sin(a) * radius;
             double y = c.getY(); // already ground-snapped in s.worldPos
-            w.spawnParticle(Particle.FLAME, x, y, z, 1, 0, 0, 0, 0);
+            EffectUtils.displayParticle(Particle.FLAME, new Location(w, x, y, z), 1, 0, 0, 0, 0);
             //w.spawnParticle(Particle.DUST, x, y, z, 1, 0, 0, 0, 0.0, d);
         }
     }

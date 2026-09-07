@@ -1,4 +1,5 @@
 package com.ebicep.warlords.pve.mobs.bosses.bossabilities;
+import com.ebicep.warlords.effects.EffectUtils;
 
 import com.ebicep.warlords.game.Game;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
@@ -115,7 +116,7 @@ public class BindingChainsAbility {
                     if (w == null) continue;
 
                     // Overhead marker
-                    w.spawnParticle(Particle.DUST, head, 2, 0.02, 0.02, 0.02, 0.0, markerDust);
+                    EffectUtils.displayParticle(Particle.DUST, head, 2, 0.02, 0.02, 0.02, 0.0, markerDust);
 
                     // Small ground ring at feet
                     drawRing(we.getLocation().clone(), 0.6, markerDust);
@@ -185,7 +186,7 @@ public class BindingChainsAbility {
             Location at = we.getLocation().clone().add(0, 1, 0);
             World w = at.getWorld();
             if (w != null) {
-                w.spawnParticle(Particle.CRIT, at, 8, 0.3, 0.3, 0.3, 0.02);
+                EffectUtils.displayParticle(Particle.CRIT, at, 8, 0.3, 0.3, 0.3, 0.02);
             }
         }
         Utils.playGlobalSound(source.getLocation(), "veilkeeper.binding.snap", 1.0f, 0.9f);
@@ -224,10 +225,10 @@ public class BindingChainsAbility {
 
         Location p = aMid.clone();
         for (int i = 0; i <= samples; i++) {
-            w.spawnParticle(Particle.DUST, p, 1, 0, 0, 0, 0.0, dust);
+            EffectUtils.displayParticle(Particle.DUST, p, 1, 0, 0, 0, 0.0, dust);
             // subtle metal spark every few samples
             if ((i % 6) == 0) {
-                w.spawnParticle(Particle.ELECTRIC_SPARK, p, 1, 0, 0, 0, 0.0);
+                EffectUtils.displayParticle(Particle.ELECTRIC_SPARK, p, 1, 0, 0, 0, 0.0);
             }
             p.add(step);
         }
@@ -243,7 +244,7 @@ public class BindingChainsAbility {
         for (double a = 0; a < twoPi; a += angStep) {
             double x = center.getX() + Math.cos(a) * radius;
             double z = center.getZ() + Math.sin(a) * radius;
-            w.spawnParticle(Particle.DUST, x, y, z, 1, 0, 0, 0, 0.0, dust);
+            EffectUtils.displayParticle(Particle.DUST, new Location(w, x, y, z), 1, 0, 0, 0, 0.0, dust);
         }
     }
 

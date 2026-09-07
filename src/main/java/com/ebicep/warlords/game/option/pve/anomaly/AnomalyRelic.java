@@ -1,5 +1,6 @@
 package com.ebicep.warlords.game.option.pve.anomaly;
 
+import com.ebicep.warlords.effects.EffectUtils;
 import com.ebicep.warlords.game.option.pve.PveOption;
 import com.ebicep.warlords.pve.mobs.AbstractMob;
 import com.ebicep.warlords.pve.mobs.Mob;
@@ -116,8 +117,8 @@ public class AnomalyRelic extends AbstractMob implements BossMinionMob {
             orbitingFragments.get(i).teleport(visualCenter.clone().add(Math.cos(angle) * 1.35, y, Math.sin(angle) * 1.35));
         }
         if (ticksElapsed % 5 == 0) {
-            visualCenter.getWorld().spawnParticle(getThemeParticle(), visualCenter, 8, .8, .8, .8, .02);
-            visualCenter.getWorld().spawnParticle(Particle.ENCHANT, visualCenter, 6, 1, 1.2, 1, .03);
+            EffectUtils.displayParticle(getThemeParticle(), visualCenter, 8, .8, .8, .8, .02);
+            EffectUtils.displayParticle(Particle.ENCHANT, visualCenter, 6, 1, 1.2, 1, .03);
         }
     }
 

@@ -50,7 +50,7 @@ public class GameStartCommand {
             boolean excludeStarter,
             Consumer<GameManager.QueueEntryBuilder> entryEditor
     ) {
-        if (GameManager.gameStartingDisabled) {
+        if (GameManager.isGameStartingDisabled()) {
             player.sendMessage(Component.text("Games are currently disabled.", NamedTextColor.RED));
             return;
         }

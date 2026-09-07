@@ -1,5 +1,6 @@
 package com.ebicep.warlords.pve.mobs.skeleton;
 
+import com.ebicep.warlords.effects.EffectUtils;
 import com.ebicep.warlords.game.option.pve.PveOption;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
 import com.ebicep.warlords.player.ingame.WarlordsPlayer;
@@ -245,7 +246,7 @@ public class BoundArcher extends AbstractMob implements EliteMob {
         direction.normalize();
 
         for (double distance = 0; distance < length; distance += .35) {
-            from.getWorld().spawnParticle(particle, from.clone().add(direction.clone().multiply(distance)), 1, 0, 0, 0, 0);
+            EffectUtils.displayParticle(particle, from.clone().add(direction.clone().multiply(distance)), 1, 0, 0, 0, 0);
         }
     }
 

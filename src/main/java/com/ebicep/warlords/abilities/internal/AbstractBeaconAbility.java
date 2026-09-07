@@ -8,6 +8,7 @@ import com.ebicep.warlords.effects.circle.LineEffect;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
 import com.ebicep.warlords.player.ingame.cooldowns.CooldownTypes;
 import com.ebicep.warlords.player.ingame.cooldowns.cooldowns.RegularCooldown;
+import com.ebicep.warlords.util.bukkit.EntitiesUtils;
 import com.ebicep.warlords.util.bukkit.LocationUtils;
 import com.ebicep.warlords.util.warlords.GameRunnable;
 import com.ebicep.warlords.util.warlords.Utils;
@@ -18,9 +19,13 @@ import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.Particle;
 import org.bukkit.Sound;
-import org.bukkit.entity.ArmorStand;
+import org.bukkit.entity.Display;
+import org.bukkit.entity.ItemDisplay;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
+import org.bukkit.util.Transformation;
+import org.joml.Quaternionf;
+import org.joml.Vector3f;
 
 import javax.annotation.Nonnull;
 import java.util.Collections;
@@ -63,6 +68,8 @@ public abstract class AbstractBeaconAbility<T extends AbstractBeaconAbility<T, R
 
         wp.getCooldownManager().limitCooldowns(RegularCooldown.class, getDataClass(), maxBeaconsAtATime);
         Location groundLocation = LocationUtils.getGroundLocation(wp.getLocation());
+        groundLocation.setPitch(0);
+        groundLocation.setYaw(0);
 
         Utils.playGlobalSound(groundLocation, "arcanist.beacon.impact", 0.3f, 1);
         Utils.playGlobalSound(groundLocation, "arcanist.beaconshadow.activation", 2, 1);
@@ -76,10 +83,7 @@ public abstract class AbstractBeaconAbility<T extends AbstractBeaconAbility<T, R
                 getLineEffect(groundLocation)
         );
 
-        ArmorStand beacon = Utils.spawnArmorStand(
-                groundLocation.clone().add(0, -1.425, 0),
-                armorStand -> armorStand.getEquipment().setHelmet(new ItemStack(Material.BEACON))
-        );
+        ItemDisplay beacon = spawnBeaconDisplay(groundLocation.clone().add(0, 0.25, 0), new ItemStack(Material.BEACON));
 
         new GameRunnable(wp.getGame()) {
             int interval = 3;
@@ -133,11 +137,30 @@ public abstract class AbstractBeaconAbility<T extends AbstractBeaconAbility<T, R
         return true;
     }
 
+    protected static ItemDisplay spawnBeaconDisplay(Location location, ItemStack itemStack) {
+        return location.getWorld().spawn(location, ItemDisplay.class, display -> {
+            display.setItemStack(itemStack);
+            display.setBillboard(Display.Billboard.FIXED);
+            display.setItemDisplayTransform(ItemDisplay.ItemDisplayTransform.FIXED);
+            display.setBrightness(EntitiesUtils.MAX_BRIGHTNESS);
+            display.setPersistent(false);
+            display.setInvulnerable(true);
+            display.setGravity(false);
+            display.setTeleportDuration(2);
+            display.setTransformation(new Transformation(
+                    new Vector3f(),
+                    new Quaternionf(),
+                    new Vector3f(1f, 1f, 1f),
+                    new Quaternionf()
+            ));
+        });
+    }
+
     public abstract Class<R> getDataClass();
 
     public abstract LineEffect getLineEffect(Location target);
 
-    public abstract R getDataObject(WarlordsEntity wp, ArmorStand beacon, Location groundLocation, CircleEffect effect, float radius);
+    public abstract R getDataObject(WarlordsEntity wp, ItemDisplay beacon, Location groundLocation, CircleEffect effect, float radius);
 
     public abstract String getAbbreviation();
 
@@ -168,12 +191,12 @@ public abstract class AbstractBeaconAbility<T extends AbstractBeaconAbility<T, R
 
     public static class BeaconData {
 
-        private final ArmorStand beacon;
+        private final ItemDisplay beacon;
         private final Location groundLocation;
         private final CircleEffect effect;
         private final FloatModifiable radius;
 
-        public BeaconData(ArmorStand beacon, Location groundLocation, CircleEffect effect, float radius) {
+        public BeaconData(ItemDisplay beacon, Location groundLocation, CircleEffect effect, float radius) {
             this.beacon = beacon;
             this.groundLocation = groundLocation;
             this.effect = effect;
@@ -184,7 +207,7 @@ public abstract class AbstractBeaconAbility<T extends AbstractBeaconAbility<T, R
             return groundLocation;
         }
 
-        public ArmorStand getBeacon() {
+        public ItemDisplay getBeacon() {
             return beacon;
         }
 

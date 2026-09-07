@@ -25,13 +25,11 @@ import net.minecraft.world.phys.Vec3;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.Material;
-import org.bukkit.entity.Entity;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.bukkit.event.block.Action;
-import org.bukkit.event.entity.EntityDamageByEntityEvent;
 import org.bukkit.event.player.PlayerEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.util.Vector;
@@ -39,7 +37,6 @@ import org.bukkit.util.Vector;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.util.List;
-import java.util.Optional;
 
 import static java.util.Collections.singletonList;
 
@@ -127,16 +124,6 @@ public class FlagSpawnPointOption implements Option {
         );
         game.registerEvents(new Listener() {
 
-            @EventHandler(priority = EventPriority.LOW)
-            public void onArmorStandBreak(EntityDamageByEntityEvent event) {
-                boolean isOurArmorStand = renderer.getRenderedArmorStands().contains(event.getEntity());
-                WarlordsEntity wp = Warlords.getPlayer(event.getDamager());
-                if (wp != null && wp.getGame() == game && isOurArmorStand) {
-                    onFlagInteract(wp);
-                    event.setCancelled(true);
-                }
-            }
-
             private boolean onFlagInteract(WarlordsEntity wp) {
                 if (game.isFrozen()) {
                     return false;
@@ -216,6 +203,9 @@ public class FlagSpawnPointOption implements Option {
                             }
                             // Steal flag
                             info.setFlag(new PlayerFlagLocation(wp, 0, spawnFlagLocation.getFlagMultiplier()));
+                            if (wp.getEntity().getVehicle() != null) {
+                                wp.getEntity().getVehicle().remove();
+                            }
                             Integer flagRes = ConfigManager.getGameConfigValue(ConfigManager.DEFAULT_NAMESPACES, "ctf.flagPickResistance", int.class, 0);
                             if (flagRes != null && flagRes != 0) {
                                 wp.getCooldownManager().addCooldown(new RegularCooldown<>(
@@ -269,27 +259,31 @@ public class FlagSpawnPointOption implements Option {
                         playerLocation.getY() + direction.getY(),
                         playerLocation.getZ() + direction.getZ()
                 );
-                checkFlagInteract(playerLocation, wp, from, to, renderer);
+                checkFlagInteract(playerLocation, wp, from, to);
             }
 
-            private void checkFlagInteract(Location playerLocation, WarlordsEntity wp, Vec3 from, Vec3 to, FlagRenderer render) {
-                Location entityLoc = new Location(playerLocation.getWorld(), 0, 0, 0);
-                for (Entity stand : render.getRenderedArmorStands()) {
-                    stand.getLocation(entityLoc);
-                    if (entityLoc.getWorld() == playerLocation.getWorld() && entityLoc.distanceSquared(playerLocation) < 5 * 5) {
-                        AABB aabb = new AABB(
-                                entityLoc.getX() - 0.5,
-                                entityLoc.getY(),
-                                entityLoc.getZ() - 0.5,
-                                entityLoc.getX() + 0.5,
-                                entityLoc.getY() + 2,
-                                entityLoc.getZ() + 0.5
-                        );
-                        Optional<Vec3> clip = aabb.clip(from, to);
-                        if (clip.isPresent() && onFlagInteract(wp)) {
-                            return;
-                        }
-                    }
+            private void checkFlagInteract(Location playerLocation, WarlordsEntity wp, Vec3 from, Vec3 to) {
+                FlagLocation flag = info.getFlag();
+                if (!(flag instanceof GroundFlagLocation || flag instanceof SpawnFlagLocation)) {
+                    return;
+                }
+                Location flagLocation = flag.getLocation();
+                if (flagLocation.getWorld() != playerLocation.getWorld() || flagLocation.distanceSquared(playerLocation) >= 5 * 5) {
+                    return;
+                }
+                // flagLocation is banner center XZ / base Y; padding around 1x2x1 banner
+                float padding = ConfigManager.getGameConfigValue(ConfigManager.DEFAULT_NAMESPACES, "ctf.flagHitboxPadding", float.class, 0.5f);
+                double horizontal = 0.5 + padding;
+                AABB aabb = new AABB(
+                        flagLocation.getX() - horizontal,
+                        flagLocation.getY() - padding,
+                        flagLocation.getZ() - horizontal,
+                        flagLocation.getX() + horizontal,
+                        flagLocation.getY() + 2.0 + padding,
+                        flagLocation.getZ() + horizontal
+                );
+                if (aabb.clip(from, to).isPresent()) {
+                    onFlagInteract(wp);
                 }
             }
         });

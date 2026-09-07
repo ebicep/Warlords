@@ -45,45 +45,45 @@ public abstract class AbstractMultiStatsLeaderboardGameType<
         ));
         statsLeaderboards.add(new StatsLeaderboard("Mage Experience",
                 CENTER_BOARD_1,
-                databasePlayer -> statsLeaderboardCategory.getStatFunction().apply(databasePlayer).getStat(Classes.MAGE, Stats::getExperience, Long::sum, 0L),
+                databasePlayer -> statsLeaderboardCategory.getStatFunction().apply(databasePlayer).getClassExperience(Classes.MAGE),
                 databasePlayer -> NumberFormat.addCommaAndRound(statsLeaderboardCategory.getStatFunction()
                                                                                         .apply(databasePlayer)
-                                                                                        .getStat(Classes.MAGE, Stats::getExperience, Long::sum, 0L))
+                                                                                        .getClassExperience(Classes.MAGE))
         ));
         statsLeaderboards.add(new StatsLeaderboard("Warrior Experience",
                 CENTER_BOARD_2,
-                databasePlayer -> statsLeaderboardCategory.getStatFunction().apply(databasePlayer).getStat(Classes.WARRIOR, Stats::getExperience, Long::sum, 0L),
+                databasePlayer -> statsLeaderboardCategory.getStatFunction().apply(databasePlayer).getClassExperience(Classes.WARRIOR),
                 databasePlayer -> NumberFormat.addCommaAndRound(statsLeaderboardCategory.getStatFunction()
                                                                                         .apply(databasePlayer)
-                                                                                        .getStat(Classes.WARRIOR, Stats::getExperience, Long::sum, 0L))
+                                                                                        .getClassExperience(Classes.WARRIOR))
         ));
         statsLeaderboards.add(new StatsLeaderboard("Paladin Experience",
                 CENTER_BOARD_3,
-                databasePlayer -> statsLeaderboardCategory.getStatFunction().apply(databasePlayer).getStat(Classes.PALADIN, Stats::getExperience, Long::sum, 0L),
+                databasePlayer -> statsLeaderboardCategory.getStatFunction().apply(databasePlayer).getClassExperience(Classes.PALADIN),
                 databasePlayer -> NumberFormat.addCommaAndRound(statsLeaderboardCategory.getStatFunction()
                                                                                         .apply(databasePlayer)
-                                                                                        .getStat(Classes.PALADIN, Stats::getExperience, Long::sum, 0L))
+                                                                                        .getClassExperience(Classes.PALADIN))
         ));
         statsLeaderboards.add(new StatsLeaderboard("Shaman Experience",
                 CENTER_BOARD_4,
-                databasePlayer -> statsLeaderboardCategory.getStatFunction().apply(databasePlayer).getStat(Classes.SHAMAN, Stats::getExperience, Long::sum, 0L),
+                databasePlayer -> statsLeaderboardCategory.getStatFunction().apply(databasePlayer).getClassExperience(Classes.SHAMAN),
                 databasePlayer -> NumberFormat.addCommaAndRound(statsLeaderboardCategory.getStatFunction()
                                                                                         .apply(databasePlayer)
-                                                                                        .getStat(Classes.SHAMAN, Stats::getExperience, Long::sum, 0L))
+                                                                                        .getClassExperience(Classes.SHAMAN))
         ));
         statsLeaderboards.add(new StatsLeaderboard("Rogue Experience",
                 CENTER_BOARD_5,
-                databasePlayer -> statsLeaderboardCategory.getStatFunction().apply(databasePlayer).getStat(Classes.ROGUE, Stats::getExperience, Long::sum, 0L),
+                databasePlayer -> statsLeaderboardCategory.getStatFunction().apply(databasePlayer).getClassExperience(Classes.ROGUE),
                 databasePlayer -> NumberFormat.addCommaAndRound(statsLeaderboardCategory.getStatFunction()
                                                                                         .apply(databasePlayer)
-                                                                                        .getStat(Classes.ROGUE, Stats::getExperience, Long::sum, 0L))
+                                                                                        .getClassExperience(Classes.ROGUE))
         ));
         statsLeaderboards.add(new StatsLeaderboard("Arcanist Experience",
                 CENTER_BOARD_6,
-                databasePlayer -> statsLeaderboardCategory.getStatFunction().apply(databasePlayer).getStat(Classes.ARCANIST, Stats::getExperience, Long::sum, 0L),
+                databasePlayer -> statsLeaderboardCategory.getStatFunction().apply(databasePlayer).getClassExperience(Classes.ARCANIST),
                 databasePlayer -> NumberFormat.addCommaAndRound(statsLeaderboardCategory.getStatFunction()
                                                                                         .apply(databasePlayer)
-                                                                                        .getStat(Classes.ARCANIST, Stats::getExperience, Long::sum, 0L))
+                                                                                        .getClassExperience(Classes.ARCANIST))
         ));
     }
 

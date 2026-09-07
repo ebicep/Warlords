@@ -1,6 +1,5 @@
 package com.ebicep.warlords.player.general.specboosts.boosts;
 
-import com.ebicep.warlords.abilities.OrbsOfLife;
 import com.ebicep.warlords.abilities.UndyingArmy;
 import com.ebicep.warlords.events.player.ingame.WarlordsAddCooldownEvent;
 import com.ebicep.warlords.game.option.marker.FlagHolder;
@@ -72,9 +71,6 @@ public class OneManArmy implements SpecBoostManager.SpecBoost<OneManArmy> {
                 } else {
                     FlagHolder.dropFlagForPlayer(warlordsEntity, false);
                     cd.setTicksLeft(1);
-                    for (OrbsOfLife orbsOfLife : warlordsEntity.getAbilitiesMatching(OrbsOfLife.class)) {
-                        orbsOfLife.setCurrentCooldown(0);
-                    }
                 }
             });
             regularCooldown.getConsumers().clear();

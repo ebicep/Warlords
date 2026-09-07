@@ -462,9 +462,9 @@ public class DunestarEscortOption extends AbstractAnomalyOption {
         for (double distance = 0; distance <= length; distance += step) {
             Location point = line.start().clone().add(unit.clone().multiply(distance));
             if (firing) {
-                world.spawnParticle(Particle.ELECTRIC_SPARK, point, 2, .05, .05, .05, 0);
+                EffectUtils.displayParticle(Particle.ELECTRIC_SPARK, point, 2, .05, .05, .05, 0);
             } else {
-                world.spawnParticle(Particle.DUST, point, 0, LASER_TELEGRAPH_DUST);
+                EffectUtils.displayParticle(Particle.DUST, point, 0, LASER_TELEGRAPH_DUST);
             }
         }
         if (firing) {
@@ -516,8 +516,8 @@ public class DunestarEscortOption extends AbstractAnomalyOption {
 
     private void showRelicParticles() {
         Location location = relicDrop.getLocation().clone().add(0, .5, 0);
-        location.getWorld().spawnParticle(Particle.END_ROD, location, 8, .4, .6, .4, .02);
-        location.getWorld().spawnParticle(Particle.ENCHANT, location, 8, .5, .7, .5, .02);
+        EffectUtils.displayParticle(Particle.END_ROD, location, 8, .4, .6, .4, .02);
+        EffectUtils.displayParticle(Particle.ENCHANT, location, 8, .5, .7, .5, .02);
     }
 
     private void showRouteParticles() {
@@ -525,7 +525,7 @@ public class DunestarEscortOption extends AbstractAnomalyOption {
             return;
         }
         Location carrierLocation = carrier.getLocation().clone().add(0, 1, 0);
-        carrierLocation.getWorld().spawnParticle(Particle.ENCHANT, carrierLocation, 5, .4, .7, .4, .02);
+        EffectUtils.displayParticle(Particle.ENCHANT, carrierLocation, 5, .4, .7, .4, .02);
 
         Location target = routeMarkers.get(nextRouteIndex).getLocation().clone().add(0, 1, 0);
         EffectUtils.displayParticle(Particle.END_ROD, target, 6, .8, .8, .8, .02);

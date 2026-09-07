@@ -1,6 +1,9 @@
 package com.ebicep.warlords.effects;
 
 import com.ebicep.warlords.Warlords;
+import com.ebicep.warlords.database.DatabaseManager;
+import com.ebicep.warlords.database.repositories.player.PlayersCollections;
+import com.ebicep.warlords.database.repositories.player.pojos.general.DatabasePlayer;
 import com.ebicep.warlords.game.Game;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
 import com.ebicep.warlords.util.bukkit.EntitiesUtils;
@@ -8,14 +11,12 @@ import com.ebicep.warlords.util.bukkit.LocationBuilder;
 import com.ebicep.warlords.util.bukkit.Matrix4d;
 import com.ebicep.warlords.util.java.Pair;
 import com.ebicep.warlords.util.warlords.GameRunnable;
-import com.ebicep.warlords.util.warlords.Utils;
 import org.bukkit.*;
 import org.bukkit.block.data.BlockData;
 import org.bukkit.entity.*;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.FireworkMeta;
 import org.bukkit.scheduler.BukkitRunnable;
-import org.bukkit.util.EulerAngle;
 import org.bukkit.util.Transformation;
 import org.bukkit.util.Vector;
 import org.joml.AxisAngle4f;
@@ -25,7 +26,10 @@ import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.UUID;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ThreadLocalRandom;
+import java.util.concurrent.atomic.AtomicInteger;
 import java.util.function.BiConsumer;
 
 import static java.lang.Math.cos;
@@ -33,10 +37,11 @@ import static java.lang.Math.sin;
 
 public class EffectUtils {
 
-    public static final double PARTICLE_RANGE = 100.0;
+    public static final double PARTICLE_RANGE = 75;
     public static final double PARTICLE_RANGE_SQ = PARTICLE_RANGE * PARTICLE_RANGE;
+    private static final ConcurrentHashMap<UUID, AtomicInteger> PARTICLE_QUALITY_COUNTERS = new ConcurrentHashMap<>();
     private static final Color DEFAULT_COLOR = Color.fromRGB(255, 0, 0);
-    private static final Particle.Spell DEFAULT_SPELL = new Particle.Spell(Color.fromRGB(140, 25, 240), 1);
+    private static final Particle.Spell DEFAULT_SPELL = new Particle.Spell(Color.fromRGB(255, 255, 255), 1);
     private static final Particle.DustOptions DEFAULT_DUST = new Particle.DustOptions(DEFAULT_COLOR, 1);
     private static final Particle.DustTransition DEFAULT_DUST_TRANSITION = new Particle.DustTransition(DEFAULT_COLOR, Color.WHITE, 1);
     private static final Float DEFAULT_FLOAT = 1f;
@@ -141,16 +146,7 @@ public class EffectUtils {
             int count,
             T data
     ) {
-        if (loc.getBlock().getType().isOccluding()) {
-            return;
-        }
-        Object resolved = resolveParticleData(particle, data);
-        for (Player player : loc.getWorld().getPlayers()) {
-            if (!isWithinParticleRange(player, loc)) {
-                continue;
-            }
-            player.spawnParticle(particle, loc, count, 0, 0, 0, 0, resolved, true);
-        }
+        displayParticle(null, particle, loc, count, 0, 0, 0, 0, data);
     }
 
     /**
@@ -192,16 +188,7 @@ public class EffectUtils {
             Location loc,
             int count
     ) {
-        if (loc.getBlock().getType().isOccluding()) {
-            return;
-        }
-        Object data = resolveParticleData(particle, null);
-        for (Player player : loc.getWorld().getPlayers()) {
-            if (!isWithinParticleRange(player, loc)) {
-                continue;
-            }
-            player.spawnParticle(particle, loc, count, 0, 0, 0, 0, data, true);
-        }
+        displayParticle(null, particle, loc, count, 0, 0, 0, 0, null);
     }
 
     /**
@@ -448,7 +435,7 @@ public class EffectUtils {
             double offsetZ,
             double speed
     ) {
-        displayParticle(player, particle, loc, count, offsetX, offsetY, offsetZ, speed, resolveParticleData(particle, null));
+        displayParticle(player, particle, loc, count, offsetX, offsetY, offsetZ, speed, null);
     }
 
     public static void displayParticle(
@@ -462,19 +449,16 @@ public class EffectUtils {
             double speed,
             Object data
     ) {
-        if (loc.getBlock().getType().isOccluding()) {
+        if (loc.getWorld() == null || loc.getBlock().getType().isOccluding()) {
             return;
         }
         Object resolved = resolveParticleData(particle, data);
         if (player == null) {
             for (Player receiver : loc.getWorld().getPlayers()) {
-                if (!isWithinParticleRange(receiver, loc)) {
-                    continue;
-                }
-                receiver.spawnParticle(particle, loc, count, offsetX, offsetY, offsetZ, speed, resolved, true);
+                spawnParticleForPlayer(receiver, particle, loc, count, offsetX, offsetY, offsetZ, speed, resolved);
             }
-        } else if (isWithinParticleRange(player, loc)) {
-            player.spawnParticle(particle, loc, count, offsetX, offsetY, offsetZ, speed, resolved, true);
+        } else {
+            spawnParticleForPlayer(player, particle, loc, count, offsetX, offsetY, offsetZ, speed, resolved);
         }
     }
 
@@ -516,6 +500,8 @@ public class EffectUtils {
         return v.setX(x).setZ(z);
     }
 
+    private static final double CHAIN_Y_OFFSET = 1.25;
+
     public static void playChainAnimation(Player player1, Player player2, ItemStack item, int ticksLived) {
         playChainAnimation(player1.getLocation(), player2.getLocation(), item, ticksLived);
     }
@@ -527,48 +513,46 @@ public class EffectUtils {
      * @param ticksLived how long should the chain last
      */
     public static void playChainAnimation(Location location1, Location location2, ItemStack item, int ticksLived) {
-        Location from = location1.clone().add(0, -0.6, 0);
-        Location to = location2.clone().add(0, -0.6, 0);
-        from.setDirection(from.toVector().subtract(to.toVector()).multiply(-1));
-        List<ArmorStand> chains = new ArrayList<>();
-        int maxDistance = (int) Math.round(to.distance(from));
-        for (int i = 0; i < maxDistance; i++) {
-            ArmorStand chain = Utils.spawnArmorStand(from, armorStand -> {
-                        armorStand.setHeadPose(new EulerAngle(from.getDirection().getY() * -1, 0, 0));
-                        armorStand.setMarker(true);
-                        armorStand.getEquipment().setHelmet(item);
-                    }
-            );
-            from.add(from.getDirection().multiply(1.25));
-            chains.add(chain);
-            if (to.distanceSquared(from) < .3) {
-                break;
-            }
+        Location from = location1.clone().add(0, CHAIN_Y_OFFSET, 0);
+        Location to = location2.clone().add(0, CHAIN_Y_OFFSET, 0);
+        float distance = (float) from.distance(to);
+        if (distance <= 0) {
+            return;
         }
-
+        List<Entity> chains = spawnChainDisplays(from, to, item, distance * 0.5f, distance);
         new BukkitRunnable() {
 
             @Override
             public void run() {
-                if (chains.isEmpty()) {
-                    this.cancel();
-                }
-
-                for (int i = 0; i < chains.size(); i++) {
-                    ArmorStand armorStand = chains.get(i);
-                    if (armorStand.getTicksLived() > ticksLived) {
-                        armorStand.remove();
-                        chains.remove(i);
-                        i--;
-                    }
-                }
-
+                chains.forEach(Entity::remove);
             }
 
-        }.runTaskTimer(Warlords.getInstance(), 0, 0);
+        }.runTaskLater(Warlords.getInstance(), ticksLived);
     }
 
     public static void playChainAnimation(Game game, Location location1, Location location2, ItemStack item, float initialDisplacement, float increment, int ticksLived) {
+        List<Entity> chains = spawnChainDisplays(location1, location2, item, initialDisplacement, increment);
+        new GameRunnable(game) {
+
+            @Override
+            public void run() {
+                chains.forEach(Entity::remove);
+            }
+
+        }.runTaskLater(ticksLived);
+    }
+
+    public static void playChainAnimation(WarlordsEntity player1, WarlordsEntity player2, ItemStack item, int ticksLived) {
+        Location from = player1.getLocation().clone().add(0, CHAIN_Y_OFFSET, 0);
+        Location to = player2.getLocation().clone().add(0, CHAIN_Y_OFFSET, 0);
+        float distance = (float) from.distance(to);
+        if (distance <= 0) {
+            return;
+        }
+        playChainAnimation(player1.getGame(), from, to, item, distance * 0.5f, distance, ticksLived);
+    }
+
+    private static List<Entity> spawnChainDisplays(Location location1, Location location2, ItemStack item, float initialDisplacement, float increment) {
         Vector direction = location2.toVector().subtract(location1.toVector()).normalize().multiply(increment);
         double pitch = new LocationBuilder(location1).faceTowards(location2).getPitch();
         LocationBuilder start = new LocationBuilder(location1).faceTowards(location2).forward(initialDisplacement).lookRight().pitch(0);
@@ -592,19 +576,7 @@ public class EffectUtils {
             ));
             start.add(direction);
         }
-
-        new GameRunnable(game) {
-
-            @Override
-            public void run() {
-                chains.forEach(Entity::remove);
-            }
-
-        }.runTaskLater(ticksLived);
-    }
-
-    public static void playChainAnimation(WarlordsEntity player1, WarlordsEntity player2, ItemStack item, int ticksLived) {
-        playChainAnimation(player1.getLocation(), player2.getLocation(), item, ticksLived);
+        return chains;
     }
 
     public static void playParticleLinkAnimation(Location to, Location from, Particle effect) {
@@ -960,7 +932,7 @@ public class EffectUtils {
             double offsetZ,
             double speed
     ) {
-        displayParticle(particle, loc, count, offsetX, offsetY, offsetZ, speed, resolveParticleData(particle, null));
+        displayParticle(null, particle, loc, count, offsetX, offsetY, offsetZ, speed, null);
     }
 
     /**
@@ -983,16 +955,40 @@ public class EffectUtils {
             double speed,
             T data
     ) {
-        if (loc.getBlock().getType().isOccluding()) {
+        displayParticle(null, particle, loc, count, offsetX, offsetY, offsetZ, speed, data);
+    }
+
+    private static void spawnParticleForPlayer(
+            Player player,
+            Particle particle,
+            Location loc,
+            int count,
+            double offsetX,
+            double offsetY,
+            double offsetZ,
+            double speed,
+            Object data
+    ) {
+        if (!isWithinParticleRange(player, loc) || shouldSkipForParticleQuality(player)) {
             return;
         }
-        Object resolved = resolveParticleData(particle, data);
-        for (Player player : loc.getWorld().getPlayers()) {
-            if (!isWithinParticleRange(player, loc)) {
-                continue;
-            }
-            player.spawnParticle(particle, loc, count, offsetX, offsetY, offsetZ, speed, resolved, true);
+        player.spawnParticle(particle, loc, count, offsetX, offsetY, offsetZ, speed, data, true);
+    }
+
+    /**
+     * Applies the viewer's particle quality setting. Uses the same modulo cancel logic as the old
+     * ProtocolLib filter: skip when {@code counter++ % particleReduction == 0}.
+     */
+    private static boolean shouldSkipForParticleQuality(Player player) {
+        DatabasePlayer databasePlayer = DatabaseManager.CACHED_PLAYERS
+                .get(PlayersCollections.LIFETIME)
+                .get(player.getUniqueId());
+        if (databasePlayer == null) {
+            return false;
         }
+        int particleReduction = databasePlayer.getParticleQuality().particleReduction;
+        AtomicInteger counter = PARTICLE_QUALITY_COUNTERS.computeIfAbsent(player.getUniqueId(), uuid -> new AtomicInteger());
+        return counter.getAndIncrement() % particleReduction == 0;
     }
 
     private static boolean isWithinParticleRange(Player player, Location loc) {

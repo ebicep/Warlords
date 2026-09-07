@@ -166,5 +166,9 @@ public class PlayerServiceImpl implements PlayerService {
         playerRepository.renameCollection(collectionName, newCollectionName, dropTarget);
     }
 
+    @Override
+    public void ensureLastLoginIndexes() {
+        playerRepository.ensureLastLoginIndexes();
+    }
 
 }

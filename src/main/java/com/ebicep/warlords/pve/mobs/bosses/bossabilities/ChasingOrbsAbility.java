@@ -138,7 +138,7 @@ public class ChasingOrbsAbility {
                     orb.current.add(dir);
                     orb.display.teleport(orb.current);
 
-                    orb.display.getWorld().spawnParticle(Particle.END_ROD, orb.current, 1, 0, 0, 0, 0);
+                    EffectUtils.displayParticle(Particle.END_ROD, orb.current, 1, 0, 0, 0, 0);
 
                     orb.age++;
 
@@ -164,7 +164,7 @@ public class ChasingOrbsAbility {
         orb.display.remove();
         orbs.remove(orb);
 
-        w.spawnParticle(Particle.EXPLOSION, at, 1, 0, 0, 0, 0);
+        EffectUtils.displayParticle(Particle.EXPLOSION, at, 1, 0, 0, 0, 0);
         Utils.playGlobalSound(at, isHealing ? Sound.ENTITY_ZOMBIE_VILLAGER_CONVERTED : Sound.ENTITY_GENERIC_EXPLODE, 2, 0.6f);
         Utils.playGlobalSound(at, Sound.ENTITY_ENDER_EYE_DEATH, 10, 0.5f);
 

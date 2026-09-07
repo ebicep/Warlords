@@ -1,5 +1,6 @@
 package com.ebicep.warlords.pve.mobs.zombie;
 
+import com.ebicep.warlords.effects.EffectUtils;
 import com.ebicep.warlords.events.player.ingame.WarlordsDamageHealingEvent;
 import com.ebicep.warlords.game.option.pve.PveOption;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
@@ -200,7 +201,7 @@ public class BarnacleBrute extends AbstractMob implements ChampionMob {
         gripTicksLeft--;
 
         if (gripTicksLeft % 10 == 0) {
-            grippedTarget.getWorld().spawnParticle(
+            EffectUtils.displayParticle(
                     Particle.SQUID_INK,
                     grippedTarget.getLocation().clone().add(0, 1.1, 0),
                     8,
@@ -262,7 +263,7 @@ public class BarnacleBrute extends AbstractMob implements ChampionMob {
 
         for (double distance = 0; distance < length; distance += .35) {
             Location particleLocation = from.clone().add(direction.clone().multiply(distance));
-            from.getWorld().spawnParticle(particle, particleLocation, 1, 0, 0, 0, 0);
+            EffectUtils.displayParticle(particle, particleLocation, 1, 0, 0, 0, 0);
         }
     }
 

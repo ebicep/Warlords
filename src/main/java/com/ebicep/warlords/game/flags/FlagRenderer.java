@@ -6,12 +6,12 @@ import com.ebicep.warlords.player.ingame.WarlordsEntity;
 import com.ebicep.warlords.player.ingame.motionsystem.MotionModifierBuilder;
 import com.ebicep.warlords.player.ingame.motionsystem.speed.FlagDebuffValueModifier;
 import com.ebicep.warlords.util.bukkit.ItemBuilder;
-import com.ebicep.warlords.util.warlords.Utils;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
 import net.kyori.adventure.text.format.TextDecoration;
 import org.bukkit.DyeColor;
 import org.bukkit.Effect;
+import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
@@ -19,14 +19,17 @@ import org.bukkit.block.banner.Pattern;
 import org.bukkit.block.banner.PatternType;
 import org.bukkit.block.data.BlockData;
 import org.bukkit.block.data.Rotatable;
-import org.bukkit.entity.ArmorStand;
+import org.bukkit.entity.Display;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
+import org.bukkit.entity.TextDisplay;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.BannerMeta;
-import org.bukkit.metadata.FixedMetadataValue;
+import org.bukkit.util.Transformation;
 import org.bukkit.util.Vector;
 import org.jetbrains.annotations.NotNull;
+import org.joml.AxisAngle4f;
+import org.joml.Vector3f;
 
 import javax.annotation.Nullable;
 import java.util.ArrayList;
@@ -38,7 +41,7 @@ public class FlagRenderer {
 
     private final FlagInfo info;
     private final List<Player> affectedPlayers = new ArrayList<>();
-    private final List<Entity> renderedArmorStands = new ArrayList<>();
+    private final List<TextDisplay> renderedDisplays = new ArrayList<>();
     private final List<Block> renderedBlocks = new ArrayList<>();
     private final List<Runnable> runningTasksCancel = new ArrayList<>();
     private int timer = 0;
@@ -50,10 +53,6 @@ public class FlagRenderer {
 
     public FlagInfo getInfo() {
         return info;
-    }
-
-    public List<Entity> getRenderedArmorStands() {
-        return renderedArmorStands;
     }
 
     /**
@@ -89,12 +88,16 @@ public class FlagRenderer {
             this.reset();
         }
         this.lastLocation = info.getFlag();
-        Warlords plugin = Warlords.getInstance();
         if (this.lastLocation instanceof GroundFlagLocation || this.lastLocation instanceof SpawnFlagLocation) {
             Block block = this.lastLocation.getLocation().getBlock();
             for (int i = 0; !block.isEmpty() && !(block.getState() instanceof org.bukkit.block.Banner) && i < 4; i++) {
                 block = block.getRelative(0, 1, 0);
             }
+            // Keep flag location aligned with where the banner actually sits
+            Location flagLocation = this.lastLocation.getLocation();
+            flagLocation.setX(block.getX() + 0.5);
+            flagLocation.setY(block.getY());
+            flagLocation.setZ(block.getZ() + 0.5);
             if (block.isEmpty() || block.getState() instanceof org.bukkit.block.Banner) {
                 renderedBlocks.add(block);
                 block.setType(info.getTeam().getColors().banner);
@@ -143,24 +146,14 @@ public class FlagRenderer {
                 }
             }
 
-            ArmorStand flag = Utils.spawnArmorStand(block.getLocation().add(.5, 0, .5), armorStand -> {
-                        armorStand.customName(Component.text(info.getTeam().getChatTag() + " FLAG",
-                                info.getTeam().getTeamColor(),
-                                TextDecoration.BOLD
-                        ));
-                        armorStand.setCustomNameVisible(true);
-                        armorStand.setMetadata("INFO", new FixedMetadataValue(plugin, info));
-                    }
-            );
-            renderedArmorStands.add(flag);
-
-            ArmorStand flagInteract = Utils.spawnArmorStand(block.getLocation().add(.5, -0.3, .5), armorStand -> {
-                        armorStand.customName(Component.text("LEFT-CLICK TO STEAL IT", NamedTextColor.WHITE, TextDecoration.BOLD));
-                        armorStand.setCustomNameVisible(true);
-                        armorStand.setMetadata("INFO", new FixedMetadataValue(plugin, info));
-                    }
-            );
-            renderedArmorStands.add(flagInteract);
+            renderedDisplays.add(spawnFlagLabel(
+                    block.getLocation().add(0.5, 2.2, 0.5),
+                    Component.text(info.getTeam().getChatTag() + " FLAG", info.getTeam().getTeamColor(), TextDecoration.BOLD)
+            ));
+            renderedDisplays.add(spawnFlagLabel(
+                    block.getLocation().add(0.5, 1.9, 0.5),
+                    Component.text("LEFT-CLICK TO STEAL IT", NamedTextColor.WHITE, TextDecoration.BOLD)
+            ));
 
         } else if (this.lastLocation instanceof PlayerFlagLocation flag) {
             flag.getPlayer().addSpeedModifier(new MotionModifierBuilder()
@@ -194,11 +187,10 @@ public class FlagRenderer {
             b.setType(Material.AIR);
         }
         renderedBlocks.clear();
-        for (Entity e : renderedArmorStands) {
-            e.removeMetadata("INFO", Warlords.getInstance());
-            e.remove();
+        for (TextDisplay display : renderedDisplays) {
+            display.remove();
         }
-        renderedArmorStands.clear();
+        renderedDisplays.clear();
         for (Player p : affectedPlayers) {
             WarlordsEntity wp = Warlords.getPlayer(p);
             if (wp != null) {
@@ -211,6 +203,25 @@ public class FlagRenderer {
             t.run();
         }
         runningTasksCancel.clear();
+    }
+
+    private static TextDisplay spawnFlagLabel(org.bukkit.Location location, Component text) {
+        return location.getWorld().spawn(location, TextDisplay.class, textDisplay -> {
+            textDisplay.text(text);
+            textDisplay.setBillboard(Display.Billboard.CENTER);
+            textDisplay.setAlignment(TextDisplay.TextAlignment.CENTER);
+            textDisplay.setShadowed(true);
+            textDisplay.setSeeThrough(true);
+            textDisplay.setGravity(false);
+            textDisplay.setInvulnerable(true);
+            textDisplay.setPersistent(false);
+            textDisplay.setTransformation(new Transformation(
+                    new Vector3f(),
+                    new AxisAngle4f(),
+                    new Vector3f(1f, 1f, 1f),
+                    new AxisAngle4f()
+            ));
+        });
     }
 
 }

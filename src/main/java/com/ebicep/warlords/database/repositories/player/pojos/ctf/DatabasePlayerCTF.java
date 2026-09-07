@@ -51,6 +51,7 @@ public class DatabasePlayerCTF implements PushedStatsWarlordsClasses.CTF, Tracks
         updateSpecStats(databasePlayer, databaseGame, gameMode, gamePlayer, result, multiplier, playersCollection);
         updateAbilityStats(gamePlayer, multiplier);
         pushedStats.applyGeneral(gamePlayer, result, multiplier);
+        pushedStats.applyFlags(gamePlayer.getFlagCaptures(), gamePlayer.getFlagReturns(), multiplier);
     }
 
     @Override

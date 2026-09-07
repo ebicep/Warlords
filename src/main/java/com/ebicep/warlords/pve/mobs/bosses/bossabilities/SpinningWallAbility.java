@@ -1,5 +1,6 @@
 package com.ebicep.warlords.pve.mobs.bosses.bossabilities;
 
+import com.ebicep.warlords.effects.EffectUtils;
 import com.ebicep.warlords.game.Game;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
 import com.ebicep.warlords.player.ingame.WarlordsNPC;
@@ -164,7 +165,7 @@ public class SpinningWallAbility {
                 //w.spawnParticle(ptype, x, y, z, perPoint, 0, 0, 0, 0.0);
                 // For colored dust instead:
                 Particle.DustOptions dust = new Particle.DustOptions(Color.fromRGB(100,180,255), 1.2f);
-                w.spawnParticle(Particle.DUST, x, y, z, 1, 0, 0, 0, 0.0, dust);
+                EffectUtils.displayParticle(Particle.DUST, new Location(w, x, y, z), 1, 0, 0, 0, 0.0, dust);
             }
         }
     }

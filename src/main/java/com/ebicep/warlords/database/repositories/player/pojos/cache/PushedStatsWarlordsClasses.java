@@ -116,23 +116,47 @@ public interface PushedStatsWarlordsClasses extends CachedGeneralStats {
         }
 
         @Override
+        default int getFlagsCaptured() {
+            return pushedFlagsCaptured();
+        }
+
+        @Override
+        default int getFlagsReturned() {
+            return pushedFlagsReturned();
+        }
+
+        @Override
         default void warmPushedStats() {
-            pushedStats().warm(() -> pushedStats().fillGeneral(
-                    CTFStatsWarlordsClasses.super.getKills(),
-                    CTFStatsWarlordsClasses.super.getAssists(),
-                    CTFStatsWarlordsClasses.super.getDeaths(),
-                    CTFStatsWarlordsClasses.super.getWins(),
-                    CTFStatsWarlordsClasses.super.getLosses(),
-                    CTFStatsWarlordsClasses.super.getPlays(),
-                    CTFStatsWarlordsClasses.super.getDamage(),
-                    CTFStatsWarlordsClasses.super.getHealing(),
-                    CTFStatsWarlordsClasses.super.getAbsorbed(),
-                    CTFStatsWarlordsClasses.super.getExperience()
-            ));
+            pushedStats().warm(() -> {
+                pushedStats().fillGeneral(
+                        CTFStatsWarlordsClasses.super.getKills(),
+                        CTFStatsWarlordsClasses.super.getAssists(),
+                        CTFStatsWarlordsClasses.super.getDeaths(),
+                        CTFStatsWarlordsClasses.super.getWins(),
+                        CTFStatsWarlordsClasses.super.getLosses(),
+                        CTFStatsWarlordsClasses.super.getPlays(),
+                        CTFStatsWarlordsClasses.super.getDamage(),
+                        CTFStatsWarlordsClasses.super.getHealing(),
+                        CTFStatsWarlordsClasses.super.getAbsorbed(),
+                        CTFStatsWarlordsClasses.super.getExperience()
+                );
+                pushedStats().fillFlags(
+                        CTFStatsWarlordsClasses.super.getFlagsCaptured(),
+                        CTFStatsWarlordsClasses.super.getFlagsReturned()
+                );
+            });
         }
 
         default int treeWalkKills() {
             return CTFStatsWarlordsClasses.super.getKills();
+        }
+
+        default int treeWalkFlagsCaptured() {
+            return CTFStatsWarlordsClasses.super.getFlagsCaptured();
+        }
+
+        default int treeWalkFlagsReturned() {
+            return CTFStatsWarlordsClasses.super.getFlagsReturned();
         }
     }
 

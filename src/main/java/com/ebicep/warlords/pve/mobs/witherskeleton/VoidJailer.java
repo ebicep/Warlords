@@ -1,5 +1,6 @@
 package com.ebicep.warlords.pve.mobs.witherskeleton;
 
+import com.ebicep.warlords.effects.EffectUtils;
 import com.ebicep.warlords.events.player.ingame.WarlordsDamageHealingEvent;
 import com.ebicep.warlords.game.option.pve.PveOption;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
@@ -157,7 +158,7 @@ public class VoidJailer extends AbstractMob implements ChampionMob {
 
         if (prisonCastTicks % 5 == 0) {
             drawPrisonRing(castTarget.getLocation(), PRISON_RADIUS, Particle.PORTAL);
-            castTarget.getWorld().spawnParticle(
+            EffectUtils.displayParticle(
                     Particle.SQUID_INK,
                     castTarget.getLocation().clone().add(0, 1.1, 0),
                     8,
@@ -287,7 +288,7 @@ public class VoidJailer extends AbstractMob implements ChampionMob {
         }
 
         if (prisonCenter != null) {
-            prisonCenter.getWorld().spawnParticle(Particle.SQUID_INK, prisonCenter.clone().add(0, 1, 0), 32, 1.2, .8, 1.2, .04);
+            EffectUtils.displayParticle(Particle.SQUID_INK, prisonCenter.clone().add(0, 1, 0), 32, 1.2, .8, 1.2, .04);
             Utils.playGlobalSound(prisonCenter, broken ? Sound.BLOCK_GLASS_BREAK : Sound.BLOCK_RESPAWN_ANCHOR_DEPLETE, 2, 0.6f);
         }
 
@@ -328,7 +329,7 @@ public class VoidJailer extends AbstractMob implements ChampionMob {
             double x = Math.cos(angle) * radius;
             double z = Math.sin(angle) * radius;
             Location particleLocation = center.clone().add(x, .15, z);
-            center.getWorld().spawnParticle(particle, particleLocation, 1, 0, 0, 0, 0);
+            EffectUtils.displayParticle(particle, particleLocation, 1, 0, 0, 0, 0);
         }
     }
 
@@ -344,7 +345,7 @@ public class VoidJailer extends AbstractMob implements ChampionMob {
 
             for (double y = .25; y <= 2.5; y += .45) {
                 Location particleLocation = prisonCenter.clone().add(x, y, z);
-                prisonCenter.getWorld().spawnParticle(Particle.SQUID_INK, particleLocation, 1, 0, 0, 0, 0);
+                EffectUtils.displayParticle(Particle.SQUID_INK, particleLocation, 1, 0, 0, 0, 0);
             }
         }
     }

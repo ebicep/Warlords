@@ -1,5 +1,6 @@
 package com.ebicep.warlords.database.leaderboards.events;
 
+import com.ebicep.holograms.Hologram;
 import com.ebicep.holograms.HologramManager;
 import com.ebicep.warlords.Warlords;
 import com.ebicep.warlords.database.leaderboards.stats.StatsLeaderboardManager;
@@ -15,6 +16,9 @@ public class EventsLeaderboardManager {
     public static final HashMap<EventLeaderboard, String> EVENT_LEADERBOARDS = new HashMap<>();
 
     public static void create() {
+        if (!Warlords.hologramsEnabled || !StatsLeaderboardManager.enabled) {
+            return;
+        }
         DatabaseGameEvent currentGameEvent = DatabaseGameEvent.currentGameEvent;
         if (currentGameEvent == null) {
             return;
@@ -24,8 +28,18 @@ public class EventsLeaderboardManager {
         Bukkit.getOnlinePlayers().forEach(EventsLeaderboardManager::resetVisibility);
     }
 
+    public static void clearHolograms() {
+        EVENT_LEADERBOARDS.forEach((eventLeaderboard, s) -> {
+            eventLeaderboard.getSortedHolograms()
+                            .stream()
+                            .flatMap(Collection::stream)
+                            .forEach(Hologram::deleteHologram);
+            eventLeaderboard.getSortedHolograms().clear();
+        });
+    }
+
     public static void resetVisibility(Player player) {
-        if (!Warlords.hologramsEnabled) {
+        if (!Warlords.hologramsEnabled || !StatsLeaderboardManager.enabled) {
             return;
         }
         StatsLeaderboardManager.validatePlayerHolograms(player);

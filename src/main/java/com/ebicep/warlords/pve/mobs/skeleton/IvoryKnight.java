@@ -1,5 +1,6 @@
 package com.ebicep.warlords.pve.mobs.skeleton;
 
+import com.ebicep.warlords.effects.EffectUtils;
 import com.ebicep.warlords.events.player.ingame.WarlordsDamageHealingEvent;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
 import com.ebicep.warlords.pve.mobs.AbstractMob;
@@ -49,7 +50,7 @@ public class IvoryKnight extends AbstractMob implements BasicMob {
 
     @Override
     public void onAttack(WarlordsEntity attacker, WarlordsEntity receiver, WarlordsDamageHealingEvent event) {
-        receiver.getLocation().getWorld().spawnParticle(
+        EffectUtils.displayParticle(
                 Particle.SWEEP_ATTACK,
                 receiver.getLocation().clone().add(0, 1, 0),
                 1,

@@ -1,8 +1,10 @@
 package com.ebicep.warlords.database.repositories.player.pojos.cache;
 
+import com.ebicep.warlords.database.repositories.player.pojos.Stats;
 import com.ebicep.warlords.database.repositories.player.pojos.pve.MultiPvEStats;
 import com.ebicep.warlords.database.repositories.player.pojos.pve.anomaly.MultiPvEAnomalyStats;
 import com.ebicep.warlords.database.repositories.player.pojos.pve.onslaught.MultiPvEOnslaughtStats;
+import com.ebicep.warlords.player.general.Classes;
 
 import java.util.Map;
 
@@ -170,6 +172,11 @@ public interface PushedMultiPvEStats extends CachedPvEStats {
         }
 
         @Override
+        default long getClassExperience(Classes classes) {
+            return pushedClassExperience(classes);
+        }
+
+        @Override
         default void warmPushedStats() {
             pushedStats().warm(() -> {
                 pushedStats().fillGeneral(
@@ -191,6 +198,11 @@ public interface PushedMultiPvEStats extends CachedPvEStats {
                         MultiPvEOnslaughtStats.super.getMobDeaths()
                 );
                 pushedStats().fillLongestTicksLived(MultiPvEOnslaughtStats.super.getLongestTicksLived());
+                long[] classXp = new long[Classes.VALUES.length];
+                for (Classes classes : Classes.VALUES) {
+                    classXp[classes.ordinal()] = MultiPvEOnslaughtStats.super.getStat(classes, Stats::getExperience, Long::sum, 0L);
+                }
+                pushedStats().fillClassExperience(classXp);
             });
         }
     }
@@ -292,6 +304,11 @@ public interface PushedMultiPvEStats extends CachedPvEStats {
                         MultiPvEAnomalyStats.super.getMobAssists(),
                         MultiPvEAnomalyStats.super.getMobDeaths()
                 );
+                long[] classXp = new long[Classes.VALUES.length];
+                for (Classes classes : Classes.VALUES) {
+                    classXp[classes.ordinal()] = MultiPvEAnomalyStats.super.getStat(classes, Stats::getExperience, Long::sum, 0L);
+                }
+                pushedStats().fillClassExperience(classXp);
             });
         }
     }

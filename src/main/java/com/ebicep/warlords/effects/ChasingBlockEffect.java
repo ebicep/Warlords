@@ -1,6 +1,5 @@
 package com.ebicep.warlords.effects;
 
-import com.ebicep.customentities.nms.SelfRemovingFallingBlock;
 import com.ebicep.warlords.Warlords;
 import com.ebicep.warlords.game.Game;
 import com.ebicep.warlords.util.bukkit.LocationBuilder;
@@ -115,20 +114,20 @@ public class ChasingBlockEffect {
                         break;
                     }
                 }
-                new SelfRemovingFallingBlock(
+                FallingBlockDebrisEffect.spawn(
                         oldLocation.clone(),
                         Objects.requireNonNullElseGet(blockState, () -> oldLocation.getBlock().getRelative(BlockFace.DOWN, 1).getBlockData()),
-                        .2,
-                        block -> block.setVelocity(new Vector(0, .25, 0))
+                        0.25,
+                        0.15
                 );
                 oldLocation.forward(1);
             }
         } else {
-            new SelfRemovingFallingBlock(
+            FallingBlockDebrisEffect.spawn(
                     new LocationBuilder(currentLocation).faceTowards(destinationLocation).forward(1),
                     Objects.requireNonNullElseGet(blockState, () -> destinationLocation.getBlock().getRelative(BlockFace.DOWN, 1).getBlockData()),
-                    .2,
-                    block -> block.setVelocity(new Vector(0, .25, 0))
+                    0.25,
+                    0.15
             );
             //reached destination
             onDestinationReached.run();

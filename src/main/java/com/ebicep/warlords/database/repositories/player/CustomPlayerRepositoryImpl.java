@@ -2,12 +2,15 @@ package com.ebicep.warlords.database.repositories.player;
 
 import com.ebicep.warlords.database.DatabaseManager;
 import com.ebicep.warlords.database.repositories.player.pojos.general.DatabasePlayer;
+import com.ebicep.warlords.util.chat.ChatUtils;
 import com.mongodb.MongoNamespace;
 import com.mongodb.client.model.RenameCollectionOptions;
 import org.bson.Document;
+import org.springframework.data.domain.Sort;
 import org.springframework.data.mongodb.core.BulkOperations;
 import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.data.mongodb.core.aggregation.Aggregation;
+import org.springframework.data.mongodb.core.index.Index;
 import org.springframework.data.mongodb.core.query.Criteria;
 import org.springframework.data.mongodb.core.query.Query;
 import org.springframework.data.mongodb.core.query.UpdateDefinition;
@@ -101,5 +104,25 @@ public class CustomPlayerRepositoryImpl implements CustomPlayerRepository {
                 new MongoNamespace(DatabaseManager.warlordsDatabase.getName(), newCollectionName),
                 new RenameCollectionOptions().dropTarget(dropTarget)
         );
+    }
+
+    @Override
+    public void ensureLastLoginIndexes() {
+        Index lastLoginIndex = new Index().on("last_login", Sort.Direction.ASC);
+        ChatUtils.MessageType.PLAYER_SERVICE.sendMessage("Ensuring last_login indexes on " + PlayersCollections.ACTIVE_COLLECTIONS.size() + " collections");
+        for (PlayersCollections collection : PlayersCollections.ACTIVE_COLLECTIONS) {
+            try {
+                String indexName = mongoTemplate.indexOps(collection.collectionName).ensureIndex(lastLoginIndex);
+                ChatUtils.MessageType.PLAYER_SERVICE.sendMessage("Ensured last_login index on " + collection.collectionName + " (" + indexName + ")");
+            } catch (Exception e) {
+                ChatUtils.MessageType.PLAYER_SERVICE.sendErrorMessage("Failed to ensure last_login index on " + collection.collectionName);
+                ChatUtils.MessageType.PLAYER_SERVICE.sendErrorMessage(e);
+                if (e instanceof RuntimeException runtimeException) {
+                    throw runtimeException;
+                }
+                throw new RuntimeException(e);
+            }
+        }
+        ChatUtils.MessageType.PLAYER_SERVICE.sendMessage("Finished ensuring last_login indexes");
     }
 }

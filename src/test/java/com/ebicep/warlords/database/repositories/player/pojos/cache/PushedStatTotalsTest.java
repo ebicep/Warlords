@@ -5,7 +5,10 @@ import com.ebicep.warlords.database.repositories.games.pojos.DatabaseGamePlayerR
 import com.ebicep.warlords.database.repositories.games.pojos.pve.DatabaseGamePlayerPvEBase;
 import com.ebicep.warlords.database.repositories.games.pojos.pve.DatabaseGamePvEBase;
 import com.ebicep.warlords.database.repositories.games.pojos.pve.wavedefense.DatabaseGamePvEWaveDefense;
+import com.ebicep.warlords.database.repositories.player.pojos.cache.support.TestReflection;
 import com.ebicep.warlords.database.repositories.player.pojos.general.DatabasePlayer;
+import com.ebicep.warlords.player.general.Classes;
+import com.ebicep.warlords.player.general.Specializations;
 import org.junit.jupiter.api.Test;
 
 import java.util.HashMap;
@@ -215,6 +218,79 @@ class PushedStatTotalsTest {
         totals.warm(() -> totals.fillGeneral(3, 0, 0, 0, 0, 0, 0, 0, 0, 0));
         totals.warm(() -> totals.fillGeneral(99, 0, 0, 0, 0, 0, 0, 0, 0, 0));
         assertEquals(3, totals.getKills());
+    }
+
+    @Test
+    void coldCacheIgnoresFlagsAndClassExperienceApply() {
+        PushedStatTotals totals = new PushedStatTotals();
+        totals.applyFlags(3, 2, 1);
+        totals.applyClassExperience(Classes.MAGE, 50, 1);
+
+        assertFalse(totals.isWarmed());
+        assertEquals(0, totals.getFlagsCaptured());
+        assertEquals(0, totals.getFlagsReturned());
+        assertEquals(0, totals.getClassExperience(Classes.MAGE));
+    }
+
+    @Test
+    void warmThenApplyFlagsIncrements() {
+        PushedStatTotals totals = new PushedStatTotals();
+        totals.warm(() -> totals.fillFlags(5, 4));
+
+        totals.applyFlags(2, 1, 1);
+        assertEquals(7, totals.getFlagsCaptured());
+        assertEquals(5, totals.getFlagsReturned());
+
+        totals.applyFlags(1, 1, 2);
+        assertEquals(9, totals.getFlagsCaptured());
+        assertEquals(7, totals.getFlagsReturned());
+    }
+
+    @Test
+    void warmThenApplyClassExperienceIncrements() {
+        PushedStatTotals totals = new PushedStatTotals();
+        long[] classXp = new long[Classes.VALUES.length];
+        classXp[Classes.MAGE.ordinal()] = 100;
+        classXp[Classes.WARRIOR.ordinal()] = 40;
+        totals.warm(() -> totals.fillClassExperience(classXp));
+
+        totals.applyClassExperience(Classes.MAGE, 25, 2);
+        assertEquals(150, totals.getClassExperience(Classes.MAGE));
+        assertEquals(40, totals.getClassExperience(Classes.WARRIOR));
+        assertEquals(0, totals.getClassExperience(Classes.PALADIN));
+    }
+
+    @Test
+    void applyGeneralBumpsClassExperienceFromSpec() {
+        PushedStatTotals totals = new PushedStatTotals();
+        totals.warm(() -> {
+            totals.fillGeneral(0, 0, 0, 0, 0, 0, 0, 0, 0, 0);
+            totals.fillClassExperience(new long[Classes.VALUES.length]);
+        });
+
+        DatabaseGamePlayerBase gamePlayer = gamePlayer(2, 1, 0);
+        TestReflection.setField(gamePlayer, "spec", Specializations.PYROMANCER);
+        totals.applyGeneral(gamePlayer, DatabaseGamePlayerResult.WON, 1);
+
+        assertEquals(20, totals.getExperience());
+        assertEquals(20, totals.getClassExperience(Classes.MAGE));
+        assertEquals(0, totals.getClassExperience(Classes.WARRIOR));
+    }
+
+    @Test
+    void invalidateClearsFlagsAndClassExperience() {
+        PushedStatTotals totals = new PushedStatTotals();
+        long[] classXp = new long[Classes.VALUES.length];
+        classXp[Classes.ROGUE.ordinal()] = 12;
+        totals.warm(() -> {
+            totals.fillFlags(3, 1);
+            totals.fillClassExperience(classXp);
+        });
+
+        totals.invalidate();
+        assertEquals(0, totals.getFlagsCaptured());
+        assertEquals(0, totals.getFlagsReturned());
+        assertEquals(0, totals.getClassExperience(Classes.ROGUE));
     }
 
     private static DatabaseGamePlayerBase gamePlayer(int killCount, int assistCount, int deathCount) {

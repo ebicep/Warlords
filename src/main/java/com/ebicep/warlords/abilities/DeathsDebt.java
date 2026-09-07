@@ -556,7 +556,7 @@ public class DeathsDebt extends AbstractTotem implements Duration, AbilityStats<
                 riteFocus.setItemStack(new ItemStack(Material.ECHO_SHARD));
             }
 
-            armorStand.getWorld().spawnParticle(
+            EffectUtils.displayParticle(
                     Particle.WITCH,
                     armorStand.getLocation().clone().add(0, 1.3, 0),
                     48,
@@ -592,7 +592,7 @@ public class DeathsDebt extends AbstractTotem implements Duration, AbilityStats<
         public void pulseRiteTotemVisual() {
             Location center = armorStand.getLocation().clone();
 
-            center.getWorld().spawnParticle(
+            EffectUtils.displayParticle(
                     Particle.SOUL_FIRE_FLAME,
                     center.clone().add(0, 1.3, 0),
                     56,
@@ -602,7 +602,7 @@ public class DeathsDebt extends AbstractTotem implements Duration, AbilityStats<
                     .05
             );
 
-            center.getWorld().spawnParticle(
+            EffectUtils.displayParticle(
                     Particle.WITCH,
                     center.clone().add(0, 1.7, 0),
                     32,

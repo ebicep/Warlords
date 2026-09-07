@@ -1,4 +1,5 @@
 package com.ebicep.warlords.pve.mobs.bosses.bossabilities;
+import com.ebicep.warlords.effects.EffectUtils;
 
 import com.ebicep.warlords.game.Game;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
@@ -203,9 +204,9 @@ public class LaserBarrageAbility {
             Location p = center.clone().add(unit.clone().multiply(d));
             if (type == Particle.DUST && dustColor != null) {
                 Particle.DustOptions dust = new Particle.DustOptions(dustColor, size);
-                w.spawnParticle(type, p, 0, dust);
+                EffectUtils.displayParticle(type, p, 0, dust);
             } else {
-                w.spawnParticle(type, p, 0, 0, 0, 0, 0.0);
+                EffectUtils.displayParticle(type, p, 0, 0, 0, 0, 0.0);
             }
         }
     }

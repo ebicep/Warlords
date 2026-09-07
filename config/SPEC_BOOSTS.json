@@ -258,9 +258,10 @@
       "striker": {
         "difficulty": 1,
         "name": "Striker",
-        "description": "Increase the damage of {{aqua:Wounding Strike}} by {{damage;%}} and the wounding inflicted by {{damage;%}}.",
+        "description": "Increase the damage of {{aqua:Wounding Strike}} by {{damage;%}} and the wounding inflicted by {{damage;%}}. Increase wounding duration by {{ticks}}.",
         "woundingStrikeDamageIncreasePercent": 10,
-        "woundingIncreasePercent": 20
+        "woundingIncreasePercent": 30,
+        "woundingDurationIncreaseTicks": 40
       },
       "ferventForce": {
         "difficulty": 2,
@@ -291,14 +292,15 @@
       "undyingSteed": {
         "difficulty": 1,
         "name": "Undying Steed",
-        "description": "Increase the damage of {{aqua:Crippling Strike}} by {{damage;%}}. Your horse will always be available when you respawn. You can take up to {{damage}} damage on your horse without dismounting.",
+        "description": "Increase the damage of {{aqua:Crippling Strike}} by {{damage;%}}. {{aqua:Crippling Strike}} does not dismount. Your horse will always be available when you respawn. You can take up to {{damage}} damage on your horse without dismounting.",
         "cripplingStrikeDamageIncreasePercent": 20,
         "horseHealth": 1500
       },
       "recklessAscent": {
         "difficulty": 3,
         "name": "Reckless Ascent",
-        "description": "Increase the radius of {{aqua:Reckless Charge}} by {{blocks}} and the range by {{blocks}}. Gain {{damageReduction;%}} damage reduction for {{ticks}} after casting {{aqua:Reckless Charge}}. {{aqua:Reckless Charge}} can ascend vertically, but you take {{damage}} when doing so.",
+        "description": "Increase the damage of {{aqua:Reckless Charge}} by {{damage;%}}, the radius by {{blocks}} and the range by {{blocks}}. Gain {{damageReduction;%}} damage reduction for {{ticks}} after casting {{aqua:Reckless Charge}}. {{aqua:Reckless Charge}} can ascend vertically, but you take {{damage}} when doing so.",
+        "recklessChargeDamageIncreasePercent": 15,
         "radiusIncrease": 1,
         "travelDistanceIncrease": 2,
         "damageReductionPercent": 15,
@@ -316,12 +318,12 @@
         "difficulty": 1,
         "name": "Vibrant Orbs",
         "description": "Increase the healing of {{aqua:Orbs of Life}} by {{heal;%}}.",
-        "healingIncreasePercent": 20
+        "healingIncreasePercent": 25
       },
       "oneManArmy": {
         "difficulty": 3,
         "name": "One Man Army",
-        "description": "Increase the duration of {{aqua:Undying Army}} by {{ticks}} for the caster. {{aqua:Undying Army}} will no longer damage you after being revived and resets the cooldown of {{aqua:Orbs of Life}} on revive.",
+        "description": "Increase the duration of {{aqua:Undying Army}} by {{ticks}} for the caster. {{aqua:Undying Army}} will no longer damage you after being revived.",
         "undyingArmyTickDurationCaster": 200
       },
       "conduit": {
@@ -768,10 +770,11 @@
       "airStrike": {
         "difficulty": 5,
         "name": "Air Strike",
-        "description": "{{aqua:Astral Plague}} will prevent you from moving and ascend you {{blocks}} into the air over {{ticks}}. Once at maximum height, you can only use {{aqua:Soulfire Beam}}, it has no cooldown, deals {{damage;%}} less damage, has range reduced by {{blocks}}, and hitbox increased by {{blocks}}. This will last for {{ticks}} or until you cast {{aqua:Soulfire Beam}} {{blue}} times.",
+        "description": "{{aqua:Astral Plague}} will ascend you {{blocks}} into the air over {{ticks}}. Once at maximum height, you can only use {{aqua:Soulfire Beam}}, it has no cooldown, deals {{damage;%}} less damage, has range reduced by {{blocks}}, and hitbox increased by {{blocks}}. This will last for {{ticks}} or until you cast {{aqua:Soulfire Beam}} {{blue}} times.",
         "ascendHeight": 4,
         "ascendDurationTicks": 10,
         "airStrikeDurationTicks": 60,
+        "flySpeed": 0,
         "soulfireBeamDamageReductionPercent": 20,
         "soulfireBeamRangeDecrease": 15,
         "soulfireBeamHitboxIncrease": 0.4,

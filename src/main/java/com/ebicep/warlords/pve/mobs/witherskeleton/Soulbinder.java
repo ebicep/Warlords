@@ -169,7 +169,7 @@ public class Soulbinder extends AbstractMob implements ChampionMob {
             attacker.playSound(attacker.getLocation(), Sound.BLOCK_RESPAWN_ANCHOR_CHARGE, 1, .5f);
         }
 
-        warlordsNPC.getWorld().spawnParticle(
+        EffectUtils.displayParticle(
                 Particle.REVERSE_PORTAL,
                 warlordsNPC.getLocation().clone().add(0, 1.2, 0),
                 24,
@@ -216,7 +216,7 @@ public class Soulbinder extends AbstractMob implements ChampionMob {
             option.spawnNewMob(boundArcher);
             boundMinions.add(boundArcher);
 
-            spawnLocation.getWorld().spawnParticle(
+            EffectUtils.displayParticle(
                     Particle.SOUL_FIRE_FLAME,
                     spawnLocation.clone().add(0, 1, 0),
                     24,
@@ -274,7 +274,7 @@ public class Soulbinder extends AbstractMob implements ChampionMob {
 
     private void playExposedEffects() {
         Location location = warlordsNPC.getLocation().clone().add(0, 1.2, 0);
-        warlordsNPC.getWorld().spawnParticle(Particle.SOUL_FIRE_FLAME, location, 36, .75, .7, .75, .04);
+        EffectUtils.displayParticle(Particle.SOUL_FIRE_FLAME, location, 36, .75, .7, .75, .04);
     }
 
     private void playRebindEffects() {
@@ -284,10 +284,10 @@ public class Soulbinder extends AbstractMob implements ChampionMob {
             double angle = Math.PI * 2 * i / 48;
             double x = Math.cos(angle) * MINION_SPAWN_RADIUS;
             double z = Math.sin(angle) * MINION_SPAWN_RADIUS;
-            center.getWorld().spawnParticle(Particle.REVERSE_PORTAL, center.clone().add(x, .15, z), 1, 0, 0, 0, 0);
+            EffectUtils.displayParticle(Particle.REVERSE_PORTAL, center.clone().add(x, .15, z), 1, 0, 0, 0, 0);
         }
 
-        warlordsNPC.getWorld().spawnParticle(
+        EffectUtils.displayParticle(
                 Particle.SQUID_INK,
                 center.clone().add(0, 1.2, 0),
                 16,
@@ -309,7 +309,7 @@ public class Soulbinder extends AbstractMob implements ChampionMob {
         direction.normalize();
 
         for (double distance = 0; distance < length; distance += .35) {
-            from.getWorld().spawnParticle(particle, from.clone().add(direction.clone().multiply(distance)), 1, 0, 0, 0, 0);
+            EffectUtils.displayParticle(particle, from.clone().add(direction.clone().multiply(distance)), 1, 0, 0, 0, 0);
         }
     }
 

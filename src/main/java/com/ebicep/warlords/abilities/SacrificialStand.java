@@ -24,9 +24,10 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
-public class SacrificialStand extends AbstractAbility implements OrangeAbilityIcon, Duration, AbilityStats<SacrificialStand, SacrificialStand.SacrificialStandStats> {
+public class SacrificialStand extends AbstractAbility implements OrangeAbilityIcon, Duration, Heals<SacrificialStand.HealingValues>, AbilityStats<SacrificialStand, SacrificialStand.SacrificialStandStats> {
 
     private final SacrificialStandStats stats = new SacrificialStandStats();
+    private final HealingValues healingValues = new HealingValues();
     private int radius = 7;
     private int tickDuration = 120;
     private int damageReductionPercent = 40;
@@ -48,6 +49,7 @@ public class SacrificialStand extends AbstractAbility implements OrangeAbilityIc
     @Override
     protected boolean onActivateInternal(@Nonnull WarlordsEntity wp) {
         LastStand.playActivationSound(wp);
+        wp.addInstance(InstanceBuilder.healing().ability(this).source(wp).value(healingValues.castHealing));
         Set<WarlordsEntity> snapshottedAllies = new HashSet<>();
         for (WarlordsEntity ally : PlayerFilter.entitiesAround(wp, radius, radius, radius).aliveTeammatesOf(wp).excluding(wp)) {
             snapshottedAllies.add(ally);
@@ -142,7 +144,9 @@ public class SacrificialStand extends AbstractAbility implements OrangeAbilityIc
 
     @Override
     public void updateDescription(Player player) {
-        description = AbilityDescriptionBuilder.create("Enter a defensive stance, reducing all damage you and your allies within ")
+        description = AbilityDescriptionBuilder.create("Heal for ")
+                                               .heal(healingValues.castHealing)
+                                               .text(" health and enter a defensive stance, reducing all damage you and your allies within ")
                                                .blocks(radius)
                                                .text(" take by ")
                                                .percent(damageReductionPercent, AbilityDescriptionBuilder.COLOR_BROWN)
@@ -169,6 +173,11 @@ public class SacrificialStand extends AbstractAbility implements OrangeAbilityIc
         return stats;
     }
 
+    @Override
+    public HealingValues getHealValues() {
+        return healingValues;
+    }
+
     public int getRadius() {
         return radius;
     }
@@ -179,6 +188,32 @@ public class SacrificialStand extends AbstractAbility implements OrangeAbilityIc
 
     public int getAllyHealMultiplierPercent() {
         return allyHealMultiplierPercent;
+    }
+
+    public static class HealingValues implements Value.ValueHolder {
+
+        private Value.SetValue castHealing = new Value.SetValue(2000);
+
+        private List<Value> values = List.of(castHealing);
+
+        @Override
+        public List<Value> getValues() {
+            return values;
+        }
+
+        @Override
+        public void init(AbstractAbilityBuilder builder) {
+            this.castHealing = ConfigManager.getAbilityConfigValue(builder.getNamespaces(),
+                    builder.getAppendedFieldNameHealing("castHealing"),
+                    Value.SetValue.class
+            );
+            this.values = List.of(castHealing);
+        }
+
+        public Value.SetValue getCastHealing() {
+            return castHealing;
+        }
+
     }
 
     public static class SacrificialStandData {

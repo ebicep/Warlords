@@ -1,4 +1,5 @@
 package com.ebicep.warlords.pve.mobs.bosses.bossabilities;
+import com.ebicep.warlords.effects.EffectUtils;
 
 import com.ebicep.warlords.player.ingame.WarlordsNPC;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
@@ -179,7 +180,7 @@ public class FallingItemSmashAbility {
                                 this.cancel();
                             } else {
                                 // small idle heart to highlight the stuck blade
-                                target.getWorld().spawnParticle(heart, target.clone().add(0, .2, 0), 1, .05, .05, .05, 0);
+                                EffectUtils.displayParticle(heart, target.clone().add(0, .2, 0), 1, .05, .05, .05, 0);
                             }
                         }
                     }.runTaskTimer(0, 1);
@@ -197,7 +198,7 @@ public class FallingItemSmashAbility {
                 }
 
                 // falling trail
-                target.getWorld().spawnParticle(fallTrail, mid, 3, .1, .1, .1, 0);
+                EffectUtils.displayParticle(fallTrail, mid, 3, .1, .1, .1, 0);
                 t++;
             }
         }.runTaskTimer(0, 1);
@@ -205,7 +206,7 @@ public class FallingItemSmashAbility {
 
     private void doImpact(Location at) {
         at.getWorld().playSound(at, impactSfx, 0.9f, 1.0f);
-        at.getWorld().spawnParticle(impactPop, at, 30, 0.6, 0.3, 0.6, 0.05, popBlock);
+        EffectUtils.displayParticle(impactPop, at, 30, 0.6, 0.3, 0.6, 0.05, popBlock);
 
         PlayerFilter.entitiesAround(at, impactRadius, 3, impactRadius)
                 .aliveEnemiesOf(source)
@@ -301,7 +302,7 @@ public class FallingItemSmashAbility {
             double x = center.getX() + Math.cos(angle) * radius;
             double z = center.getZ() + Math.sin(angle) * radius;
             Location p = new Location(center.getWorld(), x, center.getY(), z);
-            center.getWorld().spawnParticle(Particle.DUST, p, 1, dust);
+            EffectUtils.displayParticle(Particle.DUST, p, 1, dust);
         }
     }
 }

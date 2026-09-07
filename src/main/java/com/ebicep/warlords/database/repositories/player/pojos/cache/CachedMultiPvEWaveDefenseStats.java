@@ -1,6 +1,8 @@
 package com.ebicep.warlords.database.repositories.player.pojos.cache;
 
+import com.ebicep.warlords.database.repositories.player.pojos.Stats;
 import com.ebicep.warlords.database.repositories.player.pojos.pve.wavedefense.MultiPvEWaveDefenseStats;
+import com.ebicep.warlords.player.general.Classes;
 
 import java.util.Map;
 
@@ -105,6 +107,11 @@ public interface CachedMultiPvEWaveDefenseStats extends MultiPvEWaveDefenseStats
     }
 
     @Override
+    default long getClassExperience(Classes classes) {
+        return pushedClassExperience(classes);
+    }
+
+    @Override
     default void warmPushedStats() {
         pushedStats().warm(() -> {
             pushedStats().fillGeneral(
@@ -131,7 +138,16 @@ public interface CachedMultiPvEWaveDefenseStats extends MultiPvEWaveDefenseStats
                     MultiPvEWaveDefenseStats.super.getFastestGameFinished(),
                     MultiPvEWaveDefenseStats.super.getMostDamageInWave()
             );
+            pushedStats().fillClassExperience(treeWalkClassExperience());
         });
+    }
+
+    default long[] treeWalkClassExperience() {
+        long[] classXp = new long[Classes.VALUES.length];
+        for (Classes classes : Classes.VALUES) {
+            classXp[classes.ordinal()] = MultiPvEWaveDefenseStats.super.getStat(classes, Stats::getExperience, Long::sum, 0L);
+        }
+        return classXp;
     }
 
     default int treeWalkKills() {

@@ -456,7 +456,7 @@ public class WarlordsShopMenu {
             ParticleQuality particleQuality = particleQualities[i];
 
             menu.setItem(
-                    i + 3,
+                    i + 2,
                     1,
                     new ItemBuilder(particleQuality.item)
                             .lore(WordWrap.wrap(particleQuality.description, 160))

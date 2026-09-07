@@ -3,6 +3,7 @@ package com.ebicep.warlords.database.leaderboards.guilds;
 import com.ebicep.holograms.Hologram;
 import com.ebicep.holograms.HologramDataText;
 import com.ebicep.holograms.HologramManager;
+import com.ebicep.holograms.VisibilityType;
 import com.ebicep.warlords.Warlords;
 import com.ebicep.warlords.database.leaderboards.PlayerLeaderboardInfo;
 import com.ebicep.warlords.database.leaderboards.stats.StatsLeaderboardManager;
@@ -57,8 +58,16 @@ public class GuildLeaderboardManager {
         resetEventBoards();
     }
 
-    public static void resetEventBoards() {
+    public static void clearEventBoards() {
         EVENT_LEADERBOARDS.forEach(Hologram::deleteHologram);
+        EVENT_LEADERBOARDS.clear();
+    }
+
+    public static void resetEventBoards() {
+        clearEventBoards();
+        if (!Warlords.hologramsEnabled || !StatsLeaderboardManager.enabled) {
+            return;
+        }
         DatabaseGameEvent currentGameEvent = DatabaseGameEvent.currentGameEvent;
         if (currentGameEvent == null) {
             return;
@@ -86,14 +95,14 @@ public class GuildLeaderboardManager {
                     int page = Math.min(playerInfo.getPage(), pageHologramData.size() - 1);
                     return pageHologramData.get(page);
                 }
-        ).build();
+        ).setVisibility(VisibilityType.ALL).build();
         HologramManager.addHologram(board);
         EVENT_LEADERBOARDS.add(board);
         Bukkit.getOnlinePlayers().forEach(GuildLeaderboardManager::resetVisibility);
     }
 
     public static void resetVisibility(Player player) {
-        if (!Warlords.hologramsEnabled) {
+        if (!Warlords.hologramsEnabled || !StatsLeaderboardManager.enabled) {
             return;
         }
         StatsLeaderboardManager.validatePlayerHolograms(player);

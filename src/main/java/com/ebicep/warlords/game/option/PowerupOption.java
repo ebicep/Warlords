@@ -11,6 +11,7 @@ import com.ebicep.warlords.player.ingame.cooldowns.cooldowns.RegularCooldown;
 import com.ebicep.warlords.player.ingame.instances.InstanceBuilder;
 import com.ebicep.warlords.player.ingame.instances.InstanceFlags;
 import com.ebicep.warlords.player.ingame.instances.type.Modifier;
+import com.ebicep.warlords.util.bukkit.EntitiesUtils;
 import com.ebicep.warlords.util.warlords.GameRunnable;
 import com.ebicep.warlords.util.warlords.PlayerFilterGeneric;
 import com.ebicep.warlords.util.warlords.Utils;
@@ -23,8 +24,8 @@ import org.bukkit.Color;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.Particle;
-import org.bukkit.entity.ArmorStand;
 import org.bukkit.entity.Display;
+import org.bukkit.entity.ItemDisplay;
 import org.bukkit.entity.TextDisplay;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.util.Transformation;
@@ -50,7 +51,9 @@ public class PowerupOption implements Option {
     @Nonnull
     private PowerUp type;
     @Nullable
-    private ArmorStand entity;
+    private ItemDisplay itemDisplay;
+    @Nullable
+    private TextDisplay nameDisplay;
     @Nonnegative
     private int currentCooldown;
     @Nonnegative
@@ -100,7 +103,8 @@ public class PowerupOption implements Option {
                                 Component.text("Type: " + this.getType()),
                                 Component.text("Current Cooldown: " + this.getCurrentCooldown()),
                                 Component.text("Cooldown: " + this.getCooldown()),
-                                Component.text("Entity: " + this.getEntity()),
+                                Component.text("Item Display: " + this.getItemDisplay()),
+                                Component.text("Name Display: " + this.getNameDisplay()),
                                 Component.text("Randomized: " + this.isRandomPowerup())
                         )
                 )
@@ -166,23 +170,54 @@ public class PowerupOption implements Option {
     }
 
     private void spawn() {
-        if (entity != null) {
+        if (itemDisplay != null) {
             return;
         }
-        entity = Utils.spawnArmorStand(location.clone().add(0, -1.5, 0), armorStand -> {
-                    armorStand.setCustomNameVisible(true);
-                    type.setNameAndItem(this, armorStand);
+        itemDisplay = location.getWorld().spawn(location, ItemDisplay.class, display -> {
+                    display.setItemStack(new ItemStack(type.getDebugMaterial()));
+                    display.setItemDisplayTransform(ItemDisplay.ItemDisplayTransform.HEAD);
+                    display.setBillboard(Display.Billboard.FIXED);
+                    display.setBrightness(EntitiesUtils.MAX_BRIGHTNESS);
+                    display.setGravity(false);
+                    display.setInvulnerable(true);
+                    display.setPersistent(false);
+                    display.setTransformation(new Transformation(
+                            new Vector3f(0, 0, 0),
+                            new AxisAngle4f(),
+                            new Vector3f(0.5f, 0.5f, 0.5f),
+                            new AxisAngle4f()
+                    ));
+                }
+        );
+        nameDisplay = location.getWorld().spawn(location.clone().add(0, 0.5, 0), TextDisplay.class, textDisplay -> {
+                    textDisplay.text(type.getDisplayLabel());
+                    textDisplay.setBillboard(Display.Billboard.CENTER);
+                    textDisplay.setAlignment(TextDisplay.TextAlignment.CENTER);
+                    textDisplay.setSeeThrough(true);
+                    textDisplay.setBackgroundColor(Color.fromARGB(0, 0, 0, 0));
+                    textDisplay.setGravity(false);
+                    textDisplay.setInvulnerable(true);
+                    textDisplay.setPersistent(false);
+                    textDisplay.setTransformation(new Transformation(
+                            new Vector3f(0, 0f, 0),
+                            new AxisAngle4f(),
+                            new Vector3f(1, 1, 1),
+                            new AxisAngle4f()
+                    ));
                 }
         );
         Utils.playGlobalSound(location, "ctf.powerup.spawn", 2, 1);
     }
 
     private void remove() {
-        if (entity == null) {
-            return;
+        if (itemDisplay != null) {
+            itemDisplay.remove();
+            itemDisplay = null;
         }
-        entity.remove();
-        entity = null;
+        if (nameDisplay != null) {
+            nameDisplay.remove();
+            nameDisplay = null;
+        }
     }
 
     @Nonnull
@@ -207,8 +242,12 @@ public class PowerupOption implements Option {
         return cooldown;
     }
 
-    public @Nullable ArmorStand getEntity() {
-        return entity;
+    public @Nullable ItemDisplay getItemDisplay() {
+        return itemDisplay;
+    }
+
+    public @Nullable TextDisplay getNameDisplay() {
+        return nameDisplay;
     }
 
     public boolean isRandomPowerup() {
@@ -261,12 +300,6 @@ public class PowerupOption implements Option {
                 we.addSpeedModifier(we, "Speed Powerup", 40, getTickDuration());
                 Utils.playGlobalSound(option.getLocation(), "ctf.powerup.speed", 2, 1);
             }
-
-            @Override
-            public void setNameAndItem(PowerupOption option, ArmorStand armorStand) {
-                armorStand.customName(Component.text("SPEED", NamedTextColor.WHITE, TextDecoration.BOLD));
-                armorStand.getEquipment().setHelmet(new ItemStack(Material.WHITE_WOOL));
-            }
         },
         HEALING("HEALING", NamedTextColor.GREEN, 5, Material.GREEN_WOOL) {
             @Override
@@ -308,12 +341,6 @@ public class PowerupOption implements Option {
                                         .append(Component.text(getSecondDuration(), NamedTextColor.GREEN))
                                         .append(Component.text(" seconds!")));
             }
-
-            @Override
-            public void setNameAndItem(PowerupOption option, ArmorStand armorStand) {
-                armorStand.customName(Component.text("HEALING", NamedTextColor.GREEN, TextDecoration.BOLD));
-                armorStand.getEquipment().setHelmet(new ItemStack(Material.GREEN_WOOL));
-            }
         },
         ENERGY("ENERGY", NamedTextColor.GOLD, 30, Material.ORANGE_WOOL) {
             @Override
@@ -344,12 +371,6 @@ public class PowerupOption implements Option {
                                         .append(Component.text(getSecondDuration(), NamedTextColor.GREEN))
                                         .append(Component.text(" seconds!")));
             }
-
-            @Override
-            public void setNameAndItem(PowerupOption option, ArmorStand armorStand) {
-                armorStand.customName(Component.text("ENERGY", NamedTextColor.GOLD, TextDecoration.BOLD));
-                armorStand.getEquipment().setHelmet(new ItemStack(Material.ORANGE_WOOL));
-            }
         },
         DAMAGE("DAMAGE", NamedTextColor.RED, 30, Material.RED_WOOL) {
             @Override
@@ -379,12 +400,6 @@ public class PowerupOption implements Option {
                                         .append(Component.text("Damage for "))
                                         .append(Component.text(getSecondDuration(), NamedTextColor.GREEN))
                                         .append(Component.text(" seconds!")));
-            }
-
-            @Override
-            public void setNameAndItem(PowerupOption option, ArmorStand armorStand) {
-                armorStand.customName(Component.text("DAMAGE", NamedTextColor.RED, TextDecoration.BOLD));
-                armorStand.getEquipment().setHelmet(new ItemStack(Material.RED_WOOL));
             }
         },
         COOLDOWN("COOLDOWN", NamedTextColor.AQUA, 30, Material.LIGHT_BLUE_WOOL) {
@@ -421,14 +436,8 @@ public class PowerupOption implements Option {
                                         .append(Component.text(getSecondDuration(), NamedTextColor.GREEN))
                                         .append(Component.text(" seconds!")));
             }
-
-            @Override
-            public void setNameAndItem(PowerupOption option, ArmorStand armorStand) {
-                armorStand.customName(Component.text("COOLDOWN", NamedTextColor.AQUA, TextDecoration.BOLD));
-                armorStand.getEquipment().setHelmet(new ItemStack(Material.LIGHT_BLUE_WOOL));
-            }
         },
-        SELF_DAMAGE("SELF DAMAGE", NamedTextColor.DARK_RED, 0, Material.RED_WOOL) {
+        SELF_DAMAGE("5000 SELF DAMAGE", NamedTextColor.DARK_RED, 0, Material.RED_WOOL) {
             @Override
             public void onPickUp(PowerupOption option, WarlordsEntity we) {
                 we.addInstance(InstanceBuilder
@@ -439,14 +448,8 @@ public class PowerupOption implements Option {
                         .flags(InstanceFlags.IGNORE_SOURCE_DAMAGE_BOOST, InstanceFlags.IGNORE_SELF_RES)
                 );
             }
-
-            @Override
-            public void setNameAndItem(PowerupOption option, ArmorStand armorStand) {
-                armorStand.customName(Component.text("5000 SELF DAMAGE", NamedTextColor.DARK_RED, TextDecoration.BOLD));
-                armorStand.getEquipment().setHelmet(new ItemStack(Material.RED_WOOL));
-            }
         },
-        SELF_HEAL("SELF HEAL", NamedTextColor.DARK_GREEN, 0, Material.GREEN_WOOL) {
+        SELF_HEAL("5000 SELF HEAL", NamedTextColor.DARK_GREEN, 0, Material.GREEN_WOOL) {
             @Override
             public void onPickUp(PowerupOption option, WarlordsEntity we) {
                 we.addInstance(InstanceBuilder
@@ -457,14 +460,8 @@ public class PowerupOption implements Option {
                         .flag(InstanceFlags.IGNORE_SOURCE_DAMAGE_BOOST, true)
                 );
             }
-
-            @Override
-            public void setNameAndItem(PowerupOption option, ArmorStand armorStand) {
-                armorStand.customName(Component.text("5000 SELF HEAL", NamedTextColor.DARK_GREEN, TextDecoration.BOLD));
-                armorStand.getEquipment().setHelmet(new ItemStack(Material.GREEN_WOOL));
-            }
         },
-        PAYLOAD_BATTERY("PAYLOAD BATTERY", TextColor.color(255, 249, 23), 25, Material.YELLOW_TERRACOTTA) {
+        PAYLOAD_BATTERY("BATTERY", TextColor.color(255, 249, 23), 25, Material.YELLOW_TERRACOTTA) {
             @Override
             public void onPickUp(PowerupOption option, WarlordsEntity we) {
                 we.addSpeedModifier(we, "Payload Battery", -15, getTickDuration());
@@ -513,12 +510,6 @@ public class PowerupOption implements Option {
                 );
                 Utils.playGlobalSound(option.getLocation(), "ctf.powerup.speed", 2, 2);
             }
-
-            @Override
-            public void setNameAndItem(PowerupOption option, ArmorStand armorStand) {
-                armorStand.customName(Component.text("BATTERY", getTextColor(), TextDecoration.BOLD));
-                armorStand.getEquipment().setHelmet(new ItemStack(Material.YELLOW_TERRACOTTA));
-            }
         },
 
         ;
@@ -566,7 +557,9 @@ public class PowerupOption implements Option {
 
         public abstract void onPickUp(PowerupOption option, WarlordsEntity we);
 
-        public abstract void setNameAndItem(PowerupOption option, ArmorStand armorStand);
+        public Component getDisplayLabel() {
+            return Component.text(name, textColor, TextDecoration.BOLD);
+        }
 
     }
 

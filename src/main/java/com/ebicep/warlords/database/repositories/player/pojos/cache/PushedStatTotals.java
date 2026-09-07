@@ -3,7 +3,10 @@ package com.ebicep.warlords.database.repositories.player.pojos.cache;
 import com.ebicep.warlords.database.repositories.games.pojos.DatabaseGamePlayerBase;
 import com.ebicep.warlords.database.repositories.games.pojos.DatabaseGamePlayerResult;
 import com.ebicep.warlords.database.repositories.games.pojos.pve.DatabaseGamePlayerPvEBase;
+import com.ebicep.warlords.player.general.Classes;
+import com.ebicep.warlords.player.general.Specializations;
 
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
@@ -32,6 +35,9 @@ public final class PushedStatTotals {
     private long fastestGameFinished;
     private long mostDamageInWave;
     private long longestTicksLived;
+    private int flagsCaptured;
+    private int flagsReturned;
+    private final long[] classExperience = new long[Classes.VALUES.length];
 
     private final Map<String, Long> mobKills = new HashMap<>();
     private final Map<String, Long> mobAssists = new HashMap<>();
@@ -64,6 +70,9 @@ public final class PushedStatTotals {
         this.fastestGameFinished = 0;
         this.mostDamageInWave = 0;
         this.longestTicksLived = 0;
+        this.flagsCaptured = 0;
+        this.flagsReturned = 0;
+        Arrays.fill(this.classExperience, 0L);
         this.mobKills.clear();
         this.mobAssists.clear();
         this.mobDeaths.clear();
@@ -115,6 +124,20 @@ public final class PushedStatTotals {
         this.longestTicksLived = longestTicksLived;
     }
 
+    public void fillFlags(int flagsCaptured, int flagsReturned) {
+        this.flagsCaptured = flagsCaptured;
+        this.flagsReturned = flagsReturned;
+    }
+
+    public void fillClassExperience(long[] classExperience) {
+        Arrays.fill(this.classExperience, 0L);
+        if (classExperience == null) {
+            return;
+        }
+        int len = Math.min(this.classExperience.length, classExperience.length);
+        System.arraycopy(classExperience, 0, this.classExperience, 0, len);
+    }
+
     /**
      * Warms from a tree-walk snapshot via {@code fill*}. No-op if already warmed.
      * Caller must pass Multi*.super / StatsWarlordsClasses.super values, not pushed getters.
@@ -147,7 +170,30 @@ public final class PushedStatTotals {
         this.damage += gamePlayer.getTotalDamage() * multiplier;
         this.healing += gamePlayer.getTotalHealing() * multiplier;
         this.absorbed += gamePlayer.getTotalAbsorbed() * multiplier;
-        this.experience += gamePlayer.getExperienceEarnedSpec() * multiplier;
+        long experienceDelta = gamePlayer.getExperienceEarnedSpec() * multiplier;
+        this.experience += experienceDelta;
+        Specializations spec = gamePlayer.getSpec();
+        if (spec != null && experienceDelta != 0) {
+            Classes classes = Specializations.getClass(spec);
+            if (classes != null) {
+                this.classExperience[classes.ordinal()] += experienceDelta;
+            }
+        }
+    }
+
+    public void applyFlags(int flagsCaptured, int flagsReturned, int multiplier) {
+        if (!warmed) {
+            return;
+        }
+        this.flagsCaptured += flagsCaptured * multiplier;
+        this.flagsReturned += flagsReturned * multiplier;
+    }
+
+    public void applyClassExperience(Classes classes, long delta, int multiplier) {
+        if (!warmed || classes == null || delta == 0) {
+            return;
+        }
+        this.classExperience[classes.ordinal()] += delta * multiplier;
     }
 
     public void applyPvE(DatabaseGamePlayerPvEBase gamePlayer, int timeElapsed, int multiplier) {
@@ -270,6 +316,21 @@ public final class PushedStatTotals {
 
     public long getLongestTicksLived() {
         return longestTicksLived;
+    }
+
+    public int getFlagsCaptured() {
+        return flagsCaptured;
+    }
+
+    public int getFlagsReturned() {
+        return flagsReturned;
+    }
+
+    public long getClassExperience(Classes classes) {
+        if (classes == null) {
+            return 0;
+        }
+        return classExperience[classes.ordinal()];
     }
 
     public Map<String, Long> getMobKillsView() {

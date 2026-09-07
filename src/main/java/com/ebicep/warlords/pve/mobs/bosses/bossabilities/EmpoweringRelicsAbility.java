@@ -176,7 +176,7 @@ public class EmpoweringRelicsAbility {
                     if (r.claimed) continue;
 
                     drawRing(r.pos, pickupRadius, relicDust);
-                    r.pos.getWorld().spawnParticle(Particle.END_ROD, r.pos.clone().add(0, 0.6, 0), 1, 0, 0, 0, 0.0);
+                    EffectUtils.displayParticle(Particle.END_ROD, r.pos.clone().add(0, 0.6, 0), 1, 0, 0, 0, 0.0);
 
                     Optional<WarlordsEntity> maybe = PlayerFilter
                             .entitiesAround(r.pos, pickupRadius, 2, pickupRadius)
@@ -197,7 +197,7 @@ public class EmpoweringRelicsAbility {
                         spawnOrUpdateHalo(carrier);
 
                         Utils.playGlobalSound(r.pos, Sound.ENTITY_ZOMBIE_VILLAGER_CONVERTED, 2, 0.5f);
-                        r.pos.getWorld().spawnParticle(Particle.TOTEM_OF_UNDYING, r.pos, 10, 0.35, 0.35, 0.35, 0.05);
+                        EffectUtils.displayParticle(Particle.TOTEM_OF_UNDYING, r.pos, 10, 0.35, 0.35, 0.35, 0.05);
 
                         if (oneUseRelics) relics.remove(r);
                     }
@@ -222,7 +222,7 @@ public class EmpoweringRelicsAbility {
                     Location ringCenter = carrier.getLocation().clone();
                     drawRing(ringCenter, allyBuffRadius, auraDust);
 
-                    ringCenter.getWorld().spawnParticle(Particle.DUST, ringCenter, 2, 0.15, 0.1, 0.15, 0.0, auraDust);
+                    EffectUtils.displayParticle(Particle.DUST, ringCenter, 2, 0.15, 0.1, 0.15, 0.0, auraDust);
 
                     // Update halo position + rotation
                     updateHalo(carrier);
@@ -231,7 +231,7 @@ public class EmpoweringRelicsAbility {
                         it.remove();
                         onExpire.accept(carrier);
                         Utils.playGlobalSound(carrier.getLocation(), Sound.BLOCK_BEACON_DEACTIVATE, 10, 1.2f);
-                        ringCenter.getWorld().spawnParticle(Particle.END_ROD, ringCenter, 10, 0.25, 0.25, 0.25, 0.01);
+                        EffectUtils.displayParticle(Particle.END_ROD, ringCenter, 10, 0.25, 0.25, 0.25, 0.01);
                         removeHalo(carrierId);
                     }
                 }
@@ -308,7 +308,7 @@ public class EmpoweringRelicsAbility {
         for (double a = 0; a < twoPi; a += angStep) {
             double x = center.getX() + Math.cos(a) * radius;
             double z = center.getZ() + Math.sin(a) * radius;
-            w.spawnParticle(Particle.DUST, x, y, z, 1, 0, 0, 0, 0.0, dust);
+            EffectUtils.displayParticle(Particle.DUST, new Location(w, x, y, z), 1, 0, 0, 0, 0.0, dust);
         }
     }
 
