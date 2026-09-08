@@ -2,6 +2,7 @@ package com.ebicep.warlords.player.general;
 
 import com.ebicep.warlords.Warlords;
 import com.ebicep.warlords.database.DatabaseManager;
+import com.ebicep.warlords.game.Game;
 import com.ebicep.warlords.database.leaderboards.PlayerLeaderboardInfo;
 import com.ebicep.warlords.database.leaderboards.stats.StatsLeaderboard;
 import com.ebicep.warlords.database.leaderboards.stats.StatsLeaderboardManager;
@@ -279,6 +280,30 @@ public class CustomScoreboard {
             }
             CustomScoreboard.getPlayerScoreboard(onlinePlayer).applyLobbyNameDisplay(display);
         }
+    }
+
+    /**
+     * Pushes lobby-style name color onto every online player's scoreboard in {@code game}
+     * so spectators are not white nametags for in-game viewers.
+     */
+    public static void applySpectatorNameToGame(Player spectator, Game game) {
+        LobbyNameDisplay display = buildLobbyNameDisplay(spectator);
+        UUID spectatorUuid = spectator.getUniqueId();
+        game.forEachOnlinePlayer((viewer, team) -> {
+            if (!viewer.getUniqueId().equals(spectatorUuid)) {
+                getPlayerScoreboard(viewer).applyLobbyNameDisplay(display);
+            }
+        });
+        // Existing spectators → new spectator's board (same white-name gap the other way)
+        game.spectators().forEach(uuid -> {
+            if (uuid.equals(spectatorUuid)) {
+                return;
+            }
+            Player other = Bukkit.getPlayer(uuid);
+            if (other != null) {
+                getPlayerScoreboard(spectator).applyLobbyNameDisplay(buildLobbyNameDisplay(other));
+            }
+        });
     }
 
     public void updateLobbyPlayerNamesInternal() {
