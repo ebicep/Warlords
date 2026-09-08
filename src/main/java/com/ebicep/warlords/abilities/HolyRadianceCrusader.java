@@ -91,7 +91,7 @@ public class HolyRadianceCrusader extends AbstractHolyRadiance implements Heals<
                     markDuration * 20,
                     Collections.singletonList((cooldown, ticksLeft, ticksElapsed) -> {
                         if (ticksElapsed % 16 == 0) {
-                            EffectUtils.playCylinderAnimation(markTarget.getLocation(), 1, 255, 170, 0, 8, 3, .3);
+                            EffectUtils.playCylinderAnimation(markTarget.getLocation(), 1, 255, 170, 0, 6, 3, .4);
                         }
                     })
             ).addModifier(Modifier.ENERGY_GAIN_PER_TICK, energyGainPerTick -> energyGainPerTick.addModifier(FloatModifiable.ModifierType.ADDITIVE,
