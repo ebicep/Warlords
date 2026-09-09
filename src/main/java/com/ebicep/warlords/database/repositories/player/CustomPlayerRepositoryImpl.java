@@ -117,10 +117,7 @@ public class CustomPlayerRepositoryImpl implements CustomPlayerRepository {
             } catch (Exception e) {
                 ChatUtils.MessageType.PLAYER_SERVICE.sendErrorMessage("Failed to ensure last_login index on " + collection.collectionName);
                 ChatUtils.MessageType.PLAYER_SERVICE.sendErrorMessage(e);
-                if (e instanceof RuntimeException runtimeException) {
-                    throw runtimeException;
-                }
-                throw new RuntimeException(e);
+                throw e;
             }
         }
         ChatUtils.MessageType.PLAYER_SERVICE.sendMessage("Finished ensuring last_login indexes");
