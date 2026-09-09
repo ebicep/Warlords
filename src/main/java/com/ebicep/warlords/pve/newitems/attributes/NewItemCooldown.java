@@ -127,5 +127,36 @@ public class NewItemCooldown extends PermanentCooldown<NewItemCooldown> {
         this.additionalCritMultiplier += additionalCritMultiplier;
     }
 
+    public float getDamageMultiplier() {
+        return damageMultiplier;
+    }
+
+    public float getDamageBossMultiplier() {
+        return damageBossMultiplier;
+    }
+
+    public float getHealMultiplier() {
+        return healMultiplier;
+    }
+
+    public float getKbMultiplier() {
+        return kbMultiplier;
+    }
+
+    public float getThorns() {
+        return thorns;
+    }
+
+    public int getMaxThornsDamage() {
+        return maxThornsDamage;
+    }
+
+    public float getAdditionalCritChance() {
+        return additionalCritChance;
+    }
+
+    public float getAdditionalCritMultiplier() {
+        return additionalCritMultiplier;
+    }
 
 }
