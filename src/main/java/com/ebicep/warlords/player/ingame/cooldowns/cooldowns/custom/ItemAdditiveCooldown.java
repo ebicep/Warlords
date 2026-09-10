@@ -168,6 +168,34 @@ public class ItemAdditiveCooldown extends PermanentCooldown<AbstractItem> {
         aspectModifiers.put(aspect, aspectModifier);
     }
 
+    public float getDamageMultiplier() {
+        return damageMultiplier;
+    }
+
+    public float getHealMultiplier() {
+        return healMultiplier;
+    }
+
+    public float getKbMultiplier() {
+        return kbMultiplier;
+    }
+
+    public float getThorns() {
+        return thorns;
+    }
+
+    public int getMaxThornsDamage() {
+        return maxThornsDamage;
+    }
+
+    public float getAdditionalCritChance() {
+        return additionalCritChance;
+    }
+
+    public float getAdditionalCritMultiplier() {
+        return additionalCritMultiplier;
+    }
+
     /**
      * @param damageMultiplier          1.2 = 20% more damage
      * @param effectNegationTicks       20 = 1 second

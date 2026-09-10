@@ -218,6 +218,25 @@ public class FloatModifiable implements Modifiable {
         refresh();
     }
 
+    @Nullable
+    public FloatModifier getModifier(ModifierType type, String log) {
+        for (FloatModifier modifier : modifiersOf(type)) {
+            if (modifier.getLog().equals(log)) {
+                return modifier;
+            }
+        }
+        return null;
+    }
+
+    private List<FloatModifier> modifiersOf(ModifierType type) {
+        return switch (type) {
+            case OVERRIDING -> overridingModifiers;
+            case ADDITIVE -> additiveModifiers;
+            case ADDITIVE_MULTIPLIER -> multiplicativeModifiersAdditive;
+            case MULTIPLICATIVE_MULTIPLIER -> multiplicativeModifiersMultiplicative;
+        };
+    }
+
     public float getBaseValue() {
         return baseValue;
     }
@@ -327,12 +346,7 @@ public class FloatModifiable implements Modifiable {
             Consumer<Float> callback,
             boolean override
     ) {
-        List<FloatModifiable.FloatModifier> list = switch (type) {
-            case OVERRIDING -> this.overridingModifiers;
-            case ADDITIVE -> this.additiveModifiers;
-            case ADDITIVE_MULTIPLIER -> this.multiplicativeModifiersAdditive;
-            case MULTIPLICATIVE_MULTIPLIER -> this.multiplicativeModifiersMultiplicative;
-        };
+        List<FloatModifiable.FloatModifier> list = modifiersOf(type);
         if (!override) {
             for (FloatModifier modifier : list) {
                 if (modifier.getLog().equals(log)) {

@@ -6,6 +6,8 @@ import com.ebicep.warlords.database.repositories.player.pojos.general.DatabasePl
 import com.ebicep.warlords.game.Game;
 import com.ebicep.warlords.game.option.pve.PveOption;
 import com.ebicep.warlords.menu.Menu;
+import com.ebicep.warlords.player.general.Specializations;
+import com.ebicep.warlords.player.general.SpecializationStatsLore;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
 import com.ebicep.warlords.player.ingame.WarlordsPlayer;
 import com.ebicep.warlords.pve.DifficultyMode;
@@ -165,6 +167,17 @@ public class AbilityTree {
         }
 
         Menu menu = new Menu("Upgrades", 9 * 5);
+
+        Specializations specClass = warlordsPlayer.getSpecClass();
+        menu.setItem(
+                0,
+                0,
+                new ItemBuilder(specClass.specType.itemStack)
+                        .name(Component.text(specClass.name, NamedTextColor.GREEN))
+                        .lore(SpecializationStatsLore.forPlayer(warlordsPlayer))
+                        .get(),
+                ACTION_DO_NOTHING
+        );
 
         for (int i = 0; i < upgradeBranches.size(); i++) {
             AbstractUpgradeBranch<?> upgradeBranch = upgradeBranches.get(i);

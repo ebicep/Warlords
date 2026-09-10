@@ -4,7 +4,6 @@ import co.aikar.commands.BaseCommand;
 import co.aikar.commands.annotation.CommandAlias;
 import co.aikar.commands.annotation.Default;
 import com.ebicep.warlords.Warlords;
-import com.ebicep.warlords.abilities.internal.AbilityDescriptionBuilder;
 import com.ebicep.warlords.abilities.internal.AbstractAbility;
 import com.ebicep.warlords.database.DatabaseManager;
 import com.ebicep.warlords.database.repositories.config.ConfigManager;
@@ -35,7 +34,6 @@ import com.ebicep.warlords.pve.weapons.menu.WeaponManagerMenu;
 import com.ebicep.warlords.util.bukkit.ComponentUtils;
 import com.ebicep.warlords.util.bukkit.ItemBuilder;
 import com.ebicep.warlords.util.bukkit.WordWrap;
-import com.ebicep.warlords.util.java.NumberFormat;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.event.HoverEvent;
 import net.kyori.adventure.text.format.NamedTextColor;
@@ -106,32 +104,7 @@ public class WarlordsNewHotbarMenu {
         ItemBuilder icon = new ItemBuilder(selectedSpec.specType.itemStack)
                 .name(Component.text(selectedSpec.name, NamedTextColor.GREEN))
                 .lore(WordWrap.wrap(selectedSpec.getDescription(), 200));
-        icon.addLore(
-                Component.empty(),
-                Component.text("Specialization Stats:", NamedTextColor.GOLD),
-                Component.empty(),
-                Component.text("Health: ", NamedTextColor.GRAY).append(Component.text(NumberFormat.formatOptionalHundredths(apc.getMaxHealth()), NamedTextColor.GREEN)),
-                Component.empty(),
-                Component.text("Energy: ", NamedTextColor.GRAY)
-                         .append(Component.text(NumberFormat.formatOptionalHundredths(apc.getMaxEnergy()), NamedTextColor.YELLOW))
-                         .append(Component.text(" / "))
-                         .append(Component.text("+" + NumberFormat.formatOptionalHundredths(apc.getEnergyPerSec()), NamedTextColor.YELLOW))
-                         .append(Component.text(" per sec / "))
-                         .append(Component.text("+" + NumberFormat.formatOptionalHundredths(apc.getEnergyPerHit()), NamedTextColor.YELLOW))
-                         .append(Component.text(" per hit"))
-        );
-        boolean noDamageResistance = apc.getDamageResistance() == 0;
-        icon.addLore(Component.text("Damage Reduction: ", NamedTextColor.GRAY)
-                              .append(Component.text(noDamageResistance ? "None" : NumberFormat.formatOptionalTenths(apc.getDamageResistance()) + "%",
-                                      noDamageResistance ? NamedTextColor.RED : AbilityDescriptionBuilder.COLOR_BROWN
-                              ))
-        );
-        boolean noSpeed = apc.getSpeed() == 0;
-        icon.addLore(Component.text("Speed: ", NamedTextColor.GRAY)
-                              .append(Component.text(noSpeed ? "None" : NumberFormat.formatOptionalTenths(apc.getSpeed()) + "%",
-                                      noSpeed ? NamedTextColor.RED : NamedTextColor.WHITE
-                              ))
-        );
+        icon.addLore(SpecializationStatsLore.specializationStats(apc));
 
 
         // not including skill boost - these display base stats
