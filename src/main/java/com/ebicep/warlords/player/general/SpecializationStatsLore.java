@@ -132,12 +132,17 @@ public final class SpecializationStatsLore {
     }
 
     public static float getCalculatedSpeedPercent(WarlordsPlayer warlordsPlayer) {
-        for (MotionModifier modifier : warlordsPlayer.getSpeed().getModifiers()) {
-            if ("BASE".equals(modifier.getName())) {
-                return modifier.getModifier() - BASE_WALK_SPEED_OFFSET;
+        if (warlordsPlayer.getSpeed() != null) {
+            for (MotionModifier modifier : warlordsPlayer.getSpeed().getModifiers()) {
+                if ("BASE".equals(modifier.getName())) {
+                    return modifier.getModifier() - BASE_WALK_SPEED_OFFSET;
+                }
             }
         }
-        return warlordsPlayer.getSpec().getSpeed();
+        if (warlordsPlayer.getSpec() != null) {
+            return warlordsPlayer.getSpec().getSpeed();
+        }
+        return 0;
     }
 
     public static ItemBonuses collectItemBonuses(WarlordsPlayer warlordsPlayer) {
@@ -251,12 +256,6 @@ public final class SpecializationStatsLore {
     private static void addPercentStat(List<Component> lore, String label, float value, TextColor valueColor) {
         if (hasValue(value)) {
             lore.add(labeledStat(label, NumberFormat.formatOptionalTenths(value) + "%", valueColor));
-        }
-    }
-
-    private static void addFlatStat(List<Component> lore, String label, float value, TextColor valueColor) {
-        if (hasValue(value)) {
-            lore.add(labeledStat(label, NumberFormat.formatOptionalTenths(value), valueColor));
         }
     }
 
