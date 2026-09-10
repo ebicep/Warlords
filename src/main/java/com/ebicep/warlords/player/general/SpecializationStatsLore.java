@@ -92,8 +92,16 @@ public final class SpecializationStatsLore {
 
     public static List<Component> itemStats(ItemBonuses bonuses) {
         List<Component> lore = new ArrayList<>();
-        addPercentStat(lore, "Cooldown Reduction", bonuses.cooldownReduction(), NamedTextColor.AQUA);
-        addFlatStat(lore, "Skill Energy Cost Reduction", bonuses.skillEnergyCostReduction(), NamedTextColor.YELLOW);
+        if (hasValue(bonuses.cooldownReduction())) {
+            lore.add(labeledStat("Cooldown Reduction",
+                    "-" + NumberFormat.formatOptionalTenths(bonuses.cooldownReduction()) + "%",
+                    NamedTextColor.AQUA));
+        }
+        if (hasValue(bonuses.skillEnergyCostReduction())) {
+            lore.add(labeledStat("Skill Energy Cost Reduction",
+                    "-" + NumberFormat.formatOptionalTenths(bonuses.skillEnergyCostReduction()),
+                    NamedTextColor.YELLOW));
+        }
         if (hasValue(bonuses.thorns())) {
             String thornsValue = NumberFormat.formatOptionalTenths(bonuses.thorns()) + "%";
             if (bonuses.maxThornsDamage() > 0) {
@@ -107,7 +115,11 @@ public final class SpecializationStatsLore {
         addPercentStat(lore, "Crit Multiplier", bonuses.critMultiplier(), NamedTextColor.LIGHT_PURPLE);
         addPercentStat(lore, "Damage to Boss Enemies", bonuses.damageToBosses(), BOSS_DAMAGE_COLOR);
         addPercentStat(lore, "Knockback Resistance", bonuses.knockbackResistance(), AbilityDescriptionBuilder.COLOR_BROWN);
-        addFlatStat(lore, "Health Regen", bonuses.healthRegen(), NamedTextColor.RED);
+        if (hasValue(bonuses.healthRegen())) {
+            lore.add(labeledStat("Health Regen",
+                    NumberFormat.formatOptionalTenths(bonuses.healthRegen()) + "/s",
+                    NamedTextColor.RED));
+        }
         addPercentStat(lore, "Attack Speed", bonuses.attackSpeed(), NamedTextColor.RED);
         if (lore.isEmpty()) {
             return lore;
