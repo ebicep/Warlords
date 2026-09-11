@@ -53,6 +53,7 @@ public class CustomPlayerRepositoryImpl implements CustomPlayerRepository {
     public void deleteAll(PlayersCollections collection) {
         mongoTemplate.dropCollection(collection.collectionName);
         mongoTemplate.createCollection(collection.collectionName);
+        ensureLastLoginIndex(collection);
     }
 
     @Override
@@ -108,18 +109,22 @@ public class CustomPlayerRepositoryImpl implements CustomPlayerRepository {
 
     @Override
     public void ensureLastLoginIndexes() {
-        Index lastLoginIndex = new Index().on("last_login", Sort.Direction.ASC);
         ChatUtils.MessageType.PLAYER_SERVICE.sendMessage("Ensuring last_login indexes on " + PlayersCollections.ACTIVE_COLLECTIONS.size() + " collections");
         for (PlayersCollections collection : PlayersCollections.ACTIVE_COLLECTIONS) {
-            try {
-                String indexName = mongoTemplate.indexOps(collection.collectionName).ensureIndex(lastLoginIndex);
-                ChatUtils.MessageType.PLAYER_SERVICE.sendMessage("Ensured last_login index on " + collection.collectionName + " (" + indexName + ")");
-            } catch (Exception e) {
-                ChatUtils.MessageType.PLAYER_SERVICE.sendErrorMessage("Failed to ensure last_login index on " + collection.collectionName);
-                ChatUtils.MessageType.PLAYER_SERVICE.sendErrorMessage(e);
-                throw e;
-            }
+            ensureLastLoginIndex(collection);
         }
         ChatUtils.MessageType.PLAYER_SERVICE.sendMessage("Finished ensuring last_login indexes");
+    }
+
+    private void ensureLastLoginIndex(PlayersCollections collection) {
+        Index lastLoginIndex = new Index().on("last_login", Sort.Direction.ASC);
+        try {
+            String indexName = mongoTemplate.indexOps(collection.collectionName).ensureIndex(lastLoginIndex);
+            ChatUtils.MessageType.PLAYER_SERVICE.sendMessage("Ensured last_login index on " + collection.collectionName + " (" + indexName + ")");
+        } catch (Exception e) {
+            ChatUtils.MessageType.PLAYER_SERVICE.sendErrorMessage("Failed to ensure last_login index on " + collection.collectionName);
+            ChatUtils.MessageType.PLAYER_SERVICE.sendErrorMessage(e);
+            throw e;
+        }
     }
 }
