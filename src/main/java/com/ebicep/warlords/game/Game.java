@@ -531,7 +531,7 @@ public final class Game implements Runnable, AutoCloseable {
     }
 
     public Stream<WarlordsEntity> warlordsEntities() {
-        return this.players.keySet().stream().map(Warlords::getPlayer).filter(Objects::nonNull);
+        return new ArrayList<>(this.players.keySet()).stream().map(Warlords::getPlayer).filter(Objects::nonNull);
     }
 
     public void forEachOfflineWarlordsPlayer(Consumer<WarlordsPlayer> consumer) {
