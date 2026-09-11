@@ -17,6 +17,7 @@ import org.bukkit.entity.Player;
 import javax.annotation.Nonnull;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
@@ -78,7 +79,7 @@ public class HealingLink extends AbstractAbility implements PurpleAbilityIcon, D
                 tickDuration,
                 Collections.singletonList((cooldown, ticksLeft, ticksElapsed) -> {
                     if (ticksElapsed % 20 == 0) {
-                        for (WarlordsEntity linked : cooldown.getLinkedEntities()) {
+                        for (WarlordsEntity linked : new HashSet<>(cooldown.getLinkedEntities())) {
                             linked.addInstance(InstanceBuilder.healing()
                                                               .ability(this)
                                                               .source(wp)

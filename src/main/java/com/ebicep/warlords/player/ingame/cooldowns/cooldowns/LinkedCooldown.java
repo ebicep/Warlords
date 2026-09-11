@@ -149,7 +149,7 @@ public class LinkedCooldown<T> extends RegularCooldown<T> {
         if (this.linkedEntities.isEmpty()
                 && fromCm.hasCooldown(this)
                 && !fromCm.markedForRemoval(this)) {
-            setTicksLeft(0);
+            setTicksLeft(1);
         }
     }
 

@@ -117,14 +117,19 @@ public class VampiricChains extends AbstractAbility implements BlueAbilityIcon, 
                     }
                     for (WarlordsEntity linked : new HashSet<>(linkedEntities)) {
                         boolean outOfRange = wp.getLocation().distanceSquared(linked.getLocation()) > linkBreakRadius * linkBreakRadius;
-                        EffectUtils.playParticleLinkAnimation(wp.getLocation(), linked.getLocation(), 200, 50, 50, 1, 1.25f);
-                        if (!outOfRange) {
+                        boolean dead = linked.isDead();
+                        if (!dead) {
+                            EffectUtils.playParticleLinkAnimation(wp.getLocation(), linked.getLocation(), 200, 50, 50, 1, 1.25f);
+                        }
+                        if (!outOfRange && !dead) {
                             continue;
                         }
                         cooldown.unlink(linked);
-                        Utils.playGlobalSound(linked.getLocation(), "rogue.remedicchains.impact", 0.1f, 1.4f);
-                        EffectUtils.displayParticle(Particle.DAMAGE_INDICATOR, linked.getLocation().add(0, 1, 0), 10, 0.5, 0.5, 0.5, 1);
-                        stats.numberOfBrokenLinks++;
+                        if (outOfRange) {
+                            Utils.playGlobalSound(linked.getLocation(), "rogue.remedicchains.impact", 0.1f, 1.4f);
+                            EffectUtils.displayParticle(Particle.DAMAGE_INDICATOR, linked.getLocation().add(0, 1, 0), 10, 0.5, 0.5, 0.5, 1);
+                            stats.numberOfBrokenLinks++;
+                        }
                     }
                 }),
                 enemiesNear
