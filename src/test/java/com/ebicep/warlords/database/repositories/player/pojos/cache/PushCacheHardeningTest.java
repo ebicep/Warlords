@@ -122,7 +122,7 @@ class PushCacheHardeningTest {
         assertEquals(2, databasePlayer.getPubStats().pushedStats().getKills());
         assertEquals(3, databasePlayer.getCompStats().pushedStats().getKills());
         assertEquals(4, databasePlayer.getTournamentStats().pushedStats().getKills());
-        assertEquals(9, databasePlayer.pushedStats().getKills());
+        assertEquals(5, databasePlayer.pushedStats().getKills());
     }
 
     @ParameterizedTest

@@ -52,9 +52,9 @@ class PushCacheTournamentIntegrationTest {
                 1
         );
 
-        assertEquals(9, databasePlayer.getKills());
         assertEquals(9, databasePlayer.getTournamentStats().getCurrentTournamentStats().getKills());
         assertEquals(9, databasePlayer.getTournamentStats().getKills());
+        assertEquals(0, databasePlayer.getKills());
     }
 
     @ParameterizedTest(name = "{0} sequential")
@@ -80,7 +80,7 @@ class PushCacheTournamentIntegrationTest {
         );
 
         assertEquals(4, databasePlayer.getTournamentStats().getCurrentTournamentStats().getKills());
-        assertEquals(4, databasePlayer.getKills());
+        assertEquals(0, databasePlayer.getKills());
     }
 
     @ParameterizedTest(name = "{0} multiplier")
@@ -98,6 +98,6 @@ class PushCacheTournamentIntegrationTest {
         );
 
         assertEquals(8, databasePlayer.getTournamentStats().getCurrentTournamentStats().getKills());
-        assertEquals(8, databasePlayer.getKills());
+        assertEquals(0, databasePlayer.getKills());
     }
 }

@@ -302,7 +302,6 @@ public class DatabasePlayerPvE implements MultiPvEStats<
         }
         if (modeStatsUpdated) {
             StatPushUp.applyPvE(pushedStats, gamePlayer, result, databaseGame, multiplier);
-            databasePlayer.pushedStats().applyGeneral(gamePlayer, result, multiplier);
         }
     }
 

@@ -58,7 +58,7 @@ class PushCachePvEIntegrationTest {
         assertEquals(6, databasePlayer.getPveStats().getTotalMobKills());
         assertEquals(2400, databasePlayer.getPveStats().getTotalTimePlayed());
         assertEquals(2400, databasePlayer.getPveStats().getOnslaughtStats().getLongestTicksLived());
-        assertEquals(6, databasePlayer.getKills());
+        assertEquals(0, databasePlayer.getKills());
     }
 
     @Test

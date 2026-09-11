@@ -16,9 +16,6 @@ import com.ebicep.warlords.database.repositories.player.pojos.cache.PushedStatTo
 import com.ebicep.warlords.database.repositories.player.pojos.cache.StatPushUp;
 import com.ebicep.warlords.database.repositories.player.pojos.general.classes.*;
 import com.ebicep.warlords.database.repositories.player.pojos.pve.DatabasePlayerPvE;
-import com.ebicep.warlords.database.repositories.player.pojos.pve.PvEStats;
-import com.ebicep.warlords.database.repositories.player.pojos.pve.PvEStatsWarlordsClasses;
-import com.ebicep.warlords.database.repositories.player.pojos.pve.PvEStatsWarlordsSpecs;
 import com.ebicep.warlords.honorifics.HonorificProfile;
 import com.ebicep.warlords.game.GameAddon;
 import com.ebicep.warlords.game.GameMode;
@@ -177,13 +174,13 @@ public class DatabasePlayer implements CachedMultiStatsGeneral, TracksMultiAbili
         spec.setExperience(spec.getExperience() + gamePlayer.getExperienceEarnedSpec() * multiplier);
         this.experience += gamePlayer.getExperienceEarnedUniversal() * multiplier;
         if (GameMode.isPvE(gameMode) && databaseGame instanceof DatabaseGamePvEBase gamePvEBase && gamePlayer instanceof DatabaseGamePlayerPvEBase gamePlayerPvEBase) {
-            // Root push-up applied by pveStats only when a mode path actually updated
+            // PvE does not push to root (All Queues = pub + comp only)
             this.pveStats.updateStats(this, gamePvEBase, gameMode, gamePlayerPvEBase, result, multiplier, playersCollection);
             return;
         }
         List<GameAddon> gameAddons = databaseGame.getGameAddons();
         if (gameAddons.contains(GameAddon.TOURNAMENT_MODE)) {
-            // Root push-up applied by tournamentStats only on successful mode update
+            // Tournament does not push to root (All Queues = pub + comp only)
             this.tournamentStats.updateStats(this, databaseGame, gameMode, gamePlayer, result, multiplier, playersCollection);
         } else if (gameAddons.isEmpty()) {
             // Root push-up applied by pubStats only on successful mode update
@@ -219,15 +216,10 @@ public class DatabasePlayer implements CachedMultiStatsGeneral, TracksMultiAbili
 
     @Override
     public Collection<StatsWarlordsClasses<DatabaseGameBase<DatabaseGamePlayerBase>, DatabaseGamePlayerBase, Stats<DatabaseGameBase<DatabaseGamePlayerBase>, DatabaseGamePlayerBase>, StatsWarlordsSpecs<DatabaseGameBase<DatabaseGamePlayerBase>, DatabaseGamePlayerBase, Stats<DatabaseGameBase<DatabaseGamePlayerBase>, DatabaseGamePlayerBase>>>> getStats() {
+        // All Queues / root totals = pub + comp only (excludes PvE and tournament)
         List<StatsWarlordsClasses<DatabaseGameBase<DatabaseGamePlayerBase>, DatabaseGamePlayerBase, Stats<DatabaseGameBase<DatabaseGamePlayerBase>, DatabaseGamePlayerBase>, StatsWarlordsSpecs<DatabaseGameBase<DatabaseGamePlayerBase>, DatabaseGamePlayerBase, Stats<DatabaseGameBase<DatabaseGamePlayerBase>, DatabaseGamePlayerBase>>>> stats = new ArrayList<>();
         stats.addAll(pubStats.getStats());
         stats.addAll(compStats.getStats());
-        if (pveStats != null) {
-            for (PvEStatsWarlordsClasses<DatabaseGamePvEBase<DatabaseGamePlayerPvEBase>, DatabaseGamePlayerPvEBase, PvEStats<DatabaseGamePvEBase<DatabaseGamePlayerPvEBase>, DatabaseGamePlayerPvEBase>, PvEStatsWarlordsSpecs<DatabaseGamePvEBase<DatabaseGamePlayerPvEBase>, DatabaseGamePlayerPvEBase, PvEStats<DatabaseGamePvEBase<DatabaseGamePlayerPvEBase>, DatabaseGamePlayerPvEBase>>> stat : pveStats.getStats()) {
-                stats.add((StatsWarlordsClasses<DatabaseGameBase<DatabaseGamePlayerBase>, DatabaseGamePlayerBase, Stats<DatabaseGameBase<DatabaseGamePlayerBase>, DatabaseGamePlayerBase>, StatsWarlordsSpecs<DatabaseGameBase<DatabaseGamePlayerBase>, DatabaseGamePlayerBase, Stats<DatabaseGameBase<DatabaseGamePlayerBase>, DatabaseGamePlayerBase>>>) (Object) stat);
-            }
-        }
-        stats.addAll(tournamentStats.getStats());
         return stats;
     }
 

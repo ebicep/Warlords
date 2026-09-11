@@ -5,6 +5,7 @@ import com.ebicep.warlords.database.repositories.games.pojos.DatabaseGamePlayerB
 import com.ebicep.warlords.database.repositories.games.pojos.DatabaseGamePlayerResult;
 import com.ebicep.warlords.database.repositories.player.PlayersCollections;
 import com.ebicep.warlords.database.repositories.player.pojos.general.DatabasePlayer;
+import com.ebicep.warlords.game.GameAddon;
 import com.ebicep.warlords.game.GameMode;
 import com.ebicep.warlords.game.Team;
 
@@ -42,8 +43,15 @@ public final class PushCacheIntegrationSupport {
                 multiplier,
                 PlayersCollections.DAILY
         );
-        assertEquals(rootKillsBefore + gamePlayer.getTotalKills() * multiplier, databasePlayer.pushedStats().getKills(),
-                "root pushed cache must receive the delta before any rebuild");
+        boolean pushesToRoot = !GameMode.isPvE(gameMode)
+                && (game.getGameAddons() == null || !game.getGameAddons().contains(GameAddon.TOURNAMENT_MODE));
+        if (pushesToRoot) {
+            assertEquals(rootKillsBefore + gamePlayer.getTotalKills() * multiplier, databasePlayer.pushedStats().getKills(),
+                    "root pushed cache must receive the delta before any rebuild");
+        } else {
+            assertEquals(rootKillsBefore, databasePlayer.pushedStats().getKills(),
+                    "root pushed cache must not receive PvE or tournament deltas");
+        }
         PushCacheVerifier.assertConsistent(databasePlayer);
     }
 

@@ -71,7 +71,6 @@ public class TournamentStats implements CachedMultiStatsGeneral, TracksMultiAbil
     ) {
         if (getCurrentTournamentStats().updateModeStats(databasePlayer, databaseGame, gameMode, gamePlayer, result, multiplier, playersCollection)) {
             pushedStats.applyGeneral(gamePlayer, result, multiplier);
-            databasePlayer.pushedStats().applyGeneral(gamePlayer, result, multiplier);
         }
     }
 
