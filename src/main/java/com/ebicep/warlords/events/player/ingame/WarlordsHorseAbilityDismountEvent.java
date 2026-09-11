@@ -7,7 +7,7 @@ import org.bukkit.event.HandlerList;
 
 import javax.annotation.Nonnull;
 
-public class WarlordsPlayerClassRightClickEvent extends AbstractWarlordsEntityEvent implements Cancellable {
+public class WarlordsHorseAbilityDismountEvent extends AbstractWarlordsEntityEvent implements Cancellable {
 
     private static final HandlerList handlers = new HandlerList();
 
@@ -18,7 +18,7 @@ public class WarlordsPlayerClassRightClickEvent extends AbstractWarlordsEntityEv
     protected boolean cancelled = false;
     private final AbstractAbility ability;
 
-    public WarlordsPlayerClassRightClickEvent(@Nonnull WarlordsEntity player, @Nonnull AbstractAbility ability) {
+    public WarlordsHorseAbilityDismountEvent(@Nonnull WarlordsEntity player, @Nonnull AbstractAbility ability) {
         super(player);
         this.ability = ability;
     }
