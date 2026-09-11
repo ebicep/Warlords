@@ -60,8 +60,7 @@ public class HologramManager implements Listener {
                     Location location = hologram.getLocation();
                     World world = location.getWorld();
                     VisibilityManager visibilityManager = hologram.getVisibilityManager();
-                    List<Player> players = new ArrayList<>(world.getPlayers());
-                    for (Player player : players) {
+                    for (Player player : world.getPlayers()) {
                         boolean withinRange = hologram.withinRange(player);
                         boolean currentlyVisibleTo = visibilityManager.isCurrentlyVisibleTo(player);
                         switch (visibilityManager.getVisibilityType()) {
@@ -86,7 +85,7 @@ public class HologramManager implements Listener {
                 }
             }
 
-        }.runTaskTimerAsynchronously(instance, 0, 1);
+        }.runTaskTimer(instance, 0, 1);
         packetListener = new PacketAdapter(instance, ListenerPriority.NORMAL, PacketType.Play.Client.USE_ENTITY) {
             @Override
             public void onPacketReceiving(PacketEvent event) {
