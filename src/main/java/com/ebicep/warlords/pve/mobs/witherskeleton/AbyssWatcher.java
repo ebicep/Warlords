@@ -177,24 +177,25 @@ public class AbyssWatcher extends AbstractMob implements ChampionMob, Listener {
     }
 
     private void punishWatchedTarget() {
-        if (!isValidWatchedTarget(watchedTarget)) {
+        WarlordsEntity target = watchedTarget;
+        if (!isValidWatchedTarget(target)) {
             clearWatched();
             return;
         }
 
-        watchedTarget.addInstance(InstanceBuilder
+        clearWatched();
+
+        target.addInstance(InstanceBuilder
                 .damage()
                 .cause("Abyss Watch")
                 .source(warlordsNPC)
                 .value(PUNISH_DAMAGE)
         );
 
-        watchedTarget.subtractEnergy("Abyss Watch", ENERGY_DRAIN, true);
-        watchedTarget.sendMessage(Component.text("The Abyss Watcher punishes your reckless casting.", NamedTextColor.RED));
-        watchedTarget.playSound(watchedTarget.getLocation(), Sound.ENTITY_ENDERMAN_HURT, 1, 0.6f);
-        Utils.playGlobalSound(watchedTarget.getLocation(), Sound.BLOCK_RESPAWN_ANCHOR_DEPLETE, 2, 0.7f);
-
-        clearWatched();
+        target.subtractEnergy("Abyss Watch", ENERGY_DRAIN, true);
+        target.sendMessage(Component.text("The Abyss Watcher punishes your reckless casting.", NamedTextColor.RED));
+        target.playSound(target.getLocation(), Sound.ENTITY_ENDERMAN_HURT, 1, 0.6f);
+        Utils.playGlobalSound(target.getLocation(), Sound.BLOCK_RESPAWN_ANCHOR_DEPLETE, 2, 0.7f);
     }
 
     private boolean isValidWatchedTarget(WarlordsEntity target) {
