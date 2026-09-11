@@ -115,23 +115,16 @@ public class VampiricChains extends AbstractAbility implements BlueAbilityIcon, 
                     if (ticksElapsed % 8 != 0) {
                         return;
                     }
-                    Set<WarlordsEntity> toRemove = new HashSet<>();
-                    for (WarlordsEntity linked : linkedEntities) {
+                    for (WarlordsEntity linked : new HashSet<>(linkedEntities)) {
                         boolean outOfRange = wp.getLocation().distanceSquared(linked.getLocation()) > linkBreakRadius * linkBreakRadius;
-                        if (outOfRange) {
-                            linked.getCooldownManager().removeCooldownNoForce(cooldown);
-                            Utils.playGlobalSound(linked.getLocation(), "rogue.remedicchains.impact", 0.1f, 1.4f);
-                            EffectUtils.displayParticle(Particle.DAMAGE_INDICATOR, linked.getLocation().add(0, 1, 0), 10, 0.5, 0.5, 0.5, 1);
-                            stats.numberOfBrokenLinks++;
-                        }
                         EffectUtils.playParticleLinkAnimation(wp.getLocation(), linked.getLocation(), 200, 50, 50, 1, 1.25f);
-                        if (outOfRange || linked.isDead()) {
-                            toRemove.add(linked);
+                        if (!outOfRange) {
+                            continue;
                         }
-                    }
-                    linkedEntities.removeAll(toRemove);
-                    if (linkedEntities.isEmpty()) {
-                        cooldown.setTicksLeft(1);
+                        cooldown.unlink(linked);
+                        Utils.playGlobalSound(linked.getLocation(), "rogue.remedicchains.impact", 0.1f, 1.4f);
+                        EffectUtils.displayParticle(Particle.DAMAGE_INDICATOR, linked.getLocation().add(0, 1, 0), 10, 0.5, 0.5, 0.5, 1);
+                        stats.numberOfBrokenLinks++;
                     }
                 }),
                 enemiesNear

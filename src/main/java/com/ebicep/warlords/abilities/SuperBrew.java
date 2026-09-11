@@ -96,9 +96,7 @@ public class SuperBrew extends AbstractAbility implements OrangeAbilityIcon, Hit
         SuperBrewData data = new SuperBrewData(this);
         target.getCooldownManager().removeCooldown(SuperBrewData.class, false);
         wp.getCooldownManager().removeCooldown(SuperBrewData.class, false);
-        Set<WarlordsEntity> linkedEntities = new HashSet<>();
-        linkedEntities.add(target);
-        linkedEntities.add(wp);
+        Set<WarlordsEntity> linkedEntities = target != wp ? Set.of(target) : Set.of();
         superBrewCooldown = new LinkedCooldown<>(
                 name,
                 "SUPER",

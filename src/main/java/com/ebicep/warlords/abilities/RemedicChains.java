@@ -108,11 +108,17 @@ public class RemedicChains extends AbstractAbility implements BlueAbilityIcon, D
                 (cooldownManager, linkedCooldown) -> {
                 },
                 (cooldownManager, linkedCooldown) -> {
-                    if (!Objects.equals(cooldownManager.getWarlordsEntity(), wp)) {
+                    if (!pveMasterUpgrade) {
                         return;
                     }
-                    if (pveMasterUpgrade) {
+                    WarlordsEntity entity = cooldownManager.getWarlordsEntity();
+                    if (Objects.equals(entity, wp)) {
                         healthBoosts.values().forEach(FloatModifiable.FloatModifier::forceEnd);
+                    } else {
+                        FloatModifiable.FloatModifier floatModifier = healthBoosts.get(entity);
+                        if (floatModifier != null) {
+                            floatModifier.forceEnd();
+                        }
                     }
                 },
                 tickDuration,
@@ -140,29 +146,22 @@ public class RemedicChains extends AbstractAbility implements BlueAbilityIcon, D
                     if (ticksElapsed % 8 != 0) {
                         return;
                     }
-                    Set<WarlordsEntity> toRemove = new HashSet<>();
-                    for (WarlordsEntity linked : linkedEntities) {
+                    for (WarlordsEntity linked : new HashSet<>(linkedEntities)) {
                         boolean outOfRange = wp.getLocation().distanceSquared(linked.getLocation()) > linkBreakRadius * linkBreakRadius;
-                        if (outOfRange) {
-                            linked.getCooldownManager().removeCooldownNoForce(cooldown);
-                            Utils.playGlobalSound(linked.getLocation(), "rogue.remedicchains.impact", 0.1f, 1.4f);
-                            EffectUtils.displayParticle(Particle.HAPPY_VILLAGER, linked.getLocation().add(0, 1, 0), 10, 0.5, 0.5, 0.5, 1);
-                            stats.numberOfBrokenLinks++;
-                        }
                         EffectUtils.playParticleLinkAnimation(wp.getLocation(), linked.getLocation(), 250, 200, 250, 1, 1.25f);
-                        if (outOfRange || linked.isDead()) {
-                            toRemove.add(linked);
-                            if (pveMasterUpgrade) {
-                                FloatModifiable.FloatModifier floatModifier = healthBoosts.get(linked);
-                                if (floatModifier != null) {
-                                    floatModifier.forceEnd();
-                                }
+                        if (!outOfRange) {
+                            continue;
+                        }
+                        cooldown.unlink(linked);
+                        Utils.playGlobalSound(linked.getLocation(), "rogue.remedicchains.impact", 0.1f, 1.4f);
+                        EffectUtils.displayParticle(Particle.HAPPY_VILLAGER, linked.getLocation().add(0, 1, 0), 10, 0.5, 0.5, 0.5, 1);
+                        stats.numberOfBrokenLinks++;
+                        if (pveMasterUpgrade) {
+                            FloatModifiable.FloatModifier floatModifier = healthBoosts.get(linked);
+                            if (floatModifier != null) {
+                                floatModifier.forceEnd();
                             }
                         }
-                    }
-                    linkedEntities.removeAll(toRemove);
-                    if (linkedEntities.isEmpty()) {
-                        cooldown.setTicksLeft(1);
                     }
                 }),
                 teammatesNear

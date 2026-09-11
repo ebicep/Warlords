@@ -27,6 +27,7 @@ import javax.annotation.Nonnull;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.Set;
 import java.util.concurrent.ThreadLocalRandom;
 
 public class VolatileBrew extends AbstractAbility implements OrangeAbilityIcon, Duration, HitBox, AbilityStats<VolatileBrew, VolatileBrew.VolatileBrewStats>,
@@ -82,6 +83,7 @@ public class VolatileBrew extends AbstractAbility implements OrangeAbilityIcon, 
         VolatileBrewData data = new VolatileBrewData(targets.isEmpty() ? wp : targets.get(0));
         EffectUtils.playParticleLinkAnimation(wp.getLocation(), data.target.getLocation(), Particle.DRAGON_BREATH);
         ThreadLocalRandom random = ThreadLocalRandom.current();
+        Set<WarlordsEntity> linkedEntities = data.target != wp ? Set.of(data.target) : Set.of();
         LinkedCooldown<VolatileBrewData> brewCooldown = new LinkedCooldown<>(
                 name,
                 "VOLAT",
@@ -161,7 +163,7 @@ public class VolatileBrew extends AbstractAbility implements OrangeAbilityIcon, 
                             .1
                     );
                 }),
-                data.target
+                linkedEntities
         ) {
             @Override
             protected Listener getListener() {
@@ -204,8 +206,7 @@ public class VolatileBrew extends AbstractAbility implements OrangeAbilityIcon, 
                             }
                             return;
                         }
-                        data.target.getCooldownManager().removeCooldownNoForce(cooldown);
-                        cooldown.getLinkedEntities().remove(data.target);
+                        cooldown.unlink(data.target, false);
                         data.target = wp;
                         wp.sendMessage(WarlordsEntity.RECEIVE_ARROW_GREEN
                                 .append(Component.text(" You recalled your ", NamedTextColor.GRAY))
