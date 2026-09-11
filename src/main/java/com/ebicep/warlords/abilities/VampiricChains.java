@@ -98,7 +98,7 @@ public class VampiricChains extends AbstractAbility implements BlueAbilityIcon, 
                 Collections.singletonList((cooldown, ticksLeft, ticksElapsed) -> {
                     Set<WarlordsEntity> linkedEntities = cooldown.getLinkedEntities();
                     if (ticksElapsed % 20 == 0) {
-                        for (WarlordsEntity linked : linkedEntities) {
+                        for (WarlordsEntity linked : new HashSet<>(linkedEntities)) {
                             float healthDamage = linked.getMaxHealth() * maxHealthDamage / 100f;
                             healthDamage = DamageCheck.clamp(healthDamage);
                             linked.addInstance(InstanceBuilder

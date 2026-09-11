@@ -8,6 +8,7 @@ import com.ebicep.warlords.util.java.TriConsumer;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Objects;
 import java.util.Set;
 import java.util.function.BiConsumer;
 import java.util.function.Consumer;
@@ -51,8 +52,7 @@ public class LinkedCooldown<T> extends RegularCooldown<T> {
         Consumer<CooldownManager> oldRemoveForce = getOnRemoveForce();
         setOnRemoveForce(cooldownManager -> {
             oldRemoveForce.accept(cooldownManager);
-            this.linkedEntities.forEach(warlordsEntity -> warlordsEntity.getCooldownManager().removeCooldownNoForce(this));
-            this.linkedEntities.removeIf(WarlordsEntity::isDead);
+            cleanupLinkedEntities(cooldownManager);
         });
     }
 
@@ -101,9 +101,26 @@ public class LinkedCooldown<T> extends RegularCooldown<T> {
         setOnRemoveForce(cooldownManager -> {
             oldRemoveForce.accept(cooldownManager);
             onRemoveForce.accept(cooldownManager, this);
-            this.linkedEntities.forEach(warlordsEntity -> warlordsEntity.getCooldownManager().removeCooldownNoForce(this));
-            this.linkedEntities.removeIf(WarlordsEntity::isDead);
+            cleanupLinkedEntities(cooldownManager);
         });
+    }
+
+    private void cleanupLinkedEntities(CooldownManager cooldownManager) {
+        WarlordsEntity entity = cooldownManager.getWarlordsEntity();
+        if (Objects.equals(entity, from)) {
+            for (WarlordsEntity linked : new ArrayList<>(this.linkedEntities)) {
+                linked.getCooldownManager().removeCooldownNoForce(this);
+            }
+            this.linkedEntities.clear();
+            return;
+        }
+        this.linkedEntities.remove(entity);
+        CooldownManager fromCm = from.getCooldownManager();
+        if (this.linkedEntities.isEmpty()
+                && fromCm.hasCooldown(this)
+                && !fromCm.markedForRemoval(this)) {
+            setTicksLeft(0);
+        }
     }
 
     @Override
