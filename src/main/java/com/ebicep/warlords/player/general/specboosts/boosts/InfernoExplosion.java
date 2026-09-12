@@ -24,8 +24,6 @@ public class InfernoExplosion implements SpecBoostManager.SpecBoost<InfernoExplo
     private int infernoDurationReductionTicks;
     private float infernoSpeedPercent;
     private float healthLossPercent;
-    private float explosionDamageBase;
-    private float healthToDamagePercent;
     private int explosionRadius;
     private float damageReductionPercent;
     private int damageReductionDurationTicks;
@@ -37,8 +35,6 @@ public class InfernoExplosion implements SpecBoostManager.SpecBoost<InfernoExplo
         this.infernoDurationReductionTicks = getValue("infernoDurationReductionTicks", int.class);
         this.infernoSpeedPercent = getValue("infernoSpeedPercent", float.class);
         this.healthLossPercent = getValue("healthLossPercent", float.class);
-        this.explosionDamageBase = getValue("explosionDamageBase", float.class);
-        this.healthToDamagePercent = getValue("healthToDamagePercent", float.class);
         this.explosionRadius = getValue("explosionRadius", int.class);
         this.damageReductionPercent = getValue("damageReductionPercent", float.class);
         this.damageReductionDurationTicks = getValue("damageReductionDurationTicks", int.class);
@@ -53,7 +49,7 @@ public class InfernoExplosion implements SpecBoostManager.SpecBoost<InfernoExplo
 
     @Override
     public List<Object> getVariables() {
-        return List.of(infernoDurationReductionTicks, infernoSpeedPercent, healthLossPercent, explosionDamageBase, healthToDamagePercent, explosionRadius, damageReductionPercent, damageReductionDurationTicks, explosionCritChance);
+        return List.of(infernoDurationReductionTicks, infernoSpeedPercent, healthLossPercent, explosionRadius, damageReductionPercent, damageReductionDurationTicks);
     }
 
     @Override
@@ -104,8 +100,10 @@ public class InfernoExplosion implements SpecBoostManager.SpecBoost<InfernoExplo
         private void triggerExplosion() {
             if (warlordsEntity == null) return;
 
-            float healthLost = warlordsEntity.getCurrentHealth() * healthLossPercent / 100;
-            float explosionDamage = explosionDamageBase + healthLost * healthToDamagePercent / 100;
+            float healthLost = warlordsEntity.getMaxHealth() * healthLossPercent / 100;
+            if (warlordsEntity.getCurrentHealth() <= healthLost) {
+                healthLost = Math.max(0, warlordsEntity.getCurrentHealth() - 1);
+            }
 
             warlordsEntity.addInstance(InstanceBuilder
                     .fall()
@@ -129,7 +127,7 @@ public class InfernoExplosion implements SpecBoostManager.SpecBoost<InfernoExplo
                         .damage()
                         .ability(infernoAbility)
                         .source(warlordsEntity)
-                        .value(explosionDamage)
+                        .value(healthLost)
                         .critChance(explosionCritChance)
                         .critMultiplier(explosionCritMultiplier)
                 );
