@@ -50,6 +50,7 @@ import java.util.function.Function;
 public class HorseOption implements Option, Listener {
 
     private static final String ON_USE_ID = "USE_HORSE_ITEM";
+    private static final ItemStack[] IRON_HORSE_ARMOR_BY_AMOUNT = new ItemStack[17];
     public static ItemStack horseItem = getUpdatedHorseItem();
 
     public static ItemStack getUpdatedHorseItem() {
@@ -67,6 +68,19 @@ public class HorseOption implements Option, Listener {
                 )
                 .setOnUseID(ON_USE_ID)
                 .get();
+    }
+
+    private static ItemStack ironHorseArmorForAmount(int amount) {
+        int index = Math.min(Math.max(amount, 1), 16);
+        ItemStack cached = IRON_HORSE_ARMOR_BY_AMOUNT[index];
+        if (cached == null) {
+            cached = new ItemBuilder(Material.IRON_HORSE_ARMOR, index)
+                    .name(Component.empty())
+                    .setOnUseID(ON_USE_ID)
+                    .get();
+            IRON_HORSE_ARMOR_BY_AMOUNT[index] = cached;
+        }
+        return cached;
     }
 
     private final HashMap<WarlordsEntity, WarlordsHorse> playerHorses = new HashMap<>();
@@ -106,17 +120,11 @@ public class HorseOption implements Option, Listener {
     }
 
     @Override
-    public void onGameCleanup(@Nonnull Game game) {
-        playerHorses.values().forEach(WarlordsHorse::kill);
-        playerHorses.clear();
-    }
-
-    @Override
     public void updateInventory(@Nonnull WarlordsPlayer warlordsPlayer, Player player) {
         WarlordsHorse horse = getHorseForPlayer(warlordsPlayer);
         PlayerInventory inventory = player.getInventory();
         if (horse.getCurrentCooldown() > 0) {
-            inventory.setItem(7, new ItemStack(Material.IRON_HORSE_ARMOR, (int) horse.getCurrentCooldown() + 1));
+            inventory.setItem(7, ironHorseArmorForAmount((int) horse.getCurrentCooldown() + 1));
         } else {
             inventory.setItem(7, horseItem);
         }
@@ -226,11 +234,6 @@ public class HorseOption implements Option, Listener {
 
     @EventHandler
     public void onWarlordsPlayerClassRightClickEvent(WarlordsPlayerClassRightClickEvent event) {
-        WarlordsHorseAbilityDismountEvent dismountEvent = new WarlordsHorseAbilityDismountEvent(event.getWarlordsEntity(), event.getAbility());
-        Bukkit.getPluginManager().callEvent(dismountEvent);
-        if (dismountEvent.isCancelled()) {
-            return;
-        }
         getHorseForPlayer(event.getWarlordsEntity()).kill();
     }
 
@@ -299,7 +302,6 @@ public class HorseOption implements Option, Listener {
                 horse.setAdult();
                 horse.getAttribute(Attribute.MOVEMENT_SPEED).setBaseValue(speed);
                 ((CraftWorld) player.getWorld()).getHandle().addFreshEntity(customHorse, CreatureSpawnEvent.SpawnReason.CUSTOM);
-                horse.setRotation(player.getLocation().getYaw(), player.getLocation().getPitch());
                 horse.addPassenger(player); // not sure if including this in function above will cause issues
             }
             updateHealthDisplay();
@@ -327,11 +329,9 @@ public class HorseOption implements Option, Listener {
         public void kill() {
             if (horse != null) {
                 horse.remove();
-                horse = null;
             }
             if (npc != null) {
-                npc.destroy();
-                npc = null;
+                npc.despawn();
             }
         }
 
@@ -340,10 +340,8 @@ public class HorseOption implements Option, Listener {
             if (currentHealth <= 0) {
                 if (horse != null) {
                     horse.remove();
-                    horse = null;
                 } else if (npc != null) {
-                    npc.destroy();
-                    npc = null;
+                    npc.despawn();
                 }
             }
             updateHealthDisplay();
@@ -364,49 +362,6 @@ public class HorseOption implements Option, Listener {
         public void setCurrentCooldown(float currentCooldown) {
             this.currentCooldown = currentCooldown;
         }
-
-        //        public class GroundController implements Controllable.MovementController {
-//            private int jumpTicks = 0;
-//            private double speed = 0.07;
-//            private static final float AIR_SPEED = 0.5F;
-//            private static final float GROUND_SPEED = 0.5F;
-//            private static final float JUMP_VELOCITY = 0.5F;
-//            private final Controllable controllable;
-//
-//            public GroundController(Controllable controllable) {
-//                this.controllable = controllable1;
-//            }
-//
-//            public void leftClick(PlayerInteractEvent event) {
-//            }
-//
-//            public void rightClick(PlayerInteractEvent event) {
-//            }
-//            public void rightClickEntity(NPCRightClickEvent event) {
-//                controllable.enterOrLeaveVehicle(event.getClicker());
-//            }
-//
-//            public void run(Player rider) {
-//                boolean onGround = NMS.isOnGround(controllable.getNPC().getEntity());
-//                float speedMod = controllable.getNPC().getNavigator().getDefaultParameters().modifiedSpeed(onGround ? 0.5F : 0.5F);
-//                if (!Util.isHorse(controllable.getNPC().getEntity().getType())) {
-//                    this.speed = controllable.updateHorizontalSpeed(controllable.getNPC().getEntity(), rider, this.speed, speedMod, Settings.Setting.MAX_CONTROLLABLE_GROUND_SPEED.asDouble());
-//                }
-//
-//                boolean shouldJump = NMS.shouldJump(rider);
-//                if (shouldJump) {
-//                    if (onGround && this.jumpTicks == 0) {
-//                        controllable.npc.getEntity().setVelocity(controllable.npc.getEntity().getVelocity().setY(0.5F));
-//                        this.jumpTicks = 10;
-//                    }
-//                } else {
-//                    this.jumpTicks = 0;
-//                }
-//
-//                this.jumpTicks = Math.max(0, this.jumpTicks - 1);
-//                controllable.setMountedYaw(controllable.npc.getEntity());
-//            }
-//        }
 
     }
 
