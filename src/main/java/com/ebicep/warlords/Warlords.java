@@ -30,6 +30,7 @@ import com.ebicep.warlords.permissions.Permissions;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
 import com.ebicep.warlords.player.ingame.WarlordsNPC;
 import com.ebicep.warlords.player.ingame.WarlordsPlayer;
+import com.ebicep.warlords.tablist.LobbyTabListManager;
 import com.ebicep.warlords.pve.bountysystem.trackers.TracksOutsideGame;
 import com.ebicep.warlords.pve.consumables.ConsumableListener;
 import com.ebicep.warlords.pve.events.mastersworkfair.MasterworksFairManager;
@@ -326,6 +327,11 @@ public class Warlords extends JavaPlugin {
             ChatUtils.MessageType.WARLORDS.sendErrorMessage(e);
         }
         try {
+            LobbyTabListManager.get().stop();
+        } catch (Exception e) {
+            ChatUtils.MessageType.WARLORDS.sendErrorMessage(e);
+        }
+        try {
             HologramManager.cleanup();
         } catch (Exception e) {
             ChatUtils.MessageType.WARLORDS.sendErrorMessage(e);
@@ -346,6 +352,7 @@ public class Warlords extends JavaPlugin {
         GameMap.addGameHolders(gameManager);
 
         LobbyGameOption.start();
+        LobbyTabListManager.get().start();
 
         Thread.currentThread().setContextClassLoader(getClassLoader());
 
