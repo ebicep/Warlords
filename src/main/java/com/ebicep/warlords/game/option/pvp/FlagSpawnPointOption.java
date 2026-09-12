@@ -272,7 +272,7 @@ public class FlagSpawnPointOption implements Option {
                     return;
                 }
                 // flagLocation is banner center XZ / base Y; padding around 1x2x1 banner
-                float padding = ConfigManager.getGameConfigValue(ConfigManager.DEFAULT_NAMESPACES, "ctf.flagHitboxPadding", float.class, 0.5f);
+                float padding = ConfigManager.getGameConfigValue(ConfigManager.DEFAULT_NAMESPACES, "ctf.flagHitboxPadding", float.class, 0.6f);
                 double horizontal = 0.5 + padding;
                 AABB aabb = new AABB(
                         flagLocation.getX() - horizontal,
