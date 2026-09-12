@@ -176,17 +176,17 @@ public class DatabaseCommand extends BaseCommand {
         ChatChannels.sendDebugMessage(player, "Rebuilt selected push-up caches");
     }
 
-    @Subcommand("ensurelastloginindexes")
-    public void ensureLastLoginIndexes(CommandIssuer issuer) {
+    @Subcommand("ensureindexes")
+    public void ensureIndexes(CommandIssuer issuer) {
         if (!DatabaseManager.enabled || DatabaseManager.playerService == null) {
             ChatChannels.sendDebugMessage(issuer, "Database is disabled");
             return;
         }
-        ChatChannels.sendDebugMessage(issuer, "Ensuring last_login indexes...");
+        ChatChannels.sendDebugMessage(issuer, "Ensuring player indexes (last_login + unique uuid)...");
         Warlords.newChain()
                 .asyncFirst(() -> {
                     try {
-                        DatabaseManager.playerService.ensureLastLoginIndexes();
+                        DatabaseManager.playerService.ensureIndexes();
                         return true;
                     } catch (Exception e) {
                         return false;
@@ -194,9 +194,9 @@ public class DatabaseCommand extends BaseCommand {
                 })
                 .syncLast(success -> {
                     if (Boolean.TRUE.equals(success)) {
-                        ChatChannels.sendDebugMessage(issuer, "Ensured last_login indexes on all active player collections");
+                        ChatChannels.sendDebugMessage(issuer, "Ensured player indexes on all active player collections");
                     } else {
-                        ChatChannels.sendDebugMessage(issuer, "Failed to ensure last_login indexes (see console)");
+                        ChatChannels.sendDebugMessage(issuer, "Failed to ensure player indexes (see console)");
                     }
                 })
                 .execute();

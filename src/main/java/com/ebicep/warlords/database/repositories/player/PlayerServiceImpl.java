@@ -167,8 +167,8 @@ public class PlayerServiceImpl implements PlayerService {
     }
 
     @Override
-    public void ensureLastLoginIndexes() {
-        playerRepository.ensureLastLoginIndexes();
+    public void ensureIndexes() {
+        playerRepository.ensureIndexes();
     }
 
 }
