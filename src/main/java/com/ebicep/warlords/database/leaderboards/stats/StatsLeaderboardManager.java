@@ -15,7 +15,6 @@ import com.ebicep.warlords.database.repositories.player.pojos.general.DatabasePl
 import com.ebicep.warlords.database.repositories.player.pojos.pve.DatabasePlayerPvE;
 import com.ebicep.warlords.database.repositories.player.pojos.pve.events.EventMode;
 import com.ebicep.warlords.database.repositories.timings.pojos.DatabaseTiming;
-import com.ebicep.warlords.game.GameMap;
 import com.ebicep.warlords.game.GameMode;
 import com.ebicep.warlords.player.general.CustomScoreboard;
 import com.ebicep.warlords.sr.SRCalculator;
@@ -34,6 +33,7 @@ import org.bukkit.scheduler.BukkitRunnable;
 import javax.annotation.Nullable;
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.function.BiFunction;
 import java.util.function.Function;
@@ -51,12 +51,16 @@ public class StatsLeaderboardManager {
         }
     }};
 
-    public static final Map<PlayersCollections, Long> LAST_BOARD_RESETS = new HashMap<>();
+    private static final Map<PlayersCollections, Set<GameType>> PENDING_LEADERBOARD_UPDATES = new ConcurrentHashMap<>();
+    private static final Object LEADERBOARD_UPDATE_LOCK = new Object();
+    private static final AtomicBoolean LEADERBOARD_UPDATE_POLLER_STARTED = new AtomicBoolean(false);
+    private static int leaderboardUpdateCollectionIndex = 0;
+    @Nullable
+    private static BukkitRunnable leaderboardUpdatePoller;
 
     public static boolean enabled = true;
     public static boolean loaded = false;
     private static final List<Hologram> SWITCHER_HOLOGRAMS = new ArrayList<>();
-    private static PlayerLeaderboardInfo leaderboardInfo;
 
     /**
      * Performance kill switch: stop leaderboard updates and delete all lobby leaderboard holograms
@@ -65,6 +69,10 @@ public class StatsLeaderboardManager {
     public static void hardDisableLeaderboards() {
         enabled = false;
         loaded = false;
+        stopLeaderboardUpdatePoller();
+        synchronized (LEADERBOARD_UPDATE_LOCK) {
+            PENDING_LEADERBOARD_UPDATES.clear();
+        }
 
         getAllLeaderboardCategories().forEach(category -> {
             category.getAllHolograms().forEach(Hologram::deleteHologram);
@@ -92,6 +100,11 @@ public class StatsLeaderboardManager {
         if (!DatabaseManager.enabled) {
             ChatUtils.MessageType.WARLORDS.sendErrorMessage("Not adding hologram leaderboards - database is disabled");
             return;
+        }
+
+        stopLeaderboardUpdatePoller();
+        synchronized (LEADERBOARD_UPDATE_LOCK) {
+            PENDING_LEADERBOARD_UPDATES.clear();
         }
 
         STATS_LEADERBOARDS.forEach((gameType, statsLeaderboardGameType) -> statsLeaderboardGameType.addLeaderboards());
@@ -141,7 +154,7 @@ public class StatsLeaderboardManager {
                                 DatabaseManager.queueUpdatePlayerAsync(cached, value);
                             }
                         }
-                        resetLeaderboards(value, null);
+                        resetLeaderboards(value, (GameMode) null);
                         loadedBoards.getAndIncrement();
                     }).execute();
         }
@@ -164,6 +177,8 @@ public class StatsLeaderboardManager {
                     });
                     ChatUtils.MessageType.LEADERBOARDS.sendMessage("Set Leaderboard Hologram Visibility");
 
+                    startLeaderboardUpdatePoller();
+
                     if (init) {
                         ChatUtils.MessageType.LEADERBOARDS.sendMessage("init Running");
 
@@ -183,12 +198,91 @@ public class StatsLeaderboardManager {
     }
 
     /**
-     * All players in PLAYERS_TO_ADD become the new leaderboard players
-     *
-     * @param playersCollections The collection of players to reload
-     * @param gameMode
+     * Queues matching GameTypes for every active leaderboard collection.
+     * The 15s poller drains one collection at a time.
      */
+    public static void queueLeaderboardUpdate(GameMode gameMode) {
+        if (!enabled || gameMode == null) {
+            return;
+        }
+        Set<GameType> matchingGameTypes = GameType.ACTIVE_LEADERBOARDS.stream()
+                .filter(gameType -> gameType.shouldUpdateLeaderboard(gameMode))
+                .collect(Collectors.toCollection(HashSet::new));
+        if (matchingGameTypes.isEmpty()) {
+            return;
+        }
+        synchronized (LEADERBOARD_UPDATE_LOCK) {
+            for (PlayersCollections collection : PlayersCollections.ACTIVE_LEADERBOARD_COLLECTIONS) {
+                PENDING_LEADERBOARD_UPDATES
+                        .computeIfAbsent(collection, ignored -> ConcurrentHashMap.newKeySet())
+                        .addAll(matchingGameTypes);
+            }
+        }
+        ChatUtils.MessageType.LEADERBOARDS.sendMessage(
+                "Queued leaderboard updates for " + gameMode + ": " + matchingGameTypes.stream().map(gt -> gt.name).collect(Collectors.joining(", "))
+        );
+    }
+
+    /**
+     * Round-robin poller: every 15s processes pending GameTypes for the next PlayersCollections.
+     */
+    public static void startLeaderboardUpdatePoller() {
+        if (!enabled || !LEADERBOARD_UPDATE_POLLER_STARTED.compareAndSet(false, true)) {
+            return;
+        }
+        leaderboardUpdatePoller = new BukkitRunnable() {
+            @Override
+            public void run() {
+                if (!enabled) {
+                    stopLeaderboardUpdatePoller();
+                    return;
+                }
+                List<PlayersCollections> collections = PlayersCollections.ACTIVE_LEADERBOARD_COLLECTIONS;
+                if (collections.isEmpty()) {
+                    return;
+                }
+                if (leaderboardUpdateCollectionIndex >= collections.size()) {
+                    leaderboardUpdateCollectionIndex = 0;
+                }
+                PlayersCollections collection = collections.get(leaderboardUpdateCollectionIndex);
+                leaderboardUpdateCollectionIndex = (leaderboardUpdateCollectionIndex + 1) % collections.size();
+
+                Set<GameType> pending;
+                synchronized (LEADERBOARD_UPDATE_LOCK) {
+                    pending = PENDING_LEADERBOARD_UPDATES.remove(collection);
+                }
+                if (pending == null || pending.isEmpty()) {
+                    return;
+                }
+                resetLeaderboards(collection, pending);
+                setLeaderboardHologramVisibilityToAll();
+            }
+        };
+        leaderboardUpdatePoller.runTaskTimer(Warlords.getInstance(), 20 * 15, 20 * 15);
+        ChatUtils.MessageType.LEADERBOARDS.sendMessage("Started leaderboard update poller (15s)");
+    }
+
+    private static void stopLeaderboardUpdatePoller() {
+        if (leaderboardUpdatePoller != null) {
+            leaderboardUpdatePoller.cancel();
+            leaderboardUpdatePoller = null;
+        }
+        LEADERBOARD_UPDATE_POLLER_STARTED.set(false);
+    }
+
     public static void resetLeaderboards(PlayersCollections playersCollections, @Nullable GameMode gameMode) {
+        Set<GameType> gameTypes;
+        if (gameMode == null) {
+            gameTypes = new HashSet<>(GameType.ACTIVE_LEADERBOARDS);
+        } else {
+            gameTypes = GameType.ACTIVE_LEADERBOARDS.stream()
+                    .filter(gameType -> gameType.shouldUpdateLeaderboard(gameMode))
+                    .collect(Collectors.toCollection(HashSet::new));
+        }
+        resetLeaderboards(playersCollections, gameTypes);
+    }
+
+    private static void resetLeaderboards(PlayersCollections playersCollections, Set<GameType> gameTypes) {
         if (!Warlords.hologramsEnabled) {
             return;
         }
@@ -198,21 +292,20 @@ public class StatsLeaderboardManager {
         if (!PlayersCollections.ACTIVE_LEADERBOARD_COLLECTIONS.contains(playersCollections)) {
             return;
         }
-        // boards can only be reset every 5 minutes
-        if (System.currentTimeMillis() - LAST_BOARD_RESETS.getOrDefault(playersCollections, 0L) < 1000 * 60 * 5) {
+        if (gameTypes == null || gameTypes.isEmpty()) {
             return;
         }
-        LAST_BOARD_RESETS.put(playersCollections, System.currentTimeMillis());
-        if (Warlords.getGameManager().getGames().stream().anyMatch(gameHolder -> gameHolder.getGame() != null && gameHolder.getMap() != GameMap.MAIN_LOBBY)) {
-            return;
-        }
-        ChatUtils.MessageType.LEADERBOARDS.sendMessage("Resetting leaderboards for " + playersCollections.name + " (" + gameMode + ")");
-        STATS_LEADERBOARDS.forEach((gameType, statsLeaderboardGameType) -> {
-            if (gameMode == null || gameType.shouldUpdateLeaderboard(gameMode)) {
-                ChatUtils.MessageType.LEADERBOARDS.sendMessage("GameType: " + gameType.name + " - " + playersCollections.name);
-                statsLeaderboardGameType.resetLeaderboards(playersCollections);
+        ChatUtils.MessageType.LEADERBOARDS.sendMessage("Resetting leaderboards for " + playersCollections.name + " (" + gameTypes.stream()
+                .map(gt -> gt.name)
+                .collect(Collectors.joining(", ")) + ")");
+        for (GameType gameType : gameTypes) {
+            AbstractStatsLeaderboardGameType<?, ?, ?, ?> statsLeaderboardGameType = STATS_LEADERBOARDS.get(gameType);
+            if (statsLeaderboardGameType == null) {
+                continue;
             }
-        });
+            ChatUtils.MessageType.LEADERBOARDS.sendMessage("GameType: " + gameType.name + " - " + playersCollections.name);
+            statsLeaderboardGameType.resetLeaderboards(playersCollections);
+        }
         createLeaderboardSwitcherHologram();
         ChatUtils.MessageType.LEADERBOARDS.sendMessage("Loaded " + playersCollections.name +
                 "(" + DatabaseManager.CACHED_PLAYERS.get(playersCollections).values().size() + ") leaderboards");
@@ -475,7 +568,7 @@ public class StatsLeaderboardManager {
     public static PlayerLeaderboardInfo getPlayerInfo(Player player) {
         UUID uuid = player.getUniqueId();
         if (!PLAYER_LEADERBOARD_INFOS.containsKey(uuid) || PLAYER_LEADERBOARD_INFOS.get(uuid) == null) {
-            leaderboardInfo = new PlayerLeaderboardInfo();
+            PlayerLeaderboardInfo leaderboardInfo = new PlayerLeaderboardInfo();
             PLAYER_LEADERBOARD_INFOS.put(uuid, leaderboardInfo);
             return leaderboardInfo;
         }

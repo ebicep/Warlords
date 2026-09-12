@@ -578,13 +578,10 @@ public abstract class DatabaseGameBase<T extends DatabaseGamePlayerBase> {
                             //if (databaseGame.isPrivate) {
                             TaskChain<?> taskChain = Warlords.newChain()
                                                              .delay(4, TimeUnit.SECONDS)
-                                                             .async(() -> DatabaseManager.gameService.create(databaseGame, collection));
-                            for (PlayersCollections activeCollection : PlayersCollections.ACTIVE_LEADERBOARD_COLLECTIONS) {
-                                taskChain.delay(10, TimeUnit.SECONDS)
-                                         .sync(() -> StatsLeaderboardManager.resetLeaderboards(activeCollection, databaseGame.getGameMode()));
-                            }
-                            taskChain.sync(StatsLeaderboardManager::setLeaderboardHologramVisibilityToAll)
-                                     .execute();
+                                                             .async(() -> DatabaseManager.gameService.create(databaseGame, collection))
+                                                             .delay(10, TimeUnit.SECONDS)
+                                                             .sync(() -> StatsLeaderboardManager.queueLeaderboardUpdate(databaseGame.getGameMode()));
+                            taskChain.execute();
                             //}
                         }
                     } catch (Exception e) {
