@@ -20,6 +20,8 @@ import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
+import org.bukkit.event.player.PlayerMoveEvent;
+import org.bukkit.event.player.PlayerToggleFlightEvent;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -217,6 +219,32 @@ public class AirStrike implements SpecBoostManager.SpecBoost<AirStrike> {
                                         if (event.getWarlordsEntity().equals(warlordsEntity) || event.getSource().equals(warlordsEntity)) {
                                             event.setCancelled(true);
                                         }
+                                    }
+
+                                    @EventHandler
+                                    public void onMove(PlayerMoveEvent event) {
+                                        if (!warlordsEntity.getEntity().equals(event.getPlayer())) {
+                                            return;
+                                        }
+                                        if (!event.getPlayer().isFlying()) {
+                                            return;
+                                        }
+                                        Location from = event.getFrom();
+                                        Location to = event.getTo();
+                                        if (to.getY() == from.getY()) {
+                                            return;
+                                        }
+                                        to.setY(from.getY());
+                                        event.setTo(to);
+                                    }
+
+                                    @EventHandler
+                                    public void onToggleFlight(PlayerToggleFlightEvent event) {
+                                        if (!warlordsEntity.getEntity().equals(event.getPlayer())) {
+                                            return;
+                                        }
+                                        event.setCancelled(true);
+                                        event.getPlayer().setFlying(true);
                                     }
                                 };
                             }
