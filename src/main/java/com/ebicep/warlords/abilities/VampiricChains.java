@@ -29,9 +29,9 @@ public class VampiricChains extends AbstractAbility implements BlueAbilityIcon, 
     private int enemiesAffected = 3;
     private int linkBreakRadius = 18;
     private int castRange = 12;
-    private float maxHealthDamage = 2;
+    private float maxHealthDamage = 4;
     private int healRadius = 6;
-    private float healCap = 500;
+    private float healCap = 700;
 
     public VampiricChains() {
         super(AbstractAbilityBuilder.create("vampiricChains").pvp());

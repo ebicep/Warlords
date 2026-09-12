@@ -1623,9 +1623,9 @@
         "enemiesAffected": 3,
         "linkBreakRadius": 18,
         "castRange": 12,
-        "maxHealthDamage": 2,
+        "maxHealthDamage": 4,
         "healRadius": 6,
-        "healCap": 500
+        "healCap": 700
       },
       "vitalityConcoction": {
         "name": "Vitality Concoction",
