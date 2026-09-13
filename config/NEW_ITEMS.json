@@ -1608,6 +1608,21 @@
           "storedHealingCap": 800,
           "allyHealthThresholdPercent": 35,
           "dumpCooldownSeconds": 10
+        },
+        "font": {
+          "tier": "LEGENDARY",
+          "name": "Font",
+          "slots": [
+            "HELMET",
+            "GLOVES"
+          ],
+          "attributes": {
+            "HEALTH": 25,
+            "ECR": 2
+          },
+          "description": "For every {{energy}} max energy, increase your energy per second by {{energy}}.",
+          "maxEnergyRequirement": 100,
+          "energyPerSecondPerStack": 0.4
         }
       }
     }

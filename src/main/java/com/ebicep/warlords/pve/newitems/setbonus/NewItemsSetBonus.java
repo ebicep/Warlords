@@ -34,6 +34,7 @@ public enum NewItemsSetBonus implements SetBonus {
     ECHO_OF_RUIN(new EchoOfRuin()),
     ENERGIZE(new Energize()),
     ENCUMBER(new Encumber()),
+    FONT(new Font()),
     FORSAKEN_FLUX(new ForsakenFlux()),
     FROSTVEIL(new Frostveil()),
     GAMBLER(new Gambler()),
