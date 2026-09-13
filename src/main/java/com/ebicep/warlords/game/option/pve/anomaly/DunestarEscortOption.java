@@ -52,7 +52,7 @@ public class DunestarEscortOption extends AbstractAnomalyOption {
 
     private static final int SEGMENT_DURATION_TICKS = 120 * GameRunnable.SECOND;
     private static final int CHECKPOINT_CHARGE_TICKS = 150 * GameRunnable.SECOND;
-    private static final int CHECKPOINT_CHARGE_REDUCTION_TICKS_PER_KILL = Math.round(0.3f * GameRunnable.SECOND);
+    private static final int CHECKPOINT_CHARGE_REDUCTION_TICKS_PER_KILL = GameRunnable.SECOND;
     private static final int MOB_SPAWN_INTERVAL = 10;
     private static final int LASER_INTERVAL_TICKS = 15 * GameRunnable.SECOND;
     private static final int LASER_TELEGRAPH_TICKS = 2 * GameRunnable.SECOND;
@@ -381,6 +381,8 @@ public class DunestarEscortOption extends AbstractAnomalyOption {
         }
 
         checkpointChargeKills++;
+        Bukkit.broadcast(Component.text(checkpointChargeKills));
+        Bukkit.broadcast(Component.text(getRequiredChargeTicks()));
     }
 
     private void completeCheckpointCharge() {
@@ -644,7 +646,6 @@ public class DunestarEscortOption extends AbstractAnomalyOption {
                 Component.text("Next: ", NamedTextColor.WHITE).append(Component.text(targetName, NamedTextColor.AQUA)),
                 Component.text("Time: ", NamedTextColor.WHITE).append(Component.text(getSecondsRemaining() + "s", NamedTextColor.YELLOW)),
                 Component.text("Distance: ", NamedTextColor.WHITE).append(Component.text(distance + "m", NamedTextColor.YELLOW)),
-                Component.text("Charge: ", NamedTextColor.WHITE).append(Component.text(getCheckpointChargeSecondsRemaining() + "s", NamedTextColor.YELLOW)),
                 Component.text("Caches: ", NamedTextColor.WHITE).append(Component.text(caches + "/3", NamedTextColor.GREEN))
         );
     }
