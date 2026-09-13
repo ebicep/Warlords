@@ -67,7 +67,7 @@ public class Panacea extends BaseSet {
                             return;
                         }
                         WarlordsEntity healed = event.getWarlordsEntity();
-                        if (!healed.isTeammate(warlordsPlayer) || !hasDebuff(healed)) {
+                        if (!(healed instanceof WarlordsPlayer) || !healed.isTeammate(warlordsPlayer) || !hasDebuff(healed)) {
                             return;
                         }
                         currentHealValue.addModifier(
@@ -83,7 +83,7 @@ public class Panacea extends BaseSet {
                             return;
                         }
                         WarlordsEntity healed = event.getWarlordsEntity();
-                        if (!healed.isTeammate(warlordsPlayer) || !hasDebuff(healed)) {
+                        if (!(healed instanceof WarlordsPlayer) || !healed.isTeammate(warlordsPlayer) || !hasDebuff(healed)) {
                             return;
                         }
                         healed.getCooldownManager().removeDebuffCooldowns();

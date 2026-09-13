@@ -72,6 +72,7 @@ public class Reservoir extends BaseSet {
                         }
                         WarlordsEntity target = PlayerFilter.playingGame(warlordsPlayer.getGame())
                                 .aliveTeammatesOf(warlordsPlayer)
+                                .filter(WarlordsPlayer.class::isInstance)
                                 .filter(ally -> ally.getCurrentHealth() / ally.getMaxHealth() * 100f < allyHealthThresholdPercent)
                                 .stream()
                                 .min(Comparator.comparingDouble(ally -> ally.getCurrentHealth() / ally.getMaxHealth()))
@@ -103,7 +104,7 @@ public class Reservoir extends BaseSet {
                             return;
                         }
                         WarlordsEntity healed = event.getWarlordsEntity();
-                        if (healed.equals(warlordsPlayer) || !healed.isTeammate(warlordsPlayer)) {
+                        if (!(healed instanceof WarlordsPlayer) || healed.equals(warlordsPlayer) || !healed.isTeammate(warlordsPlayer)) {
                             return;
                         }
                         float excess = getExcessHealing(currentHealingValue, healed.getCurrentHealth(), healed.getMaxHealth());

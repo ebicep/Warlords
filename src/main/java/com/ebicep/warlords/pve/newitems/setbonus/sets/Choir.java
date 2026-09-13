@@ -61,7 +61,7 @@ public class Choir extends BaseSet {
                             return;
                         }
                         WarlordsEntity healed = event.getWarlordsEntity();
-                        if (healed.equals(warlordsPlayer) || !healed.isTeammate(warlordsPlayer)) {
+                        if (!(healed instanceof WarlordsPlayer) || healed.equals(warlordsPlayer) || !healed.isTeammate(warlordsPlayer)) {
                             return;
                         }
                         float splashHeal = currentHealValue * (splashHealingPercent / 100f);
@@ -70,6 +70,7 @@ public class Choir extends BaseSet {
                         }
                         PlayerFilter.entitiesAround(healed, radius, radius, radius)
                                 .aliveTeammatesOf(warlordsPlayer)
+                                .filter(WarlordsPlayer.class::isInstance)
                                 .excluding(healed)
                                 .forEach(ally -> ally.addInstance(InstanceBuilder
                                         .healing()
