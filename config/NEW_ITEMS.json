@@ -186,19 +186,13 @@
           },
           "rerollCost": {
             "1": {
-              "ETHEREUM_CRYSTAL": 3,
-              "ASCENDANT_SHARD": 1,
-              "ZENITH_STAR": 1
+              "ETHEREUM_CRYSTAL": 5
             },
             "2": {
-              "ETHEREUM_CRYSTAL": 4,
-              "ASCENDANT_SHARD": 2,
-              "ZENITH_STAR": 2
+              "ETHEREUM_CRYSTAL": 10
             },
             "3": {
-              "ETHEREUM_CRYSTAL": 5,
-              "ASCENDANT_SHARD": 3,
-              "ZENITH_STAR": 3
+              "ETHEREUM_CRYSTAL": 15
             }
           },
           "lockScrollRerollCost": {
@@ -1096,7 +1090,7 @@
           "bonusAttributeRanges": {},
           "description": "For every player below {{damage;%}} health, you heal {{heal;%}} more health.",
           "healthThresholdPercent": 75,
-          "healPercent": 8
+          "healPercent": 12
         },
         "decay": {
           "tier": "LEGENDARY",
@@ -1560,6 +1554,69 @@
           },
           "description": "+{{blocks;%}} ability range on your primary skill (if applicable).",
           "primaryAbilityRangeIncreasePercent": 15
+        },
+        "choir": {
+          "tier": "LEGENDARY",
+          "name": "Choir",
+          "slots": [
+            "LEGGINGS",
+            "BOOTS"
+          ],
+          "attributes": {
+            "HEALTH": 40,
+            "CDR": 1
+          },
+          "description": "Healing an ally also heals other allies within {{blocks}} for {{heal;%}} of that amount.",
+          "radius": 5,
+          "splashHealingPercent": 10
+        },
+        "panacea": {
+          "tier": "LEGENDARY",
+          "name": "Panacea",
+          "slots": [
+            "RING",
+            "TOME"
+          ],
+          "attributes": {
+            "HEALTH": 35,
+            "ECR": 2,
+            "CDR": 1
+          },
+          "description": "Healing a de-buffed ally is increased by {{heal;%}}. Every {{ticks}}, healing an ally also cleanses them.",
+          "healingIncreasePercent": 40,
+          "cleanseCooldownSeconds": 3
+        },
+        "reservoir": {
+          "tier": "LEGENDARY",
+          "name": "Reservoir",
+          "slots": [
+            "CHESTPLATE",
+            "LEGGINGS"
+          ],
+          "attributes": {
+            "HEALTH": 50,
+            "REGEN": 15,
+            "CDR": 1
+          },
+          "description": "Excess healing on allies is stored, up to {{heal}}. When an ally falls below {{heal;%}} health, consume the store to heal them ({{ticks}} cooldown).",
+          "storedHealingCap": 1000,
+          "allyHealthThresholdPercent": 35,
+          "dumpCooldownSeconds": 5
+        },
+        "aspire": {
+          "tier": "LEGENDARY",
+          "name": "Aspire",
+          "slots": [
+            "HELMET",
+            "GLOVES"
+          ],
+          "attributes": {
+            "HEALTH": 25,
+            "ECR": 1
+          },
+          "description": "For every {{energy}} max energy, increase your energy per second by {{energy}}.",
+          "maxEnergyRequirement": 100,
+          "energyPerSecondPerStack": 1.5
         }
       }
     }

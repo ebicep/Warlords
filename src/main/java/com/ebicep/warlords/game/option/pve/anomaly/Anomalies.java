@@ -52,7 +52,9 @@ public enum Anomalies {
             List.of(
                     Component.text("Pick up the relic to choose its carrier."),
                     Component.text("The carrier cannot attack or use abilities."),
-                    Component.text("Reach each destination within 2 minutes.")
+                    Component.text("Reach each destination within 2 minutes."),
+                    Component.text("Charge each checkpoint for 150 seconds."),
+                    Component.text("Each kill reduces checkpoint charge time by 0.3 seconds.")
             ),
             List.of(
                     new AnomalyRewardPool("Dunestar Cache I", 1_000, 50, 1, 0.10),
