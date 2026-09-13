@@ -10,7 +10,7 @@ import com.ebicep.warlords.util.warlords.modifiablevalues.FloatModifiable;
 
 import java.util.List;
 
-public class Font extends BaseSet {
+public class Aspire extends BaseSet {
 
     private int maxEnergyRequirement;
     private float energyPerSecondPerStack;
@@ -24,7 +24,7 @@ public class Font extends BaseSet {
 
     @Override
     public String getConfigFieldName() {
-        return "font";
+        return "aspire";
     }
 
     @Override
@@ -44,7 +44,7 @@ public class Font extends BaseSet {
             warlordsPlayer.getCooldownManager().addCooldown(new PermanentCooldown<>(
                     getName(),
                     null,
-                    Font.class,
+                    Aspire.class,
                     null,
                     warlordsPlayer,
                     CooldownTypes.ITEM,

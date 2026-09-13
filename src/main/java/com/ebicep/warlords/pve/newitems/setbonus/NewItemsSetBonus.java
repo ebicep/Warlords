@@ -14,6 +14,7 @@ import java.util.Set;
 public enum NewItemsSetBonus implements SetBonus {
 
     AMBULANCE(new Ambulance()),
+    ASPIRE(new Aspire()),
     AXE(new Axe()),
     BATTERY(new Battery()),
     BELLICOSE(new Bellicose()),
@@ -34,7 +35,6 @@ public enum NewItemsSetBonus implements SetBonus {
     ECHO_OF_RUIN(new EchoOfRuin()),
     ENERGIZE(new Energize()),
     ENCUMBER(new Encumber()),
-    FONT(new Font()),
     FORSAKEN_FLUX(new ForsakenFlux()),
     FROSTVEIL(new Frostveil()),
     GAMBLER(new Gambler()),
