@@ -1560,6 +1560,54 @@
           },
           "description": "+{{blocks;%}} ability range on your primary skill (if applicable).",
           "primaryAbilityRangeIncreasePercent": 15
+        },
+        "choir": {
+          "tier": "LEGENDARY",
+          "name": "Choir",
+          "slots": [
+            "LEGGINGS",
+            "BOOTS"
+          ],
+          "attributes": {
+            "HEALTH": 40,
+            "CDR": 2
+          },
+          "description": "Healing an ally also heals other allies within {{blocks}} for {{heal;%}} of that amount.",
+          "radius": 5,
+          "splashHealingPercent": 10
+        },
+        "panacea": {
+          "tier": "LEGENDARY",
+          "name": "Panacea",
+          "slots": [
+            "RING",
+            "TOME"
+          ],
+          "attributes": {
+            "HEALTH": 35,
+            "ECR": 2,
+            "CDR": 1
+          },
+          "description": "Healing a debuffed ally is increased by {{heal;%}}. Every {{ticks}}, healing an ally also cleanses them.",
+          "healingIncreasePercent": 25,
+          "cleanseCooldownSeconds": 8
+        },
+        "reservoir": {
+          "tier": "LEGENDARY",
+          "name": "Reservoir",
+          "slots": [
+            "CHESTPLATE",
+            "LEGGINGS"
+          ],
+          "attributes": {
+            "HEALTH": 50,
+            "REGEN": 15,
+            "CDR": 1
+          },
+          "description": "Excess healing on allies is stored, up to {{heal}}. When an ally falls below {{heal;%}} health, consume the store to heal them ({{ticks}} cooldown).",
+          "storedHealingCap": 800,
+          "allyHealthThresholdPercent": 35,
+          "dumpCooldownSeconds": 10
         }
       }
     }
