@@ -25,6 +25,7 @@ import org.bukkit.Material;
 import org.bukkit.Particle;
 import org.bukkit.Sound;
 import org.bukkit.World;
+import org.bukkit.block.Block;
 import org.bukkit.entity.Item;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
@@ -58,7 +59,8 @@ public class EndlessParadoxOption extends AbstractAnomalyOption {
     private static final int ALTAR_CHARGE_TICKS = 15 * GameRunnable.SECOND;
     private static final int BASE_FRAGMENT_COUNT = 3;
     private static final int BASE_GUARDS_PER_FRAGMENT = 2;
-    private static final int MAX_SCATTER_ATTEMPTS = 40;
+    private static final int MAX_SCATTER_ATTEMPTS = 80;
+    private static final int GROUND_SEARCH_RANGE = 16;
     private static final double ALTAR_RADIUS_SQUARED = 25;
     private static final double MIN_SCATTER_RADIUS = 18;
     private static final double MAX_SCATTER_RADIUS = 40;
@@ -302,41 +304,100 @@ public class EndlessParadoxOption extends AbstractAnomalyOption {
 
     private void spawnGuards(TimelineFragment fragment) {
         int guardCount = BASE_GUARDS_PER_FRAGMENT + playerCount();
-        World world = fragment.location.getWorld();
         for (int i = 0; i < guardCount; i++) {
-            double angle = ThreadLocalRandom.current().nextDouble(Math.PI * 2);
-            double distance = ThreadLocalRandom.current().nextDouble(GUARD_SPAWN_MIN_DISTANCE, GUARD_SPAWN_MAX_DISTANCE);
-            double x = fragment.location.getX() + Math.cos(angle) * distance;
-            double z = fragment.location.getZ() + Math.sin(angle) * distance;
-            double y = resolveGroundY(world, x, z);
-            AbstractMob mob = currentAnomaly.getMobSet(0).createMob(new Location(world, x, y, z));
+            Location spawnLocation = findOpenGroundAround(fragment.location, GUARD_SPAWN_MIN_DISTANCE, GUARD_SPAWN_MAX_DISTANCE);
+            if (spawnLocation == null) {
+                spawnLocation = fragment.location.clone();
+            }
+            AbstractMob mob = currentAnomaly.getMobSet(0).createMob(spawnLocation);
             fragment.guards.add(mob);
             spawnNewMob(mob, Team.RED);
         }
     }
 
     private Location findScatterLocation() {
-        World world = altarLocation.getWorld();
-        Location fallback = altarLocation.clone().add(MIN_SCATTER_RADIUS, 0, 0);
-        fallback.setY(resolveGroundY(world, fallback.getX(), fallback.getZ()));
-        Location chosen = fallback;
         for (int attempt = 0; attempt < MAX_SCATTER_ATTEMPTS; attempt++) {
             double angle = ThreadLocalRandom.current().nextDouble(Math.PI * 2);
             double distance = ThreadLocalRandom.current().nextDouble(MIN_SCATTER_RADIUS, MAX_SCATTER_RADIUS);
             double x = altarLocation.getX() + Math.cos(angle) * distance;
             double z = altarLocation.getZ() + Math.sin(angle) * distance;
-            Location candidate = new Location(world, x, resolveGroundY(world, x, z), z);
-            if (isValidScatterLocation(candidate)) {
-                chosen = candidate;
-                break;
+            Location candidate = findOpenGroundLocation(x, z);
+            if (candidate != null && isValidScatterLocation(candidate)) {
+                return candidate;
             }
-            chosen = candidate;
         }
-        return chosen;
+        Location fallback = findOpenGroundAround(altarLocation, MIN_SCATTER_RADIUS, MAX_SCATTER_RADIUS);
+        if (fallback != null) {
+            return fallback;
+        }
+        Location altarGround = findOpenGroundLocation(altarLocation.getX(), altarLocation.getZ());
+        return altarGround != null ? altarGround : findNearestAirAbove(altarLocation);
+    }
+
+    private Location findNearestAirAbove(Location origin) {
+        World world = origin.getWorld();
+        int x = origin.getBlockX();
+        int z = origin.getBlockZ();
+        for (int y = origin.getBlockY(); y < world.getMaxHeight() - 1; y++) {
+            if (isSpawnableSpace(world.getBlockAt(x, y, z)) && isSpawnableSpace(world.getBlockAt(x, y + 1, z))) {
+                return new Location(world, x + 0.5, y, z + 0.5);
+            }
+        }
+        return new Location(world, x + 0.5, origin.getY() + 1, z + 0.5);
+    }
+
+    private Location findOpenGroundAround(Location center, double minRadius, double maxRadius) {
+        for (int attempt = 0; attempt < MAX_SCATTER_ATTEMPTS; attempt++) {
+            double angle = ThreadLocalRandom.current().nextDouble(Math.PI * 2);
+            double distance = ThreadLocalRandom.current().nextDouble(minRadius, maxRadius);
+            Location candidate = findOpenGroundLocation(
+                    center.getX() + Math.cos(angle) * distance,
+                    center.getZ() + Math.sin(angle) * distance
+            );
+            if (candidate != null) {
+                return candidate;
+            }
+        }
+        return null;
+    }
+
+    @Nullable
+    private Location findOpenGroundLocation(double x, double z) {
+        World world = altarLocation.getWorld();
+        int blockX = (int) Math.floor(x);
+        int blockZ = (int) Math.floor(z);
+        int startY = altarLocation.getBlockY();
+        int minY = Math.max(world.getMinHeight() + 1, startY - GROUND_SEARCH_RANGE);
+        int maxY = Math.min(world.getMaxHeight() - 2, startY + GROUND_SEARCH_RANGE);
+        for (int delta = 0; delta <= GROUND_SEARCH_RANGE; delta++) {
+            int up = startY + delta;
+            if (up <= maxY && isOpenSpawnSpace(world, blockX, up, blockZ)) {
+                return new Location(world, blockX + 0.5, up, blockZ + 0.5);
+            }
+            int down = startY - delta;
+            if (delta != 0 && down >= minY && isOpenSpawnSpace(world, blockX, down, blockZ)) {
+                return new Location(world, blockX + 0.5, down, blockZ + 0.5);
+            }
+        }
+        return null;
+    }
+
+    private boolean isOpenSpawnSpace(World world, int x, int y, int z) {
+        Block feet = world.getBlockAt(x, y, z);
+        Block head = world.getBlockAt(x, y + 1, z);
+        Block ground = world.getBlockAt(x, y - 1, z);
+        return isSpawnableSpace(feet) && isSpawnableSpace(head) && ground.getType().isSolid();
+    }
+
+    private boolean isSpawnableSpace(Block block) {
+        return block.isPassable() && !block.getType().isSolid() && !block.isLiquid();
     }
 
     private boolean isValidScatterLocation(Location candidate) {
         if (candidate.getWorld() != altarLocation.getWorld()) {
+            return false;
+        }
+        if (!isOpenSpawnSpace(candidate.getWorld(), candidate.getBlockX(), candidate.getBlockY(), candidate.getBlockZ())) {
             return false;
         }
         if (candidate.distanceSquared(altarLocation) < MIN_SCATTER_RADIUS * MIN_SCATTER_RADIUS) {
@@ -349,14 +410,6 @@ public class EndlessParadoxOption extends AbstractAnomalyOption {
             }
         }
         return true;
-    }
-
-    private double resolveGroundY(World world, double x, double z) {
-        int highest = world.getHighestBlockYAt((int) Math.floor(x), (int) Math.floor(z)) + 1;
-        if (Math.abs(highest - altarLocation.getY()) > 12) {
-            return altarLocation.getY();
-        }
-        return Math.max(1, highest);
     }
 
     private void assignCarrier(TimelineFragment fragment, WarlordsPlayer warlordsPlayer, Player player) {
