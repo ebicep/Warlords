@@ -60,6 +60,7 @@ public class EndlessParadoxOption extends AbstractAnomalyOption {
     private static final int BOSS_SPAWN_DELAY_TICKS = 3 * GameRunnable.SECOND;
     private static final int BASE_FRAGMENT_COUNT = 3;
     private static final int BASE_GUARDS_PER_FRAGMENT = 2;
+    private static final int FRAGMENT_WAVE_SIZE = 2;
     private static final int MAX_SCATTER_ATTEMPTS = 80;
     private static final int GROUND_SEARCH_RANGE = 16;
     private static final double ALTAR_RADIUS_SQUARED = 25;
@@ -68,6 +69,7 @@ public class EndlessParadoxOption extends AbstractAnomalyOption {
     private static final double MIN_FRAGMENT_SEPARATION_SQUARED = 64;
     private static final double GUARD_SPAWN_MIN_DISTANCE = 4;
     private static final double GUARD_SPAWN_MAX_DISTANCE = 8;
+    private static final double GUARDIAN_PROXIMITY_RADIUS_SQUARED = 12 * 12;
     private static final Particle.DustOptions ALTAR_DUST = new Particle.DustOptions(Color.fromRGB(180, 80, 255), 1.4f);
     private static final Particle.DustOptions CHARGE_DUST = new Particle.DustOptions(Color.fromRGB(255, 210, 80), 1.6f);
     private static final ItemStack FRAGMENT_ITEM = new ItemBuilder(Material.AMETHYST_SHARD)
@@ -92,6 +94,7 @@ public class EndlessParadoxOption extends AbstractAnomalyOption {
     private int bossSpawnDelayTicks;
     private int fragmentsRequired;
     private int fragmentsDelivered;
+    private int currentWaveSize;
     private boolean collectionStarted;
     private boolean bossPhase;
     private boolean failed;
@@ -128,7 +131,12 @@ public class EndlessParadoxOption extends AbstractAnomalyOption {
                     return;
                 }
                 if (!fragment.unlocked) {
-                    player.sendActionBar(Component.text("Defeat this fragment's guardians before picking it up.", NamedTextColor.RED));
+                    if (!fragment.guardsSpawned) {
+                        spawnGuards(fragment);
+                        player.sendActionBar(Component.text("The fragment's guardians have awakened!", NamedTextColor.RED));
+                    } else {
+                        player.sendActionBar(Component.text("Defeat this fragment's guardians before picking it up.", NamedTextColor.RED));
+                    }
                     return;
                 }
                 if (carriers.containsKey(warlordsPlayer.getUuid())) {
@@ -202,7 +210,7 @@ public class EndlessParadoxOption extends AbstractAnomalyOption {
             if (!fragment.guards.remove(mob)) {
                 continue;
             }
-            if (fragment.guards.isEmpty() && fragment.carrier == null) {
+            if (fragment.guardsSpawned && fragment.guards.isEmpty() && fragment.carrier == null) {
                 unlockFragment(fragment);
             }
             break;
@@ -271,6 +279,7 @@ public class EndlessParadoxOption extends AbstractAnomalyOption {
                 }
 
                 mobTick();
+                spawnGuardsNearPlayers();
                 if (getTicksElapsed() % 5 == 0) {
                     showAltarParticles();
                     showFragmentParticles();
@@ -285,14 +294,33 @@ public class EndlessParadoxOption extends AbstractAnomalyOption {
         }
         collectionStarted = true;
         collectionTicksRemaining = COLLECTION_DURATION_TICKS;
-        fragmentsRequired = BASE_FRAGMENT_COUNT + playerCount();
-        for (int i = 0; i < fragmentsRequired; i++) {
+        fragmentsRequired = getScaledFragmentCount();
+        spawnFragmentWave();
+        announce(Component.text("A pair of timeline fragments has scattered around the altar.", NamedTextColor.GOLD));
+        announce(Component.text("Approach a fragment to awaken its guardians, then charge both at the altar.", NamedTextColor.AQUA));
+        announce(Component.text("The next pair appears only after both shards are offered. You have 3 minutes.", NamedTextColor.YELLOW));
+        announce(Component.text("Dying shatters a carried fragment.", NamedTextColor.RED));
+        game.forEachOnlinePlayer((player, team) -> player.playSound(player.getLocation(), Sound.BLOCK_BEACON_ACTIVATE, 2, 1));
+        markObjectiveScoreboardChanged();
+    }
+
+    private int getScaledFragmentCount() {
+        int count = BASE_FRAGMENT_COUNT + playerCount();
+        if (count % 2 != 0) {
+            count++;
+        }
+        return count;
+    }
+
+    private void spawnFragmentWave() {
+        int remaining = fragmentsRequired - fragmentsDelivered;
+        if (remaining <= 0) {
+            return;
+        }
+        currentWaveSize = Math.min(FRAGMENT_WAVE_SIZE, remaining);
+        for (int i = 0; i < currentWaveSize; i++) {
             spawnFragment();
         }
-        announce(Component.text("Timeline fragments have scattered around the altar.", NamedTextColor.GOLD));
-        announce(Component.text("Defeat their guardians, carry each shard to the altar, and charge it for 15 seconds.", NamedTextColor.AQUA));
-        announce(Component.text("You have 3 minutes. Dying shatters a carried fragment.", NamedTextColor.RED));
-        game.forEachOnlinePlayer((player, team) -> player.playSound(player.getLocation(), Sound.BLOCK_BEACON_ACTIVATE, 2, 1));
         markObjectiveScoreboardChanged();
     }
 
@@ -300,7 +328,6 @@ public class EndlessParadoxOption extends AbstractAnomalyOption {
         Location location = findScatterLocation();
         TimelineFragment fragment = new TimelineFragment(location);
         fragment.drop = spawnFragmentDrop(location);
-        spawnGuards(fragment);
         fragments.add(fragment);
     }
 
@@ -315,7 +342,30 @@ public class EndlessParadoxOption extends AbstractAnomalyOption {
         return drop;
     }
 
+    private void spawnGuardsNearPlayers() {
+        for (TimelineFragment fragment : fragments) {
+            if (fragment.guardsSpawned || fragment.carrier != null) {
+                continue;
+            }
+            Location location = fragment.drop != null && fragment.drop.isValid()
+                    ? fragment.drop.getLocation()
+                    : fragment.location;
+            boolean nearby = game.warlordsPlayers().anyMatch(player ->
+                    !player.isDead()
+                            && player.getLocation().getWorld() == location.getWorld()
+                            && player.getLocation().distanceSquared(location) <= GUARDIAN_PROXIMITY_RADIUS_SQUARED
+            );
+            if (nearby) {
+                spawnGuards(fragment);
+            }
+        }
+    }
+
     private void spawnGuards(TimelineFragment fragment) {
+        if (fragment.guardsSpawned) {
+            return;
+        }
+        fragment.guardsSpawned = true;
         int guardCount = BASE_GUARDS_PER_FRAGMENT + playerCount();
         for (int i = 0; i < guardCount; i++) {
             Location spawnLocation = findOpenGroundAround(fragment.location, GUARD_SPAWN_MIN_DISTANCE, GUARD_SPAWN_MAX_DISTANCE);
@@ -326,6 +376,13 @@ public class EndlessParadoxOption extends AbstractAnomalyOption {
             fragment.guards.add(mob);
             spawnNewMob(mob, Team.RED);
         }
+        if (fragment.guards.isEmpty()) {
+            unlockFragment(fragment);
+            return;
+        }
+        announce(Component.text("Guardians have awakened around a timeline fragment!", NamedTextColor.RED));
+        game.forEachOnlinePlayer((player, team) -> player.playSound(player.getLocation(), Sound.ENTITY_ENDER_DRAGON_GROWL, 1.2f, 1.4f));
+        markObjectiveScoreboardChanged();
     }
 
     private Location findScatterLocation() {
@@ -478,7 +535,7 @@ public class EndlessParadoxOption extends AbstractAnomalyOption {
             if (state.chargeTicks >= ALTAR_CHARGE_TICKS) {
                 iterator.remove();
                 completeFragmentCharge(state);
-                if (completed || failed || bossPhase) {
+                if (completed || failed || bossPhase || bossSpawnDelayTicks > 0) {
                     return;
                 }
             }
@@ -500,6 +557,9 @@ public class EndlessParadoxOption extends AbstractAnomalyOption {
 
         if (fragmentsDelivered >= fragmentsRequired) {
             beginBossSpawnDelay();
+        } else if (fragments.isEmpty()) {
+            announce(Component.text("The pair has been offered. The next fragments are scattering...", NamedTextColor.GOLD));
+            spawnFragmentWave();
         }
     }
 
@@ -649,6 +709,8 @@ public class EndlessParadoxOption extends AbstractAnomalyOption {
                         .append(Component.text(getCollectionSecondsRemaining() + "s", NamedTextColor.YELLOW)),
                 Component.text("Fragments: ", NamedTextColor.WHITE)
                         .append(Component.text(fragmentsDelivered + "/" + fragmentsRequired, NamedTextColor.AQUA)),
+                Component.text("Current pair: ", NamedTextColor.WHITE)
+                        .append(Component.text((currentWaveSize - fragments.size()) + "/" + currentWaveSize + " offered", NamedTextColor.GREEN)),
                 Component.text("Carrying: ", NamedTextColor.WHITE)
                         .append(Component.text(String.valueOf(carriers.size()), NamedTextColor.GOLD)),
                 Component.text("Charging: ", NamedTextColor.WHITE)
@@ -804,6 +866,7 @@ public class EndlessParadoxOption extends AbstractAnomalyOption {
         private final Set<AbstractMob> guards = ConcurrentHashMap.newKeySet();
         private Item drop;
         private boolean unlocked;
+        private boolean guardsSpawned;
         private WarlordsPlayer carrier;
 
         private TimelineFragment(Location location) {

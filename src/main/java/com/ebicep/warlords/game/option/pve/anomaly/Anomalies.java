@@ -169,7 +169,9 @@ public enum Anomalies {
             "Endless Paradox",
             List.of(
                     Component.text("Repair the broken timeline of the ancient Illusion Dynasty."),
-                    Component.text("Defeat each fragment's guardians, then carry it to the altar."),
+                    Component.text("Fragments appear in pairs around the altar."),
+                    Component.text("Guardians awaken when a player approaches a fragment."),
+                    Component.text("Charge both fragments at the altar before the next pair appears."),
                     Component.text("Charge held fragments at the altar for 15 seconds."),
                     Component.text("Dying shatters a carried fragment and manifests a replacement."),
                     Component.text("Return every fragment within 3 minutes, then defeat Illumina.")
