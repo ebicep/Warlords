@@ -236,7 +236,9 @@ public enum SkullID implements Skull {
     // https://minecraft-heads.com/custom-heads/head/101063-ghost-knight
     GHOST_KNIGHT("ZGE5YmE2ZjJlNTE4NThiZGRkMWIxMmNjMzVmYWIxOWRmYTViOWUyYTNlY2MwNzJhZTIxN2NjMDEwZmViZTUzMyJ9fX0="),
     // https://minecraft-heads.com/custom-heads/head/100702-ghost-with-clock-mask
-    GHOST_CLOCK_MASK("ZmI5MzJjYmYxMzZjNmY4NjExN2YzYjk1ZWRjY2JlZWIwZDliMWRiOTM5MWEyMDc4MDM4ZDM4YmVmOTJlODQ2ZiJ9fX0=")
+    GHOST_CLOCK_MASK("ZmI5MzJjYmYxMzZjNmY4NjExN2YzYjk1ZWRjY2JlZWIwZDliMWRiOTM5MWEyMDc4MDM4ZDM4YmVmOTJlODQ2ZiJ9fX0="),
+    // https://minecraft-heads.com/custom-heads/head/44444-steam-golem-golden
+    STEAM_GOLEM_GOLDEN("ZGIyMThlOTk4MWUzNGEwOWVkNjg5M2JlNDVjN2RiOTVlN2YwM2I3YWYzYmM0YzAwYmM0MzA4NmEyMWNiNmFlYiJ9fX0=")
 
     ;
 

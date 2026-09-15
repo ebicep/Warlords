@@ -616,7 +616,7 @@ public class EndlessParadoxOption extends AbstractAnomalyOption {
         bossSpawnDelayTicks = BOSS_SPAWN_DELAY_TICKS;
         clearAllFragments();
         clearHostileMobs();
-        announce(Component.text("The timeline is whole. Illumina arrives in 3 seconds!", NamedTextColor.GOLD));
+        announce(Component.text("The timeline is whole. Chronarch arrives in 3 seconds!", NamedTextColor.GOLD));
         game.forEachOnlinePlayer((player, team) -> player.playSound(player.getLocation(), Sound.BLOCK_BEACON_ACTIVATE, 2, .7f));
         markObjectiveScoreboardChanged();
     }
@@ -631,10 +631,10 @@ public class EndlessParadoxOption extends AbstractAnomalyOption {
         clearHostileMobs();
 
         Location spawnLocation = altarLocation.clone().add(0, 1, 0);
-        activeBoss = Mob.ILLUMINA.createMob(spawnLocation);
+        activeBoss = Mob.CHRONARCH.createMob(spawnLocation);
         spawnNewMob(activeBoss, Team.RED);
 
-        announce(Component.text("Defeat Illumina to seal the paradox!", NamedTextColor.GOLD));
+        announce(Component.text("Defeat Chronarch to seal the paradox!", NamedTextColor.GOLD));
         Utils.playGlobalSound(spawnLocation, Sound.ENTITY_WITHER_SPAWN, 2, .75f);
         markObjectiveScoreboardChanged();
     }
@@ -685,7 +685,7 @@ public class EndlessParadoxOption extends AbstractAnomalyOption {
             return List.of(
                     Component.text("Fragments: ", NamedTextColor.WHITE)
                             .append(Component.text(fragmentsDelivered + "/" + fragmentsRequired, NamedTextColor.GREEN)),
-                    Component.text("Illumina arrives in: ", NamedTextColor.WHITE)
+                    Component.text("Chronarch arrives in: ", NamedTextColor.WHITE)
                             .append(Component.text(seconds + "s", NamedTextColor.RED))
             );
         }
@@ -695,7 +695,7 @@ public class EndlessParadoxOption extends AbstractAnomalyOption {
                     .append(Component.text(fragmentsDelivered + "/" + fragmentsRequired, NamedTextColor.GREEN)));
             String bossName = activeBoss != null && activeBoss.getWarlordsNPC() != null
                     ? activeBoss.getWarlordsNPC().getName()
-                    : "Illumina";
+                    : "Chronarch";
             lines.add(Component.text("Boss: ", NamedTextColor.WHITE).append(Component.text(bossName, NamedTextColor.RED)));
             if (activeBoss != null && activeBoss.getWarlordsNPC() != null) {
                 WarlordsNPC bossNpc = activeBoss.getWarlordsNPC();

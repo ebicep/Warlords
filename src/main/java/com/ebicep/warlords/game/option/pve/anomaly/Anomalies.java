@@ -174,7 +174,7 @@ public enum Anomalies {
                     Component.text("Charge both fragments at the altar before the next pair appears."),
                     Component.text("Charge held fragments at the altar for 15 seconds."),
                     Component.text("Dying shatters a carried fragment and manifests a replacement."),
-                    Component.text("Return every fragment within 3 minutes, then defeat Illumina.")
+                    Component.text("Return every fragment within 3 minutes, then defeat Chronarch.")
             ),
             List.of(
                     new AnomalyRewardPool("Paradox Cache I", 600, 75, 1, 0.10),
@@ -230,7 +230,7 @@ public enum Anomalies {
             case ENDLESS_PARADOX -> switch (cacheIndex) {
                 case 0 -> "Charge half of the timeline fragments";
                 case 1 -> "Charge all timeline fragments at the altar";
-                default -> "Defeat Illumina";
+                default -> "Defeat Chronarch";
             };
         };
     }

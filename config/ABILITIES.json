@@ -2059,6 +2059,21 @@
         "cooldown": 30,
         "energyCost": 50
       },
+      "chronarchPendulum": {
+        "name": "Pendulum",
+        "cooldown": 8,
+        "energyCost": 50
+      },
+      "chronarchCogburst": {
+        "name": "Cogburst",
+        "cooldown": 12,
+        "energyCost": 50
+      },
+      "chronarchSpawnClockboundPhantom": {
+        "name": "Spawn Clockbound Phantom",
+        "cooldown": 22,
+        "energyCost": 0
+      },
       "illuminationLastStandNear": {
         "name": "Last Stand Near",
         "cooldown": 3,

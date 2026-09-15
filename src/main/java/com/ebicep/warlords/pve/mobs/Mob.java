@@ -700,6 +700,14 @@ public enum Mob {
             Weapons.NEW_LEAF_SCYTHE.getItem()
     )
     ),
+    CHRONARCH(EntityType.ZOMBIE, Chronarch.class, Chronarch::new, Chronarch::new, new Utils.SimpleEntityEquipment(
+            SkullUtils.getSkullFrom(SkullID.STEAM_GOLEM_GOLDEN),
+            new ItemStack(Material.GOLDEN_CHESTPLATE),
+            new ItemStack(Material.GOLDEN_LEGGINGS),
+            new ItemStack(Material.GOLDEN_BOOTS),
+            Weapons.SILVER_PHANTASM_HAMMER.getItem()
+    )
+    ),
     TORMENT(EntityType.WITHER_SKELETON, Torment.class, Torment::new, Torment::new, new Utils.SimpleEntityEquipment(
             SkullUtils.getSkullFrom(SkullID.DEMON_KING),
             Utils.applyColorTo(Material.LEATHER_CHESTPLATE, 230, 60, 60),
