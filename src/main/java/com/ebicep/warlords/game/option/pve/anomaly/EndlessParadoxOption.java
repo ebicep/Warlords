@@ -70,6 +70,13 @@ public class EndlessParadoxOption extends AbstractAnomalyOption {
     private static final double GUARD_SPAWN_MIN_DISTANCE = 4;
     private static final double GUARD_SPAWN_MAX_DISTANCE = 8;
     private static final double GUARDIAN_PROXIMITY_RADIUS_SQUARED = 12 * 12;
+    private static final Mob[] FRAGMENT_GUARDIANS = {
+            Mob.CHRONO_WARDEN,
+            Mob.AMETHYST_GUARD,
+            Mob.CRYSTAL_SENTINEL,
+            Mob.PARADOX_SHADE,
+            Mob.CLOCKBOUND_PHANTOM
+    };
     private static final Particle.DustOptions ALTAR_DUST = new Particle.DustOptions(Color.fromRGB(180, 80, 255), 1.4f);
     private static final Particle.DustOptions CHARGE_DUST = new Particle.DustOptions(Color.fromRGB(255, 210, 80), 1.6f);
     private static final ItemStack FRAGMENT_ITEM = new ItemBuilder(Material.AMETHYST_SHARD)
@@ -372,7 +379,8 @@ public class EndlessParadoxOption extends AbstractAnomalyOption {
             if (spawnLocation == null) {
                 spawnLocation = fragment.location.clone();
             }
-            AbstractMob mob = currentAnomaly.getMobSet(0).createMob(spawnLocation);
+            AbstractMob mob = FRAGMENT_GUARDIANS[ThreadLocalRandom.current().nextInt(FRAGMENT_GUARDIANS.length)]
+                    .createMob(spawnLocation);
             fragment.guards.add(mob);
             spawnNewMob(mob, Team.RED);
         }
