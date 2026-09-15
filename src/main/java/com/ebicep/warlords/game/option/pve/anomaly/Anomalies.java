@@ -164,6 +164,34 @@ public enum Anomalies {
                     .add(0.01, Mob.SKELETAL_ENTROPY)
                     .add(0.01, Mob.PIG_ALLEVIATOR)
                     .add(0.01, Mob.VOID_ZOMBIE)
+    ),
+    ENDLESS_PARADOX(
+            "Endless Paradox",
+            List.of(
+                    Component.text("Repair the broken timeline of the ancient Illusion Dynasty."),
+                    Component.text("Defeat each fragment's guardians, then carry it to the altar."),
+                    Component.text("Charge held fragments at the altar for 15 seconds."),
+                    Component.text("Dying shatters a carried fragment and manifests a replacement."),
+                    Component.text("Return every fragment within 3 minutes, then defeat Illumina.")
+            ),
+            List.of(
+                    new AnomalyRewardPool("Paradox Cache I", 600, 75, 1, 0.10),
+                    new AnomalyRewardPool("Paradox Cache II", 800, 100, 1, 0.20),
+                    new AnomalyRewardPool("Paradox Cache III", 1_200, 150, 2, 0.30)
+            ),
+            new AnomalyMobSet()
+                    .add(0.4, Mob.ZOMBIE_LAMENT)
+                    .add(0.15, Mob.SLIMY_ANOMALY)
+                    .add(0.15, Mob.ARACHNO_VENARI)
+                    .add(0.3, Mob.ZOMBIE_SWORDSMAN)
+                    .add(0.1, Mob.SKELETAL_WARLOCK)
+                    .add(0.1, Mob.PIG_SHAMAN)
+                    .add(0.1, Mob.GOLEM_APPRENTICE)
+                    .add(0.05, Mob.ANCIENT_DYNASTY)
+                    .add(0.03, Mob.WITCH_DEACON)
+                    .add(0.02, Mob.ZOMBIE_VANGUARD)
+                    .add(0.02, Mob.SKELETAL_ENTROPY)
+                    .add(0.02, Mob.VOID_ZOMBIE)
     );
 
     public static final Anomalies[] VALUES = values();
@@ -186,6 +214,7 @@ public enum Anomalies {
             case OPEX_ANOMALY -> GameMap.OPEX_ANOMALY;
             case BRIDGE_OF_DUNESTAR -> GameMap.PLAINS_OF_DUNESTAR;
             case WHAT_ONCE_WAS -> GameMap.WHAT_ONCE_WAS;
+            case ENDLESS_PARADOX -> GameMap.ENDLESS_PARADOX;
         };
     }
 
@@ -196,6 +225,11 @@ public enum Anomalies {
                     ? "Reach Checkpoint " + (cacheIndex + 1)
                     : "Deliver the relic to the sanctuary";
             case WHAT_ONCE_WAS -> "Unlock Vault " + ((cacheIndex + 1) * 2);
+            case ENDLESS_PARADOX -> switch (cacheIndex) {
+                case 0 -> "Charge half of the timeline fragments";
+                case 1 -> "Charge all timeline fragments at the altar";
+                default -> "Defeat Illumina";
+            };
         };
     }
 
