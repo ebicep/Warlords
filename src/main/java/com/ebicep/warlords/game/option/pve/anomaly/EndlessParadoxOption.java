@@ -57,6 +57,7 @@ public class EndlessParadoxOption extends AbstractAnomalyOption {
 
     private static final int COLLECTION_DURATION_TICKS = 180 * GameRunnable.SECOND;
     private static final int ALTAR_CHARGE_TICKS = 15 * GameRunnable.SECOND;
+    private static final int BOSS_SPAWN_DELAY_TICKS = 3 * GameRunnable.SECOND;
     private static final int BASE_FRAGMENT_COUNT = 3;
     private static final int BASE_GUARDS_PER_FRAGMENT = 2;
     private static final int MAX_SCATTER_ATTEMPTS = 80;
@@ -88,6 +89,7 @@ public class EndlessParadoxOption extends AbstractAnomalyOption {
     private SimpleScoreboardHandler objectiveScoreboardHandler;
     private int preparationTicks = START_DELAY_TICKS;
     private int collectionTicksRemaining;
+    private int bossSpawnDelayTicks;
     private int fragmentsRequired;
     private int fragmentsDelivered;
     private boolean collectionStarted;
@@ -121,7 +123,8 @@ public class EndlessParadoxOption extends AbstractAnomalyOption {
                         || warlordsPlayer.isDead()
                         || completed
                         || failed
-                        || bossPhase) {
+                        || bossPhase
+                        || bossSpawnDelayTicks > 0) {
                     return;
                 }
                 if (!fragment.unlocked) {
@@ -231,6 +234,16 @@ public class EndlessParadoxOption extends AbstractAnomalyOption {
                     preparationTicks--;
                     return;
                 }
+                if (bossSpawnDelayTicks > 0) {
+                    bossSpawnDelayTicks--;
+                    if (getTicksElapsed() % 5 == 0) {
+                        showAltarParticles();
+                    }
+                    if (bossSpawnDelayTicks <= 0) {
+                        startBossPhase();
+                    }
+                    return;
+                }
                 if (bossPhase) {
                     mobTick();
                     if (handleActiveBossPhase()) {
@@ -244,7 +257,7 @@ public class EndlessParadoxOption extends AbstractAnomalyOption {
                 }
 
                 handleAltarCharges();
-                if (completed || failed || bossPhase) {
+                if (completed || failed || bossPhase || bossSpawnDelayTicks > 0) {
                     return;
                 }
 
@@ -413,7 +426,7 @@ public class EndlessParadoxOption extends AbstractAnomalyOption {
     }
 
     private void assignCarrier(TimelineFragment fragment, WarlordsPlayer warlordsPlayer, Player player) {
-        if (completed || failed || bossPhase || fragment.carrier != null || !fragment.unlocked) {
+        if (completed || failed || bossPhase || bossSpawnDelayTicks > 0 || fragment.carrier != null || !fragment.unlocked) {
             return;
         }
         removeFragmentDrop(fragment);
@@ -486,7 +499,7 @@ public class EndlessParadoxOption extends AbstractAnomalyOption {
         markObjectiveScoreboardChanged();
 
         if (fragmentsDelivered >= fragmentsRequired) {
-            startBossPhase();
+            beginBossSpawnDelay();
         }
     }
 
@@ -501,7 +514,7 @@ public class EndlessParadoxOption extends AbstractAnomalyOption {
 
     private void shatterCarriedFragment(WarlordsPlayer warlordsPlayer, String summary) {
         CarrierState state = carriers.remove(warlordsPlayer.getUuid());
-        if (state == null || completed || failed || bossPhase) {
+        if (state == null || completed || failed || bossPhase || bossSpawnDelayTicks > 0) {
             return;
         }
         TimelineFragment fragment = state.fragment;
@@ -528,11 +541,24 @@ public class EndlessParadoxOption extends AbstractAnomalyOption {
         markObjectiveScoreboardChanged();
     }
 
+    private void beginBossSpawnDelay() {
+        if (bossPhase || completed || failed || bossSpawnDelayTicks > 0) {
+            return;
+        }
+        bossSpawnDelayTicks = BOSS_SPAWN_DELAY_TICKS;
+        clearAllFragments();
+        clearHostileMobs();
+        announce(Component.text("The timeline is whole. Illumina arrives in 3 seconds!", NamedTextColor.GOLD));
+        game.forEachOnlinePlayer((player, team) -> player.playSound(player.getLocation(), Sound.BLOCK_BEACON_ACTIVATE, 2, .7f));
+        markObjectiveScoreboardChanged();
+    }
+
     private void startBossPhase() {
         if (bossPhase || completed || failed) {
             return;
         }
         bossPhase = true;
+        bossSpawnDelayTicks = 0;
         clearAllFragments();
         clearHostileMobs();
 
@@ -540,7 +566,7 @@ public class EndlessParadoxOption extends AbstractAnomalyOption {
         activeBoss = Mob.ILLUMINA.createMob(spawnLocation);
         spawnNewMob(activeBoss, Team.RED);
 
-        announce(Component.text("The timeline is whole. Defeat Illumina to seal the paradox!", NamedTextColor.GOLD));
+        announce(Component.text("Defeat Illumina to seal the paradox!", NamedTextColor.GOLD));
         Utils.playGlobalSound(spawnLocation, Sound.ENTITY_WITHER_SPAWN, 2, .75f);
         markObjectiveScoreboardChanged();
     }
@@ -585,6 +611,15 @@ public class EndlessParadoxOption extends AbstractAnomalyOption {
             int seconds = Math.max(0, (preparationTicks + GameRunnable.SECOND - 1) / GameRunnable.SECOND);
             return List.of(Component.text("Anomaly starts in: ", NamedTextColor.WHITE)
                     .append(Component.text(seconds + "s", NamedTextColor.YELLOW)));
+        }
+        if (bossSpawnDelayTicks > 0) {
+            int seconds = Math.max(0, (bossSpawnDelayTicks + GameRunnable.SECOND - 1) / GameRunnable.SECOND);
+            return List.of(
+                    Component.text("Fragments: ", NamedTextColor.WHITE)
+                            .append(Component.text(fragmentsDelivered + "/" + fragmentsRequired, NamedTextColor.GREEN)),
+                    Component.text("Illumina arrives in: ", NamedTextColor.WHITE)
+                            .append(Component.text(seconds + "s", NamedTextColor.RED))
+            );
         }
         if (bossPhase) {
             List<Component> lines = new ArrayList<>();
