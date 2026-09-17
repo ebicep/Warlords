@@ -173,6 +173,18 @@ public final class MobDiscovery {
         put(Mob.EVENT_BLEUE_GRIMOIRE, "Periodically casts random defensive and healing player abilities.");
         put(Mob.EVENT_ORANGE_GRIMOIRE, "Periodically casts random ultimate-style player abilities.");
         put(Mob.EVENT_NECRONOMICON_GRIMOIRE, "Locks onto a player with a laser and Smites them for near-lethal true damage.");
+
+        List<Mob> missing = new ArrayList<>();
+        for (Mob.MobGroup group : JOURNAL_GROUPS) {
+            for (Mob mob : group.mobs) {
+                if (!MECHANICS.containsKey(mob)) {
+                    missing.add(mob);
+                }
+            }
+        }
+        if (!missing.isEmpty()) {
+            throw new IllegalStateException("Missing Discovery Journal mechanics for: " + missing);
+        }
     }
 
     private MobDiscovery() {
