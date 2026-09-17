@@ -95,34 +95,35 @@ public final class ResourceDiscovery {
 
     private static List<String> sourcesFor(Currencies currency) {
         return switch (currency) {
-            case COIN -> List.of("Wave Defense", "Onslaught", "Event Wave Defense", "Anomaly", "Raid", "Bounties", "Pouches");
+            case COIN -> List.of("Wave Defense", "Onslaught", "Event Wave Defense", "Anomaly", "Raids", "Bounties", "Reward Pouches");
             case SYNTHETIC_SHARD -> List.of("Onslaught", "Anomaly", "Weapon Salvage", "Supply Drops");
-            case LEGEND_FRAGMENTS -> List.of("Wave Defense", "Onslaught", "Raid", "Pouches");
+            case LEGEND_FRAGMENTS -> List.of("Wave Defense", "Onslaught", "Raids", "Reward Pouches");
             case ILLUSION_SHARD -> List.of("Wave Defense", "Onslaught");
-            case FAIRY_ESSENCE -> List.of("Supply Drops", "Level Rewards", "Bounties", "Event Shops");
+            case FAIRY_ESSENCE -> List.of("Supply Drops", "Level Rewards", "Bounties", "Event Shops", "Supporter Rank");
             case COMMON_STAR_PIECE, RARE_STAR_PIECE, EPIC_STAR_PIECE -> List.of("Supply Drops");
             case LEGENDARY_STAR_PIECE -> List.of("Onslaught", "Supply Drops");
-            case ASCENDANT_STAR_PIECE -> List.of("Wave Defense", "Raid");
+            case ASCENDANT_STAR_PIECE -> List.of("Wave Defense", "Raids");
             case VOID_STAR_PIECE -> List.of("Cryptic Conquest Vendor");
-            case SUPPLY_DROP_TOKEN -> List.of("Onslaught");
+            case SUPPLY_DROP_TOKEN -> List.of("Onslaught", "Supply Drop Susan");
             case SKILL_BOOST_MODIFIER -> List.of("Supply Drops", "Level Rewards", "Event Shops");
             case TITLE_TOKEN_JUGGERNAUT, TITLE_TOKEN_PHARAOHS_REVENGE, TITLE_TOKEN_SPIDERS_BURROW,
                  TITLE_TOKEN_BANE_OF_IMPURITIES, TITLE_TOKEN_GARDEN_OF_HESPERIDES, TITLE_TOKEN_LIBRARY_ARCHIVES ->
                     List.of("Event Shops", "Event Leaderboards");
-            case LIMIT_BREAKER -> List.of("Wave Defense", "Raid");
+            case LIMIT_BREAKER -> List.of("Wave Defense", "Raids");
             case MYSTERIOUS_TOKEN -> List.of("Vendors");
             case SCRAP_METAL -> List.of("Item Salvage");
-            case ASCENDANT_SHARD -> List.of("Wave Defense", "Raid");
+            case ASCENDANT_SHARD -> List.of("Wave Defense", "Raids");
             case PRESTIGE_ORB -> List.of("Spec Prestige");
-            case ETHEREUM_CRYSTAL -> List.of("Anomaly", "Raid");
-            case ASCENDANT_SCROLL -> List.of("Ascendant Vendor");
+            case ETHEREUM_CRYSTAL -> List.of("Anomaly", "Raids");
+//            case ASCENDANT_SCROLL -> List.of("Ascendant Vendor");
             case ITEM_LOCK_SCROLL -> List.of("Raid", "Ascendant Vendor");
             case CRYPTIC_CONQUEST_KEY -> List.of("Ascendant Vendor");
             case ARCHEMEDIAN_FRAGMENT -> List.of("Cryptic Conquest");
-            case SOVEREIGN_TOWER_KEY -> List.of("Ascendant Vendor");
+//            case SOVEREIGN_TOWER_KEY -> List.of("Ascendant Vendor");
             case VEILKEEPER_INSIGNIA -> List.of("Prestige Vendor");
             case CELESTIAL_BRONZE, EVENT_POINTS_BOLTARO, EVENT_POINTS_NARMER, EVENT_POINTS_MITHRA,
                  EVENT_POINTS_ILLUIMINA, EVENT_POINTS_GARDEN_OF_HESPERIDES, EVENT_POINTS_LIBRARY_ARCHIVES -> List.of();
+            default -> List.of();
         };
     }
 
@@ -134,11 +135,11 @@ public final class ResourceDiscovery {
     }
 
     private static List<String> sourcesFor(Gem gem) {
-        return List.of("Raid");
+        return List.of("Raids");
     }
 
     private static List<String> sourcesFor(Vial vial) {
-        return List.of("Vial Inventory");
+        return List.of("Vial Inventory Shop");
     }
 
     private static List<String> sourcesFor(FixedItems fixedItem) {
