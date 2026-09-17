@@ -51,10 +51,9 @@ public enum Anomalies {
             "Bridge of Dunestar",
             List.of(
                     Component.text("Pick up the relic to choose its carrier."),
-                    Component.text("The carrier cannot attack or use abilities."),
                     Component.text("Reach each destination within 2 minutes."),
                     Component.text("Charge each checkpoint for 150 seconds."),
-                    Component.text("Each kill reduces checkpoint charge time by 0.3 seconds.")
+                    Component.text("Each kill reduces checkpoint charge time.")
             ),
             List.of(
                     new AnomalyRewardPool("Dunestar Cache I", 1_000, 50, 1, 0.10),
@@ -169,12 +168,8 @@ public enum Anomalies {
             "Endless Paradox",
             List.of(
                     Component.text("Repair the broken timeline of the ancient Illusion Dynasty."),
-                    Component.text("Fragments appear in pairs around the altar."),
-                    Component.text("Guardians awaken when a player approaches a fragment."),
-                    Component.text("Charge both fragments at the altar before the next pair appears."),
-                    Component.text("Charge held fragments at the altar for 15 seconds."),
-                    Component.text("Dying shatters a carried fragment and manifests a replacement."),
-                    Component.text("Return every fragment within 3 minutes, then defeat Chronarch.")
+                    Component.text("Return every fragment within 3 minutes to summon "),
+                    Component.text("Chronarch and restore the timeline.")
             ),
             List.of(
                     new AnomalyRewardPool("Paradox Cache I", 600, 75, 1, 0.10),
@@ -193,7 +188,7 @@ public enum Anomalies {
                     .add(0.03, Mob.WITCH_DEACON)
                     .add(0.02, Mob.ZOMBIE_VANGUARD)
                     .add(0.02, Mob.SKELETAL_ENTROPY)
-                    .add(0.02, Mob.VOID_ZOMBIE)
+                    .add(0.01, Mob.VOID_ZOMBIE)
     );
 
     public static final Anomalies[] VALUES = values();

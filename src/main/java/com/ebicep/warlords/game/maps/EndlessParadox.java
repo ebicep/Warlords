@@ -13,7 +13,7 @@ public class EndlessParadox extends AbstractAnomalyMap {
     private static final double[] ALTAR_LOCATION = {0.5, 90, 0.5};
 
     public EndlessParadox() {
-        super("Endless Paradox", "EndlessParadox", ALTAR_LOCATION);
+        super("Endless Paradox", "AnomalyTest", ALTAR_LOCATION);
     }
 
     @Override

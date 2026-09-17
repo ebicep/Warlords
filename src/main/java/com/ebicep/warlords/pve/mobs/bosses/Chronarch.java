@@ -50,8 +50,8 @@ public class Chronarch extends AbstractMob implements BossMob {
                 80000,
                 0.30f,
                 20,
-                1400,
-                2000,
+                900,
+                1200,
                 createAbilities()
         );
     }
@@ -174,8 +174,8 @@ public class Chronarch extends AbstractMob implements BossMob {
                             .damage()
                             .cause("Mainspring")
                             .source(warlordsNPC)
-                            .min(180)
-                            .max(240)
+                            .min(400)
+                            .max(600)
                     ));
         }
 
@@ -226,7 +226,7 @@ public class Chronarch extends AbstractMob implements BossMob {
         );
         Utils.playGlobalSound(warlordsNPC.getLocation(), Sound.ENTITY_IRON_GOLEM_HURT, 2, 0.4f);
         EffectUtils.playHelixAnimation(warlordsNPC.getLocation(), 8, 255, 200, 40);
-        warlordsNPC.addSpeedModifier(warlordsNPC, "Overclock", 25, 10 * 20);
+        warlordsNPC.addSpeedModifier(warlordsNPC, "Overclock", 40, 30 * 20);
 
         int count = Math.max(1, (int) option.getGame().warlordsPlayers().count());
         for (int i = 0; i < count; i++) {
@@ -259,7 +259,7 @@ public class Chronarch extends AbstractMob implements BossMob {
 
                 chime++;
                 Location loc = warlordsNPC.getLocation();
-                double radius = 5 + chime * 1.25;
+                double radius = 5 + chime;
                 float pitch = 0.5f + chime * 0.12f;
                 Utils.playGlobalSound(loc, Sound.BLOCK_BELL_USE, 2, pitch);
                 EffectUtils.playCylinderAnimation(loc, radius, 255, 215, 80, 18, 3);
@@ -272,8 +272,8 @@ public class Chronarch extends AbstractMob implements BossMob {
                                     .damage()
                                     .cause("Twelve Chimes")
                                     .source(warlordsNPC)
-                                    .min(400)
-                                    .max(550)
+                                    .min(800)
+                                    .max(1000)
                             );
                         });
 
@@ -296,7 +296,7 @@ public class Chronarch extends AbstractMob implements BossMob {
                     ChatUtils.sendTitleToGamePlayers(
                             warlordsNPC.getGame(),
                             Component.empty(),
-                            Component.text("The mainspring snaps taut!", NamedTextColor.GOLD),
+                            Component.text("The mainspring snaps taut!", NamedTextColor.RED),
                             10,
                             30,
                             10
@@ -357,14 +357,6 @@ public class Chronarch extends AbstractMob implements BossMob {
             double hourAngle = ThreadLocalRandom.current().nextDouble(Math.PI * 2);
             double minuteAngle = hourAngle + Math.PI / 2;
 
-            ChatUtils.sendTitleToGamePlayers(
-                    wp.getGame(),
-                    Component.empty(),
-                    Component.text("Sidestep the clock hands!", NamedTextColor.GOLD),
-                    5,
-                    20,
-                    5
-            );
             Utils.playGlobalSound(wp.getLocation(), Sound.BLOCK_NOTE_BLOCK_BELL, 2, 0.4f);
 
             new GameRunnable(wp.getGame()) {
