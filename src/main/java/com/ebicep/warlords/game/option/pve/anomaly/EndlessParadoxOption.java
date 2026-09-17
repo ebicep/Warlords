@@ -373,7 +373,7 @@ public class EndlessParadoxOption extends AbstractAnomalyOption {
             return;
         }
         fragment.guardsSpawned = true;
-        int guardCount = BASE_GUARDS_PER_FRAGMENT + playerCount();
+        int guardCount = BASE_GUARDS_PER_FRAGMENT + (2 * playerCount());
         for (int i = 0; i < guardCount; i++) {
             Location spawnLocation = findOpenGroundAround(fragment.location, GUARD_SPAWN_MIN_DISTANCE, GUARD_SPAWN_MAX_DISTANCE);
             if (spawnLocation == null) {
