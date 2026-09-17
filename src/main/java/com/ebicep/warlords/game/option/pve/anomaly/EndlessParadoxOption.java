@@ -204,7 +204,7 @@ public class EndlessParadoxOption extends AbstractAnomalyOption {
         WarlordsEntity dead = event.getWarlordsEntity();
         if (dead instanceof WarlordsPlayer warlordsPlayer && carriers.containsKey(warlordsPlayer.getUuid())) {
             shatterCarriedFragment(warlordsPlayer, warlordsPlayer.getName() + " fell, and the timeline fragment shattered.");
-            return true;
+            return false;
         }
         if (!(dead instanceof WarlordsNPC warlordsNPC)) {
             return false;

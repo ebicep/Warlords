@@ -81,7 +81,11 @@ public class Chronarch extends AbstractMob implements BossMob {
         return new AbstractAbility[]{
                 new Pendulum(),
                 new Cogburst(),
-                new SpawnMobAbility(AbstractAbilityBuilder.create("chronarchSpawnClockboundPhantom").pve(), Mob.CLOCKBOUND_PHANTOM) {
+                new SpawnMobAbility(AbstractAbilityBuilder.create("chronarchSpawnClockboundPhantom")
+                        .pve()
+                        .name("Clockbound Phantom")
+                        .cooldown(22)
+                        .energyCost(0), Mob.CLOCKBOUND_PHANTOM) {
                     @Override
                     public int getSpawnAmount() {
                         return Math.max(1, (int) pveOption.getGame().warlordsPlayers().count());
@@ -306,7 +310,11 @@ public class Chronarch extends AbstractMob implements BossMob {
     public static class Pendulum extends AbstractPveAbility {
 
         public Pendulum() {
-            super(AbstractAbilityBuilder.create("chronarchPendulum").pve());
+            super(AbstractAbilityBuilder.create("chronarchPendulum")
+                    .pve()
+                    .name("Pendulum")
+                    .cooldown(8)
+                    .energyCost(50));
         }
 
         @Override
@@ -337,7 +345,11 @@ public class Chronarch extends AbstractMob implements BossMob {
     public static class Cogburst extends AbstractPveAbility {
 
         public Cogburst() {
-            super(AbstractAbilityBuilder.create("chronarchCogburst").pve());
+            super(AbstractAbilityBuilder.create("chronarchCogburst")
+                    .pve()
+                    .name("Cogburst")
+                    .cooldown(12)
+                    .energyCost(50));
         }
 
         @Override
