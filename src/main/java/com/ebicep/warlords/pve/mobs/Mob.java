@@ -35,6 +35,7 @@ import com.ebicep.warlords.pve.mobs.pigzombie.PigAlleviator;
 import com.ebicep.warlords.pve.mobs.pigzombie.PigDisciple;
 import com.ebicep.warlords.pve.mobs.pigzombie.PigParticle;
 import com.ebicep.warlords.pve.mobs.pigzombie.PigShaman;
+import com.ebicep.warlords.pve.mobs.paradox.*;
 import com.ebicep.warlords.pve.mobs.player.*;
 import com.ebicep.warlords.pve.mobs.skeleton.*;
 import com.ebicep.warlords.pve.mobs.slime.LurkingSlime;
@@ -464,6 +465,49 @@ public enum Mob {
     )
     ),
 
+    // Endless Paradox fragment guardians
+    CHRONO_WARDEN(EntityType.ZOMBIE, ChronoWarden.class, ChronoWarden::new, ChronoWarden::new, new Utils.SimpleEntityEquipment(
+            SkullUtils.getSkullFrom(SkullID.HOURGLASS),
+            Utils.applyColorTo(Material.LEATHER_CHESTPLATE, 186, 142, 48),
+            Utils.applyColorTo(Material.LEATHER_LEGGINGS, 160, 118, 36),
+            Utils.applyColorTo(Material.LEATHER_BOOTS, 120, 88, 24),
+            Weapons.SILVER_PHANTASM_STAFF.getItem()
+    )
+    ),
+    AMETHYST_GUARD(EntityType.ZOMBIE, AmethystGuard.class, AmethystGuard::new, AmethystGuard::new, new Utils.SimpleEntityEquipment(
+            SkullUtils.getSkullFrom(SkullID.AMETHYST_KNIGHT),
+            Utils.applyColorTo(Material.LEATHER_CHESTPLATE, 140, 70, 210),
+            Utils.applyColorTo(Material.LEATHER_LEGGINGS, 110, 50, 175),
+            Utils.applyColorTo(Material.LEATHER_BOOTS, 80, 30, 140),
+            Weapons.SOUL_REAVER.getItem()
+    )
+    ),
+    CRYSTAL_SENTINEL(EntityType.ZOMBIE, CrystalSentinel.class, CrystalSentinel::new, CrystalSentinel::new, new Utils.SimpleEntityEquipment(
+            SkullUtils.getSkullFrom(SkullID.CRYSTAL_KNIGHT),
+            Utils.applyColorTo(Material.LEATHER_CHESTPLATE, 80, 210, 220),
+            Utils.applyColorTo(Material.LEATHER_LEGGINGS, 60, 175, 190),
+            Utils.applyColorTo(Material.LEATHER_BOOTS, 40, 140, 160),
+            Weapons.NETHERSTEEL_KATANA.getItem(),
+            new ItemStack(Material.SHIELD)
+    )
+    ),
+    PARADOX_SHADE(EntityType.WITHER_SKELETON, ParadoxShade.class, ParadoxShade::new, ParadoxShade::new, new Utils.SimpleEntityEquipment(
+            SkullUtils.getSkullFrom(SkullID.GHOST_KNIGHT),
+            Utils.applyColorTo(Material.LEATHER_CHESTPLATE, 45, 20, 70),
+            Utils.applyColorTo(Material.LEATHER_LEGGINGS, 30, 12, 50),
+            Utils.applyColorTo(Material.LEATHER_BOOTS, 18, 8, 32),
+            Weapons.FABLED_HEROICS_SCYTHE.getItem()
+    )
+    ),
+    CLOCKBOUND_PHANTOM(EntityType.SKELETON, ClockboundPhantom.class, ClockboundPhantom::new, ClockboundPhantom::new, new Utils.SimpleEntityEquipment(
+            SkullUtils.getSkullFrom(SkullID.GHOST_CLOCK_MASK),
+            Utils.applyColorTo(Material.LEATHER_CHESTPLATE, 220, 200, 140),
+            Utils.applyColorTo(Material.LEATHER_LEGGINGS, 190, 170, 110),
+            Utils.applyColorTo(Material.LEATHER_BOOTS, 150, 130, 80),
+            Weapons.SILVER_PHANTASM_SWORD.getItem()
+    )
+    ),
+
     // Champion
     NIGHTMARE_ZOMBIE(EntityType.ZOMBIE, NightmareZombie.class, NightmareZombie::new, NightmareZombie::new, new Utils.SimpleEntityEquipment(
             SkullUtils.getSkullFrom(SkullID.SHADOW_DEMON),
@@ -656,6 +700,15 @@ public enum Mob {
             Weapons.NEW_LEAF_SCYTHE.getItem()
     )
     ),
+    CHRONARCH(EntityType.ZOMBIE, Chronarch.class, Chronarch::new, Chronarch::new, new Utils.SimpleEntityEquipment(
+            SkullUtils.getSkullFrom(SkullID.STEAM_GOLEM_GOLDEN),
+            new ItemStack(Material.DIAMOND_CHESTPLATE),
+            new ItemStack(Material.DIAMOND_LEGGINGS),
+            new ItemStack(Material.DIAMOND_BOOTS),
+            Weapons.WARLORDS_II_WAXWEAVER.getItem(),
+            new ItemStack(Material.CLOCK)
+    )
+    ),
     TORMENT(EntityType.WITHER_SKELETON, Torment.class, Torment::new, Torment::new, new Utils.SimpleEntityEquipment(
             SkullUtils.getSkullFrom(SkullID.DEMON_KING),
             Utils.applyColorTo(Material.LEATHER_CHESTPLATE, 230, 60, 60),
@@ -734,9 +787,9 @@ public enum Mob {
     ),
     RAID_MITHRA(EntityType.WITHER_SKELETON, RaidMithra.class, RaidMithra::new, RaidMithra::new, new Utils.SimpleEntityEquipment(
             SkullUtils.getSkullFrom(SkullID.IRON_QUEEN),
-            Utils.applyColorTo(Material.LEATHER_CHESTPLATE, 240, 240, 250),
-            Utils.applyColorTo(Material.LEATHER_LEGGINGS, 35, 28, 48),
-            Utils.applyColorTo(Material.LEATHER_BOOTS, 225, 225, 238),
+            new ItemStack(Material.NETHERITE_CHESTPLATE),
+            new ItemStack(Material.NETHERITE_LEGGINGS),
+            new ItemStack(Material.NETHERITE_BOOTS),
             Weapons.WARLORDS_II_AWAKENED_LICHBLADE.getItem(),
             new ItemStack(Material.SHIELD)
     )

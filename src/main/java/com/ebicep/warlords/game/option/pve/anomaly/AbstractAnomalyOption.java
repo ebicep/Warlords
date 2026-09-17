@@ -102,20 +102,32 @@ public abstract class AbstractAnomalyOption implements PveOption {
                     return;
                 }
                 WarlordsEntity dead = event.getWarlordsEntity();
-                if (!(dead instanceof WarlordsNPC warlordsNPC)) {
-                    return;
-                }
-                AbstractMob mob = warlordsNPC.getMob();
-                if (mob == null || !mobs.containsKey(mob)) {
-                    return;
-                }
-                mob.onDeath(event.getKiller(), dead.getLocation(), AbstractAnomalyOption.this);
-                new GameRunnable(game) {
-                    @Override
-                    public void run() {
-                        removeHostileMob(mob);
+                WarlordsEntity killer = event.getKiller();
+                if (dead instanceof WarlordsNPC warlordsNPC) {
+                    AbstractMob mob = warlordsNPC.getMob();
+                    if (mob == null || !mobs.containsKey(mob)) {
+                        return;
                     }
-                }.runTaskLater(1);
+                    mob.onDeath(killer, dead.getLocation(), AbstractAnomalyOption.this);
+                    new GameRunnable(game) {
+                        @Override
+                        public void run() {
+                            removeHostileMob(mob);
+                        }
+                    }.runTaskLater(1);
+                    if (killer instanceof WarlordsPlayer) {
+                        killer.getMinuteStats().addMobKill(mob.getName());
+                        dead.getHitBy().forEach((assisted, value) -> assisted.getMinuteStats().addMobAssist(mob.getName()));
+                    }
+                    MobCommand.SPAWNED_MOBS.remove(mob);
+                    return;
+                }
+                if (dead instanceof WarlordsPlayer && killer instanceof WarlordsNPC warlordsNPC) {
+                    AbstractMob mob = warlordsNPC.getMob();
+                    if (mob != null && mobs.containsKey(mob)) {
+                        dead.getMinuteStats().addMobDeath(mob.getName());
+                    }
+                }
             }
 
             @EventHandler
