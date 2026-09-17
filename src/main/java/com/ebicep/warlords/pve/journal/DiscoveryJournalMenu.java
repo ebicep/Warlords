@@ -227,11 +227,16 @@ public final class DiscoveryJournalMenu {
         lore.add(Component.text("Times slain: ", NamedTextColor.GRAY)
                           .append(Component.text(NumberFormat.addCommas(MobDiscovery.getKills(databasePlayer, mob)), NamedTextColor.YELLOW)));
 
-        String mechanics = MobDiscovery.getMechanics(mob);
-        if (mechanics != null && !mechanics.isEmpty()) {
+        List<String> mechanicsParagraphs = MobDiscovery.getMechanicsParagraphs(mob);
+        if (!mechanicsParagraphs.isEmpty()) {
             lore.add(Component.empty());
             lore.add(Component.text("Mechanics", NamedTextColor.AQUA));
-            lore.addAll(WordWrap.wrap(Component.text(mechanics, NamedTextColor.GRAY), 160));
+            for (int i = 0; i < mechanicsParagraphs.size(); i++) {
+                if (i > 0) {
+                    lore.add(Component.empty());
+                }
+                lore.addAll(WordWrap.wrap(Component.text(mechanicsParagraphs.get(i), NamedTextColor.GRAY), 160));
+            }
         }
 
         return new ItemBuilder(mob.getHead())

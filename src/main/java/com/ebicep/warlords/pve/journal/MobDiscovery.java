@@ -7,6 +7,7 @@ import java.util.ArrayList;
 import java.util.EnumMap;
 import java.util.List;
 import java.util.Map;
+import java.util.regex.Pattern;
 
 public final class MobDiscovery {
 
@@ -23,6 +24,8 @@ public final class MobDiscovery {
     );
 
     private static final Map<Mob, String> MECHANICS = new EnumMap<>(Mob.class);
+    private static final Pattern PARAGRAPH_BREAK = Pattern.compile("\\n+");
+    private static final Pattern SENTENCE_BREAK = Pattern.compile("(?<=[.!?])\\s+(?=[A-Z])");
 
     static {
         put(Mob.ZOMBIE_LANCER, "");
@@ -204,6 +207,36 @@ public final class MobDiscovery {
 
     public static String getMechanics(Mob mob) {
         return MECHANICS.getOrDefault(mob, "");
+    }
+
+    public static List<String> getMechanicsParagraphs(Mob mob) {
+        String mechanics = getMechanics(mob);
+        if (mechanics == null || mechanics.isBlank()) {
+            return List.of();
+        }
+        if (mechanics.indexOf('\n') >= 0) {
+            List<String> paragraphs = new ArrayList<>();
+            for (String paragraph : PARAGRAPH_BREAK.split(mechanics)) {
+                String trimmed = paragraph.trim();
+                if (!trimmed.isEmpty()) {
+                    paragraphs.add(trimmed);
+                }
+            }
+            return paragraphs;
+        }
+        String[] sentences = SENTENCE_BREAK.split(mechanics.trim());
+        if (sentences.length <= 2) {
+            return List.of(mechanics.trim());
+        }
+        List<String> paragraphs = new ArrayList<>();
+        int index = 0;
+        while (index < sentences.length) {
+            int remaining = sentences.length - index;
+            int take = remaining == 3 ? 2 : Math.min(2, remaining);
+            paragraphs.add(String.join(" ", List.of(sentences).subList(index, index + take)).trim());
+            index += take;
+        }
+        return paragraphs;
     }
 
     public static String getDisplayName(Mob mob) {
