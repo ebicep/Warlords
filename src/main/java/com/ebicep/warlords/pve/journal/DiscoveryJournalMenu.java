@@ -145,10 +145,11 @@ public final class DiscoveryJournalMenu {
         Menu menu = new Menu("Resource Journal", 9 * 4);
 
         ResourceDiscovery.Category[] categories = ResourceDiscovery.Category.VALUES;
+        int startColumn = Math.max(1, (7 - categories.length) / 2 + 1);
         for (int i = 0; i < categories.length; i++) {
             ResourceDiscovery.Category category = categories[i];
             int count = ResourceDiscovery.entries(category).size();
-            menu.setItem(i + 1, 1,
+            menu.setItem(startColumn + i, 1,
                     new ItemBuilder(category.icon)
                             .name(Component.text(category.displayName, category.textColor))
                             .lore(
