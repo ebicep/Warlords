@@ -705,24 +705,12 @@ public class EndlessParadoxOption extends AbstractAnomalyOption {
             }
             return lines;
         }
-
-        int charging = 0;
-        for (CarrierState state : carriers.values()) {
-            if (state.charging) {
-                charging++;
-            }
-        }
+        
         return List.of(
                 Component.text("Time: ", NamedTextColor.WHITE)
                         .append(Component.text(getCollectionSecondsRemaining() + "s", NamedTextColor.YELLOW)),
                 Component.text("Fragments: ", NamedTextColor.WHITE)
                         .append(Component.text(fragmentsDelivered + "/" + fragmentsRequired, NamedTextColor.AQUA)),
-                Component.text("Current pair: ", NamedTextColor.WHITE)
-                        .append(Component.text((currentWaveSize - fragments.size()) + "/" + currentWaveSize + " offered", NamedTextColor.GREEN)),
-                Component.text("Carrying: ", NamedTextColor.WHITE)
-                        .append(Component.text(String.valueOf(carriers.size()), NamedTextColor.GOLD)),
-                Component.text("Charging: ", NamedTextColor.WHITE)
-                        .append(Component.text(charging + " at altar", charging > 0 ? NamedTextColor.GREEN : NamedTextColor.GRAY)),
                 Component.text("Caches: ", NamedTextColor.WHITE)
                         .append(Component.text(countCaches() + "/3", NamedTextColor.GREEN))
         );

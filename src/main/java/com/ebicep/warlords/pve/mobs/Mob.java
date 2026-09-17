@@ -702,10 +702,11 @@ public enum Mob {
     ),
     CHRONARCH(EntityType.ZOMBIE, Chronarch.class, Chronarch::new, Chronarch::new, new Utils.SimpleEntityEquipment(
             SkullUtils.getSkullFrom(SkullID.STEAM_GOLEM_GOLDEN),
-            new ItemStack(Material.GOLDEN_CHESTPLATE),
-            new ItemStack(Material.GOLDEN_LEGGINGS),
-            new ItemStack(Material.GOLDEN_BOOTS),
-            Weapons.SILVER_PHANTASM_HAMMER.getItem()
+            new ItemStack(Material.DIAMOND_CHESTPLATE),
+            new ItemStack(Material.DIAMOND_LEGGINGS),
+            new ItemStack(Material.DIAMOND_BOOTS),
+            Weapons.WARLORDS_II_WAXWEAVER.getItem(),
+            new ItemStack(Material.CLOCK)
     )
     ),
     TORMENT(EntityType.WITHER_SKELETON, Torment.class, Torment::new, Torment::new, new Utils.SimpleEntityEquipment(
@@ -786,9 +787,9 @@ public enum Mob {
     ),
     RAID_MITHRA(EntityType.WITHER_SKELETON, RaidMithra.class, RaidMithra::new, RaidMithra::new, new Utils.SimpleEntityEquipment(
             SkullUtils.getSkullFrom(SkullID.IRON_QUEEN),
-            Utils.applyColorTo(Material.LEATHER_CHESTPLATE, 240, 240, 250),
-            Utils.applyColorTo(Material.LEATHER_LEGGINGS, 35, 28, 48),
-            Utils.applyColorTo(Material.LEATHER_BOOTS, 225, 225, 238),
+            new ItemStack(Material.NETHERITE_CHESTPLATE),
+            new ItemStack(Material.NETHERITE_LEGGINGS),
+            new ItemStack(Material.NETHERITE_BOOTS),
             Weapons.WARLORDS_II_AWAKENED_LICHBLADE.getItem(),
             new ItemStack(Material.SHIELD)
     )
