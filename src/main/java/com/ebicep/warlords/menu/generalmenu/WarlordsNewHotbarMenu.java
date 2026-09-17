@@ -24,6 +24,7 @@ import com.ebicep.warlords.pve.Currencies;
 import com.ebicep.warlords.pve.Spendable;
 import com.ebicep.warlords.pve.commands.AbilityTreeCommand;
 import com.ebicep.warlords.pve.consumables.menu.ConsumableMenu;
+import com.ebicep.warlords.pve.journal.DiscoveryJournalMenu;
 import com.ebicep.warlords.pve.mobs.MobDrop;
 import com.ebicep.warlords.pve.newitems.menu.NewItemEquipMenu;
 import com.ebicep.warlords.pve.rewards.RewardInventory;
@@ -887,6 +888,14 @@ public class WarlordsNewHotbarMenu {
                         ComponentUtils.CLICK_TO_VIEW
                 )
                 .get();
+        public static final ItemStack DISCOVERY_JOURNAL_MENU = new ItemBuilder(Material.KNOWLEDGE_BOOK)
+                .name(Component.text("Discovery Journal", NamedTextColor.AQUA))
+                .lore(WordWrap.wrap(Component.text("Browse discovered mobs and every PvE resource.", NamedTextColor.GRAY), 160))
+                .addLore(
+                        Component.empty(),
+                        ComponentUtils.CLICK_TO_VIEW
+                )
+                .get();
 
         public static void openPvEMenu(Player player) {
             DatabasePlayer databasePlayer = DatabaseManager.getPlayer(player);
@@ -928,6 +937,7 @@ public class WarlordsNewHotbarMenu {
             menu.setItem(5, 1, REWARD_INVENTORY_MENU, (m, e) -> RewardInventory.openRewardInventory(player, 1));
             menu.setItem(6, 1, ABILITY_TREE_MENU, (m, e) -> AbilityTreeCommand.open(player));
             menu.setItem(7, 1, VIAL_INVENTORY_MENU, (m, e) -> ConsumableMenu.openVialInventory(player));
+            menu.setItem(4, 2, DISCOVERY_JOURNAL_MENU, (m, e) -> DiscoveryJournalMenu.open(player));
 
             menu.setItem(3, 3, MENU_BACK, (m, e) -> WarlordsNewHotbarMenu.SelectionMenu.openWarlordsMenu(player));
             menu.setItem(4, 3, MENU_CLOSE, ACTION_CLOSE_MENU);
