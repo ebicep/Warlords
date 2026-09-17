@@ -81,17 +81,26 @@ public final class MobDiscovery {
         put(Mob.WANDER_WALKER, "At low health, recovers HP, gains speed, and resists knockback.");
         put(Mob.SLIME_GUARD, "Melee hits apply heavy Slowness.");
         put(Mob.FIRE_SPLITTER, "");
+        put(Mob.CELESTIAL_OPUS, "");
+        put(Mob.SOVEREIGN_GUARDIAN, "Freezes in place while any player is looking at it.");
 
         put(Mob.NIGHTMARE_ZOMBIE, "Reflects projectile damage, strips buffs on hit, and is knockback-immune.");
         put(Mob.PIG_PARTICLE, "Heals nearby allies and uses Prism Guard.");
         put(Mob.EXTREME_ZEALOT, "Melee hits slow enemies.");
         put(Mob.SMART_SKELETON, "Strafes while shooting Fireballs.");
         put(Mob.SKELETAL_SORCERER, "Fireballs, Blighted Scorch DoT, and wounding melee; immune to knockback and slows.");
-        put(Mob.CELESTIAL_OPUS, "");
         put(Mob.OBSIDIAN_SENTINEL, "");
         put(Mob.SLIMY_CHESS, "Drains energy and slows nearby players with Blob.");
-        put(Mob.SOVEREIGN_GUARDIAN, "Freezes in place while any player is looking at it.");
         put(Mob.ABYSS_WATCHER, "Watches a player and punishes them for casting too many abilities.");
+        put(Mob.ENDERMAN_ANOMALY, "Taine teleports around the map and kidnaps a nearby player; melee hits slow.");
+        put(Mob.LANTERN_DREDGER, "Lantern Glow grants nearby allies 30% damage reduction; Blackout blinds players in the aura.");
+        put(Mob.BARNACLE_BRUTE, "Hooks the farthest player, pulls them in, and slows them.");
+        put(Mob.SILTSTALKER, "Submerges, becomes untargetable, then emerges behind a player; the follow-up hit Weakens.");
+        put(Mob.VOID_JAILER, "Seals a player in a Void Prison; allies must damage the Jailer to break it. The trapped player deals reduced damage and is punished for leaving the circle.");
+        put(Mob.SOULBINDER, "Immune while Bound Archers live. Killing them exposes it briefly before it rebinds a new set.");
+        put(Mob.DEVOURING_IDOL, "Stationary. Nearby ability casts charge Energy; at 100% it pulses heavy damage and shields allied mobs.");
+        put(Mob.ENAVURITE, "Leashed to Enavuris; melee heals the boss. Immune to Crippling Strike.");
+        put(Mob.VANISHING_ENAVURITE, "Invisible and faster until damaged; crits force Enavuris to target that player. Cannot be stunned.");
 
         put(Mob.BOLTARO_SHADOW, "Melee hits knock back.");
         put(Mob.BOLTARO_EXLIED, "Shoots Fireballs.");

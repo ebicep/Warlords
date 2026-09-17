@@ -1395,7 +1395,16 @@ public enum Mob {
             SKELETAL_SORCERER,
             OBSIDIAN_SENTINEL,
             SLIMY_CHESS,
-            ABYSS_WATCHER
+            ABYSS_WATCHER,
+            ENDERMAN_ANOMALY,
+            LANTERN_DREDGER,
+            BARNACLE_BRUTE,
+            SILTSTALKER,
+            VOID_JAILER,
+            SOULBINDER,
+            DEVOURING_IDOL,
+            ENAVURITE,
+            VANISHING_ENAVURITE
     };
     public static final Mob[] BOSS_MINIONS = {
             BOLTARO_SHADOW,
