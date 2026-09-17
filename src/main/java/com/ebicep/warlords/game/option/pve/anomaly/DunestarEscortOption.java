@@ -381,8 +381,6 @@ public class DunestarEscortOption extends AbstractAnomalyOption {
         }
 
         checkpointChargeKills++;
-        Bukkit.broadcast(Component.text(checkpointChargeKills));
-        Bukkit.broadcast(Component.text(getRequiredChargeTicks()));
     }
 
     private void completeCheckpointCharge() {
