@@ -59,7 +59,7 @@ public class EndlessParadoxOption extends AbstractAnomalyOption {
     private static final int ALTAR_CHARGE_TICKS = 15 * GameRunnable.SECOND;
     private static final int BOSS_SPAWN_DELAY_TICKS = 3 * GameRunnable.SECOND;
     private static final int BASE_FRAGMENT_COUNT = 3;
-    private static final int BASE_GUARDS_PER_FRAGMENT = 2;
+    private static final int BASE_GUARDS_PER_FRAGMENT = 3;
     private static final int FRAGMENT_WAVE_SIZE = 2;
     private static final int MAX_SCATTER_ATTEMPTS = 80;
     private static final int GROUND_SEARCH_RANGE = 16;

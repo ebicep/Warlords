@@ -19,11 +19,11 @@ public class ClockboundPhantom extends AbstractMob implements IntermediateMob {
         super(
                 spawnLocation,
                 "Clockbound Phantom",
-                3800,
+                5800,
                 0.30f,
                 10,
-                250,
-                400
+                500,
+                700
         );
     }
 
@@ -46,7 +46,7 @@ public class ClockboundPhantom extends AbstractMob implements IntermediateMob {
 
     @Override
     public void onAttack(WarlordsEntity attacker, WarlordsEntity receiver, WarlordsDamageHealingEvent event) {
-        receiver.getCooldownManager().subtractTicksOnRegularCooldowns(8, CooldownTypes.ABILITY);
+        receiver.getCooldownManager().subtractTicksOnRegularCooldowns(15, CooldownTypes.ABILITY);
         Utils.playGlobalSound(receiver.getLocation(), Sound.BLOCK_NOTE_BLOCK_BELL, 1.5f, 0.5f);
     }
 

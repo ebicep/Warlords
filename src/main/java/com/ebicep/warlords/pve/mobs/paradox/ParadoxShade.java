@@ -20,9 +20,9 @@ public class ParadoxShade extends AbstractMob implements IntermediateMob {
         super(
                 spawnLocation,
                 "Paradox Shade",
-                3200,
+                6000,
                 0.42f,
-                5,
+                10,
                 400,
                 550
         );
