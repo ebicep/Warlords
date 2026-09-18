@@ -39,7 +39,7 @@ public final class DiscoveryJournalMenu {
         menu.setItem(4, 0,
                 new ItemBuilder(Material.KNOWLEDGE_BOOK)
                         .name(Component.text("Discovery Journal", NamedTextColor.AQUA))
-                        .lore(WordWrap.wrap(Component.text("Track the enemies you have slain and every PvE resource.", NamedTextColor.GRAY), 160))
+                        .lore(WordWrap.wrap(Component.text("Track the enemies you have slain, every PvE resource, and each playable gamemode.", NamedTextColor.GRAY), 160))
                         .get(),
                 ACTION_DO_NOTHING
         );
@@ -62,6 +62,17 @@ public final class DiscoveryJournalMenu {
                         )
                         .get(),
                 (m, e) -> openMobs(player)
+        );
+
+        menu.setItem(4, 2,
+                new ItemBuilder(Material.COMPASS)
+                        .name(Component.text("Activities", NamedTextColor.AQUA))
+                        .lore(
+                                WordWrap.wrap(Component.text("Each playable gamemode and a short summary of how it is played.", NamedTextColor.GRAY), 160)
+                        )
+                        .addLore(Component.empty(), ComponentUtils.CLICK_TO_VIEW)
+                        .get(),
+                (m, e) -> openActivities(player, 1)
         );
 
         menu.setItem(6, 2,
@@ -138,6 +149,40 @@ public final class DiscoveryJournalMenu {
         }
 
         menu.setItem(4, 5, MENU_BACK, (m, e) -> openMobs(player));
+        menu.openForPlayer(player);
+    }
+
+    public static void openActivities(Player player, int page) {
+        Menu menu = new Menu("Activity Journal", 9 * 6);
+        List<ActivityDiscovery.Entry> entries = ActivityDiscovery.entries();
+        int start = (page - 1) * ITEMS_PER_PAGE;
+        int end = Math.min(start + ITEMS_PER_PAGE, entries.size());
+
+        for (int i = start; i < end; i++) {
+            int slot = i - start;
+            menu.setItem(slot % ITEMS_PER_ROW + 1, slot / ITEMS_PER_ROW + 1, activityItem(entries.get(i)), ACTION_DO_NOTHING);
+        }
+
+        if (page > 1) {
+            menu.setItem(0, 5,
+                    new ItemBuilder(Material.ARROW)
+                            .name(Component.text("Previous Page", NamedTextColor.GREEN))
+                            .lore(Component.text("Page " + (page - 1), NamedTextColor.YELLOW))
+                            .get(),
+                    (m, e) -> openActivities(player, page - 1)
+            );
+        }
+        if (end < entries.size()) {
+            menu.setItem(8, 5,
+                    new ItemBuilder(Material.ARROW)
+                            .name(Component.text("Next Page", NamedTextColor.GREEN))
+                            .lore(Component.text("Page " + (page + 1), NamedTextColor.YELLOW))
+                            .get(),
+                    (m, e) -> openActivities(player, page + 1)
+            );
+        }
+
+        menu.setItem(4, 5, MENU_BACK, (m, e) -> open(player));
         menu.openForPlayer(player);
     }
 
@@ -241,6 +286,18 @@ public final class DiscoveryJournalMenu {
 
         return new ItemBuilder(mob.getHead())
                 .name(Component.text(name, NamedTextColor.GREEN))
+                .lore(lore)
+                .get();
+    }
+
+    private static ItemStack activityItem(ActivityDiscovery.Entry entry) {
+        List<Component> lore = new ArrayList<>();
+        lore.add(Component.text(entry.category().displayName, entry.category().textColor));
+        lore.add(Component.empty());
+        lore.addAll(WordWrap.wrap(Component.text(entry.summary(), NamedTextColor.GRAY), 160));
+
+        return new ItemBuilder(entry.icon())
+                .name(Component.text(entry.gameMode().getName(), NamedTextColor.GREEN))
                 .lore(lore)
                 .get();
     }

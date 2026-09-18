@@ -890,7 +890,7 @@ public class WarlordsNewHotbarMenu {
                 .get();
         public static final ItemStack DISCOVERY_JOURNAL_MENU = new ItemBuilder(Material.KNOWLEDGE_BOOK)
                 .name(Component.text("Discovery Journal", NamedTextColor.AQUA))
-                .lore(WordWrap.wrap(Component.text("Browse discovered mobs and every PvE resource.", NamedTextColor.GRAY), 160))
+                .lore(WordWrap.wrap(Component.text("Browse discovered mobs, playable gamemodes, and every PvE resource.", NamedTextColor.GRAY), 160))
                 .addLore(
                         Component.empty(),
                         ComponentUtils.CLICK_TO_VIEW
