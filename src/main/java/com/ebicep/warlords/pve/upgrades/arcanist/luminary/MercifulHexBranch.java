@@ -75,6 +75,7 @@ public class MercifulHexBranch extends AbstractUpgradeBranch<MercifulHex> {
                    value.forEachValue(floatModifiable -> floatModifiable.addModifier(FloatModifiable.ModifierType.ADDITIVE_MULTIPLIER, "PvE", .15f));
                });
         ability.setMaxAlliesHit(3);
+        ability.setMaxEnemiesHit(3);
     }
 
 }

@@ -45,7 +45,7 @@ public class RayOfLight extends AbstractBeam<RayOfLight, RayOfLight.RayOfLightSt
     private static final int ORB_TICK_DURATION = 240;
     private static final int ORB_BEAM_INTERVAL_TICKS = 60;
     private static final int ORB_BEAM_COUNT = 2;
-    private static final float ORB_HEIGHT = 2.5f;
+    private static final float ORB_HEIGHT = 3.5f;
     private final RayOfLightStats stats = new RayOfLightStats();
     private final HealingValues healingValues = new HealingValues();
     private boolean removeDebuffs = true;
@@ -95,7 +95,7 @@ public class RayOfLight extends AbstractBeam<RayOfLight, RayOfLight.RayOfLightSt
             display.setTransformation(new Transformation(
                     new Vector3f(),
                     new Quaternionf(),
-                    new Vector3f(0.7f, 0.7f, 0.7f),
+                    new Vector3f(0.9f, 0.9f, 0.9f),
                     new Quaternionf()
             ));
         });
@@ -123,7 +123,7 @@ public class RayOfLight extends AbstractBeam<RayOfLight, RayOfLight.RayOfLightSt
                     }
                     Location orbLocation = getOrbLocation(shooter, ticksElapsed);
                     display.teleport(orbLocation);
-                    if (ticksElapsed % 5 == 0) {
+                    if (ticksElapsed % 20 == 0) {
                         EffectUtils.displayParticle(Particle.END_ROD, orbLocation, 1, 0.15, 0.15, 0.15, 0.01);
                     }
                     if (ticksElapsed % ORB_BEAM_INTERVAL_TICKS == 0) {
@@ -134,18 +134,16 @@ public class RayOfLight extends AbstractBeam<RayOfLight, RayOfLight.RayOfLightSt
     }
 
     private void fireOrbBeams(@Nonnull WarlordsEntity shooter, @Nonnull Location orbLocation) {
-        float range = maxDistance.getCalculatedValue();
         List<WarlordsEntity> targets = PlayerFilter
-                .entitiesAround(orbLocation, range, range, range)
-                .aliveTeammatesOf(shooter)
-                .filter(WarlordsPlayer.class::isInstance)
+                .entitiesAround(orbLocation, 10, 10, 10)
+                .aliveTeammatesOfExcludingSelf(shooter)
+//                .filter(WarlordsPlayer.class::isInstance)
                 .closestFirst(orbLocation)
                 .limit(ORB_BEAM_COUNT)
                 .toList();
-        int distance = (int) range;
         for (WarlordsEntity target : targets) {
             Location start = new LocationBuilder(orbLocation).faceTowards(target.getEyeLocation());
-            Location end = Utils.getTargetLocation(start, distance).clone().add(.5, .5, .5);
+            Location end = Utils.getTargetLocation(start, 10).clone().add(.5, .5, .5);
             Pair<Float, Float> animationData = getChainAnimationData((int) Math.ceil(start.distance(end)));
             EffectUtils.playChainAnimation(shooter.getGame(), start, end, getBeamItem(), animationData.getA(), animationData.getB(), 10);
             fire(shooter, start);
