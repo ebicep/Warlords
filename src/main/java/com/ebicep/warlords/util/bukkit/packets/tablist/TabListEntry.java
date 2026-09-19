@@ -16,7 +16,8 @@ public record TabListEntry(
         int latency,
         boolean listed,
         @Nullable String skinTexture,
-        @Nullable String skinSignature
+        @Nullable String skinSignature,
+        int listOrder
 ) {
 
     public TabListEntry {
@@ -25,26 +26,30 @@ public record TabListEntry(
     }
 
     public static TabListEntry of(UUID uuid, String profileName) {
-        return new TabListEntry(uuid, profileName, null, 0, true, null, null);
+        return new TabListEntry(uuid, profileName, null, 0, true, null, null, 0);
     }
 
     public static TabListEntry of(UUID uuid, String profileName, @Nullable Component displayName, int latency) {
-        return new TabListEntry(uuid, profileName, displayName, latency, true, null, null);
+        return new TabListEntry(uuid, profileName, displayName, latency, true, null, null, 0);
     }
 
     public TabListEntry withDisplayName(@Nullable Component displayName) {
-        return new TabListEntry(uuid, profileName, displayName, latency, listed, skinTexture, skinSignature);
+        return new TabListEntry(uuid, profileName, displayName, latency, listed, skinTexture, skinSignature, listOrder);
     }
 
     public TabListEntry withLatency(int latency) {
-        return new TabListEntry(uuid, profileName, displayName, latency, listed, skinTexture, skinSignature);
+        return new TabListEntry(uuid, profileName, displayName, latency, listed, skinTexture, skinSignature, listOrder);
     }
 
     public TabListEntry withListed(boolean listed) {
-        return new TabListEntry(uuid, profileName, displayName, latency, listed, skinTexture, skinSignature);
+        return new TabListEntry(uuid, profileName, displayName, latency, listed, skinTexture, skinSignature, listOrder);
     }
 
     public TabListEntry withSkin(@Nullable String texture, @Nullable String signature) {
-        return new TabListEntry(uuid, profileName, displayName, latency, listed, texture, signature);
+        return new TabListEntry(uuid, profileName, displayName, latency, listed, texture, signature, listOrder);
+    }
+
+    public TabListEntry withListOrder(int listOrder) {
+        return new TabListEntry(uuid, profileName, displayName, latency, listed, skinTexture, skinSignature, listOrder);
     }
 }

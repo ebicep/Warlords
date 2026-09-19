@@ -12,6 +12,7 @@ import com.ebicep.warlords.Warlords;
 import com.ebicep.warlords.commands.debugcommands.misc.MountCommand;
 import com.ebicep.warlords.database.repositories.config.ConfigManager;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
+import com.ebicep.warlords.util.bukkit.packets.tablist.TabListPacketListener;
 import com.ebicep.warlords.util.bukkit.packets.wrappers.WrapperPlayClientSteerVehicle;
 import com.ebicep.warlords.util.chat.ChatChannels;
 import net.minecraft.network.protocol.game.ClientboundAnimatePacket;
@@ -82,6 +83,7 @@ public class PacketUtils {
                     }
                 }
         );
+        TabListPacketListener.register(instance);
     }
 
     public static void removeEntityForPlayer(Player player, int entityId) {

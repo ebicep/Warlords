@@ -61,7 +61,7 @@ public class GuildTag {
         this.name = name;
         this.nameColor = nameColor;
         this.bracketColor = bracketColor;
-        CustomScoreboard.updateLobbyPlayerNames();
+        CustomScoreboard.refreshLobbyPlayerDisplays();
     }
 
     public Component getColoredName() {
@@ -75,7 +75,7 @@ public class GuildTag {
 
     public void setName(String name) {
         this.name = name.toUpperCase();
-        CustomScoreboard.updateLobbyPlayerNames();
+        CustomScoreboard.refreshLobbyPlayerDisplays();
     }
 
     @Nonnull
@@ -85,7 +85,7 @@ public class GuildTag {
 
     public void setNameColor(NamedTextColor nameColor) {
         this.nameColor = nameColor.toString();
-        CustomScoreboard.updateLobbyPlayerNames();
+        CustomScoreboard.refreshLobbyPlayerDisplays();
     }
 
     @Nonnull
@@ -95,6 +95,6 @@ public class GuildTag {
 
     public void setBracketColor(NamedTextColor bracketColor) {
         this.bracketColor = bracketColor.toString();
-        CustomScoreboard.updateLobbyPlayerNames();
+        CustomScoreboard.refreshLobbyPlayerDisplays();
     }
 }

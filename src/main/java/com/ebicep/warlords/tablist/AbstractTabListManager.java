@@ -77,10 +77,52 @@ public abstract class AbstractTabListManager {
         dirtyViewers.add(viewerId);
     }
 
+    /**
+     * Register the viewer and apply layout on this tick (bypasses the UUID dirty bucket).
+     * Used for lobby ↔ game handoff so the client does not sit on an empty tab for up to
+     * {@link #UPDATE_INTERVAL} ticks.
+     */
+    public void addViewerAndFlush(@Nonnull UUID viewerId) {
+        addViewer(viewerId);
+        flushViewerNow(viewerId);
+    }
+
+    /**
+     * Immediately pack + apply layout for one viewer, activating the session if needed.
+     */
+    public void flushViewerNow(@Nonnull UUID viewerId) {
+        TabViewerSession session = sessions.computeIfAbsent(viewerId, TabViewerSession::new);
+        Player player = resolvePlayer(viewerId);
+        if (player == null) {
+            dirtyViewers.remove(viewerId);
+            return;
+        }
+        if (!session.isActive()) {
+            session.activateAndHideReals();
+        }
+        List<TabGroup> groups = getGroups();
+        TabLayoutEngine.LayoutResult layout = TabLayoutEngine.pack(groups, viewerId);
+        session.applyLayout(layout);
+        for (TabGroup group : groups) {
+            for (TabSubgroup subgroup : group.getSubgroups()) {
+                subgroup.clearPlayerDirty(viewerId);
+            }
+        }
+        dirtyViewers.remove(viewerId);
+    }
+
     public void removeViewer(@Nonnull UUID viewerId) {
+        removeViewer(viewerId, true);
+    }
+
+    /**
+     * @param restoreListed when false, fake slots are cleared but real players stay {@code listed=false}
+     *                      (use for handoff to another custom tab scope to avoid a vanilla flash)
+     */
+    public void removeViewer(@Nonnull UUID viewerId, boolean restoreListed) {
         TabViewerSession session = sessions.remove(viewerId);
         if (session != null) {
-            session.deactivate();
+            session.deactivate(restoreListed);
         }
         dirtyViewers.remove(viewerId);
         for (TabGroup group : groupsByName.values()) {
@@ -94,6 +136,7 @@ public abstract class AbstractTabListManager {
         for (TabViewerSession session : sessions.values()) {
             session.hideRealIfActive(realPlayerId);
         }
+        markAllDirty();
     }
 
     public void onRealPlayerQuit(@Nonnull UUID realPlayerId) {

@@ -1,19 +1,23 @@
 package com.ebicep.warlords.game.option;
 
+import com.ebicep.warlords.Warlords;
 import com.ebicep.warlords.game.Game;
 import com.ebicep.warlords.game.GameMode;
 import com.ebicep.warlords.tablist.GameTabListManager;
 import com.ebicep.warlords.tablist.LobbyTabListManager;
 import com.ebicep.warlords.util.warlords.GameRunnable;
+import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
+import org.bukkit.scheduler.BukkitRunnable;
 
 import javax.annotation.Nonnull;
 import java.util.List;
 import java.util.Optional;
+import java.util.UUID;
 
 /**
  * Owns the per-game {@link GameTabListManager}: poller, join/quit hide hooks, cleanup on close.
@@ -76,8 +80,8 @@ public class CustomTabListOption implements Option {
         // Move viewers off lobby tab when match play begins
         game.onlinePlayers().forEach(entry -> {
             Player player = entry.getKey();
-            LobbyTabListManager.get().removeViewer(player.getUniqueId());
-            manager.addViewer(player.getUniqueId());
+            LobbyTabListManager.get().onLeaveLobby(player.getUniqueId());
+            manager.addViewerAndFlush(player.getUniqueId());
         });
 
         new GameRunnable(game) {
@@ -101,15 +105,35 @@ public class CustomTabListOption implements Option {
         if (manager == null) {
             return;
         }
-        LobbyTabListManager.get().removeViewer(player.getUniqueId());
-        manager.addViewer(player.getUniqueId());
+        LobbyTabListManager.get().onLeaveLobby(player.getUniqueId());
+        manager.addViewerAndFlush(player.getUniqueId());
     }
 
+    /**
+     * Leave game tab and, if the player is still on the server next tick, re-enter lobby tab.
+     * Deferred one tick so disconnects (player still non-null during {@link PlayerQuitEvent})
+     * do not re-add a ghost UUID to the lobby viewer set.
+     * <p>
+     * Manual checks: (1) quit from public PreLobby — name disappears from others' Tab;
+     * (2) leave match to lobby while online — lobby tab returns without a long empty flash;
+     * (3) promote a lobby player — Tab prefix updates without join/leave churn.
+     */
     @Override
     public void onPlayerQuit(@Nonnull Player player) {
         if (manager == null) {
             return;
         }
-        manager.removeViewer(player.getUniqueId());
+        UUID id = player.getUniqueId();
+        // Keep listed=false across handoff so the client never flashes the vanilla tab
+        manager.removeViewer(id, false);
+        new BukkitRunnable() {
+            @Override
+            public void run() {
+                Player online = Bukkit.getPlayer(id);
+                if (online != null && LobbyTabListManager.isLobbyViewer(online)) {
+                    LobbyTabListManager.get().onEnterLobby(id);
+                }
+            }
+        }.runTaskLater(Warlords.getInstance(), 1L);
     }
 }

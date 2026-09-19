@@ -17,6 +17,7 @@ import com.ebicep.warlords.guilds.GuildPlayer;
 import com.ebicep.warlords.guilds.GuildTag;
 import com.ebicep.warlords.permissions.Permissions;
 import com.ebicep.warlords.pve.Currencies;
+import com.ebicep.warlords.tablist.LobbyTabListManager;
 import com.ebicep.warlords.util.java.Pair;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.TextComponent;
@@ -266,6 +267,11 @@ public class CustomScoreboard {
             }
             CustomScoreboard.getPlayerScoreboard(onlinePlayer).applyLobbyNameDisplays(displays);
         }
+    }
+
+    public static void refreshLobbyPlayerDisplays() {
+        updateLobbyPlayerNames();
+        LobbyTabListManager.get().refreshPlayerRows();
     }
 
     public static void applyLobbyPlayerNameToOthers(Player joined) {

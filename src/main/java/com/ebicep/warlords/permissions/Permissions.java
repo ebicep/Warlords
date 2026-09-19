@@ -89,7 +89,7 @@ public enum Permissions {
                 List<String> permissions = permissionsFromUser(user);
                 syncPermissionsToDatabase(uuid, permissions);
                 validateHonorificSupporterAccess(uuid, isSupporterPermissionList(permissions));
-                CustomScoreboard.updateLobbyPlayerNames();
+                CustomScoreboard.refreshLobbyPlayerDisplays();
             }
         }.runTaskLater(Warlords.getInstance(), delayTicks);
     }

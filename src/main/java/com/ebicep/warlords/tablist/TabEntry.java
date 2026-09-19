@@ -7,6 +7,10 @@ import java.util.Objects;
 
 /**
  * Resolved content for one custom tab-list row (viewer-specific after {@link TabEntrySource} runs).
+ * <p>
+ * For rows that mirror an online player, set {@link #logicalId} to that player's UUID string
+ * ({@code playerId.toString()}). {@link TabViewerSession} then uses the real username as the
+ * GameProfile name so chat Tab-complete suggests the player instead of a decorative slot name.
  */
 public record TabEntry(
         @Nullable Component displayName,
@@ -38,13 +42,6 @@ public record TabEntry(
 
     public TabEntry withLogicalId(@Nullable String logicalId) {
         return new TabEntry(displayName, latency, skinTexture, skinSignature, logicalId);
-    }
-
-    boolean sameVisual(TabEntry other) {
-        return latency == other.latency
-                && Objects.equals(displayName, other.displayName)
-                && Objects.equals(skinTexture, other.skinTexture)
-                && Objects.equals(skinSignature, other.skinSignature);
     }
 
     boolean sameSkin(TabEntry other) {

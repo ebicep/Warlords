@@ -88,7 +88,7 @@ public class GuildCommand extends BaseCommand {
         }
         GuildManager.removeGuildInvite(player, guild);
         guild.join(player);
-        CustomScoreboard.updateLobbyPlayerNames();
+        CustomScoreboard.refreshLobbyPlayerDisplays();
     }
 
     @Subcommand("menu")

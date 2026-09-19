@@ -33,7 +33,8 @@ public final class TabListPackets {
             Action.UPDATE_GAME_MODE,
             Action.UPDATE_LISTED,
             Action.UPDATE_LATENCY,
-            Action.UPDATE_DISPLAY_NAME
+            Action.UPDATE_DISPLAY_NAME,
+            Action.UPDATE_LIST_ORDER
     );
 
     private TabListPackets() {
@@ -121,7 +122,7 @@ public final class TabListPackets {
                 GameType.SURVIVAL,
                 toVanilla(entry.displayName()),
                 true,
-                0,
+                entry.listOrder(),
                 null
         );
     }

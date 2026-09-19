@@ -206,6 +206,7 @@ public class Guild {
         sendGuildMessage(player, Component.text("You left the guild!", NamedTextColor.RED));
         log(new GuildLogLeave(player.getUniqueId()));
         queueUpdate();
+        CustomScoreboard.refreshLobbyPlayerDisplays();
     }
 
     public static void sendGuildMessage(Player player, Component message) {
@@ -243,6 +244,7 @@ public class Guild {
         sendGuildMessageToOnlinePlayers(Component.text(target.getName(), NamedTextColor.AQUA).append(Component.text(" was kicked from the guild!", NamedTextColor.RED)), true);
         log(new GuildLogKick(sender.getUUID(), target.getUUID()));
         queueUpdate();
+        CustomScoreboard.refreshLobbyPlayerDisplays();
     }
 
     public GuildRole getRoleOfPlayer(UUID uuid) {
@@ -304,6 +306,7 @@ public class Guild {
         GuildManager.removeGuild(this);
         sendGuildMessageToOnlinePlayers(Component.text("The guild has been disbanded!", NamedTextColor.RED), true);
         queueUpdate();
+        CustomScoreboard.refreshLobbyPlayerDisplays();
     }
 
     public Component getList() {
@@ -392,7 +395,7 @@ public class Guild {
 
     public void setTag(GuildTag tag) {
         this.tag = tag;
-        CustomScoreboard.updateLobbyPlayerNames();
+        CustomScoreboard.refreshLobbyPlayerDisplays();
     }
 
     public void setTag(GuildPlayer sender, String tagName) {
@@ -407,7 +410,7 @@ public class Guild {
         }
         sendGuildMessageToOnlinePlayers(Component.text("The guild tag was changed to ", NamedTextColor.GREEN).append(Component.text(tagName, NamedTextColor.GOLD)), true);
         queueUpdate();
-        CustomScoreboard.updateLobbyPlayerNames();
+        CustomScoreboard.refreshLobbyPlayerDisplays();
     }
 
     public Instant getCreationDate() {

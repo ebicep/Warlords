@@ -77,10 +77,6 @@ public class TabSubgroup {
         playerDirty.add(Objects.requireNonNull(viewer, "viewer"));
     }
 
-    public boolean isDirty(@Nonnull UUID viewer) {
-        return globalDirty || playerDirty.contains(viewer);
-    }
-
     public boolean isGlobalDirty() {
         return globalDirty;
     }
@@ -99,13 +95,6 @@ public class TabSubgroup {
         }
         globalDirty = false;
         return true;
-    }
-
-    /**
-     * Clears per-viewer dirty after a successful flush for that viewer.
-     */
-    public boolean consumePlayerDirty(@Nonnull UUID viewer) {
-        return playerDirty.remove(viewer);
     }
 
     void clearPlayerDirty(@Nonnull UUID viewer) {

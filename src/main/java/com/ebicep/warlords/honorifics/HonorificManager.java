@@ -212,7 +212,7 @@ public final class HonorificManager {
 
     public static void refreshDisplays(@Nullable Player player) {
         runSync(() -> {
-            CustomScoreboard.updateLobbyPlayerNames();
+            CustomScoreboard.refreshLobbyPlayerDisplays();
             if (player != null) {
                 player.playerListName(null);
             }
