@@ -12,7 +12,6 @@ import com.ebicep.warlords.player.ingame.cooldowns.cooldowns.RegularCooldown;
 import com.ebicep.warlords.player.ingame.instances.InstanceBuilder;
 import com.ebicep.warlords.player.ingame.instances.type.CustomInstanceFlags;
 import com.ebicep.warlords.player.ingame.instances.type.Modifier;
-import com.ebicep.warlords.player.ingame.instances.type.PlayerNameInstance;
 import com.ebicep.warlords.pve.upgrades.AbilityTree;
 import com.ebicep.warlords.pve.upgrades.AbstractUpgradeBranch;
 import com.ebicep.warlords.pve.upgrades.arcanist.sentinel.FortifyingHexBranch;
@@ -91,7 +90,7 @@ public class FortifyingHex extends AbstractPiercingProjectile<FortifyingHex, For
             }
 
             @Override
-            public TextColor customActionBarColor() {
+            public TextColor customActionBarColor(WarlordsEntity warlordsEntity) {
                 return NamedTextColor.YELLOW;
             }
         };
