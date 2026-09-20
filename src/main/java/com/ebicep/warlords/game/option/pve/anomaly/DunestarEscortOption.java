@@ -577,7 +577,8 @@ public class DunestarEscortOption extends AbstractAnomalyOption {
     }
 
     private int getRequiredChargeTicks() {
-        return Math.max(0, CHECKPOINT_CHARGE_TICKS + (10 * playerCount()) - checkpointChargeKills * CHECKPOINT_CHARGE_REDUCTION_TICKS_PER_KILL);
+        int chargeTicks = playerCount() > 2 ? CHECKPOINT_CHARGE_TICKS + ((10 * GameRunnable.SECOND) * playerCount()) : CHECKPOINT_CHARGE_TICKS;
+        return Math.max(0, chargeTicks - checkpointChargeKills * CHECKPOINT_CHARGE_REDUCTION_TICKS_PER_KILL);
     }
 
     private int getCheckpointChargeSecondsRemaining() {

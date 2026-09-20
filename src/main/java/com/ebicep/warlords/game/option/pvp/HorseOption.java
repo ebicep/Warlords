@@ -234,7 +234,14 @@ public class HorseOption implements Option, Listener {
 
     @EventHandler
     public void onWarlordsPlayerClassRightClickEvent(WarlordsPlayerClassRightClickEvent event) {
-        getHorseForPlayer(event.getWarlordsEntity()).kill();
+        WarlordsHorseAbilityDismountEvent dismountEvent = new WarlordsHorseAbilityDismountEvent(
+                event.getWarlordsEntity(),
+                event.getAbility()
+        );
+        Bukkit.getPluginManager().callEvent(dismountEvent);
+        if (!dismountEvent.isCancelled()) {
+            getHorseForPlayer(event.getWarlordsEntity()).kill();
+        }
     }
 
     @EventHandler(priority = EventPriority.MONITOR)

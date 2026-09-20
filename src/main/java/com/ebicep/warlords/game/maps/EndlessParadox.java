@@ -10,10 +10,10 @@ import java.util.List;
 
 public class EndlessParadox extends AbstractAnomalyMap {
 
-    private static final double[] ALTAR_LOCATION = {0.5, 90, 0.5};
+    private static final double[] ALTAR_LOCATION = {0, 90, 0};
 
     public EndlessParadox() {
-        super("Endless Paradox", "AnomalyTest", ALTAR_LOCATION);
+        super("Endless Paradox", "EndlessParadox", ALTAR_LOCATION);
     }
 
     @Override

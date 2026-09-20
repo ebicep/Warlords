@@ -12,6 +12,7 @@ import com.ebicep.warlords.player.ingame.cooldowns.CooldownFilter;
 import com.ebicep.warlords.player.ingame.cooldowns.CooldownTypes;
 import com.ebicep.warlords.player.ingame.cooldowns.cooldowns.RegularCooldown;
 import com.ebicep.warlords.player.ingame.instances.InstanceBuilder;
+import com.ebicep.warlords.player.ingame.instances.InstanceFlags;
 import com.ebicep.warlords.player.ingame.instances.type.Modifier;
 import com.ebicep.warlords.pve.upgrades.AbilityTree;
 import com.ebicep.warlords.pve.upgrades.AbstractUpgradeBranch;
@@ -140,8 +141,9 @@ public class DivineBlessing extends AbstractAbility implements OrangeAbilityIcon
                                                     convertToMultiplicationDecimal(hexHealingBonus),
                                                     contribution -> stats.healingIncreased += Math.abs(contribution)
                                             );
-                                                }
-                                        ));
+                                        }).addModifier(Modifier.MODIFY_OUTGOING_DAMAGE_BEFORE_VARIABLE_SET, (event) -> {
+                                            event.getFlags().add(InstanceFlags.PIERCE);
+                                        }));
                                     });
                     }
                 })
