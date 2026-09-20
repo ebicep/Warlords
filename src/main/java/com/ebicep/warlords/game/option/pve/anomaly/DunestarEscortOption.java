@@ -51,7 +51,7 @@ import java.util.concurrent.ThreadLocalRandom;
 public class DunestarEscortOption extends AbstractAnomalyOption {
 
     private static final int SEGMENT_DURATION_TICKS = 120 * GameRunnable.SECOND;
-    private static final int CHECKPOINT_CHARGE_TICKS = 150 * GameRunnable.SECOND;
+    private static final int CHECKPOINT_CHARGE_TICKS = 90 * GameRunnable.SECOND;
     private static final int CHECKPOINT_CHARGE_REDUCTION_TICKS_PER_KILL = GameRunnable.SECOND;
     private static final int MOB_SPAWN_INTERVAL = 10;
     private static final int LASER_INTERVAL_TICKS = 15 * GameRunnable.SECOND;
@@ -108,22 +108,9 @@ public class DunestarEscortOption extends AbstractAnomalyOption {
         game.registerEvents(new Listener() {
             @EventHandler(priority = EventPriority.LOWEST, ignoreCancelled = true)
             public void onDamage(WarlordsDamageHealingEvent event) {
-                if (carrier != null
-                        && event.isDamageInstance()
-                        && event.getSource() == carrier
-                        && event.getWarlordsEntity() != carrier
-                ) {
-                    event.setCancelled(true);
-                }
-            }
+                if (carrier != null && event.getSource() == carrier) {
 
-            @EventHandler(priority = EventPriority.LOWEST, ignoreCancelled = true)
-            public void onAbility(WarlordsAbilityActivateEvent.Pre event) {
-                if (carrier == null || event.getWarlordsEntity() != carrier || event.getSlot() != 0) {
-                    return;
                 }
-                event.setCancelled(true);
-                event.getPlayer().sendActionBar(Component.text("The relic prevents you from using your primary skill.", NamedTextColor.RED));
             }
 
             @EventHandler(ignoreCancelled = true)
@@ -315,6 +302,12 @@ public class DunestarEscortOption extends AbstractAnomalyOption {
                     FloatModifiable.ModifierType.MULTIPLICATIVE_MULTIPLIER,
                     "Dunestar Relic",
                     ABILITY_COOLDOWN_MULTIPLIER
+            ));
+
+            carrierCooldownModifiers.add(abilities.get(i).getEnergyCost().addModifier(
+                    FloatModifiable.ModifierType.MULTIPLICATIVE_MULTIPLIER,
+                    "Dunestar Relic",
+                    2
             ));
         }
 
@@ -570,7 +563,7 @@ public class DunestarEscortOption extends AbstractAnomalyOption {
     }
 
     private int getMaximumMobCount() {
-        return 6 + playerCount() * 4 + nextRouteIndex * 2;
+        return 5 + playerCount() * 3 + nextRouteIndex * 2;
     }
 
     private String getNextDestinationName() {
@@ -584,7 +577,7 @@ public class DunestarEscortOption extends AbstractAnomalyOption {
     }
 
     private int getRequiredChargeTicks() {
-        return Math.max(0, CHECKPOINT_CHARGE_TICKS - checkpointChargeKills * CHECKPOINT_CHARGE_REDUCTION_TICKS_PER_KILL);
+        return Math.max(0, CHECKPOINT_CHARGE_TICKS + (10 * playerCount()) - checkpointChargeKills * CHECKPOINT_CHARGE_REDUCTION_TICKS_PER_KILL);
     }
 
     private int getCheckpointChargeSecondsRemaining() {

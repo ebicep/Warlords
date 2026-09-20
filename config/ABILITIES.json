@@ -1623,7 +1623,7 @@
         "enemiesAffected": 3,
         "linkBreakRadius": 18,
         "castRange": 12,
-        "maxHealthDamage": 4,
+        "maxHealthDamage": 3,
         "healRadius": 6,
         "healCap": 700
       },
