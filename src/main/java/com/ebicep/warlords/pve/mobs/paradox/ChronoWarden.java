@@ -18,7 +18,7 @@ public class ChronoWarden extends AbstractMob implements IntermediateMob {
         super(
                 spawnLocation,
                 "Chrono Warden",
-                4500,
+                8500,
                 0.28f,
                 15,
                 350,

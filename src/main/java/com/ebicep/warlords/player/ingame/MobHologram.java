@@ -238,7 +238,7 @@ public abstract class MobHologram {
         private void configureTextDisplay(TextDisplay textDisplay, CustomHologramLine customHologramLine, float displaySize) {
             textDisplay.setBillboard(Display.Billboard.CENTER);
             textDisplay.setCustomNameVisible(false);
-            textDisplay.setSeeThrough(false);
+            textDisplay.setSeeThrough(true);
             textDisplay.setTeleportDuration(TELEPORT_DURATION);
             textDisplay.setViewRange(viewRange);
             applyDisplaySize(textDisplay, displaySize);

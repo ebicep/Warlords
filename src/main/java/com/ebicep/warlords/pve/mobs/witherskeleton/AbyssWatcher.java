@@ -13,6 +13,8 @@ import com.ebicep.warlords.util.warlords.PlayerFilter;
 import com.ebicep.warlords.util.warlords.Utils;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
+import net.kyori.adventure.title.Title;
+import net.kyori.adventure.util.Ticks;
 import org.bukkit.Location;
 import org.bukkit.Particle;
 import org.bukkit.Sound;
@@ -28,10 +30,10 @@ public class AbyssWatcher extends AbstractMob implements ChampionMob, Listener {
     private static final int WATCH_COOLDOWN_TICKS = 15 * 20; // 15sec
     private static final int WATCH_DURATION_TICKS = 5 * 20;  // 5sec
     private static final int INITIAL_WATCH_DELAY_TICKS = 3 * 20;
-    private static final int CASTS_BEFORE_PUNISH = 3;
+    private static final int CASTS_BEFORE_PUNISH = 4;
     private static final int PUNISH_DAMAGE = 5000;
     private static final int ENERGY_DRAIN = 100;
-    private static final int WATCH_RANGE = 25;
+    private static final int WATCH_RANGE = 20;
 
     private WarlordsEntity watchedTarget;
     private int watchedTicksLeft = 0;
@@ -117,6 +119,11 @@ public class AbyssWatcher extends AbstractMob implements ChampionMob, Listener {
         watchedCasts++;
 
         watchedTarget.sendMessage(Component.text("The Abyss Watcher tightens its gaze. [" + watchedCasts + "/" + CASTS_BEFORE_PUNISH + "]", NamedTextColor.DARK_PURPLE));
+        watchedTarget.getEntity().showTitle(Title.title(
+                Component.empty(),
+                Component.text("YOU'RE BEING WATCHED...", NamedTextColor.DARK_PURPLE),
+                Title.Times.times(Ticks.duration(0), Ticks.duration(30), Ticks.duration(0))
+        ));
         watchedTarget.playSound(watchedTarget.getLocation(), Sound.BLOCK_RESPAWN_ANCHOR_CHARGE, 1, 0.6f);
 
         if (watchedCasts >= CASTS_BEFORE_PUNISH) {
