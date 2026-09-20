@@ -382,7 +382,7 @@ public class DeathsDebt extends AbstractTotem implements Duration, AbilityStats<
 
         for (WarlordsEntity ally : PlayerFilter
                 .entitiesAround(totemLocation, respiteRadius, respiteRadius, respiteRadius)
-                .aliveTeammatesOf(wp)
+                .aliveTeammatesOfExcludingSelf(wp)
         ) {
             reduceAllyCooldowns(ally);
             applyRiteAttackSpeed(wp, ally);
