@@ -65,6 +65,11 @@ public class FlagRenderer {
         return lastLocation;
     }
 
+    public void forceRender() {
+        reset();
+        render();
+    }
+
     public void checkRender() {
         if (this.lastLocation != info.getFlag()) {
             this.render();
