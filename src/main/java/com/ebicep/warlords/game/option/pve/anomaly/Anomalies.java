@@ -173,8 +173,8 @@ public enum Anomalies {
             ),
             List.of(
                     new AnomalyRewardPool("Paradox Cache I", 600, 75, 1, 0.10),
-                    new AnomalyRewardPool("Paradox Cache II", 800, 100, 1, 0.20),
-                    new AnomalyRewardPool("Paradox Cache III", 1_200, 150, 2, 0.30)
+                    new AnomalyRewardPool("Paradox Cache II", 800, 100, 1, 0.15),
+                    new AnomalyRewardPool("Paradox Cache III", 1_200, 150, 2, 0.20)
             ),
             new AnomalyMobSet()
                     .add(0.4, Mob.ZOMBIE_LAMENT)

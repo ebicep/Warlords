@@ -42,7 +42,7 @@ public class SanctifiedBeacon extends AbstractBeaconAbility<SanctifiedBeacon, Sa
     private int critMultiplierReducedBy = 25;
     private int hexIntervalTicks = 60;
     private int stacksGranted = 1;
-    private float damageReductionPve = 30;
+    private float damageReductionPve = 25;
 
     private ChasingOrbsAbility chasingItemDamage;
     private ChasingOrbsAbility chasingItemHealing;
@@ -67,6 +67,22 @@ public class SanctifiedBeacon extends AbstractBeaconAbility<SanctifiedBeacon, Sa
 
     @Override
     public Component getBonusDescription() {
+        if (isInPve()) {
+            return AbilityDescriptionBuilder.create("All enemies within a ")
+                    .blocks(radius)
+                    .text(" radius have their damage reduced by ")
+                    .percent(damageReductionPve, NamedTextColor.RED)
+                    .text(". The beacon will emit a wave of energy that grants ")
+                    .text(maxAllies, NamedTextColor.BLUE)
+                    .text(" allies in range ")
+                    .text(stacksGranted, NamedTextColor.BLUE)
+                    .text(" stack" + (stacksGranted != 1 ? "s" : "") + " of ")
+                    .text("MHEX", NamedTextColor.DARK_GREEN)
+                    .text(" every ")
+                    .durationTicks(hexIntervalTicks)
+                    .text(".")
+                    .build();
+        }
         return AbilityDescriptionBuilder.create("All enemies within a ")
                                         .blocks(radius)
                                         .text(" radius have their Crit Multiplier reduced by ")
@@ -198,21 +214,6 @@ public class SanctifiedBeacon extends AbstractBeaconAbility<SanctifiedBeacon, Sa
                             }
                             nearBy.getSpeed().removeModifier(name);
                             nearBy.addSpeedModifier(wp, name, -30, 9999);
-                            nearBy.getCooldownManager().removeCooldownByName("Shadow Garden");
-                            nearBy.getCooldownManager()
-                                  .addCooldown(new PermanentCooldown<>(
-                                          "Shadow Garden",
-                                          "GARDEN",
-                                          SanctifiedBeacon.class,
-                                          null,
-                                          wp,
-                                          CooldownTypes.ABILITY,
-                                          cooldownManager -> {},
-                                          false
-                                  ).addModifier(Modifier.MODIFY_OUTGOING_DAMAGE_BEFORE_INTERVENE, (event, currentDamageValue) -> {
-                                      currentDamageValue.addModifier(FloatModifiable.ModifierType.MULTIPLICATIVE_MULTIPLIER, name, 0.7f);
-                                          }
-                                  ));
                         }
                     }
                 }
@@ -249,7 +250,7 @@ public class SanctifiedBeacon extends AbstractBeaconAbility<SanctifiedBeacon, Sa
             EffectUtils.playCircularEffectAround(wp.getGame(), crystal.getLocation(), Particle.TOTEM_OF_UNDYING, 3, 1, 0.15, 4, 1, 4);
             EffectUtils.playCircularEffectAround(wp.getGame(), crystal.getLocation(), Particle.HAPPY_VILLAGER, 1, 1, 0.1, 8, 1, 3);
         }
-        if (ticksElapsed > 0 && pveMasterUpgrade) {
+        if (pveMasterUpgrade) {
             if (ticksElapsed % 120 == 0) {
                 chasingItemDamage.start(wp.getGame());
             } else if (ticksElapsed % 150 == 0) {

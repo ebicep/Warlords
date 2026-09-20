@@ -1294,7 +1294,7 @@
         "critMultiplierReducedBy": 25,
         "hexIntervalTicks": 60,
         "stacksGranted": 1,
-        "damageReductionPve": 30,
+        "damageReductionPve": 25,
         "radius": 8,
         "tickDuration": 300
       },
@@ -1623,7 +1623,7 @@
         "enemiesAffected": 3,
         "linkBreakRadius": 18,
         "castRange": 12,
-        "maxHealthDamage": 4,
+        "maxHealthDamage": 3,
         "healRadius": 6,
         "healCap": 700
       },

@@ -134,7 +134,7 @@ public class Chronarch extends AbstractMob implements BossMob {
                 },
                 true
         );
-        warlordsNPC.addKnockbackModifier(warlordsNPC, "Clockwork Frame", -80, frame);
+        warlordsNPC.addKnockbackModifier(warlordsNPC, "Clockwork Frame", -60, frame);
         warlordsNPC.getCooldownManager().addCooldown(frame);
 
         ChatUtils.sendTitleToGamePlayers(
@@ -159,8 +159,6 @@ public class Chronarch extends AbstractMob implements BossMob {
 
     @Override
     public void whileAlive(int ticksElapsed, PveOption option) {
-        warlordsNPC.getSpeed().removeNegativeModifiers();
-
         Location loc = warlordsNPC.getLocation();
         if (ticksElapsed % 20 == 0) {
             EffectUtils.playCylinderAnimation(loc, 6, 212, 175, 55, 12, 2);
@@ -259,10 +257,11 @@ public class Chronarch extends AbstractMob implements BossMob {
 
                 chime++;
                 Location loc = warlordsNPC.getLocation();
-                double radius = 5 + chime;
+                double radius = 7 + (chime * 3);
                 float pitch = 0.5f + chime * 0.12f;
                 Utils.playGlobalSound(loc, Sound.BLOCK_BELL_USE, 2, pitch);
-                EffectUtils.playCylinderAnimation(loc, radius, 255, 215, 80, 18, 3);
+                EffectUtils.playCylinderAnimation(loc, radius, 0, 0, 0, 18, 3);
+                EffectUtils.drawRing(loc, radius, 1, Particle.SOUL_FIRE_FLAME);
 
                 PlayerFilter.entitiesAround(warlordsNPC, radius, radius, radius)
                         .aliveEnemiesOf(warlordsNPC)
@@ -289,10 +288,23 @@ public class Chronarch extends AbstractMob implements BossMob {
                 if (chime >= 6) {
                     chiming = false;
                     warlordsNPC.addSpeedModifier(warlordsNPC, "Wound Spring", 15, Integer.MAX_VALUE);
+                    Utils.playGlobalSound(warlordsNPC.getLocation(), "raid.church.dingalt", 2, 0.5f);
                     int count = Math.max(1, (int) option.getGame().warlordsPlayers().count());
                     for (int i = 0; i < count; i++) {
                         option.spawnNewMob(Mob.CLOCKBOUND_PHANTOM.createMob(loc));
                     }
+                    PlayerFilter.entitiesAround(warlordsNPC, radius, radius, radius)
+                            .aliveEnemiesOf(warlordsNPC)
+                            .forEach(enemy -> {
+                                EffectUtils.playParticleLinkAnimation(enemy.getLocation(), loc, 255, 200, 40, 2);
+                                enemy.addInstance(InstanceBuilder
+                                        .damage()
+                                        .cause("Twelve Chimes")
+                                        .source(warlordsNPC)
+                                        .min(7000)
+                                        .max(9000)
+                                );
+                            });
                     ChatUtils.sendTitleToGamePlayers(
                             warlordsNPC.getGame(),
                             Component.empty(),
@@ -334,8 +346,8 @@ public class Chronarch extends AbstractMob implements BossMob {
                                 .damage()
                                 .ability(this)
                                 .source(wp)
-                                .min(650)
-                                .max(850)
+                                .min(850)
+                                .max(1050)
                         );
                     });
             return true;
