@@ -1455,7 +1455,7 @@
       },
       "CHRONARCH": {
         "name": "Chronarch",
-        "max_health": 80000,
+        "max_health": 100000,
         "walk_speed": 0.3,
         "damage_resistance": 20.0,
         "min_melee_damage": 1400.0,
