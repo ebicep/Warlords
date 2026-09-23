@@ -16,9 +16,9 @@ public enum Anomalies {
                     Component.text("Defend each relic for 2 minutes.")
             ),
             List.of(
-                    new AnomalyRewardPool("Opex Cache I", 600, 60, 1, 0.10),
-                    new AnomalyRewardPool("Opex Cache II", 600, 80, 1, 0.20),
-                    new AnomalyRewardPool("Opex Cache III", 600, 100, 2, 0.30)
+                    new AnomalyRewardPool("Opex Cache I", 600, 0, 1, 0.10),
+                    new AnomalyRewardPool("Opex Cache II", 600, 1, 1, 0.20),
+                    new AnomalyRewardPool("Opex Cache III", 600, 2, 2, 0.30)
             ),
             new AnomalyMobSet()
                     //basic
@@ -56,9 +56,9 @@ public enum Anomalies {
                     Component.text("Each kill reduces checkpoint charge time.")
             ),
             List.of(
-                    new AnomalyRewardPool("Dunestar Cache I", 1_000, 40, 1, 0.10),
-                    new AnomalyRewardPool("Dunestar Cache II", 1_500, 60, 1, 0.20),
-                    new AnomalyRewardPool("Dunestar Cache III", 2_000, 80, 2, 0.30)
+                    new AnomalyRewardPool("Dunestar Cache I", 1_000, 0, 1, 0.10),
+                    new AnomalyRewardPool("Dunestar Cache II", 1_500, 1, 1, 0.20),
+                    new AnomalyRewardPool("Dunestar Cache III", 2_000, 2, 2, 0.30)
             ),
             new AnomalyMobSet()
                     //basic
@@ -143,9 +143,9 @@ public enum Anomalies {
                     Component.text("Wrong inputs summon additional defenders.")
             ),
             List.of(
-                    new AnomalyRewardPool("Remnant Cache I", 500, 45, 1, 0.10),
-                    new AnomalyRewardPool("Remnant Cache II", 750, 60, 1, 0.20),
-                    new AnomalyRewardPool("Remnant Cache III", 1000, 75, 2, 0.30)
+                    new AnomalyRewardPool("Remnant Cache I", 500, 0, 1, 0.10),
+                    new AnomalyRewardPool("Remnant Cache II", 750, 1, 1, 0.20),
+                    new AnomalyRewardPool("Remnant Cache III", 1000, 2, 2, 0.30)
             ),
             new AnomalyMobSet()
                     //basic
@@ -172,9 +172,9 @@ public enum Anomalies {
                     Component.text("Chronarch and restore the timeline.")
             ),
             List.of(
-                    new AnomalyRewardPool("Paradox Cache I", 600, 25, 1, 0.10),
-                    new AnomalyRewardPool("Paradox Cache II", 800, 50, 1, 0.15),
-                    new AnomalyRewardPool("Paradox Cache III", 1_200, 75, 2, 0.20)
+                    new AnomalyRewardPool("Paradox Cache I", 600, 0, 1, 0.10),
+                    new AnomalyRewardPool("Paradox Cache II", 800, 1, 1, 0.15),
+                    new AnomalyRewardPool("Paradox Cache III", 1_200, 2, 2, 0.20)
             ),
             new AnomalyMobSet()
                     .add(0.4, Mob.ZOMBIE_LAMENT)

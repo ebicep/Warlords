@@ -22,14 +22,14 @@ public final class AnomalyRewardPool {
 
     private final String name;
     private final long coins;
-    private final long secondaryCurrencyAmount;
+    private final int cacheIndex;
     private final long ethereumCrystals;
     private final double newItemChance;
 
-    public AnomalyRewardPool(String name, long coins, long secondaryCurrencyAmount, long ethereumCrystals, double newItemChance) {
+    public AnomalyRewardPool(String name, long coins, int cacheIndex, long ethereumCrystals, double newItemChance) {
         this.name = name;
         this.coins = coins;
-        this.secondaryCurrencyAmount = secondaryCurrencyAmount;
+        this.cacheIndex = cacheIndex;
         this.ethereumCrystals = ethereumCrystals;
         this.newItemChance = newItemChance;
     }
@@ -41,9 +41,10 @@ public final class AnomalyRewardPool {
     }
 
     private Map<Currencies, Long> currencyRewards(long rotationStartEpochSecond) {
+        Currencies secondaryCurrency = AnomalyRotation.getSecondaryRewardCurrency(rotationStartEpochSecond);
         LinkedHashMap<Currencies, Long> rewards = new LinkedHashMap<>();
         rewards.put(Currencies.COIN, coins);
-        rewards.put(AnomalyRotation.getSecondaryRewardCurrency(rotationStartEpochSecond), secondaryCurrencyAmount);
+        rewards.put(secondaryCurrency, AnomalyRotation.getSecondaryRewardAmount(secondaryCurrency, cacheIndex));
         rewards.put(Currencies.ETHEREUM_CRYSTAL, ethereumCrystals);
         return Collections.unmodifiableMap(rewards);
     }
