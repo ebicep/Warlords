@@ -97,7 +97,7 @@ public class NewItemCooldown extends PermanentCooldown<NewItemCooldown> {
                             .cause("Thorns")
                             .source(from)
                             .value(thornsDamage)
-                            .flags(InstanceFlags.RECURSIVE, InstanceFlags.IGNORE_SOURCE_DAMAGE_BOOST)
+                            .flags(InstanceFlags.RECURSIVE)
                     );
                 }
         );

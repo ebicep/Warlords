@@ -13,6 +13,7 @@ import com.ebicep.warlords.util.warlords.PlayerFilter;
 import com.ebicep.warlords.util.warlords.Utils;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
+import net.kyori.adventure.text.format.TextColor;
 import org.bukkit.Bukkit;
 import org.bukkit.Particle;
 import org.bukkit.entity.Player;
@@ -133,10 +134,15 @@ public class VampiricChains extends AbstractAbility implements BlueAbilityIcon, 
                     }
                 }),
                 enemiesNear
-        );
-        wp.getCooldownManager().removeCooldown(VampiricChainsData.class, false);
+        ) {
+            @Override
+            public TextColor customActionBarColor(WarlordsEntity warlordsEntity) {
+                return warlordsEntity.equals(wp) ? NamedTextColor.GREEN : NamedTextColor.RED;
+            }
+        };
+        wp.getCooldownManager().removeCooldown(cd -> cd.getCooldownObject() instanceof VampiricChainsData && cd.getFrom().equals(wp), false);
         wp.getCooldownManager().addCooldown(vampiricChainsCooldown);
-        enemiesNear.forEach(entity -> entity.getCooldownManager().removeCooldown(VampiricChainsData.class, false));
+        enemiesNear.forEach(entity -> entity.getCooldownManager().removeCooldown(cd -> cd.getCooldownObject() instanceof VampiricChainsData && cd.getFrom().equals(wp), false));
         enemiesNear.forEach(entity -> entity.getCooldownManager().addCooldown(vampiricChainsCooldown));
         addSecondaryAbility(
                 1,

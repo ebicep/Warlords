@@ -12,7 +12,6 @@ import com.ebicep.warlords.player.ingame.cooldowns.CooldownTypes;
 import com.ebicep.warlords.player.ingame.cooldowns.cooldowns.RegularCooldown;
 import com.ebicep.warlords.player.ingame.instances.InstanceBuilder;
 import com.ebicep.warlords.player.ingame.instances.InstanceFlags;
-import com.ebicep.warlords.player.ingame.instances.type.PlayerNameInstance;
 import com.ebicep.warlords.pve.mobs.player.TestDummy;
 import com.ebicep.warlords.pve.mobs.tiers.PlayerMob;
 import com.ebicep.warlords.pve.upgrades.AbilityTree;
@@ -477,7 +476,7 @@ public class MercifulHex extends AbstractPiercingProjectile<MercifulHex, Mercifu
             }
 
             @Override
-            public TextColor customActionBarColor() {
+            public TextColor customActionBarColor(WarlordsEntity warlordsEntity) {
                 return NamedTextColor.DARK_GREEN;
             }
         });

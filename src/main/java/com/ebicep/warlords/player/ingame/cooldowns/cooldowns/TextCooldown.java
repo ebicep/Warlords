@@ -32,7 +32,7 @@ public class TextCooldown<T> extends AbstractCooldown<T> {
     }
 
     @Override
-    public Component getNameAbbreviation() {
+    public Component getNameAbbreviation(WarlordsEntity warlordsEntity) {
         return Component.textOfChildren(
                 Component.text(nameAbbreviation, NamedTextColor.GREEN),
                 Component.text(":", NamedTextColor.GRAY),
