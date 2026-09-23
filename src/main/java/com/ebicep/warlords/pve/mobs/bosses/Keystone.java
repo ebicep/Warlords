@@ -37,7 +37,7 @@ public class Keystone extends AbstractMob implements BossMob {
     private boolean cracked = false;
 
     public Keystone(Location spawnLocation) {
-        this(spawnLocation, "Keystone", 16000, 0.22f, 18, 750, 1000);
+        this(spawnLocation, "Keystone", 22000, 0.34f, 20, 750, 1000);
     }
 
     public Keystone(
@@ -84,14 +84,6 @@ public class Keystone extends AbstractMob implements BossMob {
     @Override
     public void onSpawn(PveOption option) {
         super.onSpawn(option);
-        ChatUtils.sendTitleToGamePlayers(
-                option.getGame(),
-                Component.text("KEYSTONE", NamedTextColor.GRAY),
-                Component.text("Melee wedges one player. Load strikes the healthiest.", NamedTextColor.DARK_GRAY),
-                10,
-                40,
-                10
-        );
     }
 
     @Override
@@ -188,8 +180,8 @@ public class Keystone extends AbstractMob implements BossMob {
                     .damage()
                     .ability(this)
                     .source(wp)
-                    .min(650)
-                    .max(850)
+                    .min(1000)
+                    .max(1300)
             );
             wp.addInstance(InstanceBuilder
                     .healing()

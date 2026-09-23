@@ -680,7 +680,7 @@ public enum Mob {
             Utils.applyColorTo(Material.LEATHER_CHESTPLATE, 150, 145, 135),
             Utils.applyColorTo(Material.LEATHER_LEGGINGS, 120, 115, 105),
             Utils.applyColorTo(Material.LEATHER_BOOTS, 90, 88, 80),
-            Weapons.STONE_MALLET.getItem()
+            Weapons.WARLORDS_II_SOUL_COLLECTOR.getItem()
     )
     ),
     MITHRA(EntityType.ZOMBIE, Mithra.class, Mithra::new, Mithra::new, new Utils.SimpleEntityEquipment(

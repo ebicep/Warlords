@@ -32,19 +32,18 @@ import java.util.concurrent.ThreadLocalRandom;
 public class AnomalyOption extends AbstractAnomalyOption {
 
     public static final int OBJECTIVE_COUNT = 3;
-    public static final int OBJECTIVE_DURATION_TICKS = 120 * GameRunnable.SECOND;
-    private static final int MOB_SPAWN_INTERVAL = 10;
+    public static final int OBJECTIVE_DURATION_TICKS = 100 * GameRunnable.SECOND;
+    private static final int MOB_SPAWN_INTERVAL = 8;
     private static final int BASE_RELIC_HEALTH = 25_000;
     private static final int[] BOSS_TRIGGER_TICKS = {
-            30 * GameRunnable.SECOND,
-            60 * GameRunnable.SECOND,
-            90 * GameRunnable.SECOND
+            25 * GameRunnable.SECOND,
+            50 * GameRunnable.SECOND,
+            75 * GameRunnable.SECOND
     };
     private static final Mob[] RELIC_BOSSES = {
             Mob.GHOULCALLER,
             Mob.MITHRA,
             Mob.BOLTARO,
-            Mob.NARMER,
             Mob.KEYSTONE,
             Mob.CHESSKING
     };
