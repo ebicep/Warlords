@@ -2059,6 +2059,11 @@
         "cooldown": 30,
         "energyCost": 50
       },
+      "riftbinderConduitPulse": {
+        "name": "Conduit Pulse",
+        "cooldown": 10,
+        "energyCost": 0
+      },
       "chronarchPendulum": {
         "name": "Pendulum",
         "cooldown": 8,
