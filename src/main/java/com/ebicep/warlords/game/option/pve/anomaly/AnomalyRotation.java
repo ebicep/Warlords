@@ -1,5 +1,6 @@
 package com.ebicep.warlords.game.option.pve.anomaly;
 
+import com.ebicep.warlords.pve.Currencies;
 import com.ebicep.warlords.pve.newitems.setbonus.NewItemsSetBonus;
 import com.ebicep.warlords.pve.newitems.tiers.NewItemTier;
 
@@ -13,6 +14,13 @@ import java.util.Random;
 public final class AnomalyRotation {
 
     private static final long ROTATION_SEED_SALT = 0x414E4F4D414C594CL;
+    private static final long SECONDARY_CURRENCY_SALT = 0x4341434845435552L;
+    private static final List<Currencies> SECONDARY_REWARD_CURRENCIES = List.of(
+            Currencies.LEGEND_FRAGMENTS,
+            Currencies.SYNTHETIC_SHARD,
+            Currencies.ILLUSION_SHARD,
+            Currencies.SUPPLY_DROP_TOKEN
+    );
 
     private static volatile Anomalies testAnomalyOverride;
 
@@ -51,6 +59,15 @@ public final class AnomalyRotation {
 
     public static boolean hasTestAnomalyOverride() {
         return testAnomalyOverride != null;
+    }
+
+    public static Currencies getSecondaryRewardCurrency() {
+        return getSecondaryRewardCurrency(getRotationStart().getEpochSecond());
+    }
+
+    public static Currencies getSecondaryRewardCurrency(long rotationStartEpochSecond) {
+        Random random = new Random(rotationStartEpochSecond ^ SECONDARY_CURRENCY_SALT);
+        return SECONDARY_REWARD_CURRENCIES.get(random.nextInt(SECONDARY_REWARD_CURRENCIES.size()));
     }
 
     public static NewItemsSetBonus getGuaranteedLegendarySet() {
