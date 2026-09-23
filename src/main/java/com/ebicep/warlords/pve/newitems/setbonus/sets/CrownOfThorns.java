@@ -1,16 +1,18 @@
 package com.ebicep.warlords.pve.newitems.setbonus.sets;
 
 import com.ebicep.warlords.player.ingame.WarlordsPlayer;
-import com.ebicep.warlords.player.ingame.cooldowns.CooldownTypes;
+import com.ebicep.warlords.player.ingame.cooldowns.CooldownFilter;
 import com.ebicep.warlords.player.ingame.cooldowns.cooldowns.PermanentCooldown;
-import com.ebicep.warlords.player.ingame.instances.type.Modifier;
+import com.ebicep.warlords.player.ingame.cooldowns.cooldowns.custom.ItemAdditiveCooldown;
+import com.ebicep.warlords.pve.newitems.attributes.NewItemCooldown;
 import com.ebicep.warlords.pve.newitems.setbonus.BaseSet;
 import com.ebicep.warlords.pve.newitems.setbonus.SetBonus;
-import com.ebicep.warlords.util.warlords.modifiablevalues.FloatModifiable;
 
 import java.util.List;
 
 public class CrownOfThorns extends BaseSet {
+
+    private static final int THORN_DAMAGE_CAP_MULTIPLIER = 2;
 
     private int thornDamageBoost;
 
@@ -39,29 +41,19 @@ public class CrownOfThorns extends BaseSet {
 
         @Override
         public void apply(WarlordsPlayer warlordsPlayer) {
-            warlordsPlayer.getCooldownManager().addCooldown(new PermanentCooldown<>(
-                    getName(),
-                    null,
-                    Decay.class,
-                    null,
-                    warlordsPlayer,
-                    CooldownTypes.ITEM,
-                    cooldownManager -> {
-                    },
-                    false
-            ).addModifier(
-                    Modifier.MODIFY_OUTGOING_DAMAGE_BEFORE_INTERVENE,
-                    (event, currentDamageValue) -> {
-                        if (!event.getCause().contains("Thorns")) {
-                            return;
-                        }
-                        currentDamageValue.addModifier(
-                                FloatModifiable.ModifierType.MULTIPLICATIVE_MULTIPLIER,
-                                getName(),
-                                1 + (thornDamageBoost / 100f)
-                        );
-                    }
-            ));
+            float damageMultiplier = 1 + (thornDamageBoost / 100f);
+            new CooldownFilter<>(warlordsPlayer, PermanentCooldown.class)
+                    .filterCooldownName("Item")
+                    .findAny()
+                    .ifPresent(cooldown -> {
+                        NewItemCooldown itemCooldown = (NewItemCooldown) cooldown;
+                        itemCooldown.multiplyMaxThornsDamage(THORN_DAMAGE_CAP_MULTIPLIER);
+                        itemCooldown.multiplyThornsDamage(damageMultiplier);
+                    });
+            new CooldownFilter<>(warlordsPlayer, PermanentCooldown.class)
+                    .filterCooldownName("Item Additive")
+                    .findAny()
+                    .ifPresent(cooldown -> ((ItemAdditiveCooldown) cooldown).multiplyThornsDamage(damageMultiplier));
         }
 
     }

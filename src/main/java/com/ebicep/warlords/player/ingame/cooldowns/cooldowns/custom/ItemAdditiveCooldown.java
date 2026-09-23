@@ -10,6 +10,7 @@ import com.ebicep.warlords.player.ingame.instances.InstanceFlags;
 import com.ebicep.warlords.player.ingame.instances.type.Modifier;
 import com.ebicep.warlords.pve.items.types.AbstractItem;
 import com.ebicep.warlords.pve.mobs.Aspect;
+import com.ebicep.warlords.pve.newitems.attributes.ThornsDamage;
 import com.ebicep.warlords.util.warlords.modifiablevalues.FloatModifiable;
 
 import java.util.HashMap;
@@ -41,6 +42,7 @@ public class ItemAdditiveCooldown extends PermanentCooldown<AbstractItem> {
     private float healMultiplier = 1;
     private float kbMultiplier = 0;
     private float thorns = 0;
+    private float thornsDamageMultiplier = 1;
     private int maxThornsDamage = 0;
     private float additionalCritChance = 0;
     private float additionalCritMultiplier = 0;
@@ -110,10 +112,13 @@ public class ItemAdditiveCooldown extends PermanentCooldown<AbstractItem> {
                     if (thorns <= 0) {
                         return;
                     }
-                    float thornsDamage = currentDamageValue * thorns;
-                    if (thornsDamage > maxThornsDamage) {
-                        thornsDamage = maxThornsDamage;
-                    }
+                    // Crown of Thorns is folded in here. The instance ignores other source damage boosts.
+                    float thornsDamage = ThornsDamage.calculate(
+                            currentDamageValue,
+                            thorns,
+                            thornsDamageMultiplier,
+                            maxThornsDamage
+                    );
                     attacker.addInstance(InstanceBuilder
                             .damage()
                             .cause("Thorns")
@@ -154,6 +159,10 @@ public class ItemAdditiveCooldown extends PermanentCooldown<AbstractItem> {
     public void addThorns(float thorns, int maxThornsDamage) {
         this.thorns += thorns / 100;
         this.maxThornsDamage = Math.max(this.maxThornsDamage, maxThornsDamage);
+    }
+
+    public void multiplyThornsDamage(float multiplier) {
+        this.thornsDamageMultiplier *= multiplier;
     }
 
     public void addCritChance(float additionalCritChance) {
