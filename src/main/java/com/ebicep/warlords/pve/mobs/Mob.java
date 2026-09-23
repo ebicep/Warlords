@@ -675,12 +675,12 @@ public enum Mob {
             Weapons.WALKING_STICK.getItem()
     )
     ),
-    RIFTBINDER(EntityType.ZOMBIE, Riftbinder.class, Riftbinder::new, Riftbinder::new, new Utils.SimpleEntityEquipment(
-            SkullUtils.getSkullFrom(SkullID.SCULK_CORRUPTION),
-            Utils.applyColorTo(Material.LEATHER_CHESTPLATE, 90, 20, 140),
-            Utils.applyColorTo(Material.LEATHER_LEGGINGS, 70, 15, 120),
-            Utils.applyColorTo(Material.LEATHER_BOOTS, 50, 10, 90),
-            Weapons.VORPAL_SWORD.getItem()
+    KEYSTONE(EntityType.ZOMBIE, Keystone.class, Keystone::new, Keystone::new, new Utils.SimpleEntityEquipment(
+            SkullUtils.getSkullFrom(SkullID.GHOST_GRAY),
+            Utils.applyColorTo(Material.LEATHER_CHESTPLATE, 150, 145, 135),
+            Utils.applyColorTo(Material.LEATHER_LEGGINGS, 120, 115, 105),
+            Utils.applyColorTo(Material.LEATHER_BOOTS, 90, 88, 80),
+            Weapons.STONE_MALLET.getItem()
     )
     ),
     MITHRA(EntityType.ZOMBIE, Mithra.class, Mithra::new, Mithra::new, new Utils.SimpleEntityEquipment(
@@ -1426,7 +1426,7 @@ public enum Mob {
             BOLTARO,
             GHOULCALLER,
             NARMER,
-            RIFTBINDER,
+            KEYSTONE,
             MITHRA,
             ZENITH,
             MAGMATIC_OOZE,

@@ -381,13 +381,13 @@
         "min_melee_damage": 1600.0,
         "max_melee_damage": 2000.0
       },
-      "RIFTBINDER": {
-        "name": "Riftbinder",
+      "KEYSTONE": {
+        "name": "Keystone",
         "max_health": 16000,
-        "walk_speed": 0.3,
-        "damage_resistance": 15.0,
-        "min_melee_damage": 800.0,
-        "max_melee_damage": 1100.0
+        "walk_speed": 0.22,
+        "damage_resistance": 18.0,
+        "min_melee_damage": 750.0,
+        "max_melee_damage": 1000.0
       },
       "MITHRA": {
         "name": "Echo of Mithra",

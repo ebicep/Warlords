@@ -45,7 +45,7 @@ public class AnomalyOption extends AbstractAnomalyOption {
             Mob.MITHRA,
             Mob.BOLTARO,
             Mob.NARMER,
-            Mob.RIFTBINDER,
+            Mob.KEYSTONE,
             Mob.CHESSKING
     };
 
