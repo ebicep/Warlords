@@ -116,20 +116,20 @@ public final class ResourceDiscovery {
             case PRESTIGE_ORB -> List.of("Spec Prestige");
             case ETHEREUM_CRYSTAL -> List.of("Anomaly", "Raids");
 //            case ASCENDANT_SCROLL -> List.of("Ascendant Vendor");
-            case ITEM_LOCK_SCROLL -> List.of("Raid", "Ascendant Vendor");
-            case CRYPTIC_CONQUEST_KEY -> List.of("Ascendant Vendor");
+            case ITEM_LOCK_SCROLL -> List.of("Raid");
+//            case CRYPTIC_CONQUEST_KEY -> List.of("Ascendant Vendor");
             case ARCHEMEDIAN_FRAGMENT -> List.of("Cryptic Conquest");
 //            case SOVEREIGN_TOWER_KEY -> List.of("Ascendant Vendor");
             case VEILKEEPER_INSIGNIA -> List.of("Prestige Vendor");
             case CELESTIAL_BRONZE, EVENT_POINTS_BOLTARO, EVENT_POINTS_NARMER, EVENT_POINTS_MITHRA,
                  EVENT_POINTS_ILLUIMINA, EVENT_POINTS_GARDEN_OF_HESPERIDES, EVENT_POINTS_LIBRARY_ARCHIVES -> List.of();
-            default -> List.of();
+            default -> List.of("Currently cannot be earned.");
         };
     }
 
     private static List<String> sourcesFor(MobDrop drop) {
         return switch (drop) {
-            case ZENITH_STAR -> List.of("Onslaught", "Wave Defense");
+            case ZENITH_STAR -> List.of("Zenith Boss", "Onslaught", "Wave Defense");
             case AWAKENED_ABILITY_SCROLL -> List.of("Hidden Mob Drops");
         };
     }
