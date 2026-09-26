@@ -7,10 +7,10 @@ import org.bukkit.Material;
 public enum GemType implements NamedEnum {
 
     IMPAIRMENT("Gemstone of Impairment", NewItemAttribute.DAMAGE, .25f, Material.REDSTONE),
-    ALLEVIATION("Gemstone of Alleviation", NewItemAttribute.HEALING, .25f, Material.GLOWSTONE_DUST),
-    SURGES("Gemstone of Surges", NewItemAttribute.MAX_ENERGY, 5, Material.GLOW_INK_SAC),
-    NOURISHMENT("Gemstone of Nourishment", NewItemAttribute.HEALTH, 10, Material.GHAST_TEAR),
-    SPEED("Gemstone of Speed", NewItemAttribute.ATTACK_SPEED, 2, Material.SUGAR),
+    ALLEVIATION("Gemstone of Alleviation", NewItemAttribute.HEALING, .25f, Material.TURTLE_SCUTE),
+    SURGES("Gemstone of Surges", NewItemAttribute.MAX_ENERGY, 5, Material.SUNFLOWER),
+    NOURISHMENT("Gemstone of Nourishment", NewItemAttribute.HEALTH, 10, Material.SWEET_BERRIES),
+    SPEED("Gemstone of Speed", NewItemAttribute.ATTACK_SPEED, 2, Material.FEATHER),
 
     ;
 
