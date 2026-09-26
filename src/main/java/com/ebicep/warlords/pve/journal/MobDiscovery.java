@@ -254,6 +254,14 @@ public final class MobDiscovery {
         return databasePlayer.getPveStats().getMobKillCount(name);
     }
 
+    public static long getDeaths(DatabasePlayer databasePlayer, Mob mob) {
+        String name = mob.name;
+        if (name == null || name.isEmpty()) {
+            return 0;
+        }
+        return databasePlayer.getPveStats().getMobDeathCount(name);
+    }
+
     public static boolean isDiscovered(DatabasePlayer databasePlayer, Mob mob) {
         return getKills(databasePlayer, mob) > 0;
     }

@@ -271,6 +271,8 @@ public final class DiscoveryJournalMenu {
         lore.add(Component.empty());
         lore.add(Component.text("Times slain: ", NamedTextColor.GRAY)
                           .append(Component.text(NumberFormat.addCommas(MobDiscovery.getKills(databasePlayer, mob)), NamedTextColor.YELLOW)));
+        lore.add(Component.text("Times died: ", NamedTextColor.GRAY)
+                          .append(Component.text(NumberFormat.addCommas(MobDiscovery.getDeaths(databasePlayer, mob)), NamedTextColor.RED)));
 
         List<String> mechanicsParagraphs = MobDiscovery.getMechanicsParagraphs(mob);
         if (!mechanicsParagraphs.isEmpty()) {
