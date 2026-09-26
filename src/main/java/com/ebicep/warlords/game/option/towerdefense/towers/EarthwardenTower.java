@@ -124,7 +124,7 @@ public class EarthwardenTower extends AbstractTower implements Upgradeable.Path2
                     .setGame(target.getGame())
                     .setSpeed(1.5f)
                     .setDestination(() -> target.isDead() ? null : target.getLocation())
-                    .setOnTick((ticksElapsed, location) -> {
+                    .setOnMove((ticksElapsed, location, index) -> {
 
                     })
                     .setOnDestinationReached(() -> {

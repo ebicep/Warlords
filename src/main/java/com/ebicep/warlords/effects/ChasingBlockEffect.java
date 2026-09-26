@@ -3,6 +3,7 @@ package com.ebicep.warlords.effects;
 import com.ebicep.warlords.Warlords;
 import com.ebicep.warlords.game.Game;
 import com.ebicep.warlords.util.bukkit.LocationBuilder;
+import com.ebicep.warlords.util.java.TriConsumer;
 import com.ebicep.warlords.util.warlords.GameRunnable;
 import org.bukkit.Location;
 import org.bukkit.Material;
@@ -13,7 +14,6 @@ import org.bukkit.util.Vector;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.Objects;
-import java.util.function.BiConsumer;
 import java.util.function.Supplier;
 
 public class ChasingBlockEffect {
@@ -25,7 +25,7 @@ public class ChasingBlockEffect {
     @Nullable
     private final BlockData blockState;
     private final Supplier<Location> destination;
-    private final BiConsumer<Integer, Location> onTick;
+    private final TriConsumer<Integer, Location, Integer> onMove;
     private final Runnable onDestinationReached;
     private final int maxTicks;
 
@@ -38,7 +38,7 @@ public class ChasingBlockEffect {
             @Nullable BlockData blockState,
             Supplier<Location> destination,
             Runnable onDestinationReached,
-            BiConsumer<Integer, Location> onTick,
+            TriConsumer<Integer, Location, Integer> onMove,
             int maxTicks
     ) {
         this.game = game;
@@ -47,7 +47,7 @@ public class ChasingBlockEffect {
         this.blockState = blockState;
         this.destination = destination;
         this.onDestinationReached = onDestinationReached;
-        this.onTick = onTick;
+        this.onMove = onMove;
         this.maxTicks = maxTicks;
     }
 
@@ -84,7 +84,6 @@ public class ChasingBlockEffect {
             cancel();
             return;
         }
-        onTick.accept(ticksElapsed, currentLocation.clone());
         Vector change = destinationLocation.toVector().subtract(currentLocation.toVector());
         change.setY(0);
         double length = change.lengthSquared();
@@ -94,38 +93,30 @@ public class ChasingBlockEffect {
             LocationBuilder oldLocation = new LocationBuilder(currentLocation);
             currentLocation.add(change);
             oldLocation.faceTowards(currentLocation);
+            double lastGroundY = currentLocation.getY();
             // loop through the distance in case where the distance is greater than 1, dont want block skipping
             // does look slightly weird since chunks of blocks will be placed/spawned at once with the same velocity (not a smooth transition)
             for (int i = 0; i < speed; i++) {
-                //moving vertically
-                if (destinationLocation.getY() < oldLocation.getY()) {
-                    for (int j = 0; j < 10; j++) {
-                        if (oldLocation.clone().add(0, -1, 0).getBlock().getType() == Material.AIR) {
-                            oldLocation.add(0, -1, 0);
-                        } else {
-                            break;
-                        }
-                    }
-                }
-                for (int j = 0; j < 10; j++) {
-                    if (oldLocation.getBlock().getType() != Material.AIR) {
-                        oldLocation.add(0, 1, 0);
-                    } else {
-                        break;
-                    }
-                }
+                snapToGround(oldLocation, destinationLocation);
+                lastGroundY = oldLocation.getY();
                 FallingBlockDebrisEffect.spawn(
                         oldLocation.clone(),
                         Objects.requireNonNullElseGet(blockState, () -> oldLocation.getBlock().getRelative(BlockFace.DOWN, 1).getBlockData()),
                         0.25,
                         0.15
                 );
+                onMove.accept(ticksElapsed, oldLocation.clone(), i);
                 oldLocation.forward(1);
             }
+            currentLocation.setY(lastGroundY);
         } else {
+            LocationBuilder horizontalDestination = new LocationBuilder(destinationLocation);
+            horizontalDestination.setY(currentLocation.getY());
+            LocationBuilder spawnLocation = new LocationBuilder(currentLocation).faceTowards(horizontalDestination).forward(1);
+            snapToGround(spawnLocation, destinationLocation);
             FallingBlockDebrisEffect.spawn(
-                    new LocationBuilder(currentLocation).faceTowards(destinationLocation).forward(1),
-                    Objects.requireNonNullElseGet(blockState, () -> destinationLocation.getBlock().getRelative(BlockFace.DOWN, 1).getBlockData()),
+                    spawnLocation.clone(),
+                    Objects.requireNonNullElseGet(blockState, () -> spawnLocation.getBlock().getRelative(BlockFace.DOWN, 1).getBlockData()),
                     0.25,
                     0.15
             );
@@ -134,6 +125,25 @@ public class ChasingBlockEffect {
             cancel();
         }
         ticksElapsed++;
+    }
+
+    private static void snapToGround(LocationBuilder loc, Location destination) {
+        if (destination.getY() < loc.getY()) {
+            for (int j = 0; j < 10; j++) {
+                if (loc.clone().add(0, -1, 0).getBlock().getType() == Material.AIR) {
+                    loc.add(0, -1, 0);
+                } else {
+                    break;
+                }
+            }
+        }
+        for (int j = 0; j < 10; j++) {
+            if (loc.getBlock().getType() != Material.AIR) {
+                loc.add(0, 1, 0);
+            } else {
+                break;
+            }
+        }
     }
 
     public void cancel() {
@@ -146,7 +156,7 @@ public class ChasingBlockEffect {
         private float speed = 1;
         private @Nullable BlockData block = null;
         private Supplier<Location> destination;
-        private BiConsumer<Integer, Location> onTick = (i, loc) -> {};
+        private TriConsumer<Integer, Location, Integer> onMove = (ticksElapsed, loc, index) -> {};
         private Runnable onDestinationReached = () -> {};
         private int maxTicks = 200;
 
@@ -170,8 +180,8 @@ public class ChasingBlockEffect {
             return this;
         }
 
-        public Builder setOnTick(BiConsumer<Integer, Location> onTick) {
-            this.onTick = onTick;
+        public Builder setOnMove(TriConsumer<Integer, Location, Integer> onMove) {
+            this.onMove = onMove;
             return this;
         }
 
@@ -186,7 +196,7 @@ public class ChasingBlockEffect {
         }
 
         public ChasingBlockEffect create() {
-            return new ChasingBlockEffect(game, speed, block, destination, onDestinationReached, onTick, maxTicks);
+            return new ChasingBlockEffect(game, speed, block, destination, onDestinationReached, onMove, maxTicks);
         }
     }
 }
