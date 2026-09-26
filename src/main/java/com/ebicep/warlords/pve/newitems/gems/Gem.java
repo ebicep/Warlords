@@ -56,7 +56,7 @@ public enum Gem implements Spendable, NamedEnum {
      * Paid on top of {@link GemTier#MERGE_AMOUNT} gems of the tier being merged.
      */
     public static final LinkedHashMap<Spendable, Long> MERGE_COST = new LinkedHashMap<>() {{
-        put(Currencies.SYNTHETIC_SHARD, 1_000L);
+        put(Currencies.SYNTHETIC_SHARD, 2_000L);
         put(Currencies.COIN, 100_000L);
     }};
 
@@ -168,7 +168,7 @@ public enum Gem implements Spendable, NamedEnum {
         List<Component> lore = new ArrayList<>();
         lore.add(getAttributeComponent());
         lore.add(Component.empty());
-        lore.add(Component.text("Tier " + tier.getName() + " Gem", NamedTextColor.GRAY));
+        lore.add(Component.text("Tier " + tier.getName() + " Gemstone", NamedTextColor.GRAY));
         return new ItemBuilder(item)
                 .name(getColoredName())
                 .lore(lore)

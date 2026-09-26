@@ -13,6 +13,7 @@ import com.ebicep.warlords.game.Team;
 import com.ebicep.warlords.game.option.ExperienceGainOption;
 import com.ebicep.warlords.game.option.marker.scoreboard.ScoreboardHandler;
 import com.ebicep.warlords.game.option.marker.scoreboard.SimpleScoreboardHandler;
+import com.ebicep.warlords.game.option.pve.PveMobKillTracker;
 import com.ebicep.warlords.game.option.pve.PveOption;
 import com.ebicep.warlords.game.option.pve.rewards.PveRewards;
 import com.ebicep.warlords.game.option.pve.wavedefense.WaveDefenseOption;
@@ -115,10 +116,7 @@ public abstract class AbstractAnomalyOption implements PveOption {
                             removeHostileMob(mob);
                         }
                     }.runTaskLater(1);
-                    if (killer instanceof WarlordsPlayer) {
-                        killer.getMinuteStats().addMobKill(mob.getName());
-                        dead.getHitBy().forEach((assisted, value) -> assisted.getMinuteStats().addMobAssist(mob.getName()));
-                    }
+                    PveMobKillTracker.recordKill(killer, dead, mob);
                     MobCommand.SPAWNED_MOBS.remove(mob);
                     return;
                 }

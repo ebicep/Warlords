@@ -1369,13 +1369,14 @@ public enum Mob {
     public static final Mob[] INTERMEDIATE = {
             HOUND, INTERMEDIATE_WARRIOR_BERSERKER, SKELETAL_WARLOCK, PIG_SHAMAN,
             BLAZING_KINDLE, WANDER_KNIGHTS, ZOMBIE_SWORDSMAN, ZOMBIE_LAMENT, IVORY_RONIN,
-            GRAVE_KNIGHT, ASHEN_PHYSICIAN, VEILED_CULTIST, SUNKEN_DELVER
+            GRAVE_KNIGHT, ASHEN_PHYSICIAN, VEILED_CULTIST, SUNKEN_DELVER,
+            WITCH_DEACON, PIG_ALLEVIATOR
     };
     public static final Mob[] ADVANCED = {
-            ILLUMINATION, GOLEM_APPRENTICE, SCRUPULOUS_ZOMBIE, CELESTIAL_BOW_WIELDER,
+            ILLUMINATION, GOLEM_APPRENTICE, CELESTIAL_BOW_WIELDER,
             ZOMBIE_VANGUARD, ADVANCED_WARRIOR_BERSERKER,
-            ZOMBIE_RAIDER, SKELETAL_ENTROPY, WITCH_DEACON, PIG_ALLEVIATOR, PALE_SERAPH,
-            DUNE_JACKAL, ROTVEIL_MARAUDER
+            ZOMBIE_RAIDER, SKELETAL_ENTROPY, PALE_SERAPH,
+            DUNE_JACKAL, ROTVEIL_MARAUDER, WANDER_WALKER
     };
     public static final Mob[] ELITE = {
             CELESTIAL_SWORD_WIELDER,
@@ -1388,9 +1389,11 @@ public enum Mob {
             SKELETAL_MESMER,
             ZOMBIE_KNIGHT,
             VOID_ZOMBIE,
-            WANDER_WALKER,
             SLIME_GUARD,
-            FIRE_SPLITTER
+            FIRE_SPLITTER,
+            SCRUPULOUS_ZOMBIE,
+            CELESTIAL_OPUS,
+            SOVEREIGN_GUARDIAN
     };
     public static final Mob[] CHAMPION = {
             NIGHTMARE_ZOMBIE,
@@ -1398,11 +1401,18 @@ public enum Mob {
             EXTREME_ZEALOT,
             SMART_SKELETON,
             SKELETAL_SORCERER,
-            CELESTIAL_OPUS,
             OBSIDIAN_SENTINEL,
             SLIMY_CHESS,
-            SOVEREIGN_GUARDIAN,
-            ABYSS_WATCHER
+            ABYSS_WATCHER,
+            ENDERMAN_ANOMALY,
+            LANTERN_DREDGER,
+            BARNACLE_BRUTE,
+            SILTSTALKER,
+            VOID_JAILER,
+            SOULBINDER,
+            DEVOURING_IDOL,
+            ENAVURITE,
+            VANISHING_ENAVURITE
     };
     public static final Mob[] BOSS_MINIONS = {
             BOLTARO_SHADOW,
@@ -1438,7 +1448,12 @@ public enum Mob {
             LILIUM,
             VEILKEEPER,
             CENTURION,
-            VANGUARD
+            VANGUARD,
+            CHESSKING,
+            CHRONARCH,
+            PHYSIRA,
+            ENAVURIS,
+            RAID_MITHRA
     };
     public static final Mob[] EVENT_BOSSES = {
             EVENT_BOLTARO, EVENT_NARMER, EVENT_MITHRA, EVENT_ILLUSION_CORE, EVENT_EXILED_CORE, EVENT_CALAMITY_CORE, EVENT_ILLUMINA,
