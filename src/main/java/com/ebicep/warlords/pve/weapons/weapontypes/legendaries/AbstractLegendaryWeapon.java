@@ -220,30 +220,29 @@ public abstract class AbstractLegendaryWeapon extends AbstractWeapon implements 
         LinkedHashMap<Currencies, Long> cost = new LinkedHashMap<>();
         switch (tier) {
             case 1 -> {
-                cost.put(Currencies.COIN, 100_000L);
-                cost.put(Currencies.SYNTHETIC_SHARD, 7_500L);
-                cost.put(Currencies.LEGEND_FRAGMENTS, 3_000L);
+                cost.put(Currencies.COIN, 200_000L);
+                cost.put(Currencies.SYNTHETIC_SHARD, 2_000L);
+                cost.put(Currencies.LEGEND_FRAGMENTS, 2_000L);
             }
             case 2 -> {
-                cost.put(Currencies.COIN, 250_000L);
-                cost.put(Currencies.SYNTHETIC_SHARD, 10_000L);
-                cost.put(Currencies.LEGEND_FRAGMENTS, 6_000L);
+                cost.put(Currencies.COIN, 400_000L);
+                cost.put(Currencies.SYNTHETIC_SHARD, 4_000L);
+                cost.put(Currencies.LEGEND_FRAGMENTS, 4_000L);
             }
             case 3 -> {
-                cost.put(Currencies.COIN, 500_000L);
-                cost.put(Currencies.SYNTHETIC_SHARD, 12_500L);
-                cost.put(Currencies.LEGEND_FRAGMENTS, 9_000L);
+                cost.put(Currencies.COIN, 600_000L);
+                cost.put(Currencies.SYNTHETIC_SHARD, 6_000L);
+                cost.put(Currencies.LEGEND_FRAGMENTS, 6_000L);
             }
             case 4 -> {
-                cost.put(Currencies.COIN, 1_000_000L);
-                cost.put(Currencies.SYNTHETIC_SHARD, 15_000L);
-                cost.put(Currencies.LEGEND_FRAGMENTS, 12_000L);
+                cost.put(Currencies.COIN, 800_000L);
+                cost.put(Currencies.SYNTHETIC_SHARD, 8_000L);
+                cost.put(Currencies.LEGEND_FRAGMENTS, 8_000L);
             }
             case 5 -> {
-                cost.put(Currencies.COIN, 2_000_000L);
-                cost.put(Currencies.SYNTHETIC_SHARD, 20_000L);
-                cost.put(Currencies.LEGEND_FRAGMENTS, 15_000L);
-                cost.put(Currencies.ASCENDANT_SHARD, 3L);
+                cost.put(Currencies.COIN, 1_000_000L);
+                cost.put(Currencies.SYNTHETIC_SHARD, 10_000L);
+                cost.put(Currencies.LEGEND_FRAGMENTS, 10_000L);
             }
         }
         return cost;
@@ -744,35 +743,35 @@ public abstract class AbstractLegendaryWeapon extends AbstractWeapon implements 
         switch (tier) {
             case 1 -> {
                 cost.put(Currencies.COIN, 500_000L);
-                cost.put(Currencies.SYNTHETIC_SHARD, 2500L);
-                cost.put(Currencies.LEGEND_FRAGMENTS, 1000L);
+                cost.put(Currencies.SYNTHETIC_SHARD, 2000L);
+                cost.put(Currencies.LEGEND_FRAGMENTS, 2000L);
                 cost.put(MobDrop.ZENITH_STAR, 1L);
             }
             case 2 -> {
                 cost.put(Currencies.COIN, 1_000_000L);
-                cost.put(Currencies.SYNTHETIC_SHARD, 5000L);
-                cost.put(Currencies.LEGEND_FRAGMENTS, 2000L);
-                cost.put(MobDrop.ZENITH_STAR, 3L);
+                cost.put(Currencies.SYNTHETIC_SHARD, 4000L);
+                cost.put(Currencies.LEGEND_FRAGMENTS, 4000L);
+                cost.put(MobDrop.ZENITH_STAR, 2L);
             }
             case 3 -> {
                 cost.put(Currencies.COIN, 2_000_000L);
-                cost.put(Currencies.SYNTHETIC_SHARD, 7500L);
-                cost.put(Currencies.LEGEND_FRAGMENTS, 3000L);
-                cost.put(MobDrop.ZENITH_STAR, 5L);
+                cost.put(Currencies.SYNTHETIC_SHARD, 6000L);
+                cost.put(Currencies.LEGEND_FRAGMENTS, 6000L);
+                cost.put(MobDrop.ZENITH_STAR, 3L);
                 cost.put(Currencies.LIMIT_BREAKER, 1L);
             }
             case 4 -> {
-                cost.put(Currencies.COIN, 4_000_000L);
-                cost.put(Currencies.SYNTHETIC_SHARD, 10000L);
-                cost.put(Currencies.LEGEND_FRAGMENTS, 5000L);
-                cost.put(MobDrop.ZENITH_STAR, 7L);
+                cost.put(Currencies.COIN, 3_000_000L);
+                cost.put(Currencies.SYNTHETIC_SHARD, 8000L);
+                cost.put(Currencies.LEGEND_FRAGMENTS, 8000L);
+                cost.put(MobDrop.ZENITH_STAR, 4L);
                 cost.put(Currencies.LIMIT_BREAKER, 2L);
             }
             case 5 -> {
-                cost.put(Currencies.COIN, 8_000_000L);
-                cost.put(Currencies.SYNTHETIC_SHARD, 15000L);
-                cost.put(Currencies.LEGEND_FRAGMENTS, 8000L);
-                cost.put(MobDrop.ZENITH_STAR, 9L);
+                cost.put(Currencies.COIN, 4_000_000L);
+                cost.put(Currencies.SYNTHETIC_SHARD, 10000L);
+                cost.put(Currencies.LEGEND_FRAGMENTS, 10000L);
+                cost.put(MobDrop.ZENITH_STAR, 5L);
                 cost.put(Currencies.LIMIT_BREAKER, 3L);
             }
         }
