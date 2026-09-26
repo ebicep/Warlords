@@ -162,8 +162,8 @@ public class WaveDefenseOption implements PveOption {
                         }.runTaskLater(1);
 
                         if (killer instanceof WarlordsPlayer) {
-                            killer.getMinuteStats().addMobKill(mobToRemove.getStatId());
-                            we.getHitBy().forEach((assisted, value) -> assisted.getMinuteStats().addMobAssist(mobToRemove.getStatId()));
+                            killer.getMinuteStats().addMobKill(mobToRemove.getName());
+                            we.getHitBy().forEach((assisted, value) -> assisted.getMinuteStats().addMobAssist(mobToRemove.getName()));
 
                             if (coinGainOption == null) {
                                 return;
@@ -181,7 +181,7 @@ public class WaveDefenseOption implements PveOption {
                     MobCommand.SPAWNED_MOBS.remove(mobToRemove);
                 } else if (we instanceof WarlordsPlayer && killer instanceof WarlordsNPC) {
                     if (mobs.containsKey(((WarlordsNPC) killer).getMob())) {
-                        we.getMinuteStats().addMobDeath(((WarlordsNPC) killer).getMob().getStatId());
+                        we.getMinuteStats().addMobDeath(((WarlordsNPC) killer).getMob().getName());
                     }
                 }
             }

@@ -281,11 +281,10 @@ public final class HonorificManager {
     }
 
     private static long getMobKills(DatabasePlayerPvE pveStats, Mob mob) {
-        long kills = pveStats.getMobKillCount(mob.name());
-        if (mob.name == null || mob.name.isEmpty() || mob.name().equals(mob.name)) {
-            return kills;
+        if (mob.name == null || mob.name.isEmpty()) {
+            return 0;
         }
-        return kills + pveStats.getMobKillCount(mob.name);
+        return pveStats.getMobKillCount(mob.name);
     }
 
     private static long getSkeletonKills(DatabasePlayerPvE pveStats) {
@@ -315,7 +314,6 @@ public final class HonorificManager {
     private static Set<String> mobDisplayNames(Mob[] mobs) {
         Set<String> names = new HashSet<>();
         for (Mob mob : mobs) {
-            names.add(mob.name());
             if (mob.name != null && !mob.name.isEmpty()) {
                 names.add(mob.name);
             }

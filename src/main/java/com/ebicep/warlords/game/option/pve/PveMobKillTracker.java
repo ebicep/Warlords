@@ -13,7 +13,7 @@ public final class PveMobKillTracker {
         if (!(killer instanceof WarlordsPlayer) || mob == null || dead == null) {
             return;
         }
-        killer.getMinuteStats().addMobKill(mob.getStatId());
-        dead.getHitBy().forEach((assisted, value) -> assisted.getMinuteStats().addMobAssist(mob.getStatId()));
+        killer.getMinuteStats().addMobKill(mob.getName());
+        dead.getHitBy().forEach((assisted, value) -> assisted.getMinuteStats().addMobAssist(mob.getName()));
     }
 }

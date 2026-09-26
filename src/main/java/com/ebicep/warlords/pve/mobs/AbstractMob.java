@@ -637,10 +637,6 @@ public abstract class AbstractMob implements Mob {
         return name;
     }
 
-    public String getStatId() {
-        return getMobRegistry().name();
-    }
-
     public EntityEquipment getEquipment() {
         return equipment;
     }
