@@ -3,11 +3,15 @@ package com.ebicep.warlords.game.option.pve.raid;
 import com.ebicep.warlords.database.DatabaseManager;
 import com.ebicep.warlords.database.repositories.player.pojos.general.DatabasePlayer;
 import com.ebicep.warlords.events.game.WarlordsGameTriggerWinEvent;
+import com.ebicep.warlords.events.player.ingame.WarlordsDeathEvent;
 import com.ebicep.warlords.game.Game;
 import com.ebicep.warlords.game.Team;
 import com.ebicep.warlords.game.option.marker.scoreboard.ScoreboardHandler;
 import com.ebicep.warlords.game.option.marker.scoreboard.SimpleScoreboardHandler;
+import com.ebicep.warlords.game.option.pve.PveMobKillTracker;
 import com.ebicep.warlords.game.option.pve.PveOption;
+import com.ebicep.warlords.player.ingame.WarlordsEntity;
+import com.ebicep.warlords.player.ingame.WarlordsNPC;
 import com.ebicep.warlords.game.option.pve.raid.rooms.RaidRoom;
 import com.ebicep.warlords.game.option.pve.rewards.PveRewards;
 import com.ebicep.warlords.player.ingame.WarlordsPlayer;
@@ -18,6 +22,8 @@ import com.ebicep.warlords.util.warlords.GameRunnable;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
 import org.bukkit.Bukkit;
+import org.bukkit.event.EventHandler;
+import org.bukkit.event.Listener;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -63,6 +69,20 @@ public class RaidOption implements PveOption {
         }
 
         game.registerEvents(getBaseListener());
+        game.registerEvents(new Listener() {
+            @EventHandler(ignoreCancelled = true)
+            public void onDeath(WarlordsDeathEvent event) {
+                WarlordsEntity dead = event.getWarlordsEntity();
+                if (!(dead instanceof WarlordsNPC warlordsNPC)) {
+                    return;
+                }
+                AbstractMob mob = warlordsNPC.getMob();
+                if (mob == null || !mobs.containsKey(mob)) {
+                    return;
+                }
+                PveMobKillTracker.recordKill(event.getKiller(), dead, mob);
+            }
+        });
 
         game.registerGameMarker(ScoreboardHandler.class, healthScoreboardHandler = new SimpleScoreboardHandler(6, "kills") {
                     @Nonnull

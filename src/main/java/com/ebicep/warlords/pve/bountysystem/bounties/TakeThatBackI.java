@@ -28,7 +28,7 @@ public class TakeThatBackI extends AbstractBounty implements TracksDuringGame, W
 
     @Override
     public int getTarget() {
-        return 500;
+        return 200;
     }
 
     @Override
@@ -54,7 +54,7 @@ public class TakeThatBackI extends AbstractBounty implements TracksDuringGame, W
         if (!event.isDead()) {
             return;
         }
-        if (event.getInstanceFlags().contains(InstanceFlags.TRUE_DAMAGE) || event.getInstanceFlags().contains(InstanceFlags.REFLECTIVE_DAMAGE) || event.getCause()
+        if (event.getInstanceFlags().contains(InstanceFlags.PIERCE) || event.getInstanceFlags().contains(InstanceFlags.REFLECTIVE_DAMAGE) || event.getCause()
                                                                                                                                                        .equals("Thorns")) {
             newKills++;
         }

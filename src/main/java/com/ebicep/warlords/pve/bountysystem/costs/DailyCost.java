@@ -7,7 +7,7 @@ import java.util.LinkedHashMap;
 public interface DailyCost extends BountyCost {
 
     LinkedHashMap<Currencies, Long> COST = new LinkedHashMap<>() {{
-        put(Currencies.COIN, 5000L);
+        put(Currencies.COIN, 0L);
     }};
 
 

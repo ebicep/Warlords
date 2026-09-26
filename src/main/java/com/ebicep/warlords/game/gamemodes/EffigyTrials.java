@@ -81,7 +81,7 @@ public class EffigyTrials implements Mode {
 
     @Override
     public boolean isHiddenInMenu() {
-        return Mode.super.isHiddenInMenu();
+        return true;
     }
 
     @Override

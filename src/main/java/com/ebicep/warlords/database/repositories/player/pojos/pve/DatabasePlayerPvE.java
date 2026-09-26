@@ -431,6 +431,10 @@ public class DatabasePlayerPvE implements MultiPvEStats<
         return pushedMobKillCount(mobName);
     }
 
+    public long getMobDeathCount(String mobName) {
+        return pushedMobDeathCount(mobName);
+    }
+
 
     public void addCurrency(Currencies currency, Long amount) {
         if (AdminCommand.BYPASSED_PLAYER_CURRENCIES.contains(this)) {

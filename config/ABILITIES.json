@@ -2059,6 +2059,11 @@
         "cooldown": 30,
         "energyCost": 50
       },
+      "keystoneLoad": {
+        "name": "Load",
+        "cooldown": 12,
+        "energyCost": 0
+      },
       "chronarchPendulum": {
         "name": "Pendulum",
         "cooldown": 8,

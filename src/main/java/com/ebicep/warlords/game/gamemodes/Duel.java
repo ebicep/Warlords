@@ -71,6 +71,11 @@ public class Duel implements Mode {
     }
 
     @Override
+    public boolean isHiddenInMenu() {
+        return true;
+    }
+
+    @Override
     public GamesCollections getGamesCollections() {
         return GamesCollections.DUEL;
     }

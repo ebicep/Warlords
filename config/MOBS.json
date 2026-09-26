@@ -381,6 +381,14 @@
         "min_melee_damage": 1600.0,
         "max_melee_damage": 2000.0
       },
+      "KEYSTONE": {
+        "name": "Keystone",
+        "max_health": 16000,
+        "walk_speed": 0.22,
+        "damage_resistance": 18.0,
+        "min_melee_damage": 750.0,
+        "max_melee_damage": 1000.0
+      },
       "MITHRA": {
         "name": "Echo of Mithra",
         "max_health": 20000,
@@ -1455,7 +1463,7 @@
       },
       "CHRONARCH": {
         "name": "Chronarch",
-        "max_health": 80000,
+        "max_health": 100000,
         "walk_speed": 0.3,
         "damage_resistance": 20.0,
         "min_melee_damage": 1400.0,

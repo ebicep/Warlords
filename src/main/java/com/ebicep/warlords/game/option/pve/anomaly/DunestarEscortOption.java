@@ -52,7 +52,6 @@ public class DunestarEscortOption extends AbstractAnomalyOption {
 
     private static final int SEGMENT_DURATION_TICKS = 120 * GameRunnable.SECOND;
     private static final int CHECKPOINT_CHARGE_TICKS = 90 * GameRunnable.SECOND;
-    private static final int CHECKPOINT_CHARGE_REDUCTION_TICKS_PER_KILL = GameRunnable.SECOND;
     private static final int MOB_SPAWN_INTERVAL = 10;
     private static final int LASER_INTERVAL_TICKS = 15 * GameRunnable.SECOND;
     private static final int LASER_TELEGRAPH_TICKS = 2 * GameRunnable.SECOND;
@@ -312,7 +311,7 @@ public class DunestarEscortOption extends AbstractAnomalyOption {
         }
 
         announce(Component.text(carrier.getName() + " picked up the Dunestar Relic!", NamedTextColor.GOLD));
-        announce(Component.text("Reach each destination within 2 minutes, then charge the relic energy for 150 seconds. Each kill reduces the charge time by 0.3 seconds.", NamedTextColor.AQUA));
+        announce(Component.text("Reach each destination within 2 minutes, then charge the relic energy for 150 seconds. Each kill reduces the charge time by " + getChargeReductionText() + ".", NamedTextColor.AQUA));
         game.forEachOnlinePlayer((onlinePlayer, team) -> onlinePlayer.playSound(onlinePlayer.getLocation(), Sound.ENTITY_PLAYER_LEVELUP, 2, 1));
     }
 
@@ -576,9 +575,27 @@ public class DunestarEscortOption extends AbstractAnomalyOption {
         return Math.max(0, (segmentTicksRemaining + GameRunnable.SECOND - 1) / GameRunnable.SECOND);
     }
 
+    private int getChargeReductionTicksPerKill() {
+        return switch (playerCount()) {
+            case 1, 2 -> 2 * GameRunnable.SECOND;
+            case 3, 4 -> 3 * GameRunnable.SECOND / 2;
+            default -> GameRunnable.SECOND;
+        };
+    }
+
+    private String getChargeReductionText() {
+        int ticks = getChargeReductionTicksPerKill();
+        int wholeSeconds = ticks / GameRunnable.SECOND;
+        int tenth = (ticks % GameRunnable.SECOND) * 10 / GameRunnable.SECOND;
+        if (tenth == 0) {
+            return wholeSeconds + (wholeSeconds == 1 ? " second" : " seconds");
+        }
+        return wholeSeconds + "." + tenth + " seconds";
+    }
+
     private int getRequiredChargeTicks() {
         int chargeTicks = playerCount() > 2 ? CHECKPOINT_CHARGE_TICKS + ((10 * GameRunnable.SECOND) * playerCount()) : CHECKPOINT_CHARGE_TICKS;
-        return Math.max(0, chargeTicks - checkpointChargeKills * CHECKPOINT_CHARGE_REDUCTION_TICKS_PER_KILL);
+        return Math.max(0, chargeTicks - checkpointChargeKills * getChargeReductionTicksPerKill());
     }
 
     private int getCheckpointChargeSecondsRemaining() {
