@@ -22,7 +22,7 @@ public class RefinedI extends AbstractBounty implements TracksOutsideGame, Lifet
         if (!(event.getWeapon() instanceof AbstractLegendaryWeapon weapon)) {
             return;
         }
-        if (weapon.getUpgradeLevel() >= 4) {
+        if (weapon.getUpgradeLevel() >= 5) {
             value++;
         }
     }
@@ -34,7 +34,7 @@ public class RefinedI extends AbstractBounty implements TracksOutsideGame, Lifet
 
     @Override
     public String getDescription() {
-        return "Upgrade a Legendary Weapon to 4/4";
+        return "Max out a legendary weapon.";
     }
 
     @Override

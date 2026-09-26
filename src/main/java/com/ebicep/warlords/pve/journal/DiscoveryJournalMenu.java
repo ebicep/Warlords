@@ -257,13 +257,13 @@ public final class DiscoveryJournalMenu {
 
         String name = MobDiscovery.getDisplayName(mob);
         List<Component> lore = new ArrayList<>();
-        lore.add(Component.text("Health: ", NamedTextColor.GRAY)
+        lore.add(Component.text("Health: ", NamedTextColor.RED)
                           .append(Component.text(NumberFormat.addCommaAndRound(mob.maxHealth), NamedTextColor.GREEN)));
-        lore.add(Component.text("Walk Speed: ", NamedTextColor.GRAY)
+        lore.add(Component.text("Walk Speed: ", NamedTextColor.YELLOW)
                           .append(Component.text(NumberFormat.formatOptionalHundredths(mob.walkSpeed), NamedTextColor.GREEN)));
-        lore.add(Component.text("Damage Resistance: ", NamedTextColor.GRAY)
+        lore.add(Component.text("Damage Resistance: ", NamedTextColor.GOLD)
                           .append(Component.text(NumberFormat.formatOptionalHundredths(mob.damageResistance), NamedTextColor.GREEN)));
-        lore.add(Component.text("Melee Damage: ", NamedTextColor.GRAY)
+        lore.add(Component.text("Melee Damage: ", NamedTextColor.YELLOW)
                           .append(Component.text(
                                   NumberFormat.addCommaAndRound(mob.minMeleeDamage) + " - " + NumberFormat.addCommaAndRound(mob.maxMeleeDamage),
                                   NamedTextColor.GREEN
