@@ -63,9 +63,6 @@ public final class ResourceDiscovery {
         for (Vial vial : Vial.VALUES) {
             entries.add(new Entry(vial, Category.VIALS, sourcesFor(vial)));
         }
-        for (FixedItems fixedItem : FixedItems.values()) {
-            entries.add(new Entry(fixedItem, Category.ITEMS, sourcesFor(fixedItem)));
-        }
         for (SpendableRandomNewItem randomNewItem : SpendableRandomNewItem.VALUES) {
             entries.add(new Entry(randomNewItem, Category.ITEMS, sourcesFor(randomNewItem)));
         }
@@ -98,39 +95,39 @@ public final class ResourceDiscovery {
             case COIN -> List.of("Wave Defense", "Onslaught", "Event Wave Defense", "Anomaly", "Raids", "Bounties", "Reward Pouches");
             case SYNTHETIC_SHARD -> List.of("Onslaught", "Anomaly", "Weapon Salvage", "Supply Drops");
             case LEGEND_FRAGMENTS -> List.of("Wave Defense", "Onslaught", "Raids", "Reward Pouches");
-            case ILLUSION_SHARD -> List.of("Wave Defense", "Onslaught");
+            case ILLUSION_SHARD -> List.of("Wave Defense", "Onslaught", "Bounties");
             case FAIRY_ESSENCE -> List.of("Supply Drops", "Level Rewards", "Bounties", "Event Shops", "Supporter Rank");
             case COMMON_STAR_PIECE, RARE_STAR_PIECE, EPIC_STAR_PIECE -> List.of("Supply Drops");
             case LEGENDARY_STAR_PIECE -> List.of("Onslaught", "Supply Drops");
             case ASCENDANT_STAR_PIECE -> List.of("Wave Defense", "Raids");
-            case VOID_STAR_PIECE -> List.of("Cryptic Conquest Vendor");
+            case VOID_STAR_PIECE -> List.of("Cryptic Conquest");
             case SUPPLY_DROP_TOKEN -> List.of("Onslaught", "Supply Drop Susan");
             case SKILL_BOOST_MODIFIER -> List.of("Supply Drops", "Level Rewards", "Event Shops");
             case TITLE_TOKEN_JUGGERNAUT, TITLE_TOKEN_PHARAOHS_REVENGE, TITLE_TOKEN_SPIDERS_BURROW,
                  TITLE_TOKEN_BANE_OF_IMPURITIES, TITLE_TOKEN_GARDEN_OF_HESPERIDES, TITLE_TOKEN_LIBRARY_ARCHIVES ->
                     List.of("Event Shops", "Event Leaderboards");
             case LIMIT_BREAKER -> List.of("Wave Defense", "Raids");
-            case MYSTERIOUS_TOKEN -> List.of("Vendors");
+//            case MYSTERIOUS_TOKEN -> List.of("Vendors");
             case SCRAP_METAL -> List.of("Item Salvage");
             case ASCENDANT_SHARD -> List.of("Wave Defense", "Raids");
             case PRESTIGE_ORB -> List.of("Spec Prestige");
             case ETHEREUM_CRYSTAL -> List.of("Anomaly", "Raids");
 //            case ASCENDANT_SCROLL -> List.of("Ascendant Vendor");
-            case ITEM_LOCK_SCROLL -> List.of("Raid");
+            case ITEM_LOCK_SCROLL -> List.of("Raids");
 //            case CRYPTIC_CONQUEST_KEY -> List.of("Ascendant Vendor");
             case ARCHEMEDIAN_FRAGMENT -> List.of("Cryptic Conquest");
 //            case SOVEREIGN_TOWER_KEY -> List.of("Ascendant Vendor");
             case VEILKEEPER_INSIGNIA -> List.of("Prestige Vendor");
             case CELESTIAL_BRONZE, EVENT_POINTS_BOLTARO, EVENT_POINTS_NARMER, EVENT_POINTS_MITHRA,
                  EVENT_POINTS_ILLUIMINA, EVENT_POINTS_GARDEN_OF_HESPERIDES, EVENT_POINTS_LIBRARY_ARCHIVES -> List.of();
-            default -> List.of("Currently cannot be earned.");
+            default -> List.of("Currently not obtainable.");
         };
     }
 
     private static List<String> sourcesFor(MobDrop drop) {
         return switch (drop) {
             case ZENITH_STAR -> List.of("Zenith Boss", "Onslaught", "Wave Defense");
-            case AWAKENED_ABILITY_SCROLL -> List.of("Hidden Mob Drops");
+            case AWAKENED_ABILITY_SCROLL -> List.of("Currently not obtainable.");
         };
     }
 
@@ -150,8 +147,8 @@ public final class ResourceDiscovery {
 
     private static List<String> sourcesFor(SpendableRandomNewItem randomNewItem) {
         return switch (randomNewItem) {
-            case COMMON, RARE, EPIC, SOVEREIGN, LEGENDARY -> List.of("Wave Defense", "Onslaught", "Event Wave Defense", "Anomaly");
-            case ASCENDANT -> List.of("Wave Defense", "Anomaly");
+            case COMMON, RARE, EPIC, SOVEREIGN, LEGENDARY -> List.of("Wave Defense", "Onslaught", "Event Wave Defense", "Anomaly", "Supply Drop Susan", "Bounties", "Reward Pouches");
+            case ASCENDANT -> List.of("Currently not obtainable.");
         };
     }
 }

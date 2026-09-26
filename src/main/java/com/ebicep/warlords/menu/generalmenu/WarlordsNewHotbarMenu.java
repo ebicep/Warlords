@@ -899,7 +899,7 @@ public class WarlordsNewHotbarMenu {
 
         public static void openPvEMenu(Player player) {
             DatabasePlayer databasePlayer = DatabaseManager.getPlayer(player);
-            Menu menu = new Menu("PvE Menu", 9 * 4);
+            Menu menu = new Menu("PvE Menu", 9 * 5);
 
             List<AbstractWeapon> weapons = databasePlayer.getPveStats().getWeaponInventory();
             Optional<AbstractWeapon> optionalWeapon = weapons
@@ -937,7 +937,7 @@ public class WarlordsNewHotbarMenu {
             menu.setItem(5, 1, REWARD_INVENTORY_MENU, (m, e) -> RewardInventory.openRewardInventory(player, 1));
             menu.setItem(6, 1, ABILITY_TREE_MENU, (m, e) -> AbilityTreeCommand.open(player));
             menu.setItem(7, 1, VIAL_INVENTORY_MENU, (m, e) -> ConsumableMenu.openVialInventory(player));
-            menu.setItem(4, 2, DISCOVERY_JOURNAL_MENU, (m, e) -> DiscoveryJournalMenu.open(player));
+            menu.setItem(1, 2, DISCOVERY_JOURNAL_MENU, (m, e) -> DiscoveryJournalMenu.open(player));
 
             menu.setItem(3, 3, MENU_BACK, (m, e) -> WarlordsNewHotbarMenu.SelectionMenu.openWarlordsMenu(player));
             menu.setItem(4, 3, MENU_CLOSE, ACTION_CLOSE_MENU);
