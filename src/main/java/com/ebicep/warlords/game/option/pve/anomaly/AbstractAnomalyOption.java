@@ -333,6 +333,22 @@ public abstract class AbstractAnomalyOption implements PveOption {
         return objectivesCompleted;
     }
 
+    public boolean isRewardEligible(UUID uuid) {
+        return rewardEligiblePlayers.contains(uuid);
+    }
+
+    public int getCacheRewardCount() {
+        boolean[] cacheEligibility = finalCacheEligibility == null ? getCacheEligibility() : finalCacheEligibility;
+        int eligibleObjectiveCount = Math.min(cacheEligibility.length, currentAnomaly.getRewardPools().size());
+        int cachesGranted = 0;
+        for (int i = 0; i < eligibleObjectiveCount; i++) {
+            if (cacheEligibility[i]) {
+                cachesGranted++;
+            }
+        }
+        return cachesGranted;
+    }
+
     public boolean isCompleted() {
         return successfulCompletion;
     }
