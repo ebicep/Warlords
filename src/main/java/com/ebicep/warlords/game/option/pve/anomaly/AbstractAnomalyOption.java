@@ -123,7 +123,7 @@ public abstract class AbstractAnomalyOption implements PveOption {
                 if (dead instanceof WarlordsPlayer && killer instanceof WarlordsNPC warlordsNPC) {
                     AbstractMob mob = warlordsNPC.getMob();
                     if (mob != null && mobs.containsKey(mob)) {
-                        dead.getMinuteStats().addMobDeath(mob.getName());
+                        dead.getMinuteStats().addMobDeath(mob.getStatId());
                     }
                 }
             }

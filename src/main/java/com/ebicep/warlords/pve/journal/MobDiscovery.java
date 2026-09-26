@@ -5,8 +5,11 @@ import com.ebicep.warlords.pve.mobs.Mob;
 
 import java.util.ArrayList;
 import java.util.EnumMap;
+import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.regex.Pattern;
 
 public final class MobDiscovery {
@@ -257,11 +260,40 @@ public final class MobDiscovery {
     }
 
     public static long getKills(DatabasePlayer databasePlayer, Mob mob) {
-        String name = mob.name;
-        if (name == null || name.isEmpty()) {
-            return 0;
+        long kills = databasePlayer.getPveStats().getMobKillCount(mob.name());
+        String displayName = mob.name;
+        if (displayName == null || displayName.isEmpty() || displayName.equals(mob.name()) || ambiguousDisplayNames().contains(displayName)) {
+            return kills;
         }
-        return databasePlayer.getPveStats().getMobKillCount(name);
+        return kills + databasePlayer.getPveStats().getMobKillCount(displayName);
+    }
+
+    private static volatile Set<String> ambiguousDisplayNames;
+
+    private static Set<String> ambiguousDisplayNames() {
+        Set<String> cached = ambiguousDisplayNames;
+        if (cached != null) {
+            return cached;
+        }
+        Map<String, Integer> counts = new HashMap<>();
+        for (Mob value : Mob.VALUES) {
+            if (value.name == null || value.name.isEmpty()) {
+                continue;
+            }
+            counts.merge(value.name, 1, Integer::sum);
+        }
+        if (counts.isEmpty()) {
+            return Set.of();
+        }
+        Set<String> ambiguous = new HashSet<>();
+        counts.forEach((name, count) -> {
+            if (count > 1) {
+                ambiguous.add(name);
+            }
+        });
+        cached = Set.copyOf(ambiguous);
+        ambiguousDisplayNames = cached;
+        return cached;
     }
 
     public static boolean isDiscovered(DatabasePlayer databasePlayer, Mob mob) {

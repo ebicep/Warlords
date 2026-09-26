@@ -72,15 +72,15 @@ public class EffigyTrialOption implements PveOption {
                         }.runTaskLater(1);
 
                         if (killer instanceof WarlordsPlayer) {
-                            killer.getMinuteStats().addMobKill(mobToRemove.getName());
-                            we.getHitBy().forEach((assisted, value) -> assisted.getMinuteStats().addMobAssist(mobToRemove.getName()));
+                            killer.getMinuteStats().addMobKill(mobToRemove.getStatId());
+                            we.getHitBy().forEach((assisted, value) -> assisted.getMinuteStats().addMobAssist(mobToRemove.getStatId()));
                         }
 
                     }
                     MobCommand.SPAWNED_MOBS.remove(mobToRemove);
                 } else if (we instanceof WarlordsPlayer && killer instanceof WarlordsNPC) {
                     if (mobs.containsKey(((WarlordsNPC) killer).getMob())) {
-                        we.getMinuteStats().addMobDeath(((WarlordsNPC) killer).getMob().getName());
+                        we.getMinuteStats().addMobDeath(((WarlordsNPC) killer).getMob().getStatId());
                     }
                 }
             }
