@@ -580,7 +580,7 @@
         "difficulty": 2,
         "name": "Urgent Care",
         "description": "Reduce the healing of {{aqua:Healing Totem}} by {{heal;%}}, the energy cost by {{energy;%}}, the cooldown by {{ticks;%}}, and increase the number of charges to {{blue}}, the healing rate by {{blue:;x}}, and the radius by {{blocks}}. Within the Totem, allies with health greater than {{heal;%}} will transfer their healing to the lowest health ally at {{heal;%}} effectiveness.",
-        "healingTotemHealingDecreasePercent": 50,
+        "healingTotemHealingDecreasePercent": 60,
         "healingTotemEnergyDecreasePercent": 50,
         "healingTotemCooldownDecreasePercent": 50,
         "healingTotemMaxAbilityCharges": 2,
