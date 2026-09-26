@@ -12,7 +12,6 @@ import com.ebicep.warlords.pve.mobs.AbstractMob;
 import com.ebicep.warlords.pve.mobs.Mob;
 import com.ebicep.warlords.pve.mobs.abilities.AbstractPveAbility;
 import com.ebicep.warlords.pve.mobs.tiers.BossMob;
-import com.ebicep.warlords.util.chat.ChatUtils;
 import com.ebicep.warlords.util.warlords.GameRunnable;
 import com.ebicep.warlords.util.warlords.PlayerFilter;
 import com.ebicep.warlords.util.warlords.Utils;
@@ -28,7 +27,7 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
 
-public class Keystone extends AbstractMob implements BossMob {
+public class EchoOfGradient extends AbstractMob implements BossMob {
 
     private static final int WEDGE_DURATION_TICKS = 6 * GameRunnable.SECOND;
 
@@ -36,11 +35,11 @@ public class Keystone extends AbstractMob implements BossMob {
     private int wedgesToSettle = 4;
     private boolean cracked = false;
 
-    public Keystone(Location spawnLocation) {
-        this(spawnLocation, "Keystone", 22000, 0.34f, 20, 750, 1000);
+    public EchoOfGradient(Location spawnLocation) {
+        this(spawnLocation, "Echo of Gradient", 30000, 0.34f, 20, 750, 1000);
     }
 
-    public Keystone(
+    public EchoOfGradient(
             Location spawnLocation,
             String name,
             int maxHealth,
@@ -63,17 +62,17 @@ public class Keystone extends AbstractMob implements BossMob {
 
     @Override
     public Mob getMobRegistry() {
-        return Mob.KEYSTONE;
+        return Mob.ECHO_OF_GRADIENT;
     }
 
     @Override
     public Component getDescription() {
-        return Component.text("Wedge of the Opex arch", NamedTextColor.GRAY);
+        return Component.text("Vessel of the Mistress", NamedTextColor.GRAY);
     }
 
     @Override
     public TextColor getColor() {
-        return NamedTextColor.DARK_GRAY;
+        return NamedTextColor.LIGHT_PURPLE;
     }
 
     @Override

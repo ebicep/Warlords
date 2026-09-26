@@ -675,7 +675,7 @@ public enum Mob {
             Weapons.WALKING_STICK.getItem()
     )
     ),
-    KEYSTONE(EntityType.ZOMBIE, Keystone.class, Keystone::new, Keystone::new, new Utils.SimpleEntityEquipment(
+    ECHO_OF_GRADIENT(EntityType.ZOMBIE, EchoOfGradient.class, EchoOfGradient::new, EchoOfGradient::new, new Utils.SimpleEntityEquipment(
             SkullUtils.getSkullFrom(SkullID.GHOST_GRAY),
             Utils.applyColorTo(Material.LEATHER_CHESTPLATE, 150, 145, 135),
             Utils.applyColorTo(Material.LEATHER_LEGGINGS, 120, 115, 105),
@@ -1426,7 +1426,7 @@ public enum Mob {
             BOLTARO,
             GHOULCALLER,
             NARMER,
-            KEYSTONE,
+            ECHO_OF_GRADIENT,
             MITHRA,
             ZENITH,
             MAGMATIC_OOZE,

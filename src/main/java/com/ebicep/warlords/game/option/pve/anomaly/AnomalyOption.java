@@ -44,7 +44,7 @@ public class AnomalyOption extends AbstractAnomalyOption {
             Mob.GHOULCALLER,
             Mob.MITHRA,
             Mob.BOLTARO,
-            Mob.KEYSTONE,
+            Mob.ECHO_OF_GRADIENT,
             Mob.CHESSKING
     };
 
