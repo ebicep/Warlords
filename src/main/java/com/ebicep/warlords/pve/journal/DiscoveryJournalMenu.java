@@ -34,7 +34,7 @@ public final class DiscoveryJournalMenu {
 
     public static void open(Player player) {
         DatabasePlayer databasePlayer = DatabaseManager.getPlayer(player);
-        Menu menu = new Menu("Discovery Journal", 9 * 4);
+        Menu menu = new Menu("Discovery Journal", 9 * 5);
 
         menu.setItem(4, 0,
                 new ItemBuilder(Material.KNOWLEDGE_BOOK)
@@ -86,8 +86,8 @@ public final class DiscoveryJournalMenu {
                 (m, e) -> openResources(player)
         );
 
-        menu.setItem(3, 3, WarlordsNewHotbarMenu.PvEMenu.MENU_BACK_PVE, (m, e) -> WarlordsNewHotbarMenu.PvEMenu.openPvEMenu(player));
-        menu.setItem(4, 3, MENU_CLOSE, ACTION_CLOSE_MENU);
+        menu.setItem(3, 4, WarlordsNewHotbarMenu.PvEMenu.MENU_BACK_PVE, (m, e) -> WarlordsNewHotbarMenu.PvEMenu.openPvEMenu(player));
+        menu.setItem(4, 4, MENU_CLOSE, ACTION_CLOSE_MENU);
         menu.openForPlayer(player);
     }
 
@@ -257,16 +257,16 @@ public final class DiscoveryJournalMenu {
 
         String name = MobDiscovery.getDisplayName(mob);
         List<Component> lore = new ArrayList<>();
-        lore.add(Component.text("Health: ", NamedTextColor.RED)
-                          .append(Component.text(NumberFormat.addCommaAndRound(mob.maxHealth), NamedTextColor.GREEN)));
-        lore.add(Component.text("Walk Speed: ", NamedTextColor.YELLOW)
-                          .append(Component.text(NumberFormat.formatOptionalHundredths(mob.walkSpeed), NamedTextColor.GREEN)));
-        lore.add(Component.text("Damage Resistance: ", NamedTextColor.GOLD)
-                          .append(Component.text(NumberFormat.formatOptionalHundredths(mob.damageResistance), NamedTextColor.GREEN)));
-        lore.add(Component.text("Melee Damage: ", NamedTextColor.YELLOW)
+        lore.add(Component.text("Health: ", NamedTextColor.GRAY)
+                          .append(Component.text(NumberFormat.addCommaAndRound(mob.maxHealth), NamedTextColor.RED)));
+        lore.add(Component.text("Walk Speed: ", NamedTextColor.GRAY)
+                          .append(Component.text(NumberFormat.formatOptionalHundredths(mob.walkSpeed * 20) + " blocks/s", NamedTextColor.YELLOW)));
+        lore.add(Component.text("Damage Resistance: ", NamedTextColor.GRAY)
+                          .append(Component.text(NumberFormat.formatOptionalHundredths(mob.damageResistance) + "%", NamedTextColor.GOLD)));
+        lore.add(Component.text("Melee Damage: ", NamedTextColor.GRAY)
                           .append(Component.text(
                                   NumberFormat.addCommaAndRound(mob.minMeleeDamage) + " - " + NumberFormat.addCommaAndRound(mob.maxMeleeDamage),
-                                  NamedTextColor.GREEN
+                                  NamedTextColor.YELLOW
                           )));
         lore.add(Component.empty());
         lore.add(Component.text("Times slain: ", NamedTextColor.GRAY)

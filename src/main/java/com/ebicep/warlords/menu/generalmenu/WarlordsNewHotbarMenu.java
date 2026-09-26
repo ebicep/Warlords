@@ -939,8 +939,8 @@ public class WarlordsNewHotbarMenu {
             menu.setItem(7, 1, VIAL_INVENTORY_MENU, (m, e) -> ConsumableMenu.openVialInventory(player));
             menu.setItem(1, 2, DISCOVERY_JOURNAL_MENU, (m, e) -> DiscoveryJournalMenu.open(player));
 
-            menu.setItem(3, 3, MENU_BACK, (m, e) -> WarlordsNewHotbarMenu.SelectionMenu.openWarlordsMenu(player));
-            menu.setItem(4, 3, MENU_CLOSE, ACTION_CLOSE_MENU);
+            menu.setItem(3, 4, MENU_BACK, (m, e) -> WarlordsNewHotbarMenu.SelectionMenu.openWarlordsMenu(player));
+            menu.setItem(4, 4, MENU_CLOSE, ACTION_CLOSE_MENU);
 
             menu.openForPlayer(player);
         }

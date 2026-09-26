@@ -2,6 +2,7 @@ package com.ebicep.warlords.pve.journal;
 
 import com.ebicep.warlords.database.repositories.player.pojos.general.DatabasePlayer;
 import com.ebicep.warlords.pve.mobs.Mob;
+import com.ebicep.warlords.pve.mobs.tiers.RaidBossMob;
 
 import java.util.ArrayList;
 import java.util.EnumMap;
@@ -56,6 +57,7 @@ public final class MobDiscovery {
         put(Mob.ASHEN_PHYSICIAN, "");
         put(Mob.VEILED_CULTIST, "");
         put(Mob.SUNKEN_DELVER, "");
+        put(Mob.CLOCKBOUND_PHANTOM, "");
 
         put(Mob.ILLUMINATION, "It grants Last Stand to nearby allies. When it dies, it explodes and deals Blight damage.");
         put(Mob.GOLEM_APPRENTICE, "Its melee hits knock enemies into the air.");
@@ -132,17 +134,17 @@ public final class MobDiscovery {
         put(Mob.ILLUMINA, "Illumina roots groups of players with Bramble and slows them with Bramble Slowness. She summons Skeletal Sorcerers and opens with Golem Apprentices. At key health thresholds she starts timed Damage Checks: deal enough damage before the timer ends, or Vampiric Leash drains the party and Death Ray nearly kills everyone while she heals. Later phases add Nightmare Zombies. Deal heavy damage during Damage Checks and clear extra enemies between them.");
         put(Mob.VOID, "Void shreds the ground, spawns souls, and drops Thunder Clouds between Armageddon-style lightning waves. At high health he uses Augmented Immolation, which expands flame across the floor. Mid-fight he demands large timed Damage Checks with Golem Apprentice spawns. If you fail, the party is crushed. A second immolation and a harder Damage Check follow, and near death he summons Boltaros. Save cooldowns for Damage Checks and stay off the flame floors.");
         put(Mob.TORMENT, "Torment only takes full damage from players who have Damage Check. Without it, your hits are heavily reduced. Soul Fire pulses and Tormenting Mark force a marked player to stay away from allies, and Souls of Gradient make that mark worse. During health phases, he pulls everyone into Whispers suction zones of true damage, spawns Celestial Opus, and later marks a Divine Protector whose aura shields nearby allies while Torment rains Divine Punishment. Keep Damage Check up, draw marked players away from the group, and protect the chosen player.");
-        put(Mob.ONE_OF_NINE, "One of Nine is mostly immune and reflects damage taken outside short vulnerability windows. Wait for the marked vulnerable halo before dealing heavy damage. Orbiting swords, a Reaving Blades aura, Giant Lasers, and chasing orbs punish standing still. Later phases bring laser barrages with Rift Walkers, a timed Nine Crystal check that kills the party with Valerian Death if it fails, spinning walls with meteors, triple lasers, and then arena collapse. Kill Echo of Blades and Soul Reavers, and only deal heavy damage during damage windows.");
         put(Mob.ORBYZ, "Orbyz permanently slows anyone nearby and periodically uses Blizzard Impendus to slow and damage the group. He takes very little damage unless someone holds the Empowering Relic and shares Empowering Allies, so pick up relics and stay near the holder. Frost Veils spawn, Heavenly Spears rain ice, and health phases fire rotating radial lasers or long spear barrages. Stay mobile for spears and lasers, rotate the relic, and deal damage while allies are buffed.");
+        put(Mob.ONE_OF_NINE, "One of Nine is mostly immune and reflects damage taken outside short vulnerability windows. Wait for the marked vulnerable halo before dealing heavy damage. One of Nine has a Reaving Blades aura, shielding him from close combat. He ocassionaly chasing orbs that punish standing still. Later phases bring laser barrages with Rift Walkers, a timed Nine Crystal check that kills the party with Valerian Death if it fails, spinning walls with meteors, triple lasers, and then arena collapse. Kill Echo of Blades and Soul Reavers, and only deal heavy damage during damage windows.");
         put(Mob.LILIUM, "Lilium's Petal Crystals reduce the damage she takes until they are destroyed. Rose Gardens, Bouquet barrages, and blade waltzes force constant movement. Liliath Enigmas make her fully invulnerable while they are alive, so kill them immediately. Later phases include crystal shields, Enigma traps, sky conduit platform sequences, arena splits with Echoes, champion protectors during spear rain, and Crystalline Petal extras. Clear crystals and Enigmas first, then deal damage between dances.");
-        put(Mob.VEILKEEPER, "Veilkeeper is an invulnerable gatekeeper. He cancels all damage, freezes in place, and after a warning monologue begins striking the party with unavoidable true damage until you leave. There is no kill phase. Treat him as a rejection encounter, not a damage check.");
-        put(Mob.CENTURION, "Centurion is a Nameless Crown bruiser with enormous health and steady crushing melee. He does not have special phases yet. Survive his raw pressure, keep healers ready, and wear him down.");
-        put(Mob.VANGUARD, "Vanguard hits even harder than Centurion, trading some speed for devastating melee. Expect a straightforward fight with massive health and no special phases. Coordinate defensive abilities and wear him down.");
         put(Mob.CHESSKING, "Chessking belches heavy slime around him and floods the map with Slime Guards and Slimy Chess. There is a cap on how many extra slimes can spawn. Projectile hits heal him through Blob Heal, so favor melee and abilities over bows. As his health drops, he shrinks, gains speed and jump, tightens Belch range, and spawns faster. Kill the extra slimes, avoid feeding him projectiles, and finish the smaller, quicker form.");
         put(Mob.CHRONARCH, "Chronarch resists knockback with his Clockwork Frame and pulses Mainspring damage on nearby players. Pendulum knocks players back and slows them. Cogburst telegraphs clock-hand beams, so step off the hands before they strike. He summons Clockbound Phantoms throughout the fight. Below 65% health, Overclock speeds him up and adds Chrono Wardens. Below 30% health, Twelve Chimes expands ringing circles; leave the circle each chime. Clear phantoms and stay off the clock hands.");
-        put(Mob.PHYSIRA, "Physira forces a race to destroy pylons. Around 75% health she rings the arena with six crystals. Destroy every pylon before the countdown ends, or the whole party takes lethal Valerian Death true damage. Stay mobile, split damage across pylons, and call out when the timer is tight.");
         put(Mob.ENAVURIS, "Enavuris cannot be silenced or stunned. He volleys Ender Stones that damage, teleport, silence, and cut your outgoing damage. Imprisonment locks a player in an obsidian cage with further silence and weakened damage. Enavurites and Vanishing Enavurites also join the fight. Free caged allies quickly, dodge stone volleys, and clear extras so the boss does not overwhelm the party.");
-        put(Mob.RAID_MITHRA, "Raid Mithra is a colossal raid boss framed by orbiting crystals and a spinning royal halo. When she attacks, she telegraphs a multi-stage chakram cleave into a royal impact. Watch the sweep and step out before the final hit. Between strikes she paces with chess-like steps and queen flourishes. Learn the cleave timing, keep the raid spread for impacts, and treat the fight as a long endurance battle.");
+        put(Mob.RAID_MITHRA, "???");
+        put(Mob.VEILKEEPER, "???");
+        put(Mob.CENTURION, "???");
+        put(Mob.VANGUARD, "???");
+        put(Mob.PHYSIRA, "???");
 
         put(Mob.EVENT_BOLTARO, "Event Boltaro uses the same Multi Hit melee knockback combo as his dungeon counterpart. He does not open with Exiled Apostates. Instead, near half health he splits into two Event Boltaro Shadows. Finish the shadows after the split, because the original will not remain as a single target.");
         put(Mob.EVENT_NARMER, "Event Narmer is rooted in place and opens with either Djer or Djet, plus Acolytes, Berserkers, and Lancers. He is immune while the ancestor lives, then becomes immune again below 40% health while Acolytes remain. Ally deaths heal him, and killing Acolytes too quickly still risks Death Wish. Kill the ancestor first, space out Acolyte deaths, and endure Ground Shred quakes.");
@@ -189,18 +191,6 @@ public final class MobDiscovery {
         put(Mob.EVENT_BLEUE_GRIMOIRE, "It periodically casts random defensive and healing player abilities.");
         put(Mob.EVENT_ORANGE_GRIMOIRE, "It periodically casts random ultimate-style player abilities.");
         put(Mob.EVENT_NECRONOMICON_GRIMOIRE, "It locks onto a player with a laser and Smites them for near-lethal true damage.");
-
-        List<Mob> missing = new ArrayList<>();
-        for (Mob.MobGroup group : JOURNAL_GROUPS) {
-            for (Mob mob : group.mobs) {
-                if (!MECHANICS.containsKey(mob)) {
-                    missing.add(mob);
-                }
-            }
-        }
-        if (!missing.isEmpty()) {
-            throw new IllegalStateException("Missing Discovery Journal mechanics for: " + missing);
-        }
     }
 
     private MobDiscovery() {

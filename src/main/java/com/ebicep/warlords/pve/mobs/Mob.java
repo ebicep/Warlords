@@ -1370,7 +1370,7 @@ public enum Mob {
             HOUND, INTERMEDIATE_WARRIOR_BERSERKER, SKELETAL_WARLOCK, PIG_SHAMAN,
             BLAZING_KINDLE, WANDER_KNIGHTS, ZOMBIE_SWORDSMAN, ZOMBIE_LAMENT, IVORY_RONIN,
             GRAVE_KNIGHT, ASHEN_PHYSICIAN, VEILED_CULTIST, SUNKEN_DELVER,
-            WITCH_DEACON, PIG_ALLEVIATOR
+            WITCH_DEACON, PIG_ALLEVIATOR, CLOCKBOUND_PHANTOM
     };
     public static final Mob[] ADVANCED = {
             ILLUMINATION, GOLEM_APPRENTICE, CELESTIAL_BOW_WIELDER,
@@ -1443,17 +1443,17 @@ public enum Mob {
             ILLUMINA,
             VOID,
             TORMENT,
-            ONE_OF_NINE,
             ORBYZ,
+            ONE_OF_NINE,
             LILIUM,
-            VEILKEEPER,
-            CENTURION,
-            VANGUARD,
             CHESSKING,
             CHRONARCH,
             PHYSIRA,
             ENAVURIS,
-            RAID_MITHRA
+            RAID_MITHRA,
+            VANGUARD,
+            CENTURION,
+            VEILKEEPER,
     };
     public static final Mob[] EVENT_BOSSES = {
             EVENT_BOLTARO, EVENT_NARMER, EVENT_MITHRA, EVENT_ILLUSION_CORE, EVENT_EXILED_CORE, EVENT_CALAMITY_CORE, EVENT_ILLUMINA,
