@@ -19,7 +19,7 @@ public class BulwarkI extends AbstractBounty implements TracksPostGame, Lifetime
 
     @Override
     public String getDescription() {
-        return "Absorb 300 million damage in PvE.";
+        return "Absorb 300 million damage in any gamemode.";
     }
 
     @Override

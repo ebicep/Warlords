@@ -20,12 +20,12 @@ public class ExecutionerI extends AbstractBounty implements TracksPostGame, Life
 
     @Override
     public String getDescription() {
-        return "Kill " + NumberFormat.addCommaAndRound(getTarget()) + " enemies in PvE.";
+        return "Kill " + NumberFormat.addCommaAndRound(getTarget()) + " enemies in any gamemode.";
     }
 
     @Override
     public int getTarget() {
-        return 50_000;
+        return 100_000;
     }
 
     @Override

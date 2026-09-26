@@ -20,7 +20,7 @@ public class EndureI extends AbstractBounty implements TracksPostGame, DailyCost
 
     @Override
     public String getDescription() {
-        return "Take " + NumberFormat.addCommaAndRound(getTarget()) + " damage in PvE.";
+        return "Take " + NumberFormat.addCommaAndRound(getTarget()) + " damage in any gamemode.";
     }
 
     @Override

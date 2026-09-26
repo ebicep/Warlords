@@ -7,10 +7,11 @@ import com.ebicep.warlords.player.ingame.WarlordsPlayer;
 import com.ebicep.warlords.pve.bountysystem.AbstractBounty;
 import com.ebicep.warlords.pve.bountysystem.Bounty;
 import com.ebicep.warlords.pve.bountysystem.costs.LifetimeCost;
+import com.ebicep.warlords.pve.bountysystem.rewards.LifeTimeRewardSpendable4;
 import com.ebicep.warlords.pve.bountysystem.rewards.LifetimeRewardSpendable3;
 import com.ebicep.warlords.pve.bountysystem.trackers.TracksPostGame;
 
-public class CarnageI extends AbstractBounty implements TracksPostGame, LifetimeCost, LifetimeRewardSpendable3 {
+public class CarnageI extends AbstractBounty implements TracksPostGame, LifetimeCost, LifeTimeRewardSpendable4 {
 
     @Override
     public String getName() {
@@ -19,7 +20,7 @@ public class CarnageI extends AbstractBounty implements TracksPostGame, Lifetime
 
     @Override
     public String getDescription() {
-        return "Deal 2 billion damage in PvE.";
+        return "Deal 2 billion damage in any gamemode.";
     }
 
     @Override

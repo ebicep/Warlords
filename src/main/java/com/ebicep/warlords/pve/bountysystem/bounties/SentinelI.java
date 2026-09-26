@@ -20,7 +20,7 @@ public class SentinelI extends AbstractBounty implements TracksPostGame, Lifetim
 
     @Override
     public String getDescription() {
-        return "Get " + NumberFormat.addCommaAndRound(getTarget()) + " assists in PvE.";
+        return "Get " + NumberFormat.addCommaAndRound(getTarget()) + " assists in any gamemode.";
     }
 
     @Override
