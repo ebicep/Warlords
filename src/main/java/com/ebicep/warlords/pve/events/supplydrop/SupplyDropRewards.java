@@ -2,6 +2,8 @@ package com.ebicep.warlords.pve.events.supplydrop;
 
 import com.ebicep.warlords.database.repositories.player.pojos.pve.DatabasePlayerPvE;
 import com.ebicep.warlords.pve.Currencies;
+import com.ebicep.warlords.pve.newitems.NewItemsUtils;
+import com.ebicep.warlords.pve.newitems.SpendableRandomNewItem;
 import com.ebicep.warlords.pve.weapons.WeaponsPvE;
 import com.ebicep.warlords.util.java.RandomCollection;
 import net.kyori.adventure.text.Component;
@@ -45,6 +47,9 @@ public enum SupplyDropRewards {
     COINS_100000("100,000 Coins", 100, WeaponsPvE.EPIC, Currencies.COIN, 100000),
     FAIRY_ESSENCE_20("20 Fairy Essence", 500, WeaponsPvE.RARE, Currencies.FAIRY_ESSENCE, 20),
     FAIRY_ESSENCE_40("40 Fairy Essence", 200, WeaponsPvE.RARE, Currencies.FAIRY_ESSENCE, 40),
+    COMMON_ITEM("Random Common Item", 200, WeaponsPvE.COMMON, SpendableRandomNewItem.COMMON),
+    RARE_ITEM("Random Rare Item", 50, WeaponsPvE.RARE, SpendableRandomNewItem.RARE),
+    EPIC_ITEM("Random Epic Item", 10, WeaponsPvE.EPIC, SpendableRandomNewItem.EPIC),
 
     ;
 
@@ -61,13 +66,30 @@ public enum SupplyDropRewards {
     public final WeaponsPvE rarity; //using for convenience
     public final Currencies currency;
     public final long currencyAmount;
+    public final SpendableRandomNewItem randomNewItem;
 
     SupplyDropRewards(String name, int dropChance, WeaponsPvE rarity, Currencies currency, long currencyAmount) {
+        this(name, dropChance, rarity, currency, currencyAmount, null);
+    }
+
+    SupplyDropRewards(String name, int dropChance, WeaponsPvE rarity, SpendableRandomNewItem randomNewItem) {
+        this(name, dropChance, rarity, null, 1, randomNewItem);
+    }
+
+    SupplyDropRewards(
+            String name,
+            int dropChance,
+            WeaponsPvE rarity,
+            Currencies currency,
+            long currencyAmount,
+            SpendableRandomNewItem randomNewItem
+    ) {
         this.name = name;
         this.dropChance = dropChance;
         this.rarity = rarity;
         this.currency = currency;
         this.currencyAmount = currencyAmount;
+        this.randomNewItem = randomNewItem;
     }
 
     public static SupplyDropRewards getRandomReward() {
@@ -75,6 +97,10 @@ public enum SupplyDropRewards {
     }
 
     public void giveReward(DatabasePlayerPvE databasePlayerPvE) {
+        if (randomNewItem != null) {
+            databasePlayerPvE.getNewItemsManager().addItem(NewItemsUtils.generateRandomItem(randomNewItem.getTier()));
+            return;
+        }
         databasePlayerPvE.addCurrency(currency, currencyAmount);
     }
 

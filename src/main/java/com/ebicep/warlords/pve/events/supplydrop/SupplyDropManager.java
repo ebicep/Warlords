@@ -320,10 +320,15 @@ public class SupplyDropManager {
         Bukkit.getPluginManager().callEvent(new SupplyDropCallEvent(uuid, amount, true));
 
         Map<Currencies, Long> rewardTotals = new HashMap<>();
+        Map<SupplyDropRewards, Long> itemTotals = new HashMap<>();
         List<SupplyDropRewards> individualRolls = new ArrayList<>();
         for (long i = 0; i < amount; i++) {
             SupplyDropRewards reward = SupplyDropRewards.getRandomReward();
-            rewardTotals.merge(reward.currency, reward.currencyAmount, Long::sum);
+            if (reward.randomNewItem != null) {
+                itemTotals.merge(reward, 1L, Long::sum);
+            } else {
+                rewardTotals.merge(reward.currency, reward.currencyAmount, Long::sum);
+            }
             individualRolls.add(reward);
         }
 
@@ -352,8 +357,13 @@ public class SupplyDropManager {
         }
 
         compiled.forEach(databasePlayerPvE::addCurrency);
+        itemTotals.forEach((reward, count) -> {
+            for (long i = 0; i < count; i++) {
+                reward.giveReward(databasePlayerPvE);
+            }
+        });
 
-        Component summary = getSummary(amount, compiled);
+        Component summary = getSummary(amount, compiled, itemTotals);
         sendSupplyDropMessage(uuid, summary);
         player.playSound(player.getLocation(), Sound.ENTITY_PLAYER_LEVELUP, 1, 1.2f);
 
@@ -362,7 +372,7 @@ public class SupplyDropManager {
     }
 
     @Nonnull
-    private static Component getSummary(long amount, LinkedHashMap<Currencies, Long> compiled) {
+    private static Component getSummary(long amount, LinkedHashMap<Currencies, Long> compiled, Map<SupplyDropRewards, Long> items) {
         Component summary = Component.text("You received from ", NamedTextColor.GRAY)
                                      .append(Component.text(amount, NamedTextColor.YELLOW))
                                      .append(Component.text(" supply drops:", NamedTextColor.GRAY));
@@ -370,6 +380,15 @@ public class SupplyDropManager {
             summary = summary.appendNewline()
                              .append(Component.text("- ", NamedTextColor.GRAY))
                              .append(entry.getKey().getCostColoredName(entry.getValue()));
+        }
+        for (SupplyDropRewards reward : SupplyDropRewards.values()) {
+            Long count = items.get(reward);
+            if (count == null || count <= 0) {
+                continue;
+            }
+            summary = summary.appendNewline()
+                             .append(Component.text("- ", NamedTextColor.GRAY))
+                             .append(Component.text(count + " " + reward.name, reward.getTextColor()));
         }
         return summary;
     }
