@@ -28,8 +28,8 @@ import java.util.Map;
 public class WeaponCraftMenu {
 
     public static final LinkedHashMap<Currencies, Long> LEGENDARY_COST = new LinkedHashMap<>() {{
-        put(Currencies.COIN, 600_000L);
-        put(Currencies.SYNTHETIC_SHARD, 6_000L);
+        put(Currencies.COIN, 500_000L);
+        put(Currencies.SYNTHETIC_SHARD, 5_000L);
     }};
     public static final LinkedHashMap<Currencies, Long> ASCENDANT_COST = new LinkedHashMap<>() {{
         put(Currencies.COIN, 2_500_000L);

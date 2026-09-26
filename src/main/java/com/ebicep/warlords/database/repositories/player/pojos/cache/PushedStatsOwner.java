@@ -104,6 +104,11 @@ public interface PushedStatsOwner {
         return pushedStats().getMobKillCount(mobName);
     }
 
+    default long pushedMobDeathCount(String mobName) {
+        warmPushedStats();
+        return pushedStats().getMobDeathCount(mobName);
+    }
+
     default int pushedHighestWaveCleared() {
         warmPushedStats();
         return pushedStats().getHighestWaveCleared();

@@ -1,5 +1,6 @@
 package com.ebicep.warlords.game.option.pve.anomaly;
 
+import com.ebicep.warlords.pve.Currencies;
 import com.ebicep.warlords.pve.newitems.setbonus.NewItemsSetBonus;
 import com.ebicep.warlords.pve.newitems.tiers.NewItemTier;
 
@@ -8,11 +9,25 @@ import java.time.Instant;
 import java.time.temporal.ChronoUnit;
 import java.util.Comparator;
 import java.util.List;
+import java.util.Map;
 import java.util.Random;
 
 public final class AnomalyRotation {
 
     private static final long ROTATION_SEED_SALT = 0x414E4F4D414C594CL;
+    private static final long SECONDARY_CURRENCY_SALT = 0x4341434845435552L;
+    private static final List<Currencies> SECONDARY_REWARD_CURRENCIES = List.of(
+            Currencies.LEGEND_FRAGMENTS,
+            Currencies.SYNTHETIC_SHARD,
+            Currencies.ILLUSION_SHARD,
+            Currencies.SUPPLY_DROP_TOKEN
+    );
+    private static final Map<Currencies, long[]> SECONDARY_REWARD_AMOUNTS = Map.of(
+            Currencies.LEGEND_FRAGMENTS, new long[]{10, 20, 30},
+            Currencies.SYNTHETIC_SHARD, new long[]{45, 60, 75},
+            Currencies.SUPPLY_DROP_TOKEN, new long[]{1, 1, 2},
+            Currencies.ILLUSION_SHARD, new long[]{1, 1, 2}
+    );
 
     private static volatile Anomalies testAnomalyOverride;
 
@@ -51,6 +66,23 @@ public final class AnomalyRotation {
 
     public static boolean hasTestAnomalyOverride() {
         return testAnomalyOverride != null;
+    }
+
+    public static Currencies getSecondaryRewardCurrency() {
+        return getSecondaryRewardCurrency(getRotationStart().getEpochSecond());
+    }
+
+    public static Currencies getSecondaryRewardCurrency(long rotationStartEpochSecond) {
+        Random random = new Random(rotationStartEpochSecond ^ SECONDARY_CURRENCY_SALT);
+        return SECONDARY_REWARD_CURRENCIES.get(random.nextInt(SECONDARY_REWARD_CURRENCIES.size()));
+    }
+
+    public static long getSecondaryRewardAmount(Currencies currency, int cacheIndex) {
+        long[] amounts = SECONDARY_REWARD_AMOUNTS.get(currency);
+        if (amounts == null || amounts.length == 0) {
+            throw new IllegalArgumentException("No anomaly cache amounts for " + currency);
+        }
+        return amounts[Math.clamp(cacheIndex, 0, amounts.length - 1)];
     }
 
     public static NewItemsSetBonus getGuaranteedLegendarySet() {
