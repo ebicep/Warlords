@@ -1450,10 +1450,10 @@ public enum Mob {
             CHRONARCH,
             PHYSIRA,
             ENAVURIS,
-            RAID_MITHRA,
-            VANGUARD,
-            CENTURION,
-            VEILKEEPER,
+//            RAID_MITHRA,
+//            VANGUARD,
+//            CENTURION,
+//            VEILKEEPER,
     };
     public static final Mob[] EVENT_BOSSES = {
             EVENT_BOLTARO, EVENT_NARMER, EVENT_MITHRA, EVENT_ILLUSION_CORE, EVENT_EXILED_CORE, EVENT_CALAMITY_CORE, EVENT_ILLUMINA,

@@ -138,4 +138,13 @@ public class CompensationReward extends AbstractReward {
         }
     }
 
+    public static class WeaponUpgradeRefundPatch extends CompensationReward {
+        public WeaponUpgradeRefundPatch() {
+        }
+
+        public WeaponUpgradeRefundPatch(LinkedHashMap<Spendable, Long> rewards) {
+            super(rewards, "Weapon Upgrade Refund");
+        }
+    }
+
 }
