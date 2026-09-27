@@ -35,26 +35,26 @@ import java.util.List;
 
 public class RaidMithra extends AbstractMob implements RaidBossMob {
 
-    private static final int CRYSTAL_COUNT = 6;
+    private static final int CRYSTAL_COUNT = 9;
     private static final int ATTACK_ANIMATION_DURATION = 18;
-    private static final double CRYSTAL_ORBIT_RADIUS = 2;
+    private static final double CRYSTAL_ORBIT_RADIUS = 7;
     private static final double CRYSTAL_ORBIT_SPEED = 0.75;
     private static final double CRYSTAL_VERTICAL_AMPLITUDE = 0.6;
-    private static final int CROWN_SHARD_COUNT = 8;
-    private static final double CROWN_RADIUS = 1.08;
+    private static final int CROWN_SHARD_COUNT = 6;
+    private static final double CROWN_RADIUS = 4;
     private static final float CROWN_SPIN_DEGREES = 0.5f;
     private static final float CROWN_SHARD_WIDTH = 1.15f;
-    private static final float CROWN_SHARD_HEIGHT = 2.8f;
-    private static final double CROWN_HEIGHT_OFFSET = 0.95;
+    private static final float CROWN_SHARD_HEIGHT = 2f;
+    private static final double CROWN_HEIGHT_OFFSET = 1;
     private static final float FLOOR_DIAGRAM_SPIN_DEGREES = 0.5f;
     private static final double FLOOR_DIAGRAM_OUTER_RADIUS = 3.4;
-    private static final double FLOOR_DIAGRAM_MID_RADIUS = 2.2;
-    private static final double FLOOR_DIAGRAM_INNER_RADIUS = 1.05;
+    private static final double FLOOR_DIAGRAM_MID_RADIUS = 4;
+    private static final double FLOOR_DIAGRAM_INNER_RADIUS = 1.8;
     private static final double FLOOR_DIAGRAM_SPACING = 0.65;
     private static final Particle.DustOptions WHITE_DUST = new Particle.DustOptions(Color.fromRGB(245, 245, 255), 1.25f);
     private static final Particle.DustOptions ABYSS_DUST = new Particle.DustOptions(Color.fromRGB(88, 52, 130), 1.25f);
-    private static final Particle.DustOptions DIAGRAM_WHITE = new Particle.DustOptions(Color.fromRGB(245, 245, 255), 0.95f);
-    private static final Particle.DustOptions DIAGRAM_ABYSS = new Particle.DustOptions(Color.fromRGB(130, 78, 196), 0.95f);
+    private static final Particle.DustOptions DIAGRAM_WHITE = new Particle.DustOptions(Color.fromRGB(245, 245, 255), 0.65f);
+    private static final Particle.DustOptions DIAGRAM_ABYSS = new Particle.DustOptions(Color.fromRGB(130, 78, 196), 0.65f);
 
     private final List<ItemDisplay> orbitingCrystals = new ArrayList<>();
     private final List<ItemDisplay> crownShards = new ArrayList<>();
@@ -99,7 +99,7 @@ public class RaidMithra extends AbstractMob implements RaidBossMob {
 
     @Override
     public Component getDescription() {
-        return Component.text("♦ RAID BOSS ♦", TextColor.color(225, 85, 115), TextDecoration.BOLD);
+        return Component.text(". ╰──╮ ♦ RAID BOSS ♦ ╭──╯ .", TextColor.color(225, 85, 115), TextDecoration.BOLD);
     }
 
     @Override
