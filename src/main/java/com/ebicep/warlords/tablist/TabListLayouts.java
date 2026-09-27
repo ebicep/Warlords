@@ -25,6 +25,8 @@ public final class TabListLayouts {
     private static final int TEAM_MAX_ENTRIES = 40;
     private static final int TEAM_MIN_COLUMNS = 1;
     private static final int TEAM_MAX_COLUMNS = 2;
+    /** Approximate tab column width used to space-pad team title rows. */
+    private static final int TEAM_TITLE_COLUMN_CHARS = 40;
 
     private TabListLayouts() {
     }
@@ -158,7 +160,13 @@ public final class TabListLayouts {
         private static TabSubgroup headerSubgroup(@Nonnull Team team, int priority) {
             TabSubgroup header = new TabSubgroup(priority);
             String title = team.prefix() + " TEAM";
-            TabEntry entry = TabEntry.of(Component.text(title, team.getTeamColor(), TextDecoration.BOLD));
+            int totalPad = Math.max(0, TEAM_TITLE_COLUMN_CHARS - title.length());
+            int leftPad = totalPad / 2;
+            int rightPad = totalPad - leftPad;
+            Component displayName = Component.text(" ".repeat(leftPad))
+                    .append(Component.text(title, team.getTeamColor(), TextDecoration.BOLD))
+                    .append(Component.text(" ".repeat(rightPad)));
+            TabEntry entry = TabEntry.of(displayName);
             String[] skin = TabListSkins.textureAndSignature(team.getColors());
             entry = entry.withSkin(skin[0], skin[1]);
             TabEntry headerEntry = entry;

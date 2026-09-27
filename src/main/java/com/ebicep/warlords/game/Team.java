@@ -65,7 +65,8 @@ public enum Team {
     }
 
     /**
-     * Returns the prefix as "XXX" (typically 3 chars, all uppercase
+     * Returns the prefix as "XXX" (typically 3 chars, all uppercase).
+     *
      * @return "XXX"
      */
     @Nonnull
