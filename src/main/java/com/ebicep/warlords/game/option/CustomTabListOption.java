@@ -1,6 +1,7 @@
 package com.ebicep.warlords.game.option;
 
 import com.ebicep.warlords.Warlords;
+import com.ebicep.warlords.featureflags.FeatureFlags;
 import com.ebicep.warlords.game.Game;
 import com.ebicep.warlords.game.GameMode;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
@@ -42,6 +43,10 @@ public class CustomTabListOption implements Option {
         return game.getGameMode() != GameMode.LOBBY;
     }
 
+    private static boolean customTabListActive() {
+        return FeatureFlags.isCustomTabListEnabled(null);
+    }
+
     @Nonnull
     public TabListLayout layout() {
         return layout;
@@ -65,7 +70,7 @@ public class CustomTabListOption implements Option {
             return Optional.empty();
         }
         CustomTabListOption option = options.getFirst();
-        if (!option.isEnabled(game) || option.manager == null) {
+        if (!customTabListActive() || option.manager == null) {
             return Optional.empty();
         }
         return Optional.of(option);
@@ -77,7 +82,7 @@ public class CustomTabListOption implements Option {
         game.registerEvents(new Listener() {
             @EventHandler
             public void onJoin(PlayerJoinEvent event) {
-                if (manager == null) {
+                if (manager == null || !customTabListActive()) {
                     return;
                 }
                 manager.onRealPlayerJoin(event.getPlayer().getUniqueId());
@@ -85,7 +90,7 @@ public class CustomTabListOption implements Option {
 
             @EventHandler
             public void onQuit(PlayerQuitEvent event) {
-                if (manager == null) {
+                if (manager == null || !customTabListActive()) {
                     return;
                 }
                 manager.onRealPlayerQuit(event.getPlayer().getUniqueId());
@@ -97,6 +102,10 @@ public class CustomTabListOption implements Option {
 
     @Override
     public void start(@Nonnull Game game) {
+        if (!customTabListActive() || manager == null) {
+            startPoller(game);
+            return;
+        }
         // Idempotent flush when match play begins (viewers may already be on game tab from PreLobby)
         game.onlinePlayers().forEach(entry -> {
             Player player = entry.getKey();
@@ -108,7 +117,7 @@ public class CustomTabListOption implements Option {
 
     @Override
     public void afterAllWarlordsEntitiesCreated(@Nonnull List<WarlordsEntity> players) {
-        if (manager == null) {
+        if (manager == null || !customTabListActive()) {
             return;
         }
         // start() ran before WarlordsPlayers existed; rebuild rows with class/level/flag now.
@@ -123,9 +132,14 @@ public class CustomTabListOption implements Option {
         poller = new GameRunnable(game) {
             @Override
             public void run() {
-                if (manager != null) {
-                    manager.tick();
+                if (manager == null) {
+                    return;
                 }
+                if (!customTabListActive()) {
+                    manager.deactivateAllSessions();
+                    return;
+                }
+                manager.tick();
             }
         };
         poller.runTaskTimer(1, 1);
@@ -145,7 +159,7 @@ public class CustomTabListOption implements Option {
 
     @Override
     public void onPlayerReJoinGame(@Nonnull Player player) {
-        if (manager == null) {
+        if (manager == null || !customTabListActive()) {
             return;
         }
         LobbyTabListManager.get().onLeaveLobby(player.getUniqueId());
@@ -163,7 +177,7 @@ public class CustomTabListOption implements Option {
      */
     @Override
     public void onPlayerQuit(@Nonnull Player player) {
-        if (manager == null) {
+        if (manager == null || !customTabListActive()) {
             return;
         }
         UUID id = player.getUniqueId();

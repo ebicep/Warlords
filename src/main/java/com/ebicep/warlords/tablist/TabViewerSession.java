@@ -2,6 +2,7 @@ package com.ebicep.warlords.tablist;
 
 import com.ebicep.warlords.util.bukkit.packets.tablist.TabListEntry;
 import com.ebicep.warlords.util.bukkit.packets.tablist.TabListPackets;
+import com.ebicep.warlords.featureflags.FeatureFlags;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 
@@ -45,7 +46,7 @@ public class TabViewerSession {
      * Whether this viewer currently has an active custom tab (used by packet rewrite).
      */
     public static boolean isCustomTabActive(@Nonnull UUID viewerId) {
-        return ACTIVE_BY_VIEWER.containsKey(viewerId);
+        return FeatureFlags.isCustomTabListEnabled(null) && ACTIVE_BY_VIEWER.containsKey(viewerId);
     }
 
     @Nonnull

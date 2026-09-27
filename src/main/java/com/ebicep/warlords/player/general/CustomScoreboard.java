@@ -2,6 +2,7 @@ package com.ebicep.warlords.player.general;
 
 import com.ebicep.warlords.Warlords;
 import com.ebicep.warlords.database.DatabaseManager;
+import com.ebicep.warlords.featureflags.FeatureFlags;
 import com.ebicep.warlords.game.Game;
 import com.ebicep.warlords.database.leaderboards.PlayerLeaderboardInfo;
 import com.ebicep.warlords.database.leaderboards.stats.StatsLeaderboard;
@@ -260,6 +261,9 @@ public class CustomScoreboard {
     }
 
     public static void updateLobbyPlayerNames() {
+        if (FeatureFlags.isCustomTabListEnabled(null)) {
+            return;
+        }
         List<LobbyNameDisplay> displays = buildLobbyNameDisplays();
         for (Player onlinePlayer : Bukkit.getOnlinePlayers()) {
             if (!isInLobby(onlinePlayer)) {
@@ -270,11 +274,17 @@ public class CustomScoreboard {
     }
 
     public static void refreshLobbyPlayerDisplays() {
-        updateLobbyPlayerNames();
-        LobbyTabListManager.get().refreshPlayerRows();
+        if (FeatureFlags.isCustomTabListEnabled(null)) {
+            LobbyTabListManager.get().refreshPlayerRows();
+        } else {
+            updateLobbyPlayerNames();
+        }
     }
 
     public static void applyLobbyPlayerNameToOthers(Player joined) {
+        if (FeatureFlags.isCustomTabListEnabled(null)) {
+            return;
+        }
         if (!isInLobby(joined)) {
             return;
         }
@@ -313,6 +323,9 @@ public class CustomScoreboard {
     }
 
     public void updateLobbyPlayerNamesInternal() {
+        if (FeatureFlags.isCustomTabListEnabled(null)) {
+            return;
+        }
         Player player = Bukkit.getPlayer(uuid);
         if (player == null || !isInLobby(player)) {
             return;

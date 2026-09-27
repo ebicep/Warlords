@@ -170,7 +170,9 @@ public class PlayingStateScoreboardUpdater {
         WarlordsPlayerName name = cachedNames.computeIfAbsent(warlordsPlayer, k -> new WarlordsPlayerName());
         name.setBasePrefix(classComponent);
         name.setBaseSuffix(baseSuffix.build());
-        player.playerListName(TabListPlayers.gameDisplayName(warlordsPlayer));
+        if (CustomTabListOption.get(game).isEmpty()) {
+            player.playerListName(TabListPlayers.gameDisplayName(warlordsPlayer));
+        }
         // Base parts feed above-head overlays; re-dirty in case names already flushed this period.
         markNamesDirty(warlordsPlayer);
     }

@@ -1,6 +1,7 @@
 package com.ebicep.warlords.tablist;
 
 import com.ebicep.warlords.Warlords;
+import com.ebicep.warlords.featureflags.FeatureFlags;
 import com.ebicep.warlords.game.GameMode;
 import com.ebicep.warlords.guilds.Guild;
 import com.ebicep.warlords.guilds.GuildManager;
@@ -67,6 +68,9 @@ public final class LobbyTabListManager extends AbstractTabListManager {
         listener = new Listener() {
             @EventHandler
             public void onJoin(PlayerJoinEvent event) {
+                if (!FeatureFlags.isCustomTabListEnabled(null)) {
+                    return;
+                }
                 UUID id = event.getPlayer().getUniqueId();
                 onEnterLobby(id);
                 onRealPlayerJoin(id);
@@ -74,6 +78,9 @@ public final class LobbyTabListManager extends AbstractTabListManager {
 
             @EventHandler
             public void onQuit(PlayerQuitEvent event) {
+                if (!FeatureFlags.isCustomTabListEnabled(null)) {
+                    return;
+                }
                 UUID id = event.getPlayer().getUniqueId();
                 lobbyViewerIds.remove(id);
                 onRealPlayerQuit(id);
@@ -116,6 +123,9 @@ public final class LobbyTabListManager extends AbstractTabListManager {
      * Player became a lobby tab viewer (server join or returned from a match).
      */
     public void onEnterLobby(@Nonnull UUID viewerId) {
+        if (!FeatureFlags.isCustomTabListEnabled(null)) {
+            return;
+        }
         lobbyViewerIds.add(viewerId);
         addViewer(viewerId);
         syncPlayerSources();
@@ -127,6 +137,9 @@ public final class LobbyTabListManager extends AbstractTabListManager {
      * Does not restore {@code listed=true} so game tab can take over without a vanilla flash.
      */
     public void onLeaveLobby(@Nonnull UUID viewerId) {
+        if (!FeatureFlags.isCustomTabListEnabled(null)) {
+            return;
+        }
         lobbyViewerIds.remove(viewerId);
         removeViewer(viewerId, false);
         syncPlayerSources();
@@ -136,6 +149,9 @@ public final class LobbyTabListManager extends AbstractTabListManager {
      * Force-rebuild lobby player rows (guild tag / membership / sort order / rank display changes).
      */
     public void refreshPlayerRows() {
+        if (!FeatureFlags.isCustomTabListEnabled(null)) {
+            return;
+        }
         ensurePlayersGroup();
         lastSourceIds = Set.of();
         syncPlayerSources();
@@ -143,8 +159,34 @@ public final class LobbyTabListManager extends AbstractTabListManager {
 
     @Override
     public void tick() {
+        if (!FeatureFlags.isCustomTabListEnabled(null)) {
+            deactivateAllSessions();
+            return;
+        }
+        registerOnlineLobbyViewers();
         pruneOfflineLobbyViewers();
         super.tick();
+    }
+
+    /** Picks up lobby players when the feature is enabled mid-session. */
+    private void registerOnlineLobbyViewers() {
+        boolean changed = false;
+        for (Player player : Bukkit.getOnlinePlayers()) {
+            if (!isLobbyViewer(player)) {
+                continue;
+            }
+            UUID id = player.getUniqueId();
+            if (lobbyViewerIds.add(id)) {
+                addViewer(id);
+                changed = true;
+            } else if (getSession(id) == null) {
+                addViewer(id);
+                changed = true;
+            }
+        }
+        if (changed) {
+            syncPlayerSources();
+        }
     }
 
     /**

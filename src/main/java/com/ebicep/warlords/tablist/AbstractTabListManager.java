@@ -227,6 +227,17 @@ public abstract class AbstractTabListManager {
         return Math.floorMod(uuid.hashCode(), UPDATE_INTERVAL) == bucket;
     }
 
+    public void deactivateAllSessions() {
+        if (sessions.isEmpty()) {
+            return;
+        }
+        for (TabViewerSession session : List.copyOf(sessions.values())) {
+            session.deactivate(true);
+        }
+        sessions.clear();
+        dirtyViewers.clear();
+    }
+
     /**
      * Deactivate all sessions and clear registration. Called on game close / plugin disable.
      */

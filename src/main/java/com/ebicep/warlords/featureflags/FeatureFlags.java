@@ -17,6 +17,7 @@ public final class FeatureFlags {
 
     public static final String HONORIFICS = "honorifics";
     public static final String HONORIFICS_DISPLAY = "honorificsDisplay";
+    public static final String CUSTOM_TAB_LIST = "customTabList";
 
     private FeatureFlags() {
     }
@@ -38,6 +39,10 @@ public final class FeatureFlags {
 
     public static boolean isFeatureEnabled(String featureKey, @Nullable CommandSender sender) {
         return getFlag("features", featureKey, sender);
+    }
+
+    public static boolean isCustomTabListEnabled(@Nullable CommandSender sender) {
+        return isFeatureEnabled(CUSTOM_TAB_LIST, sender);
     }
 
     public static void sendDisabledMessage(Player player) {
