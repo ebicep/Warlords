@@ -10,6 +10,7 @@ import com.ebicep.warlords.game.GameAddon;
 import com.ebicep.warlords.game.GameMap;
 import com.ebicep.warlords.game.Team;
 import com.ebicep.warlords.game.option.Option;
+import com.ebicep.warlords.game.option.CustomTabListOption;
 import com.ebicep.warlords.game.option.PlayerCooldownDisplayOption;
 import com.ebicep.warlords.game.option.PreGameItemOption;
 import com.ebicep.warlords.game.option.RecordTimeElapsedOption;
@@ -23,6 +24,7 @@ import com.ebicep.warlords.game.option.win.WinByAllDeathOption;
 import com.ebicep.warlords.guilds.bounty.GuildBountyOption;
 import com.ebicep.warlords.menu.PlayerHotBarItemListener;
 import com.ebicep.warlords.menu.generalmenu.WarlordsNewHotbarMenu;
+import com.ebicep.warlords.tablist.TabListLayouts;
 import com.ebicep.warlords.util.bukkit.LocationFactory;
 import com.ebicep.warlords.util.java.TriFunction;
 import net.kyori.adventure.text.Component;
@@ -40,6 +42,7 @@ public class Anomaly implements Mode {
     @Override
     public List<Option> initMap(GameMap map, LocationFactory loc, EnumSet<GameAddon> addons) {
         List<Option> options = new ArrayList<>();
+        options.add(new CustomTabListOption(TabListLayouts.pveBlue()));
         Component base = Component.text("", NamedTextColor.YELLOW, TextDecoration.BOLD);
         options.add(TextOption.Type.CHAT_CENTERED.create(
                 Component.text("Anomaly", NamedTextColor.AQUA, TextDecoration.BOLD),

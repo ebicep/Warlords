@@ -1,5 +1,7 @@
 package com.ebicep.warlords.tablist;
 
+import net.kyori.adventure.text.Component;
+
 import javax.annotation.Nonnull;
 import java.util.ArrayList;
 import java.util.Comparator;
@@ -10,11 +12,17 @@ import java.util.UUID;
 /**
  * Column-major packing of groups/subgroups into a fixed tab grid.
  * Pure function — no packets or Bukkit.
+ * <p>
+ * Groups with {@code minColumns > 0} are padded with blank entries so the client
+ * receives enough listed rows for those columns to appear (entry count drives layout).
  */
 public final class TabLayoutEngine {
 
     public static final int DEFAULT_ROWS = 20;
     public static final int DEFAULT_COLUMNS = 4;
+
+    /** Empty display pad used to fill reserved min-columns. */
+    public static final TabEntry BLANK = TabEntry.of(Component.empty());
 
     private TabLayoutEngine() {
     }
@@ -54,10 +62,16 @@ public final class TabLayoutEngine {
             }
 
             List<TabEntry> placed = placeGroup(group, viewer, rows, bandWidth);
-            int usedColumns = writeBand(slots, placed, bandStart, rows, bandWidth);
-
-            // Reserve at least minColumns (clamped to band), or used columns if larger
-            int reserved = Math.max(usedColumns, Math.min(group.getMinColumns(), bandWidth));
+            int contentColumns = placed.isEmpty() ? 0 : (placed.size() + rows - 1) / rows;
+            int minReserved = Math.min(group.getMinColumns(), bandWidth);
+            int reserved = Math.max(contentColumns, minReserved);
+            // Pad only to satisfy minColumns so the client lists enough entries for those columns
+            int targetSize = Math.max(placed.size(), minReserved * rows);
+            targetSize = Math.min(targetSize, bandWidth * rows);
+            while (placed.size() < targetSize) {
+                placed.add(BLANK);
+            }
+            writeBand(slots, placed, bandStart, rows, bandWidth);
             globalColumn = bandStart + reserved;
         }
 
@@ -82,7 +96,7 @@ public final class TabLayoutEngine {
     @Nonnull
     private static List<TabEntry> placeGroup(TabGroup group, UUID viewer, int rows, int bandWidth) {
         int capacity = Math.min(bandWidth * rows, group.getMaxEntries());
-        List<TabEntry> band = new ArrayList<>(capacity);
+        List<TabEntry> band = new ArrayList<>(Math.max(capacity, 0));
 
         for (TabSubgroup subgroup : group.getSubgroupsByPriority()) {
             if (band.size() >= capacity) {
@@ -103,12 +117,9 @@ public final class TabLayoutEngine {
     }
 
     /**
-     * Writes band-local entries into absolute slots (column-major). Returns columns used.
+     * Writes band-local entries into absolute slots (column-major).
      */
-    private static int writeBand(TabEntry[] slots, List<TabEntry> band, int bandStart, int rows, int bandWidth) {
-        if (band.isEmpty()) {
-            return 0;
-        }
+    private static void writeBand(TabEntry[] slots, List<TabEntry> band, int bandStart, int rows, int bandWidth) {
         for (int i = 0; i < band.size(); i++) {
             int localCol = i / rows;
             int localRow = i % rows;
@@ -118,7 +129,6 @@ public final class TabLayoutEngine {
             int absoluteCol = bandStart + localCol;
             slots[absoluteCol * rows + localRow] = band.get(i);
         }
-        return (band.size() + rows - 1) / rows;
     }
 
     public record PlacedEntry(int slotIndex, @Nonnull TabEntry entry) {

@@ -6,6 +6,7 @@ import com.ebicep.warlords.game.option.*;
 import com.ebicep.warlords.game.option.pvp.ApplySpecBoostsOption;
 import com.ebicep.warlords.game.option.pvp.HorseOption;
 import com.ebicep.warlords.game.option.pvp.ctf.FlagOption;
+import com.ebicep.warlords.tablist.TabListLayouts;
 import com.ebicep.warlords.util.bukkit.LocationFactory;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
@@ -20,6 +21,7 @@ public class Debug implements Mode {
     @Override
     public List<Option> initMap(GameMap map, LocationFactory loc, EnumSet<GameAddon> addons) {
         List<Option> options = Mode.super.initMap(map, loc, addons);
+        options.add(new CustomTabListOption(TabListLayouts.pvpBlueRed()));
 
         options.add(TextOption.Type.TITLE.create(
                 3,

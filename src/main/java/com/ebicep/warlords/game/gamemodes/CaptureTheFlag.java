@@ -18,6 +18,7 @@ import com.ebicep.warlords.game.option.pvp.ctf.FlagOption;
 import com.ebicep.warlords.game.option.respawn.NoRespawnIfOfflineOption;
 import com.ebicep.warlords.game.option.respawn.RespawnSpawnDamageOption;
 import com.ebicep.warlords.game.option.respawn.RespawnWaveOption;
+import com.ebicep.warlords.tablist.TabListLayouts;
 import com.ebicep.warlords.util.bukkit.LocationFactory;
 import com.ebicep.warlords.util.java.TriFunction;
 import net.kyori.adventure.text.Component;
@@ -34,6 +35,7 @@ public class CaptureTheFlag implements Mode {
     @Override
     public List<Option> initMap(GameMap map, LocationFactory loc, EnumSet<GameAddon> addons) {
         List<Option> options = Mode.super.initMap(map, loc, addons);
+        options.add(new CustomTabListOption(TabListLayouts.pvpBlueRed()));
 
         Component base = Component.text("", NamedTextColor.YELLOW, TextDecoration.BOLD);
         options.add(TextOption.Type.CHAT_CENTERED.create(

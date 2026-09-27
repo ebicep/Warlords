@@ -8,11 +8,13 @@ import com.ebicep.warlords.game.Game;
 import com.ebicep.warlords.game.GameAddon;
 import com.ebicep.warlords.game.GameMap;
 import com.ebicep.warlords.game.option.Option;
+import com.ebicep.warlords.game.option.CustomTabListOption;
 import com.ebicep.warlords.game.option.PlayerCooldownDisplayOption;
 import com.ebicep.warlords.game.option.TextOption;
 import com.ebicep.warlords.game.option.WeaponOption;
 import com.ebicep.warlords.game.option.pvp.ApplySpecBoostsOption;
 import com.ebicep.warlords.game.option.pvp.HorseOption;
+import com.ebicep.warlords.tablist.TabListLayouts;
 import com.ebicep.warlords.util.bukkit.LocationFactory;
 import com.ebicep.warlords.util.java.TriFunction;
 import net.kyori.adventure.text.Component;
@@ -29,6 +31,7 @@ public class Duel implements Mode {
     @Override
     public List<Option> initMap(GameMap map, LocationFactory loc, EnumSet<GameAddon> addons) {
         List<Option> options = Mode.super.initMap(map, loc, addons);
+        options.add(new CustomTabListOption(TabListLayouts.pvpBlueRed()));
         Component base = Component.text("", NamedTextColor.YELLOW, TextDecoration.BOLD);
         options.add(TextOption.Type.CHAT_CENTERED.create(
                 Component.text("Warlords", NamedTextColor.WHITE, TextDecoration.BOLD),

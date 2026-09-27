@@ -17,6 +17,7 @@ import com.ebicep.warlords.game.option.respawn.NoRespawnIfOfflineOption;
 import com.ebicep.warlords.game.option.win.WinByAllDeathOption;
 import com.ebicep.warlords.menu.PlayerHotBarItemListener;
 import com.ebicep.warlords.menu.generalmenu.WarlordsNewHotbarMenu;
+import com.ebicep.warlords.tablist.TabListLayouts;
 import com.ebicep.warlords.util.bukkit.LocationFactory;
 import com.ebicep.warlords.util.java.TriFunction;
 import org.bukkit.Material;
@@ -31,6 +32,7 @@ public class EventWaveDefense implements Mode {
     @Override
     public List<Option> initMap(GameMap map, LocationFactory loc, EnumSet<GameAddon> addons) {
         List<Option> options = new ArrayList<>();
+        options.add(new CustomTabListOption(TabListLayouts.pveBlue()));
         options.add(new PreGameItemOption(4, PlayerHotBarItemListener.SELECTION_MENU, (g, p) -> WarlordsNewHotbarMenu.SelectionMenu.openWarlordsMenu(p)));
         options.add(new RecordTimeElapsedOption(true));
         options.add(new WeaponOption(WeaponOption::showPvEWeapon, WeaponOption::showWeaponStats));

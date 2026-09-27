@@ -7,6 +7,7 @@ import com.ebicep.warlords.game.option.*;
 import com.ebicep.warlords.game.option.freeze.GameFreezeOption;
 import com.ebicep.warlords.game.option.respawn.NoRespawnIfOfflineOption;
 import com.ebicep.warlords.game.option.towerdefense.WinByLastStandingCastleOption;
+import com.ebicep.warlords.tablist.TabListLayouts;
 import com.ebicep.warlords.util.bukkit.LocationFactory;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
@@ -23,6 +24,7 @@ public class TowerDefense implements Mode {
     @Override
     public List<Option> initMap(GameMap map, LocationFactory loc, EnumSet<GameAddon> addons) {
         List<Option> options = new ArrayList<>();
+        options.add(new CustomTabListOption(TabListLayouts.pveBlue()));
 
         Component base = Component.text("", NamedTextColor.YELLOW, TextDecoration.BOLD);
         options.add(TextOption.Type.CHAT_CENTERED.create(

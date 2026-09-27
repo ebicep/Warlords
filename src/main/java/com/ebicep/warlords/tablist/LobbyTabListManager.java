@@ -1,14 +1,12 @@
 package com.ebicep.warlords.tablist;
 
 import com.ebicep.warlords.Warlords;
-import com.ebicep.warlords.game.Game;
 import com.ebicep.warlords.game.GameMode;
 import com.ebicep.warlords.guilds.Guild;
 import com.ebicep.warlords.guilds.GuildManager;
 import com.ebicep.warlords.guilds.GuildPlayer;
 import com.ebicep.warlords.guilds.GuildTag;
 import com.ebicep.warlords.permissions.Permissions;
-import com.ebicep.warlords.player.ingame.WarlordsEntity;
 import com.ebicep.warlords.util.bukkit.packets.tablist.TabListSkins;
 import com.ebicep.warlords.util.java.Pair;
 import net.kyori.adventure.text.Component;
@@ -264,11 +262,8 @@ public final class LobbyTabListManager extends AbstractTabListManager {
     }
 
     public static boolean isLobbyViewer(@Nonnull Player player) {
-        WarlordsEntity entity = Warlords.getPlayer(player);
-        if (entity == null) {
-            return true;
-        }
-        Game game = entity.getGame();
-        return game == null || game.getGameMode() == GameMode.LOBBY;
+        return Warlords.getGameManager().getPlayerGame(player.getUniqueId())
+                .map(game -> game.getGameMode() == GameMode.LOBBY)
+                .orElse(true);
     }
 }

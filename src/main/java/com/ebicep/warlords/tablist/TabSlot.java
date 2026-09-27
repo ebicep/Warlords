@@ -14,8 +14,8 @@ import java.util.UUID;
  * <p>
  * Profile names are unique invisible braille characters so decorative rows do not
  * pollute client chat Tab-complete with {@code !000}-style strings. Grid order comes
- * from packet {@code listOrder} (= {@link #index()}) via {@link TabViewerSession},
- * not scoreboard teams or GameProfile name lexicographics.
+ * from packet {@code listOrder} via {@link TabViewerSession} (inverted: higher listOrder
+ * sorts earlier on the client), not scoreboard teams or GameProfile name lexicographics.
  */
 public record TabSlot(
         int index,

@@ -3,9 +3,11 @@ package com.ebicep.warlords.game.gamemodes;
 import com.ebicep.warlords.database.repositories.config.ConfigManager;
 import com.ebicep.warlords.game.GameAddon;
 import com.ebicep.warlords.game.GameMap;
+import com.ebicep.warlords.game.option.CustomTabListOption;
 import com.ebicep.warlords.game.option.Option;
 import com.ebicep.warlords.game.option.WeaponOption;
 import com.ebicep.warlords.game.option.pve.tutorial.TutorialOption;
+import com.ebicep.warlords.tablist.TabListLayouts;
 import com.ebicep.warlords.util.bukkit.LocationFactory;
 import org.bukkit.Material;
 import org.bukkit.inventory.ItemStack;
@@ -19,6 +21,7 @@ public class Tutorial implements Mode {
     @Override
     public List<Option> initMap(GameMap map, LocationFactory loc, EnumSet<GameAddon> addons) {
         List<Option> options = new ArrayList<>();
+        options.add(new CustomTabListOption(TabListLayouts.pveBlue()));
         options.add(new WeaponOption());
         options.add(new TutorialOption());
         return options;

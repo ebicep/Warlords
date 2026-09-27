@@ -166,7 +166,8 @@ public class TabViewerSession {
 
     /**
      * Diff {@code next} against the last render and send batched packets.
-     * Slot order is driven by packet {@code listOrder} (= slot index).
+     * Slot order is driven by packet {@code listOrder} (inverted from slot index so the
+     * client’s descending listOrder sort matches column-major top-left packing).
      */
     public void applyLayout(@Nonnull TabLayoutEngine.LayoutResult layout) {
         Player viewer = getViewer();
@@ -282,8 +283,11 @@ public class TabViewerSession {
     }
 
     static TabListEntry toPacketEntry(TabSlot slot, TabEntry entry, String profileName) {
+        // Client sorts tab entries by listOrder descending (higher first). Slot 0 is top-left,
+        // so invert against the pool so packed column-major order matches on-screen order.
+        int listOrder = TabSlot.POOL_SIZE - 1 - slot.index();
         TabListEntry packet = TabListEntry.of(slot.uuid(), profileName, entry.displayName(), entry.latency())
-                .withListOrder(slot.index());
+                .withListOrder(listOrder);
         if (entry.skinTexture() != null) {
             packet = packet.withSkin(entry.skinTexture(), entry.skinSignature());
         }

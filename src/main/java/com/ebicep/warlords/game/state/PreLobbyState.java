@@ -279,6 +279,7 @@ public class PreLobbyState implements State, TimerDebugAble {
         } else {
             ChatUtils.MessageType.WARLORDS.sendErrorMessage("Unable to warp player to lobby!, no lobby marker found");
         }
+        game.forEachEnabledOption(option -> option.onPlayerReJoinGame(player));
     }
 
     @Override

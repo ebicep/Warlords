@@ -5,6 +5,7 @@ import com.ebicep.warlords.game.Game;
 import com.ebicep.warlords.game.GameMode;
 import com.ebicep.warlords.tablist.GameTabListManager;
 import com.ebicep.warlords.tablist.LobbyTabListManager;
+import com.ebicep.warlords.tablist.TabListLayout;
 import com.ebicep.warlords.util.warlords.GameRunnable;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
@@ -16,20 +17,33 @@ import org.bukkit.scheduler.BukkitRunnable;
 
 import javax.annotation.Nonnull;
 import java.util.List;
+import java.util.Objects;
 import java.util.Optional;
 import java.util.UUID;
 
 /**
  * Owns the per-game {@link GameTabListManager}: poller, join/quit hide hooks, cleanup on close.
- * Disabled for {@link GameMode#LOBBY} — those viewers use {@link LobbyTabListManager}.
+ * Modes supply a {@link TabListLayout}; other Options may attach {@code TabSubgroup}s via
+ * {@link #manager()} after register. Disabled for {@link GameMode#LOBBY}.
  */
 public class CustomTabListOption implements Option {
 
+    private final TabListLayout layout;
     private GameTabListManager manager;
+    private GameRunnable poller;
+
+    public CustomTabListOption(@Nonnull TabListLayout layout) {
+        this.layout = Objects.requireNonNull(layout, "layout");
+    }
 
     @Override
     public boolean isEnabled(@Nonnull Game game) {
         return game.getGameMode() != GameMode.LOBBY;
+    }
+
+    @Nonnull
+    public TabListLayout layout() {
+        return layout;
     }
 
     @Nonnull
@@ -40,8 +54,11 @@ public class CustomTabListOption implements Option {
         return manager;
     }
 
+    /**
+     * Enabled, registered tab-list option for this game, if any.
+     */
     @Nonnull
-    public static Optional<GameTabListManager> get(@Nonnull Game game) {
+    public static Optional<CustomTabListOption> get(@Nonnull Game game) {
         List<CustomTabListOption> options = game.getOption(CustomTabListOption.class);
         if (options.isEmpty()) {
             return Optional.empty();
@@ -50,12 +67,12 @@ public class CustomTabListOption implements Option {
         if (!option.isEnabled(game) || option.manager == null) {
             return Optional.empty();
         }
-        return Optional.of(option.manager);
+        return Optional.of(option);
     }
 
     @Override
     public void register(@Nonnull Game game) {
-        manager = new GameTabListManager(game);
+        manager = new GameTabListManager(game, layout);
         game.registerEvents(new Listener() {
             @EventHandler
             public void onJoin(PlayerJoinEvent event) {
@@ -73,27 +90,42 @@ public class CustomTabListOption implements Option {
                 manager.onRealPlayerQuit(event.getPlayer().getUniqueId());
             }
         });
+        // Start during PreLobby so queue players are isolated from the global lobby tab
+        startPoller(game);
     }
 
     @Override
     public void start(@Nonnull Game game) {
-        // Move viewers off lobby tab when match play begins
+        // Idempotent flush when match play begins (viewers may already be on game tab from PreLobby)
         game.onlinePlayers().forEach(entry -> {
             Player player = entry.getKey();
             LobbyTabListManager.get().onLeaveLobby(player.getUniqueId());
             manager.addViewerAndFlush(player.getUniqueId());
         });
+        startPoller(game);
+    }
 
-        new GameRunnable(game) {
+    private void startPoller(@Nonnull Game game) {
+        if (poller != null || manager == null) {
+            return;
+        }
+        poller = new GameRunnable(game) {
             @Override
             public void run() {
-                manager.tick();
+                if (manager != null) {
+                    manager.tick();
+                }
             }
-        }.runTaskTimer(1, 1);
+        };
+        poller.runTaskTimer(1, 1);
     }
 
     @Override
     public void onGameCleanup(@Nonnull Game game) {
+        if (poller != null) {
+            poller.cancel();
+            poller = null;
+        }
         if (manager != null) {
             manager.clear();
             manager = null;

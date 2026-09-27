@@ -66,7 +66,7 @@ class TabLayoutEngineTest {
 
     @Test
     void lowerPriorityGroupClippedWhenColumnsExhausted() {
-        // Reserve all 4 columns for the high-priority group even if only 3 are filled
+        // Reserve all 4 columns for the high-priority group; pad blanks for minColumns
         TabGroup high = new TabGroup("high", 0, 4, 4, 60);
         TabGroup low = new TabGroup("low", 1, 0, 2, 40);
         TabSubgroup highSub = new TabSubgroup(0);
@@ -78,12 +78,16 @@ class TabLayoutEngineTest {
 
         TabLayoutEngine.LayoutResult result = TabLayoutEngine.pack(List.of(high, low), VIEWER, ROWS, COLS);
 
-        assertEquals(60, result.size());
-        assertTrue(result.entries().stream().allMatch(e -> e.entry().logicalId().startsWith("h")));
+        assertEquals(80, result.size());
+        assertTrue(result.entries().stream()
+                .filter(e -> e.entry().logicalId() != null)
+                .allMatch(e -> e.entry().logicalId().startsWith("h")));
+        assertTrue(result.entries().stream().noneMatch(e ->
+                e.entry().logicalId() != null && e.entry().logicalId().startsWith("l")));
     }
 
     @Test
-    void minColumnsReservesBandForNextGroup() {
+    void minColumnsPadsBlankEntriesAndReservesBandForNextGroup() {
         TabGroup first = new TabGroup("first", 0, 2, 2, 5);
         TabGroup second = new TabGroup("second", 1, 0, 2, 20);
         TabSubgroup a = new TabSubgroup(0);
@@ -95,11 +99,34 @@ class TabLayoutEngineTest {
 
         TabLayoutEngine.LayoutResult result = TabLayoutEngine.pack(List.of(first, second), VIEWER, ROWS, COLS);
 
-        assertEquals(8, result.size());
-        // first uses col 0 (5 entries), minColumns=2 reserves col 0-1; second starts at col 2
+        // first: 5 content + 35 blanks to fill minColumns=2; second: 3 content at col 2
+        assertEquals(43, result.size());
         assertEquals(0, result.entries().get(0).slotIndex());
-        assertEquals(2 * ROWS, result.entries().get(5).slotIndex());
+        assertEquals("a0", logicalAtSlot(result, 0));
+        assertEquals(TabLayoutEngine.BLANK, result.entries().stream()
+                .filter(e -> e.slotIndex() == 5)
+                .findFirst()
+                .orElseThrow()
+                .entry());
+        assertEquals(2 * ROWS, result.entries().stream()
+                .filter(e -> "b0".equals(e.entry().logicalId()))
+                .findFirst()
+                .orElseThrow()
+                .slotIndex());
         assertEquals("b0", logicalAtSlot(result, 2 * ROWS));
+    }
+
+    @Test
+    void minColumnsOnePadsEmptyGroupToFullColumn() {
+        TabGroup group = new TabGroup("empty", 0, 1, 1, 40);
+        group.addSubgroup(new TabSubgroup(0));
+
+        TabLayoutEngine.LayoutResult result = TabLayoutEngine.pack(List.of(group), VIEWER, ROWS, COLS);
+
+        assertEquals(ROWS, result.size());
+        assertTrue(result.entries().stream().allMatch(e -> e.entry() == TabLayoutEngine.BLANK));
+        assertEquals(0, result.entries().get(0).slotIndex());
+        assertEquals(ROWS - 1, result.entries().get(ROWS - 1).slotIndex());
     }
 
     @Test

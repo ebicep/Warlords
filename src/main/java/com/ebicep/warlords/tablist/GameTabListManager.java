@@ -13,18 +13,39 @@ import java.util.stream.Collectors;
 
 /**
  * Per-game tab list manager. Viewers are all online game members including spectators.
+ * Content comes from a {@link TabListLayout} plus any subgroups other Options attach.
  */
 public class GameTabListManager extends AbstractTabListManager {
 
     private final Game game;
+    private final TabListLayout layout;
 
-    public GameTabListManager(@Nonnull Game game) {
+    public GameTabListManager(@Nonnull Game game, @Nonnull TabListLayout layout) {
         this.game = Objects.requireNonNull(game, "game");
+        this.layout = Objects.requireNonNull(layout, "layout");
+        this.layout.apply(this, game);
     }
 
     @Nonnull
     public Game getGame() {
         return game;
+    }
+
+    @Nonnull
+    public TabListLayout getLayout() {
+        return layout;
+    }
+
+    @Override
+    public void tick() {
+        layout.sync(this, game);
+        super.tick();
+    }
+
+    @Override
+    public void addViewerAndFlush(@Nonnull UUID viewerId) {
+        layout.sync(this, game);
+        super.addViewerAndFlush(viewerId);
     }
 
     @Nonnull

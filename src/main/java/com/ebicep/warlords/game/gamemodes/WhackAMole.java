@@ -3,9 +3,11 @@ package com.ebicep.warlords.game.gamemodes;
 import com.ebicep.warlords.game.GameAddon;
 import com.ebicep.warlords.game.GameMap;
 import com.ebicep.warlords.game.Team;
+import com.ebicep.warlords.game.option.CustomTabListOption;
 import com.ebicep.warlords.game.option.Option;
 import com.ebicep.warlords.game.option.WeaponOption;
 import com.ebicep.warlords.game.option.win.WinAfterTimeoutOption;
+import com.ebicep.warlords.tablist.TabListLayouts;
 import com.ebicep.warlords.util.bukkit.LocationFactory;
 import org.bukkit.inventory.ItemStack;
 
@@ -18,6 +20,7 @@ public class WhackAMole implements Mode {
     @Override
     public List<Option> initMap(GameMap map, LocationFactory loc, EnumSet<GameAddon> addons) {
         List<Option> options = new ArrayList<>();
+        options.add(new CustomTabListOption(TabListLayouts.pveBlue()));
         options.add(new WinAfterTimeoutOption(60, Team.RED));
         options.add(new WeaponOption());
         return options;

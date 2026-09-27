@@ -35,7 +35,7 @@ class TabSlotTest {
     }
 
     @Test
-    void toPacketEntryUsesSlotIndexAsListOrderAndDecorativeProfileName() {
+    void toPacketEntryUsesInvertedListOrderAndDecorativeProfileName() {
         for (int i : new int[]{0, 1, 19, 79}) {
             TabSlot slot = TabSlot.get(i);
             TabEntry entry = TabEntry.of(Component.text("row-" + i), 42);
@@ -43,7 +43,7 @@ class TabSlotTest {
             TabListEntry packet = TabViewerSession.toPacketEntry(slot, entry, profileName);
 
             assertEquals(slot.profileName(), profileName);
-            assertEquals(i, packet.listOrder());
+            assertEquals(TabSlot.POOL_SIZE - 1 - i, packet.listOrder());
             assertEquals(slot.uuid(), packet.uuid());
             assertEquals(slot.profileName(), packet.profileName());
             assertEquals(42, packet.latency());

@@ -18,6 +18,7 @@ import com.ebicep.warlords.game.option.respawn.RespawnProtectionOption;
 import com.ebicep.warlords.game.option.respawn.RespawnWaveOption;
 import com.ebicep.warlords.game.option.win.WinAfterTimeoutOption;
 import com.ebicep.warlords.game.option.win.WinByPointsOption;
+import com.ebicep.warlords.tablist.TabListLayouts;
 import com.ebicep.warlords.util.bukkit.LocationFactory;
 import com.ebicep.warlords.util.java.TriFunction;
 import net.kyori.adventure.text.Component;
@@ -35,6 +36,7 @@ public class Interception implements Mode {
     @Override
     public List<Option> initMap(GameMap map, LocationFactory loc, EnumSet<GameAddon> addons) {
         List<Option> options = Mode.super.initMap(map, loc, addons);
+        options.add(new CustomTabListOption(TabListLayouts.pvpBlueRed()));
         int points = 1500;
 
         Component base = Component.text("", NamedTextColor.YELLOW, TextDecoration.BOLD);

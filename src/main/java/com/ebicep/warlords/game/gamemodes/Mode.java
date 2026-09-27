@@ -10,7 +10,6 @@ import com.ebicep.warlords.events.game.WarlordsGameTriggerWinEvent;
 import com.ebicep.warlords.game.Game;
 import com.ebicep.warlords.game.GameAddon;
 import com.ebicep.warlords.game.GameMap;
-import com.ebicep.warlords.game.option.CustomTabListOption;
 import com.ebicep.warlords.game.option.FlyOption;
 import com.ebicep.warlords.game.option.Option;
 import com.ebicep.warlords.game.option.PreGameItemOption;
@@ -100,7 +99,6 @@ public interface Mode {
         );
 
         options.add(new GameFreezeOption());
-        options.add(new CustomTabListOption());
         options.add(new DrowningDamage());
         options.add(new FallDamage());
         options.add(new KillDamage());
