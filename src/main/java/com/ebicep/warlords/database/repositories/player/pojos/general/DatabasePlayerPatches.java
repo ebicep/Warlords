@@ -333,6 +333,33 @@ public enum DatabasePlayerPatches {
             return true;
         }
     },
+    WEAPON_TITLE_UPGRADE_REFUND {
+        @Override
+        public boolean run(UUID uuid, DatabasePlayer databasePlayer) {
+            DatabasePlayerPvE pveStats = databasePlayer.getPveStats();
+            LinkedHashMap<Spendable, Long> rewards = WeaponTitleUpgradeRefund.calculate(pveStats.getWeaponInventory());
+            if (rewards.isEmpty()) {
+                return true;
+            }
+            pveStats.getCompensationRewards().add(new CompensationReward.WeaponUpgradeRefundPatch(rewards));
+
+            List<Component> summary = new ArrayList<>();
+            summary.add(Component.text("------------------------------------------------", NamedTextColor.DARK_AQUA));
+            summary.add(Component.text("Weapon Upgrade Refund", NamedTextColor.GOLD));
+            summary.add(Component.text("This is a partial refund for materials spent on weapon and title upgrades.", NamedTextColor.GRAY));
+            summary.add(Component.text("You will only receive these rewards once.", NamedTextColor.GRAY));
+            rewards.forEach((spendable, amount) -> summary.add(
+                    Component.text(" • ", NamedTextColor.DARK_GRAY)
+                             .append(spendable.getCostColoredName(amount))
+            ));
+            summary.add(Component.text("Claim them in your Rewards Inventory", NamedTextColor.GREEN));
+            summary.add(Component.text("------------------------------------------------", NamedTextColor.DARK_AQUA));
+            databasePlayer.addFutureMessage(FutureMessage.create(summary, true));
+
+            ChatUtils.MessageType.WARLORDS.sendMessage("Weapon upgrade refund for " + uuid + ": " + rewards);
+            return true;
+        }
+    },
 
     ;
 
