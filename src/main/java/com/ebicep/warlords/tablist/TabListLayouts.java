@@ -8,14 +8,10 @@ import net.kyori.adventure.text.format.TextDecoration;
 import org.bukkit.entity.Player;
 
 import javax.annotation.Nonnull;
-import java.util.Comparator;
-import java.util.HashSet;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 import java.util.UUID;
-import java.util.stream.Collectors;
 
 /**
  * Prefab {@link TabListLayout}s for common game modes.
@@ -65,7 +61,7 @@ public final class TabListLayouts {
         private final List<TeamBand> bands;
         private final boolean collapseAllToFirstBand;
         private final Map<String, TabSubgroup> playerSubgroups = new LinkedHashMap<>();
-        private final Map<String, Set<UUID>> lastIds = new LinkedHashMap<>();
+        private final Map<String, List<UUID>> lastIds = new LinkedHashMap<>();
         private boolean applied;
         private boolean forcePlayerSync;
 
@@ -96,7 +92,7 @@ public final class TabListLayouts {
                 TabSubgroup players = new TabSubgroup(1);
                 group.addSubgroup(players);
                 playerSubgroups.put(band.groupName(), players);
-                lastIds.put(band.groupName(), Set.of());
+                lastIds.put(band.groupName(), List.of());
             }
             applied = true;
         }
@@ -114,31 +110,31 @@ public final class TabListLayouts {
         private void syncCollapsed(@Nonnull Game game) {
             TeamBand band = bands.getFirst();
             List<Map.Entry<Player, Team>> players = game.onlinePlayersWithoutSpectators()
-                    .sorted(Comparator.comparing(e -> e.getKey().getName(), String.CASE_INSENSITIVE_ORDER))
+                    .sorted(TabListPlayers.gamePlayerComparator())
                     .toList();
-            Set<UUID> current = players.stream()
+            List<UUID> current = players.stream()
                     .map(e -> e.getKey().getUniqueId())
-                    .collect(Collectors.toCollection(HashSet::new));
+                    .toList();
             if (!forcePlayerSync && current.equals(lastIds.get(band.groupName()))) {
                 return;
             }
             forcePlayerSync = false;
-            lastIds.put(band.groupName(), Set.copyOf(current));
+            lastIds.put(band.groupName(), List.copyOf(current));
             playerSubgroups.get(band.groupName()).setSources(TabListPlayers.toPlayerSources(players));
         }
 
         private void syncByTeam(@Nonnull Game game) {
             boolean anyChange = forcePlayerSync;
             Map<String, List<Map.Entry<Player, Team>>> byBand = new LinkedHashMap<>();
-            Map<String, Set<UUID>> nextIds = new LinkedHashMap<>();
+            Map<String, List<UUID>> nextIds = new LinkedHashMap<>();
             for (TeamBand band : bands) {
                 List<Map.Entry<Player, Team>> players = game.onlinePlayersWithoutSpectators()
                         .filter(e -> e.getValue() == band.team())
-                        .sorted(Comparator.comparing(e -> e.getKey().getName(), String.CASE_INSENSITIVE_ORDER))
+                        .sorted(TabListPlayers.gamePlayerComparator())
                         .toList();
-                Set<UUID> ids = players.stream()
+                List<UUID> ids = players.stream()
                         .map(e -> e.getKey().getUniqueId())
-                        .collect(Collectors.toCollection(HashSet::new));
+                        .toList();
                 byBand.put(band.groupName(), players);
                 nextIds.put(band.groupName(), ids);
                 if (!ids.equals(lastIds.get(band.groupName()))) {
@@ -150,7 +146,7 @@ public final class TabListLayouts {
             }
             forcePlayerSync = false;
             for (TeamBand band : bands) {
-                lastIds.put(band.groupName(), Set.copyOf(nextIds.get(band.groupName())));
+                lastIds.put(band.groupName(), List.copyOf(nextIds.get(band.groupName())));
                 playerSubgroups.get(band.groupName())
                         .setSources(TabListPlayers.toPlayerSources(byBand.get(band.groupName())));
             }

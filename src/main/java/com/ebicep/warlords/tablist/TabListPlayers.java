@@ -11,8 +11,11 @@ import net.kyori.adventure.text.TextComponent;
 import net.kyori.adventure.text.format.NamedTextColor;
 import org.bukkit.entity.Player;
 
+import com.ebicep.warlords.player.general.Specializations;
+
 import javax.annotation.Nonnull;
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.List;
 import java.util.Map;
 import java.util.UUID;
@@ -25,6 +28,23 @@ public final class TabListPlayers {
     private static final TextComponent WHITE_FLAG = Component.text("⚑", NamedTextColor.WHITE);
 
     private TabListPlayers() {
+    }
+
+    /**
+     * Same ordering as {@code PlayingStateScoreboardUpdater.tabListTeamName}: faction, specialization, name.
+     */
+    @Nonnull
+    public static Comparator<Map.Entry<Player, Team>> gamePlayerComparator() {
+        return Comparator
+                .comparingInt((Map.Entry<Player, Team> e) -> e.getValue().ordinal())
+                .thenComparingInt(e -> specOrdinal(e.getKey()))
+                .thenComparing(e -> e.getKey().getName(), String.CASE_INSENSITIVE_ORDER);
+    }
+
+    private static int specOrdinal(@Nonnull Player player) {
+        WarlordsEntity entity = Warlords.getPlayer(player);
+        Specializations spec = entity == null ? null : entity.getSpecClass();
+        return spec == null ? Integer.MAX_VALUE : spec.ordinal();
     }
 
     @Nonnull
