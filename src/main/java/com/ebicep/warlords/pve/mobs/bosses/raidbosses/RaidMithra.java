@@ -3,11 +3,11 @@ package com.ebicep.warlords.pve.mobs.bosses.raidbosses;
 import com.ebicep.warlords.effects.EffectUtils;
 import com.ebicep.warlords.events.player.ingame.WarlordsDamageHealingEvent;
 import com.ebicep.warlords.game.option.pve.PveOption;
-import com.ebicep.warlords.player.general.Weapons;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
 import com.ebicep.warlords.pve.mobs.AbstractMob;
 import com.ebicep.warlords.pve.mobs.Mob;
 import com.ebicep.warlords.pve.mobs.tiers.RaidBossMob;
+import com.ebicep.warlords.util.bukkit.EntitiesUtils;
 import com.ebicep.warlords.util.warlords.Utils;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
@@ -40,16 +40,30 @@ public class RaidMithra extends AbstractMob implements RaidBossMob {
     private static final double CRYSTAL_ORBIT_RADIUS = 2;
     private static final double CRYSTAL_ORBIT_SPEED = 0.75;
     private static final double CRYSTAL_VERTICAL_AMPLITUDE = 0.6;
+    private static final int CROWN_SHARD_COUNT = 8;
+    private static final double CROWN_RADIUS = 1.08;
+    private static final float CROWN_SPIN_DEGREES = 0.5f;
+    private static final float CROWN_SHARD_WIDTH = 1.15f;
+    private static final float CROWN_SHARD_HEIGHT = 2.8f;
+    private static final double CROWN_HEIGHT_OFFSET = 0.95;
+    private static final float FLOOR_DIAGRAM_SPIN_DEGREES = 0.5f;
+    private static final double FLOOR_DIAGRAM_OUTER_RADIUS = 3.4;
+    private static final double FLOOR_DIAGRAM_MID_RADIUS = 2.2;
+    private static final double FLOOR_DIAGRAM_INNER_RADIUS = 1.05;
+    private static final double FLOOR_DIAGRAM_SPACING = 0.65;
     private static final Particle.DustOptions WHITE_DUST = new Particle.DustOptions(Color.fromRGB(245, 245, 255), 1.25f);
     private static final Particle.DustOptions ABYSS_DUST = new Particle.DustOptions(Color.fromRGB(88, 52, 130), 1.25f);
+    private static final Particle.DustOptions DIAGRAM_WHITE = new Particle.DustOptions(Color.fromRGB(245, 245, 255), 0.95f);
+    private static final Particle.DustOptions DIAGRAM_ABYSS = new Particle.DustOptions(Color.fromRGB(130, 78, 196), 0.95f);
 
     private final List<ItemDisplay> orbitingCrystals = new ArrayList<>();
-    private final List<ItemDisplay> royalHaloDisplays = new ArrayList<>();
+    private final List<ItemDisplay> crownShards = new ArrayList<>();
     private RaidBossUtils.RaidBossHealthBar raidHealthBar;
     private Location previousLocation;
     private Location royalAttackImpact;
     private Vector royalAttackForward;
-    private float haloRotation;
+    private float crownRotation;
+    private float floorDiagramRotation;
     private int attackAnimationTicks;
     private int royalAttackSequenceTicks = -1;
     private int chessStep;
@@ -102,7 +116,7 @@ public class RaidMithra extends AbstractMob implements RaidBossMob {
     public void onSpawn(PveOption option) {
         super.onSpawn(option);
 
-        spawnRoyalHalo();
+        spawnCrystalCrown();
         spawnOrbitingCrystals();
         raidHealthBar = RaidBossUtils.createHealthBar(
                 warlordsNPC,
@@ -134,7 +148,8 @@ public class RaidMithra extends AbstractMob implements RaidBossMob {
         Location current = warlordsNPC.getLocation();
         boolean moving = isMoving(current);
 
-        updateRoyalHalo(ticksElapsed, moving);
+        updateCrystalCrown();
+        updateFloorDiagram(ticksElapsed);
         updateOrbitingCrystals(ticksElapsed);
         updateRoyalAttackSequence();
         if (raidHealthBar != null) {
@@ -197,12 +212,12 @@ public class RaidMithra extends AbstractMob implements RaidBossMob {
 
     @Override
     public void cleanup(PveOption pveOption) {
-        for (ItemDisplay display : royalHaloDisplays) {
-            if (display != null && !display.isDead()) {
-                display.remove();
+        for (ItemDisplay shard : crownShards) {
+            if (shard != null && !shard.isDead()) {
+                shard.remove();
             }
         }
-        royalHaloDisplays.clear();
+        crownShards.clear();
         for (ItemDisplay crystal : orbitingCrystals) {
             if (crystal != null && !crystal.isDead()) {
                 crystal.remove();
@@ -219,128 +234,140 @@ public class RaidMithra extends AbstractMob implements RaidBossMob {
         previousLocation = null;
     }
 
-    private void spawnRoyalHalo() {
-        ItemStack chakram = Weapons.WARLORDS_II_ROYAL_CHAKRAM.getItem().clone();
-        ItemStack royalJewel = new ItemStack(Material.NETHER_STAR);
+    private void spawnCrystalCrown() {
+        ItemStack shard = new ItemStack(Material.AMETHYST_SHARD);
         Location location = warlordsNPC.getLocation();
 
-        royalHaloDisplays.add(spawnRoyalHaloDisplay(chakram.clone(), location, 2.7f));
-        royalHaloDisplays.add(spawnRoyalHaloDisplay(chakram.clone(), location, 1.35f));
-        royalHaloDisplays.add(spawnRoyalHaloDisplay(chakram.clone(), location, 1.35f));
-        royalHaloDisplays.add(spawnRoyalHaloDisplay(royalJewel, location, 0.85f));
+        for (int i = 0; i < CROWN_SHARD_COUNT; i++) {
+            crownShards.add(spawnCrownShard(shard.clone(), location));
+        }
 
-        updateRoyalHalo(0, false);
+        updateCrystalCrown();
     }
 
-    private ItemDisplay spawnRoyalHaloDisplay(ItemStack item, Location location, float scale) {
+    private ItemDisplay spawnCrownShard(ItemStack item, Location location) {
         return warlordsNPC.getWorld().spawn(location, ItemDisplay.class, display -> {
             display.setItemStack(item);
-            display.setBillboard(Display.Billboard.FIXED);
+            display.setItemDisplayTransform(ItemDisplay.ItemDisplayTransform.FIXED);
+            display.setBillboard(Display.Billboard.VERTICAL);
             display.setInterpolationDuration(2);
             display.setTeleportDuration(2);
+            display.setBrightness(EntitiesUtils.MAX_BRIGHTNESS);
             display.setPersistent(false);
-            display.setTransformation(new Transformation(
-                    new Vector3f(0, 0, 0),
-                    new Quaternionf(),
-                    new Vector3f(scale, scale, scale),
-                    new Quaternionf()
-            ));
+            display.setTransformation(crownShardTransformation());
         });
     }
 
-    private void updateRoyalHalo(int ticksElapsed, boolean moving) {
-        if (royalHaloDisplays.size() < 4 || !(warlordsNPC.getEntity() instanceof LivingEntity entity)) {
-            return;
-        }
-
-        ItemDisplay mainHalo = royalHaloDisplays.get(0);
-        ItemDisplay firstWing = royalHaloDisplays.get(1);
-        ItemDisplay secondWing = royalHaloDisplays.get(2);
-        ItemDisplay royalJewel = royalHaloDisplays.get(3);
-        if (mainHalo.isDead() || firstWing.isDead() || secondWing.isDead() || royalJewel.isDead()) {
+    private void updateCrystalCrown() {
+        if (crownShards.isEmpty() || !(warlordsNPC.getEntity() instanceof LivingEntity entity)) {
             return;
         }
 
         double centerX = (entity.getBoundingBox().getMinX() + entity.getBoundingBox().getMaxX()) / 2;
         double centerZ = (entity.getBoundingBox().getMinZ() + entity.getBoundingBox().getMaxZ()) / 2;
-        double bob = Math.sin(ticksElapsed * 0.09) * 0.16;
-        double baseY = entity.getBoundingBox().getMaxY() + 0.72 + bob;
-        boolean attacking = attackAnimationTicks > 0;
-        double attackPulse = getAttackPulse();
+        double y = entity.getBoundingBox().getMaxY() + CROWN_HEIGHT_OFFSET;
+        crownRotation += CROWN_SPIN_DEGREES;
+        double baseAngle = Math.toRadians(crownRotation);
 
-        haloRotation += attacking ? 16 : moving ? 4.5f : 1.5f;
-        double rotation = Math.toRadians(haloRotation);
-        float attackTilt = (float) (attackPulse * 24);
-        float mainScale = (float) (2.7 + attackPulse * 0.9);
+        for (int i = 0; i < crownShards.size(); i++) {
+            ItemDisplay shard = crownShards.get(i);
+            if (shard == null || shard.isDead()) {
+                continue;
+            }
 
-        mainHalo.teleport(new Location(entity.getWorld(), centerX, baseY, centerZ));
-        mainHalo.setTransformation(new Transformation(
+            double angle = baseAngle + Math.PI * 2 * i / CROWN_SHARD_COUNT;
+            shard.teleport(new Location(
+                    entity.getWorld(),
+                    centerX + Math.cos(angle) * CROWN_RADIUS,
+                    y,
+                    centerZ + Math.sin(angle) * CROWN_RADIUS
+            ));
+        }
+    }
+
+    private Transformation crownShardTransformation() {
+        return new Transformation(
                 new Vector3f(0, 0, 0),
+                new Quaternionf(),
+                new Vector3f(CROWN_SHARD_WIDTH, CROWN_SHARD_HEIGHT, CROWN_SHARD_WIDTH),
                 new Quaternionf()
-                        .rotateX((float) Math.toRadians(90 + attackTilt))
-                        .rotateZ((float) rotation),
-                new Vector3f(mainScale, mainScale, mainScale),
-                new Quaternionf()
-        ));
+        );
+    }
 
-        double wingRadius = 1.28 + attackPulse * 0.9;
-        double wingBob = Math.sin(ticksElapsed * 0.13) * 0.12;
-        updateRoyalWing(firstWing, entity, centerX, centerZ, baseY + wingBob, rotation, wingRadius, attackPulse, 1);
-        updateRoyalWing(secondWing, entity, centerX, centerZ, baseY - wingBob, rotation + Math.PI, wingRadius, attackPulse, -1);
+    private void updateFloorDiagram(int ticksElapsed) {
+        floorDiagramRotation += FLOOR_DIAGRAM_SPIN_DEGREES;
+        if (ticksElapsed % 2 != 0 || !(warlordsNPC.getEntity() instanceof LivingEntity entity)) {
+            return;
+        }
 
-        double jewelBob = Math.sin(ticksElapsed * 0.16) * 0.12;
-        float jewelScale = (float) (0.85 + attackPulse * 0.55);
-        royalJewel.teleport(new Location(entity.getWorld(), centerX, baseY + 1.15 + jewelBob + attackPulse * 0.25, centerZ));
-        royalJewel.setTransformation(new Transformation(
-                new Vector3f(0, 0, 0),
-                new Quaternionf()
-                        .rotateY((float) -rotation * 1.5f)
-                        .rotateZ((float) Math.toRadians(45)),
-                new Vector3f(jewelScale, jewelScale, jewelScale),
-                new Quaternionf()
-        ));
+        Location origin = new Location(
+                entity.getWorld(),
+                (entity.getBoundingBox().getMinX() + entity.getBoundingBox().getMaxX()) / 2,
+                entity.getBoundingBox().getMinY() + 0.08,
+                (entity.getBoundingBox().getMinZ() + entity.getBoundingBox().getMaxZ()) / 2
+        );
+        double rotation = Math.toRadians(floorDiagramRotation);
 
-        if (ticksElapsed % 4 == 0) {
+        drawDiagramRing(origin, FLOOR_DIAGRAM_OUTER_RADIUS, rotation, DIAGRAM_WHITE);
+        drawDiagramRing(origin, FLOOR_DIAGRAM_MID_RADIUS, rotation, DIAGRAM_ABYSS);
+        drawDiagramRing(origin, FLOOR_DIAGRAM_INNER_RADIUS, rotation, DIAGRAM_WHITE);
+
+        int points = 6;
+        for (int i = 0; i < points; i++) {
+            double start = rotation + Math.PI * 2 * i / points;
+            double next = rotation + Math.PI * 2 * (i + 1) / points;
+            double star = rotation + Math.PI * 2 * (i + 2) / points;
+            Particle.DustOptions spokeDust = i % 2 == 0 ? DIAGRAM_WHITE : DIAGRAM_ABYSS;
+            drawDiagramSegment(origin, start, FLOOR_DIAGRAM_OUTER_RADIUS, next, FLOOR_DIAGRAM_OUTER_RADIUS, DIAGRAM_ABYSS);
+            drawDiagramSegment(origin, start, FLOOR_DIAGRAM_MID_RADIUS, star, FLOOR_DIAGRAM_MID_RADIUS, DIAGRAM_WHITE);
+            drawDiagramSegment(origin, start, FLOOR_DIAGRAM_INNER_RADIUS, start, FLOOR_DIAGRAM_OUTER_RADIUS, spokeDust);
+        }
+    }
+
+    private void drawDiagramRing(Location origin, double radius, double rotation, Particle.DustOptions dust) {
+        int points = Math.max(8, (int) Math.ceil(Math.PI * 2 * radius / FLOOR_DIAGRAM_SPACING));
+        for (int i = 0; i < points; i++) {
+            double angle = rotation + Math.PI * 2 * i / points;
             EffectUtils.displayParticle(
-                    Particle.END_ROD,
-                    new Location(entity.getWorld(), centerX, baseY, centerZ),
-                    attacking ? 5 : 2,
-                    attacking ? 1.4 : 0.8,
-                    0.2,
-                    attacking ? 1.4 : 0.8,
-                    0
+                    Particle.DUST,
+                    origin.clone().add(Math.cos(angle) * radius, 0, Math.sin(angle) * radius),
+                    1,
+                    0,
+                    0,
+                    0,
+                    0,
+                    dust
             );
         }
     }
 
-    private void updateRoyalWing(
-            ItemDisplay wing,
-            LivingEntity entity,
-            double centerX,
-            double centerZ,
-            double y,
-            double angle,
-            double radius,
-            double attackPulse,
-            int tiltDirection
+    private void drawDiagramSegment(
+            Location origin,
+            double angleA,
+            double radiusA,
+            double angleB,
+            double radiusB,
+            Particle.DustOptions dust
     ) {
-        wing.teleport(new Location(
-                entity.getWorld(),
-                centerX + Math.cos(angle) * radius,
-                y + attackPulse * 0.18,
-                centerZ + Math.sin(angle) * radius
-        ));
-
-        float scale = (float) (1.35 + attackPulse * 0.5);
-        wing.setTransformation(new Transformation(
-                new Vector3f(0, 0, 0),
-                new Quaternionf()
-                        .rotateX((float) Math.toRadians(62 + attackPulse * 12))
-                        .rotateY((float) Math.toRadians(tiltDirection * (24 + attackPulse * 16)))
-                        .rotateZ((float) angle),
-                new Vector3f(scale, scale, scale),
-                new Quaternionf()
-        ));
+        double x1 = Math.cos(angleA) * radiusA;
+        double z1 = Math.sin(angleA) * radiusA;
+        double x2 = Math.cos(angleB) * radiusB;
+        double z2 = Math.sin(angleB) * radiusB;
+        double length = Math.hypot(x2 - x1, z2 - z1);
+        int steps = Math.max(1, (int) Math.ceil(length / FLOOR_DIAGRAM_SPACING));
+        for (int i = 0; i <= steps; i++) {
+            double t = i / (double) steps;
+            EffectUtils.displayParticle(
+                    Particle.DUST,
+                    origin.clone().add(x1 + (x2 - x1) * t, 0, z1 + (z2 - z1) * t),
+                    1,
+                    0,
+                    0,
+                    0,
+                    0,
+                    dust
+            );
+        }
     }
 
     private void spawnOrbitingCrystals() {
