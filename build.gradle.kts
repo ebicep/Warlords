@@ -36,7 +36,13 @@ val gitDirty: String = runCatching {
         isIgnoreExitValue = true
     }.standardOutput.asText.get().isNotBlank().toString()
 }.getOrElse { "false" }
-val buildTime: String = Instant.now().toString()
+// Prefer git commit time so processResources stays UP-TO-DATE across rebuilds.
+// Set -PreleaseBuild=true to stamp wall-clock build time for release artifacts.
+val buildTime: String = if (providers.gradleProperty("releaseBuild").map { it.toBoolean() }.orElse(false).get()) {
+    Instant.now().toString()
+} else {
+    gitCommitTime
+}
 
 java {
     // Configure the java toolchain. This allows gradle to auto-provision JDK 21 on systems that only have JDK 8 installed for example.
@@ -64,15 +70,27 @@ repositories {
     maven("https://repo.onarandombox.com/content/groups/public/")
 }
 
+configurations.configureEach {
+    exclude(group = "net.bytebuddy", module = "byte-buddy")
+}
+
 dependencies {
     pluginRemapper("net.fabricmc:tiny-remapper:0.12.1:fat")
     paperweight.paperDevBundle("1.21.11-R0.1-SNAPSHOT")
 
     implementation("co.aikar:taskchain-bukkit:3.7.2")
 
-    implementation("net.dv8tion:JDA:5.0.0-beta.24")
+    implementation("net.dv8tion:JDA:5.0.0-beta.24") {
+        exclude(group = "club.minnced", module = "opus-java")
+        exclude(group = "club.minnced", module = "opus-java-api")
+        exclude(group = "club.minnced", module = "opus-java-natives")
+    }
 
-    implementation("org.springframework.boot:spring-boot-starter-data-mongodb:3.0.4")
+    // Lean Spring Data Mongo (no Boot starter / logback)
+    implementation("org.springframework.data:spring-data-mongodb:4.0.3")
+    implementation("org.mongodb:mongodb-driver-sync:4.8.2")
+    implementation("org.springframework:spring-context:6.0.6")
+    compileOnly("jakarta.annotation:jakarta.annotation-api:2.1.1")
 
     implementation("co.aikar:acf-paper:0.5.1-SNAPSHOT")
 
@@ -81,9 +99,10 @@ dependencies {
     compileOnly("io.papermc.paper:paper-api:1.21.11-R0.1-SNAPSHOT")
 
     compileOnly("com.sk89q.worldedit:worldedit-bukkit:7.3.18")
-    implementation("com.google.guava:guava:32.1.3-jre")
-    implementation("com.google.code.gson:gson:2.10.1")
-    implementation("it.unimi.dsi:fastutil:8.5.12")
+    // Provided by Paper at runtime — do not shade
+    compileOnly("com.google.guava:guava:32.1.3-jre")
+    compileOnly("com.google.code.gson:gson:2.10.1")
+    compileOnly("it.unimi.dsi:fastutil:8.5.12")
 
     compileOnly("net.citizensnpcs:citizens-main:2.0.41-SNAPSHOT") {
         exclude(group = "*", module = "*")
@@ -150,10 +169,6 @@ tasks {
         archiveVersion.set(archiveVersionSuffix)
         relocate("co.aikar.commands", "com.ebicep.warlords.acf.acf")
         relocate("co.aikar.locales", "com.ebicep.warlords.acf.locales")
-
-        dependencies {
-            exclude(dependency("club.minnced:opus-java"))
-        }
     }
 
     reobfJar {
