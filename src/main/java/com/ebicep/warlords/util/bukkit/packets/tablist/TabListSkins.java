@@ -2,17 +2,29 @@ package com.ebicep.warlords.util.bukkit.packets.tablist;
 
 import com.destroystokyo.paper.profile.PlayerProfile;
 import com.destroystokyo.paper.profile.ProfileProperty;
+import com.ebicep.warlords.util.bukkit.Colors;
 import org.bukkit.entity.Player;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
 /**
- * Reads texture properties from a live player's profile for fake tab entries.
+ * Texture properties for fake tab entries: live players and solid {@link Colors} heads.
  */
 public final class TabListSkins {
 
     private TabListSkins() {
+    }
+
+    /**
+     * Signed solid-color head texture for decorative tab rows.
+     *
+     * @return {@code [texture, signature]}
+     */
+    @Nonnull
+    public static String[] textureAndSignature(@Nonnull Colors color) {
+        TabListColorSkins.SkinPair pair = TabListColorSkins.get(color);
+        return new String[]{pair.value(), pair.signature()};
     }
 
     /**

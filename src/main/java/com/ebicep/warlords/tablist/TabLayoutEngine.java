@@ -1,5 +1,7 @@
 package com.ebicep.warlords.tablist;
 
+import com.ebicep.warlords.util.bukkit.Colors;
+import com.ebicep.warlords.util.bukkit.packets.tablist.TabListSkins;
 import net.kyori.adventure.text.Component;
 
 import javax.annotation.Nonnull;
@@ -22,7 +24,12 @@ public final class TabLayoutEngine {
     public static final int DEFAULT_COLUMNS = 4;
 
     /** Empty display pad used to fill reserved min-columns. */
-    public static final TabEntry BLANK = TabEntry.of(Component.empty());
+    public static final TabEntry BLANK = blankPadEntry();
+
+    private static TabEntry blankPadEntry() {
+        String[] skin = TabListSkins.textureAndSignature(Colors.DARK_GRAY);
+        return TabEntry.of(Component.empty()).withSkin(skin[0], skin[1]);
+    }
 
     private TabLayoutEngine() {
     }

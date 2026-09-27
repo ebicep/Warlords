@@ -2,6 +2,7 @@ package com.ebicep.warlords.tablist;
 
 import com.ebicep.warlords.game.Game;
 import com.ebicep.warlords.game.Team;
+import com.ebicep.warlords.util.bukkit.packets.tablist.TabListSkins;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.TextDecoration;
 import org.bukkit.entity.Player;
@@ -158,7 +159,10 @@ public final class TabListLayouts {
             TabSubgroup header = new TabSubgroup(priority);
             String title = team.prefix() + " TEAM";
             TabEntry entry = TabEntry.of(Component.text(title, team.getTeamColor(), TextDecoration.BOLD));
-            header.add(viewer -> entry);
+            String[] skin = TabListSkins.textureAndSignature(team.getColors());
+            entry = entry.withSkin(skin[0], skin[1]);
+            TabEntry headerEntry = entry;
+            header.add(viewer -> headerEntry);
             return header;
         }
     }
