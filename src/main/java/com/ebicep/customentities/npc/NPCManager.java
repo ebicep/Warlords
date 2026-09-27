@@ -68,7 +68,7 @@ public class NPCManager {
                 createWeeklyItemTraderNPC();
                 createTreasureHuntVendorNPC();
                 //createAscendantWeaponNPC();
-                createTutorialGuideNPC();
+                //createTutorialGuideNPC();
                 createMainLobbySetupNPC();
                 registerTrait(ReadyUpOption.ReadyUpTrait.class, "ReadyUpTrait");
                 ChatUtils.MessageType.GAME.sendMessage("Done adding game join NPCs");
