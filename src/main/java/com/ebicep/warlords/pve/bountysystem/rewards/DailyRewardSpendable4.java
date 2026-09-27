@@ -9,8 +9,8 @@ public interface DailyRewardSpendable4 extends RewardSpendable {
 
     LinkedHashMap<Spendable, Long> REWARD = new LinkedHashMap<>() {{
         put(Currencies.COIN, 30000L);
-        put(Currencies.SYNTHETIC_SHARD, 50L);
-        put(Currencies.LEGEND_FRAGMENTS, 50L);
+        put(Currencies.SYNTHETIC_SHARD, 100L);
+        put(Currencies.LEGEND_FRAGMENTS, 100L);
     }};
 
     @Override

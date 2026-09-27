@@ -11,6 +11,8 @@ import com.ebicep.warlords.player.general.SpecializationStatsLore;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
 import com.ebicep.warlords.player.ingame.WarlordsPlayer;
 import com.ebicep.warlords.pve.DifficultyMode;
+import com.ebicep.warlords.pve.consumables.menu.ConsumableMenu;
+import com.ebicep.warlords.pve.consumables.vials.Vial;
 import com.ebicep.warlords.util.bukkit.ItemBuilder;
 import com.ebicep.warlords.util.bukkit.WordWrap;
 import com.ebicep.warlords.util.chat.ChatUtils;
@@ -25,6 +27,7 @@ import net.kyori.adventure.text.format.TextDecoration;
 import org.bukkit.Material;
 import org.bukkit.Sound;
 import org.bukkit.entity.Player;
+import org.bukkit.inventory.ItemStack;
 import org.bukkit.scheduler.BukkitRunnable;
 import org.springframework.data.mongodb.core.mapping.Field;
 
@@ -177,6 +180,18 @@ public class AbilityTree {
                         .lore(SpecializationStatsLore.forPlayer(warlordsPlayer))
                         .get(),
                 ACTION_DO_NOTHING
+        );
+
+        menu.setItem(
+                8,
+                0,
+                new ItemBuilder(Material.POTION)
+                    .name(Component.text("Vial Inventory", NamedTextColor.GREEN))
+                    .lore(Component.text("Click to open vial inventory", NamedTextColor.GRAY))
+                    .get(),
+                (m, e) -> {
+                    ConsumableMenu.openVialInventory(player);
+                }
         );
 
         for (int i = 0; i < upgradeBranches.size(); i++) {

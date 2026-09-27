@@ -55,7 +55,7 @@ public class RaidMithra extends AbstractMob implements RaidBossMob {
     private int chessStep;
 
     public RaidMithra(Location spawnLocation) {
-        this(spawnLocation, "Mithra", 4_000_000, 0.18f, 20, 1200, 1600);
+        this(spawnLocation, "Mithra", 8_000_000, 0.18f, 20, 1200, 1600);
     }
 
     public RaidMithra(

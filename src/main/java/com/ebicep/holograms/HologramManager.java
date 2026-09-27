@@ -33,13 +33,16 @@ import org.bukkit.event.player.PlayerTeleportEvent;
 import org.bukkit.scheduler.BukkitRunnable;
 import org.bukkit.scheduler.BukkitTask;
 
-import java.util.*;
+import java.util.List;
+import java.util.Map;
+import java.util.Objects;
+import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
 
 public class HologramManager implements Listener {
 
     private static final int INTERACT_COOLDOWN_MS = 250;
-    private static final int TICK_INTERVAL = 10;
+    private static final int TICK_INTERVAL = 20;
     private static final Map<UUID, Long> INTERACT_COOLDOWNS = new ConcurrentHashMap<>();
     private static final Map<String, Hologram> HOLOGRAMS = new ConcurrentHashMap<>();
     static int entityId = Integer.MAX_VALUE / 8;

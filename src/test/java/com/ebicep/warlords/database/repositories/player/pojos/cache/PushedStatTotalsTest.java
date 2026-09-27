@@ -131,11 +131,14 @@ class PushedStatTotalsTest {
     @Test
     void fillPvEStoresTotalMobKills() {
         PushedStatTotals totals = new PushedStatTotals();
-        totals.warm(() -> totals.fillPvE(0, Map.of("Iron Golem", 3L, "Zombie", 2L), Map.of(), Map.of()));
+        totals.warm(() -> totals.fillPvE(0, Map.of("Iron Golem", 3L, "Zombie", 2L), Map.of(), Map.of("Iron Golem", 4L)));
 
         assertEquals(5, totals.getTotalMobKills());
         assertEquals(3L, totals.getMobKillCount("Iron Golem"));
         assertEquals(0L, totals.getMobKillCount("irongolem"));
+        assertEquals(4L, totals.getMobDeathCount("Iron Golem"));
+        assertEquals(0L, totals.getMobDeathCount("irongolem"));
+        assertEquals(0L, totals.getMobDeathCount(null));
     }
 
     @Test

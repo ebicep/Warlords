@@ -132,7 +132,7 @@ public class RegularCooldown<T> extends AbstractCooldown<T> {
     }
 
     @Override
-    public Component getNameAbbreviation() {
+    public Component getNameAbbreviation(WarlordsEntity warlordsEntity) {
         if (ticksLeft <= 0) {
             return Component.empty();
         }
@@ -142,7 +142,7 @@ public class RegularCooldown<T> extends AbstractCooldown<T> {
 
         return Component.textOfChildren(
                 Component.text(nameAbbreviation,
-                        customActionBarColor() != null ? customActionBarColor() : cooldownType.getTextColor()
+                        customActionBarColor(warlordsEntity) != null ? customActionBarColor(warlordsEntity) : cooldownType.getTextColor()
                 ),
                 Component.text(":", NamedTextColor.GRAY),
                 Component.text(ticksLeft / 20 + 1, NamedTextColor.GOLD)

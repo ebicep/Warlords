@@ -2,7 +2,9 @@ package com.ebicep.warlords.abilities;
 
 import com.ebicep.warlords.abilities.internal.*;
 import com.ebicep.warlords.database.repositories.config.ConfigManager;
+import com.ebicep.warlords.effects.EffectUtils;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
+import com.ebicep.warlords.player.ingame.WarlordsPlayer;
 import com.ebicep.warlords.player.ingame.cooldowns.CooldownFilter;
 import com.ebicep.warlords.player.ingame.cooldowns.CooldownTypes;
 import com.ebicep.warlords.player.ingame.cooldowns.cooldowns.RegularCooldown;
@@ -11,23 +13,39 @@ import com.ebicep.warlords.player.ingame.instances.type.Modifier;
 import com.ebicep.warlords.pve.upgrades.AbilityTree;
 import com.ebicep.warlords.pve.upgrades.AbstractUpgradeBranch;
 import com.ebicep.warlords.pve.upgrades.arcanist.luminary.RayOfLightBranch;
+import com.ebicep.warlords.util.bukkit.EntitiesUtils;
+import com.ebicep.warlords.util.bukkit.LocationBuilder;
 import com.ebicep.warlords.util.java.Pair;
+import com.ebicep.warlords.util.warlords.PlayerFilter;
 import com.ebicep.warlords.util.warlords.Utils;
 import com.ebicep.warlords.util.warlords.modifiablevalues.FloatModifiable;
 import net.kyori.adventure.text.format.NamedTextColor;
 import org.bukkit.Location;
 import org.bukkit.Material;
+import org.bukkit.Particle;
+import org.bukkit.World;
+import org.bukkit.entity.Display;
+import org.bukkit.entity.ItemDisplay;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
+import org.bukkit.util.Transformation;
 import org.jetbrains.annotations.Nullable;
+import org.joml.Quaternionf;
+import org.joml.Vector3f;
 
 import javax.annotation.Nonnull;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 public class RayOfLight extends AbstractBeam<RayOfLight, RayOfLight.RayOfLightStats> implements Heals<RayOfLight.HealingValues> {
 
     public static final ItemStack BEAM_ITEM = new ItemStack(Material.WITHER_ROSE);
+    private static final ItemStack ORB_ITEM = new ItemStack(Material.GLOWSTONE);
+    private static final int ORB_TICK_DURATION = 240;
+    private static final int ORB_BEAM_INTERVAL_TICKS = 60;
+    private static final int ORB_BEAM_COUNT = 2;
+    private static final float ORB_HEIGHT = 3.5f;
     private final RayOfLightStats stats = new RayOfLightStats();
     private final HealingValues healingValues = new HealingValues();
     private boolean removeDebuffs = true;
@@ -40,7 +58,11 @@ public class RayOfLight extends AbstractBeam<RayOfLight, RayOfLight.RayOfLightSt
     protected boolean onActivateInternal(@Nonnull WarlordsEntity shooter) {
         beamPlayer(shooter, shooter);
         Utils.playGlobalSound(shooter.getLocation(), "arcanist.rayoflightalt.activation", 2, 0.9f);
-        return super.onActivateInternal(shooter);
+        boolean activated = super.onActivateInternal(shooter);
+        if (pveMasterUpgrade2) {
+            spawnRadiantOrb(shooter);
+        }
+        return activated;
     }
 
     @Override
@@ -52,6 +74,86 @@ public class RayOfLight extends AbstractBeam<RayOfLight, RayOfLight.RayOfLightSt
     @Override
     public ItemStack getBeamItem() {
         return BEAM_ITEM;
+    }
+
+    private void spawnRadiantOrb(@Nonnull WarlordsEntity shooter) {
+        shooter.getCooldownManager().limitCooldowns(RegularCooldown.class, RadiantOrbData.class, 1);
+        Location spawnLocation = getOrbLocation(shooter, 0);
+        World world = spawnLocation.getWorld();
+        if (world == null) {
+            return;
+        }
+        ItemDisplay orb = world.spawn(spawnLocation, ItemDisplay.class, display -> {
+            display.setItemStack(ORB_ITEM);
+            display.setBillboard(Display.Billboard.FIXED);
+            display.setItemDisplayTransform(ItemDisplay.ItemDisplayTransform.FIXED);
+            display.setBrightness(EntitiesUtils.MAX_BRIGHTNESS);
+            display.setPersistent(false);
+            display.setInvulnerable(true);
+            display.setGravity(false);
+            display.setTeleportDuration(2);
+            display.setTransformation(new Transformation(
+                    new Vector3f(),
+                    new Quaternionf(),
+                    new Vector3f(0.9f, 0.9f, 0.9f),
+                    new Quaternionf()
+            ));
+        });
+        RadiantOrbData data = new RadiantOrbData(orb);
+        shooter.getCooldownManager().addCooldown(new RegularCooldown<>(
+                "Radiant Orb",
+                "ORB",
+                RadiantOrbData.class,
+                data,
+                shooter,
+                CooldownTypes.ABILITY,
+                cooldownManager -> {
+                },
+                cooldownManager -> {
+                    ItemDisplay display = data.getOrb();
+                    if (!display.isDead()) {
+                        display.remove();
+                    }
+                },
+                ORB_TICK_DURATION,
+                Collections.singletonList((cooldown, ticksLeft, ticksElapsed) -> {
+                    ItemDisplay display = data.getOrb();
+                    if (display.isDead()) {
+                        return;
+                    }
+                    Location orbLocation = getOrbLocation(shooter, ticksElapsed);
+                    display.teleport(orbLocation);
+                    if (ticksElapsed % 20 == 0) {
+                        EffectUtils.displayParticle(Particle.END_ROD, orbLocation, 1, 0.15, 0.15, 0.15, 0.01);
+                    }
+                    if (ticksElapsed % ORB_BEAM_INTERVAL_TICKS == 0) {
+                        fireOrbBeams(shooter, orbLocation);
+                    }
+                })
+        ));
+    }
+
+    private void fireOrbBeams(@Nonnull WarlordsEntity shooter, @Nonnull Location orbLocation) {
+        List<WarlordsEntity> targets = PlayerFilter
+                .entitiesAround(orbLocation, 10, 10, 10)
+                .aliveTeammatesOfExcludingSelf(shooter)
+//                .filter(WarlordsPlayer.class::isInstance)
+                .closestFirst(orbLocation)
+                .limit(ORB_BEAM_COUNT)
+                .toList();
+        for (WarlordsEntity target : targets) {
+            Location start = new LocationBuilder(orbLocation).faceTowards(target.getEyeLocation());
+            Location end = Utils.getTargetLocation(start, 10).clone().add(.5, .5, .5);
+            Pair<Float, Float> animationData = getChainAnimationData((int) Math.ceil(start.distance(end)));
+            EffectUtils.playChainAnimation(shooter.getGame(), start, end, getBeamItem(), animationData.getA(), animationData.getB(), 10);
+            fire(shooter, start);
+        }
+    }
+
+    private Location getOrbLocation(@Nonnull WarlordsEntity shooter, int ticksElapsed) {
+        Location location = shooter.getLocation().add(0, ORB_HEIGHT + Math.sin(ticksElapsed / 8d) * 0.15, 0);
+        location.setYaw(ticksElapsed * 4f);
+        return location;
     }
 
     private void beamPlayer(@Nonnull WarlordsEntity hit, WarlordsEntity wp) {
@@ -168,6 +270,20 @@ public class RayOfLight extends AbstractBeam<RayOfLight, RayOfLight.RayOfLightSt
 
     public void setRemoveDebuffs(boolean removeDebuffs) {
         this.removeDebuffs = removeDebuffs;
+    }
+
+    public static class RadiantOrbData {
+
+        private final ItemDisplay orb;
+
+        public RadiantOrbData(ItemDisplay orb) {
+            this.orb = orb;
+        }
+
+        public ItemDisplay getOrb() {
+            return orb;
+        }
+
     }
 
     public static class HealingValues implements Value.ValueHolder {

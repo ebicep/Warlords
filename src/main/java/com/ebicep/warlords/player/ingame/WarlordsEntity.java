@@ -1582,8 +1582,8 @@ public abstract class WarlordsEntity {
             }
             addedAny = true;
             for (AbstractCooldown<?> abstractCooldown : cooldownManager.getCooldowns()) {
-                if (abstractCooldown.getNameAbbreviation() != null) {
-                    actionBarMessage.append(abstractCooldown.getNameAbbreviation()).append(Component.space());
+                if (abstractCooldown.getNameAbbreviation(this) != null) {
+                    actionBarMessage.append(abstractCooldown.getNameAbbreviation(this)).append(Component.space());
                 }
             }
         }

@@ -1,14 +1,12 @@
 package com.ebicep.warlords.player.general.specboosts.boosts;
 
 import com.ebicep.warlords.abilities.CripplingStrike;
-import com.ebicep.warlords.events.player.ingame.WarlordsDamageHealingEvent;
 import com.ebicep.warlords.events.player.ingame.WarlordsHorseAbilityDismountEvent;
 import com.ebicep.warlords.events.player.ingame.WarlordsRespawnEvent;
 import com.ebicep.warlords.game.option.pvp.HorseOption;
 import com.ebicep.warlords.player.general.specboosts.SpecBoostManager;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
 import com.ebicep.warlords.player.ingame.WarlordsPlayer;
-import com.ebicep.warlords.player.ingame.instances.InstanceFlags;
 import com.ebicep.warlords.util.warlords.modifiablevalues.FloatModifiable;
 import org.bukkit.event.EventHandler;
 
@@ -67,17 +65,6 @@ public class UndyingSteed implements SpecBoostManager.SpecBoost<UndyingSteed> {
             for (HorseOption horseOption : warlordsEntity.getGame().getOption(HorseOption.class)) {
                 horseOption.getHorseForPlayer(warlordsEntity).getHealth().removeModifier("Spec Boost");
             }
-        }
-
-        @EventHandler(ignoreCancelled = true)
-        public void onDamageHeal(WarlordsDamageHealingEvent event) {
-            if (!event.getSource().equals(warlordsEntity)) {
-                return;
-            }
-            if (!(event.getAbility() instanceof CripplingStrike)) {
-                return;
-            }
-            event.getFlags().add(InstanceFlags.NO_DISMOUNT);
         }
 
         @EventHandler(ignoreCancelled = true)

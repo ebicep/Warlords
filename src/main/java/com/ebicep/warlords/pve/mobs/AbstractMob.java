@@ -68,7 +68,6 @@ import javax.annotation.Nullable;
 import java.util.*;
 import java.util.concurrent.ThreadLocalRandom;
 import java.util.function.Consumer;
-import java.util.function.Function;
 
 public abstract class AbstractMob implements Mob {
 
@@ -192,7 +191,6 @@ public abstract class AbstractMob implements Mob {
             }
         }
 
-        this.npc.data().set(NPC.Metadata.JUMP_POWER_SUPPLIER, (Function<NPC, Float>) npc -> 0f);
         this.npc.data().set(NPC.Metadata.COLLIDABLE, true);
         this.npc.data().set(NPC.Metadata.NAMEPLATE_VISIBLE, false);
         this.npc.data().set(NPC.Metadata.KEEP_CHUNK_LOADED, true);

@@ -167,7 +167,7 @@ public abstract class AbstractCooldown<T> implements PlayerNameInstance, SpecDam
         this.onRemoveForce = onRemoveForce;
     }
 
-    public abstract Component getNameAbbreviation();
+    public abstract Component getNameAbbreviation(WarlordsEntity warlordsEntity);
 
     public void setNameAbbreviation(String nameAbbreviation) {
         this.nameAbbreviation = nameAbbreviation;
@@ -177,7 +177,7 @@ public abstract class AbstractCooldown<T> implements PlayerNameInstance, SpecDam
 
     public abstract boolean removeCheck();
 
-    public TextColor customActionBarColor() {
+    public TextColor customActionBarColor(WarlordsEntity warlordsEntity) {
         return null;
     }
 

@@ -346,10 +346,18 @@ public final class PushedStatTotals {
     }
 
     public long getMobKillCount(String mobName) {
+        return lookup(mobKills, mobName);
+    }
+
+    public long getMobDeathCount(String mobName) {
+        return lookup(mobDeaths, mobName);
+    }
+
+    private static long lookup(Map<String, Long> counts, String mobName) {
         if (mobName == null || mobName.isEmpty()) {
             return 0;
         }
-        Long value = mobKills.get(mobName);
+        Long value = counts.get(mobName);
         return value == null ? 0 : value;
     }
 

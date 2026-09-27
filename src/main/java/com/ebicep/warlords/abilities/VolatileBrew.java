@@ -226,7 +226,7 @@ public class VolatileBrew extends AbstractAbility implements OrangeAbilityIcon, 
             }
 
             @Override
-            public TextColor customActionBarColor() {
+            public TextColor customActionBarColor(WarlordsEntity warlordsEntity) {
                 return data.damageMode ? NamedTextColor.DARK_RED : NamedTextColor.DARK_GREEN;
             }
         };

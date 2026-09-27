@@ -27,15 +27,19 @@ public class FlagOption implements Option {
 
             @EventHandler
             public void onPlayerLogout(PlayerQuitEvent event) {
-                dropFlag(Warlords.getPlayer(event.getPlayer()), false);
+                dropFlag(Warlords.getPlayer(event.getPlayer()), true, true);
             }
 
-            public boolean dropFlag(@Nullable WarlordsEntity player, boolean manuallyDropped) {
+            public boolean dropFlag(@Nullable WarlordsEntity player, boolean manuallyDropped, boolean immediate) {
                 if (player == null) {
                     return false;
                 }
-                FlagHolder.dropFlagForPlayer(player, manuallyDropped);
+                FlagHolder.dropFlagForPlayer(player, manuallyDropped, immediate);
                 return true;
+            }
+
+            public boolean dropFlag(@Nullable WarlordsEntity player, boolean manuallyDropped) {
+                return dropFlag(player, manuallyDropped, false);
             }
 
             @EventHandler(ignoreCancelled = true)

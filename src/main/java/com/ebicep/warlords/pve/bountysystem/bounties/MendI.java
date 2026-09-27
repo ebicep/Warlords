@@ -18,12 +18,12 @@ public class MendI extends AbstractBounty implements TracksPostGame, LifetimeCos
 
     @Override
     public String getDescription() {
-        return "Heal for 500 million.";
+        return "Heal for 250 million.";
     }
 
     @Override
     public int getTarget() {
-        return 500_000_000;
+        return 250_000_000;
     }
 
     @Override

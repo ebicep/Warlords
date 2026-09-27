@@ -381,6 +381,14 @@
         "min_melee_damage": 1600.0,
         "max_melee_damage": 2000.0
       },
+      "KEYSTONE": {
+        "name": "Keystone",
+        "max_health": 16000,
+        "walk_speed": 0.22,
+        "damage_resistance": 18.0,
+        "min_melee_damage": 750.0,
+        "max_melee_damage": 1000.0
+      },
       "MITHRA": {
         "name": "Echo of Mithra",
         "max_health": 20000,
@@ -1412,6 +1420,54 @@
         "damage_resistance": 10.0,
         "min_melee_damage": 500.0,
         "max_melee_damage": 800.0
+      },
+      "CHRONO_WARDEN": {
+        "name": "Chrono Warden",
+        "max_health": 10000,
+        "walk_speed": 0.28,
+        "damage_resistance": 15.0,
+        "min_melee_damage": 350.0,
+        "max_melee_damage": 500.0
+      },
+      "AMETHYST_GUARD": {
+        "name": "Amethyst Guard",
+        "max_health": 5000,
+        "walk_speed": 0.32,
+        "damage_resistance": 10.0,
+        "min_melee_damage": 500.0,
+        "max_melee_damage": 800.0
+      },
+      "CRYSTAL_SENTINEL": {
+        "name": "Crystal Sentinel",
+        "max_health": 6500,
+        "walk_speed": 0.26,
+        "damage_resistance": 20.0,
+        "min_melee_damage": 500.0,
+        "max_melee_damage": 700.0
+      },
+      "PARADOX_SHADE": {
+        "name": "Paradox Shade",
+        "max_health": 9000,
+        "walk_speed": 0.42,
+        "damage_resistance": 5.0,
+        "min_melee_damage": 450.0,
+        "max_melee_damage": 600.0
+      },
+      "CLOCKBOUND_PHANTOM": {
+        "name": "Clockbound Phantom",
+        "max_health": 12000,
+        "walk_speed": 0.3,
+        "damage_resistance": 10.0,
+        "min_melee_damage": 450.0,
+        "max_melee_damage": 700.0
+      },
+      "CHRONARCH": {
+        "name": "Chronarch",
+        "max_health": 100000,
+        "walk_speed": 0.3,
+        "damage_resistance": 20.0,
+        "min_melee_damage": 1400.0,
+        "max_melee_damage": 2000.0
       }
     }
   }

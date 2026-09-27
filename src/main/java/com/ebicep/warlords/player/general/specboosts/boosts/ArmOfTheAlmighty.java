@@ -20,6 +20,7 @@ import java.util.List;
 
 public class ArmOfTheAlmighty implements SpecBoostManager.SpecBoost<ArmOfTheAlmighty> {
 
+    private int avengerStrikeEnergyCostIncrease;
     private int cleaveTargets;
     private float cleaveRange;
     private float cleaveDamagePercent;
@@ -28,6 +29,7 @@ public class ArmOfTheAlmighty implements SpecBoostManager.SpecBoost<ArmOfTheAlmi
 
     @Override
     public void init() {
+        this.avengerStrikeEnergyCostIncrease = getValue("avengerStrikeEnergyCostIncrease", int.class);
         this.cleaveTargets = getValue("cleaveTargets", int.class);
         this.cleaveRange = getValue("cleaveRange", float.class);
         this.cleaveDamagePercent = getValue("cleaveDamagePercent", float.class);
@@ -42,7 +44,7 @@ public class ArmOfTheAlmighty implements SpecBoostManager.SpecBoost<ArmOfTheAlmi
 
     @Override
     public List<Object> getVariables() {
-        return List.of(cleaveTargets, cleaveRange, cleaveDamagePercent, energyStealPerCleave, wrathDamageBoostPercent);
+        return List.of(avengerStrikeEnergyCostIncrease, cleaveTargets, cleaveRange, cleaveDamagePercent, energyStealPerCleave, wrathDamageBoostPercent);
     }
 
     @Override
@@ -62,6 +64,9 @@ public class ArmOfTheAlmighty implements SpecBoostManager.SpecBoost<ArmOfTheAlmi
         @Override
         public void apply(WarlordsPlayer warlordsPlayer) {
             this.warlordsEntity = warlordsPlayer;
+            warlordsPlayer.getAbilitiesMatching(AvengersStrike.class).forEach(avengersStrike ->
+                    avengersStrike.getEnergyCost().addModifier(FloatModifiable.ModifierType.ADDITIVE, "Spec Boost", avengerStrikeEnergyCostIncrease)
+            );
             warlordsPlayer.getCooldownManager().addCooldown(new PermanentCooldown<>(
                     getStringName(),
                     null,

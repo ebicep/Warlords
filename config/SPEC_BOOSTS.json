@@ -290,7 +290,7 @@
       "undyingSteed": {
         "difficulty": 1,
         "name": "Undying Steed",
-        "description": "Increase the damage of {{aqua:Crippling Strike}} by {{damage;%}}. {{aqua:Crippling Strike}} does not dismount. Your horse will always be available when you respawn. You can take up to {{damage}} damage on your horse without dismounting.",
+        "description": "Increase the damage of {{aqua:Crippling Strike}} by {{damage;%}}. Using {{aqua:Crippling Strike}} does not dismount you. Your horse will always be available when you respawn. You can take up to {{damage}} damage on your horse without dismounting.",
         "cripplingStrikeDamageIncreasePercent": 20,
         "horseHealth": 1500
       },
@@ -334,7 +334,8 @@
       "armOfTheAlmighty": {
         "difficulty": 3,
         "name": "Arm of the Almighty",
-        "description": "{{aqua:Avenger's Strike}} will now cleave up to {{blue}} enemies within {{blocks}} for {{damage;%}} damage and will remove {{energy}} energy. During {{aqua:Avenger's Wrath}}, instead increase the damage of {{aqua:Avenger's Strike}} by {{damage;%}}.",
+        "description": "Increase the energy cost of {{aqua:Avenger's Strike}} by {{energy}}. {{aqua:Avenger's Strike}} will now cleave up to {{blue}} enemies within {{blocks}} for {{damage;%}} damage and will remove {{energy}} energy. During {{aqua:Avenger's Wrath}}, instead increase the damage of {{aqua:Avenger's Strike}} by {{damage;%}}.",
+        "avengerStrikeEnergyCostIncrease": 10,
         "cleaveTargets": 2,
         "cleaveRange": 3.5,
         "cleaveDamagePercent": 35,
@@ -434,7 +435,7 @@
         "description": "Increase the healing of {{aqua:Holy Radiance}} by {{heal;%}} and the travel speed by {{speed;%}}. Allies healed by {{aqua:Holy Radiance}} gain {{damageReduction;%}} damage reduction against primary abilities for {{ticks}}.",
         "holyRadianceHealingIncreasePercent": 20,
         "holyRadianceTravelSpeedPercentIncrease": 200,
-        "primaryAbilityDamageReductionPercent": 40,
+        "primaryAbilityDamageReductionPercent": 35,
         "primaryAbilityDamageReductionDurationTicks": 100
       },
       "lustrousCrown": {
@@ -580,7 +581,7 @@
         "difficulty": 2,
         "name": "Urgent Care",
         "description": "Reduce the healing of {{aqua:Healing Totem}} by {{heal;%}}, the energy cost by {{energy;%}}, the cooldown by {{ticks;%}}, and increase the number of charges to {{blue}}, the healing rate by {{blue:;x}}, and the radius by {{blocks}}. Within the Totem, allies with health greater than {{heal;%}} will transfer their healing to the lowest health ally at {{heal;%}} effectiveness.",
-        "healingTotemHealingDecreasePercent": 50,
+        "healingTotemHealingDecreasePercent": 60,
         "healingTotemEnergyDecreasePercent": 50,
         "healingTotemCooldownDecreasePercent": 50,
         "healingTotemMaxAbilityCharges": 2,
@@ -594,7 +595,7 @@
         "name": "Trickster",
         "description": "Reduce the bonus damage threshold of {{aqua:Incendiary Curse}} by {{damage;%}}, increase the damage by {{damage;%}} and the energy cost by {{energy}}. {{aqua:Soul Switch}} grants invisibility for {{ticks}} and leaves behind a dummy that lasts for {{ticks}}, has {{heal}} health, and damages enemies for how much they deal to it. Increase the healing threshold of {{aqua:Shadow Leap}} to {{heal}}.",
         "incendiaryCurseDamageThresholdDecrease": 10,
-        "incendiaryCurseDamageIncreasePercent": 20,
+        "incendiaryCurseDamageIncreasePercent": 15,
         "incendiaryCurseEnergyCostIncrease": 20,
         "soulSwitchInvisTickDuration": 30,
         "soulSwitchDummyDurationTicks": 50,

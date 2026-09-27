@@ -11,9 +11,9 @@ import com.ebicep.warlords.database.repositories.player.pojos.general.DatabasePl
 import com.ebicep.warlords.events.player.ingame.WarlordsPlayerStunEvent;
 import com.ebicep.warlords.game.Game;
 import com.ebicep.warlords.game.Team;
-import com.ebicep.warlords.game.state.PlayingState;
-import com.ebicep.warlords.game.option.Option;
 import com.ebicep.warlords.game.option.marker.CompassTargetMarker;
+import com.ebicep.warlords.game.option.marker.FlagHolder;
+import com.ebicep.warlords.game.state.PlayingState;
 import com.ebicep.warlords.player.general.ArmorManager;
 import com.ebicep.warlords.player.general.Specializations;
 import com.ebicep.warlords.player.ingame.motionsystem.MotionModifierBuilder;
@@ -521,6 +521,7 @@ public class WarlordsPlayer extends WarlordsEntity implements Listener {
             player.teleport(loc);
             this.entity = player;
             updateEntity();
+            FlagHolder.refreshCarrierRender(this);
         }
     }
 

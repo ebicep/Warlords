@@ -62,7 +62,7 @@ public class Soulflame extends BaseSet {
                                     .value(warlordsPlayer.getMaxHealth() * 0.05f)
                                     .cause("Soulflame")
                                     .source(warlordsPlayer)
-                                    .flags(InstanceFlags.NO_MESSAGE, InstanceFlags.NO_HIT_SOUND)
+                                    .flags(InstanceFlags.NO_MESSAGE, InstanceFlags.NO_HIT_SOUND, InstanceFlags.RECURSIVE)
                             );
                         }
                     }

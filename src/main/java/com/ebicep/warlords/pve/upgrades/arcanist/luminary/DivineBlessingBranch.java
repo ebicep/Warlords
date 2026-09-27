@@ -39,7 +39,9 @@ public class DivineBlessingBranch extends AbstractUpgradeBranch<DivineBlessing> 
                 "Dampened Descent",
                 "Divine Blessing - Master Upgrade",
                 """
-                        Upon cast, all allies within 10 blocks will have their current Merciful Hex duration reset. These reset stacks of Merciful Hex will be boosted by Divine Blessing. Additionally, reduce the cooldown of Ray of Light by 45% while Divine Blessing is active.
+                        Upon cast, all allies within 10 blocks will have their current Merciful Hex duration reset. These reset stacks of Merciful Hex will be boosted by Divine Blessing.
+                        
+                        Additionally, all affected allies will gain resistance/shield pierce on their attacks when they have max Merciful Hex stacks.
                         """,
                 50000,
                 () -> {

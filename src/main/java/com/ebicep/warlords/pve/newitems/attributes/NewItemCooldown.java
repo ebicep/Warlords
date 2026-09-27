@@ -39,7 +39,9 @@ public class NewItemCooldown extends PermanentCooldown<NewItemCooldown> {
     private float healMultiplier = 1;
     private float kbMultiplier = 0;
     private float thorns = 0;
+    private float thornsDamageMultiplier = 1;
     private int maxThornsDamage = 0;
+    private int maxThornsDamageMultiplier = 1;
     private float additionalCritChance = 0;
     private float additionalCritMultiplier = 0;
 
@@ -83,10 +85,13 @@ public class NewItemCooldown extends PermanentCooldown<NewItemCooldown> {
                     if (thorns <= 0) {
                         return;
                     }
-                    float thornsDamage = currentDamageValue * thorns;
-                    if (thornsDamage > maxThornsDamage) {
-                        thornsDamage = maxThornsDamage;
-                    }
+                    // Crown of Thorns is folded in here. The instance ignores other source damage boosts.
+                    float thornsDamage = ThornsDamage.calculate(
+                            currentDamageValue,
+                            thorns,
+                            thornsDamageMultiplier,
+                            getMaxThornsDamage()
+                    );
                     attacker.addInstance(InstanceBuilder
                             .damage()
                             .cause("Thorns")
@@ -119,6 +124,14 @@ public class NewItemCooldown extends PermanentCooldown<NewItemCooldown> {
         this.maxThornsDamage = Math.max(this.maxThornsDamage, maxThornsDamage);
     }
 
+    public void multiplyThornsDamage(float multiplier) {
+        this.thornsDamageMultiplier *= multiplier;
+    }
+
+    public void multiplyMaxThornsDamage(int multiplier) {
+        this.maxThornsDamageMultiplier *= multiplier;
+    }
+
     public void addCritChance(float additionalCritChance) {
         this.additionalCritChance += additionalCritChance;
     }
@@ -148,7 +161,7 @@ public class NewItemCooldown extends PermanentCooldown<NewItemCooldown> {
     }
 
     public int getMaxThornsDamage() {
-        return maxThornsDamage;
+        return maxThornsDamage * maxThornsDamageMultiplier;
     }
 
     public float getAdditionalCritChance() {

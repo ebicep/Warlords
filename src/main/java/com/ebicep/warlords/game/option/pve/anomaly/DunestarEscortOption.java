@@ -13,6 +13,7 @@ import com.ebicep.warlords.game.Team;
 import com.ebicep.warlords.game.option.marker.scoreboard.ScoreboardHandler;
 import com.ebicep.warlords.game.option.marker.scoreboard.SimpleScoreboardHandler;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
+import com.ebicep.warlords.player.ingame.WarlordsNPC;
 import com.ebicep.warlords.player.ingame.WarlordsPlayer;
 import com.ebicep.warlords.player.ingame.instances.InstanceBuilder;
 import com.ebicep.warlords.player.ingame.instances.InstanceFlags;
@@ -50,7 +51,7 @@ import java.util.concurrent.ThreadLocalRandom;
 public class DunestarEscortOption extends AbstractAnomalyOption {
 
     private static final int SEGMENT_DURATION_TICKS = 120 * GameRunnable.SECOND;
-    private static final int CHECKPOINT_CHARGE_TICKS = 30 * GameRunnable.SECOND;
+    private static final int CHECKPOINT_CHARGE_TICKS = 90 * GameRunnable.SECOND;
     private static final int MOB_SPAWN_INTERVAL = 10;
     private static final int LASER_INTERVAL_TICKS = 15 * GameRunnable.SECOND;
     private static final int LASER_TELEGRAPH_TICKS = 2 * GameRunnable.SECOND;
@@ -87,6 +88,7 @@ public class DunestarEscortOption extends AbstractAnomalyOption {
     private int segmentTicksRemaining;
     private int laserTicksRemaining;
     private int checkpointChargeTicks;
+    private int checkpointChargeKills;
     private boolean relicSpawned;
     private boolean chargingCheckpoint;
     private boolean failed;
@@ -105,22 +107,9 @@ public class DunestarEscortOption extends AbstractAnomalyOption {
         game.registerEvents(new Listener() {
             @EventHandler(priority = EventPriority.LOWEST, ignoreCancelled = true)
             public void onDamage(WarlordsDamageHealingEvent event) {
-                if (carrier != null
-                        && event.isDamageInstance()
-                        && event.getSource() == carrier
-                        && event.getWarlordsEntity() != carrier
-                ) {
-                    event.setCancelled(true);
-                }
-            }
+                if (carrier != null && event.getSource() == carrier) {
 
-            @EventHandler(priority = EventPriority.LOWEST, ignoreCancelled = true)
-            public void onAbility(WarlordsAbilityActivateEvent.Pre event) {
-                if (carrier == null || event.getWarlordsEntity() != carrier || event.getSlot() != 0) {
-                    return;
                 }
-                event.setCancelled(true);
-                event.getPlayer().sendActionBar(Component.text("The relic prevents you from using your primary skill.", NamedTextColor.RED));
             }
 
             @EventHandler(ignoreCancelled = true)
@@ -192,11 +181,12 @@ public class DunestarEscortOption extends AbstractAnomalyOption {
 
     @Override
     protected boolean handleSpecialDeath(WarlordsDeathEvent event) {
-        if (carrier == null || event.getWarlordsEntity() != carrier) {
-            return false;
+        if (carrier != null && event.getWarlordsEntity() == carrier) {
+            failEscort("The relic carrier fell.");
+            return true;
         }
-        failEscort("The relic carrier fell.");
-        return true;
+        applyKillChargeReduction(event);
+        return false;
     }
 
     @Override
@@ -299,6 +289,7 @@ public class DunestarEscortOption extends AbstractAnomalyOption {
         segmentTicksRemaining = SEGMENT_DURATION_TICKS;
         laserTicksRemaining = LASER_INTERVAL_TICKS;
         checkpointChargeTicks = 0;
+        checkpointChargeKills = 0;
         chargingCheckpoint = false;
         previousSlotEight = player.getInventory().getItem(8) == null ? null : player.getInventory().getItem(8).clone();
         player.getInventory().setItem(8, RELIC_ITEM.clone());
@@ -311,10 +302,16 @@ public class DunestarEscortOption extends AbstractAnomalyOption {
                     "Dunestar Relic",
                     ABILITY_COOLDOWN_MULTIPLIER
             ));
+
+            carrierCooldownModifiers.add(abilities.get(i).getEnergyCost().addModifier(
+                    FloatModifiable.ModifierType.MULTIPLICATIVE_MULTIPLIER,
+                    "Dunestar Relic",
+                    2
+            ));
         }
 
         announce(Component.text(carrier.getName() + " picked up the Dunestar Relic!", NamedTextColor.GOLD));
-        announce(Component.text("Reach each destination within 2 minutes, then charge the relic energy for 30 seconds.", NamedTextColor.AQUA));
+        announce(Component.text("Reach each destination within 2 minutes, then charge the relic energy for 150 seconds. Each kill reduces the charge time by " + getChargeReductionText() + ".", NamedTextColor.AQUA));
         game.forEachOnlinePlayer((onlinePlayer, team) -> onlinePlayer.playSound(onlinePlayer.getLocation(), Sound.ENTITY_PLAYER_LEVELUP, 2, 1));
     }
 
@@ -333,7 +330,7 @@ public class DunestarEscortOption extends AbstractAnomalyOption {
             }
             chargingCheckpoint = true;
             checkpointChargeTicks = 0;
-            announce(Component.text(getNextDestinationName() + " reached. Hold the relic here for 30 seconds to restore maximum power!", NamedTextColor.GOLD));
+            announce(Component.text(getNextDestinationName() + " reached. Hold the relic here for " + getCheckpointChargeSecondsRemaining() + " seconds to restore maximum power!", NamedTextColor.GOLD));
             game.forEachOnlinePlayer((player, team) -> player.playSound(player.getLocation(), Sound.BLOCK_BEACON_ACTIVATE, 2, 1.15f));
         }
 
@@ -350,16 +347,32 @@ public class DunestarEscortOption extends AbstractAnomalyOption {
         if (escortTicks % 5 == 0) {
             showCheckpointChargeParticles();
         }
-        if (checkpointChargeTicks % (5 * GameRunnable.SECOND) == 0 && checkpointChargeTicks < CHECKPOINT_CHARGE_TICKS) {
+        if (checkpointChargeTicks % (5 * GameRunnable.SECOND) == 0 && checkpointChargeTicks < getRequiredChargeTicks()) {
             int secondsRemaining = getCheckpointChargeSecondsRemaining();
             game.forEachOnlinePlayer((player, team) -> player.sendActionBar(
                     Component.text("Relic charging: ", NamedTextColor.AQUA)
                             .append(Component.text(secondsRemaining + "s remaining", NamedTextColor.YELLOW))
             ));
         }
-        if (checkpointChargeTicks >= CHECKPOINT_CHARGE_TICKS) {
+        if (checkpointChargeTicks >= getRequiredChargeTicks()) {
             completeCheckpointCharge();
         }
+    }
+
+    private void applyKillChargeReduction(WarlordsDeathEvent event) {
+        if (completed || failed || carrier == null) {
+            return;
+        }
+        if (!(event.getWarlordsEntity() instanceof WarlordsNPC warlordsNPC)) {
+            return;
+        }
+        if (warlordsNPC.getGame() != game
+                || warlordsNPC.getMob() == null
+                || !getMobs().contains(warlordsNPC.getMob())) {
+            return;
+        }
+
+        checkpointChargeKills++;
     }
 
     private void completeCheckpointCharge() {
@@ -368,6 +381,7 @@ public class DunestarEscortOption extends AbstractAnomalyOption {
         cacheEligibility[cacheIndex] = true;
         chargingCheckpoint = false;
         checkpointChargeTicks = 0;
+        checkpointChargeKills = 0;
 
         if (completedRouteIndex < routeMarkers.size() - 1) {
             DunestarCurrencyOption.grantCheckpointReward(game);
@@ -536,7 +550,8 @@ public class DunestarEscortOption extends AbstractAnomalyOption {
             return;
         }
         Location target = routeMarkers.get(nextRouteIndex).getLocation().clone().add(0, 1, 0);
-        double progress = checkpointChargeTicks / (double) CHECKPOINT_CHARGE_TICKS;
+        int requiredChargeTicks = getRequiredChargeTicks();
+        double progress = requiredChargeTicks <= 0 ? 1 : checkpointChargeTicks / (double) requiredChargeTicks;
         double radius = 2.5 + progress * .8;
         for (int i = 0; i < 12; i++) {
             double angle = Math.PI * 2 * i / 12.0 + escortTicks * .04;
@@ -547,7 +562,7 @@ public class DunestarEscortOption extends AbstractAnomalyOption {
     }
 
     private int getMaximumMobCount() {
-        return 6 + playerCount() * 4 + nextRouteIndex * 2;
+        return 5 + playerCount() * 3 + nextRouteIndex * 2;
     }
 
     private String getNextDestinationName() {
@@ -560,8 +575,31 @@ public class DunestarEscortOption extends AbstractAnomalyOption {
         return Math.max(0, (segmentTicksRemaining + GameRunnable.SECOND - 1) / GameRunnable.SECOND);
     }
 
+    private int getChargeReductionTicksPerKill() {
+        return switch (playerCount()) {
+            case 1, 2 -> 2 * GameRunnable.SECOND;
+            case 3, 4 -> 3 * GameRunnable.SECOND / 2;
+            default -> GameRunnable.SECOND;
+        };
+    }
+
+    private String getChargeReductionText() {
+        int ticks = getChargeReductionTicksPerKill();
+        int wholeSeconds = ticks / GameRunnable.SECOND;
+        int tenth = (ticks % GameRunnable.SECOND) * 10 / GameRunnable.SECOND;
+        if (tenth == 0) {
+            return wholeSeconds + (wholeSeconds == 1 ? " second" : " seconds");
+        }
+        return wholeSeconds + "." + tenth + " seconds";
+    }
+
+    private int getRequiredChargeTicks() {
+        int chargeTicks = playerCount() > 2 ? CHECKPOINT_CHARGE_TICKS + ((10 * GameRunnable.SECOND) * playerCount()) : CHECKPOINT_CHARGE_TICKS;
+        return Math.max(0, chargeTicks - checkpointChargeKills * getChargeReductionTicksPerKill());
+    }
+
     private int getCheckpointChargeSecondsRemaining() {
-        return Math.max(0, (CHECKPOINT_CHARGE_TICKS - checkpointChargeTicks + GameRunnable.SECOND - 1) / GameRunnable.SECOND);
+        return Math.max(0, (getRequiredChargeTicks() - checkpointChargeTicks + GameRunnable.SECOND - 1) / GameRunnable.SECOND);
     }
 
     private List<Component> getEscortScoreboard() {
@@ -599,11 +637,15 @@ public class DunestarEscortOption extends AbstractAnomalyOption {
         }
 
         if (chargingCheckpoint) {
-            int chargePercent = Math.min(100, (int) Math.floor(checkpointChargeTicks * 100.0 / CHECKPOINT_CHARGE_TICKS));
+            int requiredChargeTicks = getRequiredChargeTicks();
+            int chargePercent = requiredChargeTicks <= 0
+                    ? 100
+                    : Math.min(100, (int) Math.floor(checkpointChargeTicks * 100.0 / requiredChargeTicks));
             return List.of(
                     Component.text("Carrier: ", NamedTextColor.WHITE).append(Component.text(carrier.getName(), NamedTextColor.GOLD)),
                     Component.text("Charging: ", NamedTextColor.WHITE).append(Component.text(targetName, NamedTextColor.AQUA)),
                     Component.text("Charge: ", NamedTextColor.WHITE).append(Component.text(chargePercent + "%", NamedTextColor.GREEN)),
+                    Component.text("Time: ", NamedTextColor.WHITE).append(Component.text(getCheckpointChargeSecondsRemaining() + "s", NamedTextColor.YELLOW)),
                     Component.text("Caches: ", NamedTextColor.WHITE).append(Component.text(caches + "/3", NamedTextColor.GREEN))
             );
         }

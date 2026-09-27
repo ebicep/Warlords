@@ -126,6 +126,7 @@ public class FlagSpawnPointOption implements Option {
 
             private boolean onFlagInteract(WarlordsEntity wp) {
                 if (game.isFrozen()) {
+                    wp.sendMessage(Component.text("You cannot interact with the flag while the game is paused!", NamedTextColor.YELLOW));
                     return false;
                 }
                 Team team = wp.getTeam();

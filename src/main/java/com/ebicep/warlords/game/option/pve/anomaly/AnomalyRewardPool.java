@@ -21,23 +21,32 @@ import java.util.concurrent.ThreadLocalRandom;
 public final class AnomalyRewardPool {
 
     private final String name;
-    private final Map<Currencies, Long> currencies;
+    private final long coins;
+    private final int cacheIndex;
+    private final long ethereumCrystals;
     private final double newItemChance;
 
-    public AnomalyRewardPool(String name, long coins, long syntheticShards, long ethereumCrystals, double newItemChance) {
+    public AnomalyRewardPool(String name, long coins, int cacheIndex, long ethereumCrystals, double newItemChance) {
         this.name = name;
-        LinkedHashMap<Currencies, Long> rewards = new LinkedHashMap<>();
-        rewards.put(Currencies.COIN, coins);
-        rewards.put(Currencies.SYNTHETIC_SHARD, syntheticShards);
-        rewards.put(Currencies.ETHEREUM_CRYSTAL, ethereumCrystals);
-        this.currencies = Collections.unmodifiableMap(rewards);
+        this.coins = coins;
+        this.cacheIndex = cacheIndex;
+        this.ethereumCrystals = ethereumCrystals;
         this.newItemChance = newItemChance;
     }
 
     public AnomalyRewardCache createCache(NewItemsSetBonus featuredLegendarySet, long rotationStart) {
         LinkedHashMap<Spendable, Long> cacheCurrencies = new LinkedHashMap<>();
-        currencies.forEach(cacheCurrencies::put);
+        currencyRewards(rotationStart).forEach(cacheCurrencies::put);
         return new AnomalyRewardCache(cacheCurrencies, name, rotationStart, rollNewItem(featuredLegendarySet));
+    }
+
+    private Map<Currencies, Long> currencyRewards(long rotationStartEpochSecond) {
+        Currencies secondaryCurrency = AnomalyRotation.getSecondaryRewardCurrency(rotationStartEpochSecond);
+        LinkedHashMap<Currencies, Long> rewards = new LinkedHashMap<>();
+        rewards.put(Currencies.COIN, coins);
+        rewards.put(secondaryCurrency, AnomalyRotation.getSecondaryRewardAmount(secondaryCurrency, cacheIndex));
+        rewards.put(Currencies.ETHEREUM_CRYSTAL, ethereumCrystals);
+        return Collections.unmodifiableMap(rewards);
     }
 
     @Nullable
@@ -70,7 +79,7 @@ public final class AnomalyRewardPool {
     }
 
     public List<Component> getLore() {
-        List<Component> lore = new ArrayList<>(PvEUtils.getCostLore(currencies, "Guaranteed", false));
+        List<Component> lore = new ArrayList<>(PvEUtils.getCostLore(getCurrencies(), "Guaranteed", false));
         lore.add(Component.empty());
         lore.add(Component.text("Item chance: " + Math.round(newItemChance * 100) + "%", NamedTextColor.AQUA));
         lore.add(Component.text(" - Common: 50%", NewItemTier.COMMON.getTextColor()));
@@ -86,6 +95,6 @@ public final class AnomalyRewardPool {
     }
 
     public Map<Currencies, Long> getCurrencies() {
-        return currencies;
+        return currencyRewards(AnomalyRotation.getRotationStart().getEpochSecond());
     }
 }

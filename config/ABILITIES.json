@@ -1294,7 +1294,7 @@
         "critMultiplierReducedBy": 25,
         "hexIntervalTicks": 60,
         "stacksGranted": 1,
-        "damageReductionPve": 30,
+        "damageReductionPve": 25,
         "radius": 8,
         "tickDuration": 300
       },
@@ -1623,7 +1623,7 @@
         "enemiesAffected": 3,
         "linkBreakRadius": 18,
         "castRange": 12,
-        "maxHealthDamage": 4,
+        "maxHealthDamage": 3,
         "healRadius": 6,
         "healCap": 700
       },
@@ -2058,6 +2058,26 @@
         "name": "Spawn Skeletal Sorcerer",
         "cooldown": 30,
         "energyCost": 50
+      },
+      "keystoneLoad": {
+        "name": "Load",
+        "cooldown": 12,
+        "energyCost": 0
+      },
+      "chronarchPendulum": {
+        "name": "Pendulum",
+        "cooldown": 8,
+        "energyCost": 50
+      },
+      "chronarchCogburst": {
+        "name": "Cogburst",
+        "cooldown": 12,
+        "energyCost": 50
+      },
+      "chronarchSpawnClockboundPhantom": {
+        "name": "Spawn Clockbound Phantom",
+        "cooldown": 22,
+        "energyCost": 0
       },
       "illuminationLastStandNear": {
         "name": "Last Stand Near",
