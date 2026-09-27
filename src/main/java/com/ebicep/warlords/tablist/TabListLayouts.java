@@ -64,10 +64,16 @@ public final class TabListLayouts {
         private final Map<String, TabSubgroup> playerSubgroups = new LinkedHashMap<>();
         private final Map<String, Set<UUID>> lastIds = new LinkedHashMap<>();
         private boolean applied;
+        private boolean forcePlayerSync;
 
         private TeamBandsLayout(@Nonnull List<TeamBand> bands, boolean collapseAllToFirstBand) {
             this.bands = List.copyOf(bands);
             this.collapseAllToFirstBand = collapseAllToFirstBand;
+        }
+
+        @Override
+        public void forcePlayerSync() {
+            forcePlayerSync = true;
         }
 
         @Override
@@ -110,15 +116,16 @@ public final class TabListLayouts {
             Set<UUID> current = players.stream()
                     .map(e -> e.getKey().getUniqueId())
                     .collect(Collectors.toCollection(HashSet::new));
-            if (current.equals(lastIds.get(band.groupName()))) {
+            if (!forcePlayerSync && current.equals(lastIds.get(band.groupName()))) {
                 return;
             }
+            forcePlayerSync = false;
             lastIds.put(band.groupName(), Set.copyOf(current));
             playerSubgroups.get(band.groupName()).setSources(TabListPlayers.toPlayerSources(players));
         }
 
         private void syncByTeam(@Nonnull Game game) {
-            boolean anyChange = false;
+            boolean anyChange = forcePlayerSync;
             Map<String, List<Map.Entry<Player, Team>>> byBand = new LinkedHashMap<>();
             Map<String, Set<UUID>> nextIds = new LinkedHashMap<>();
             for (TeamBand band : bands) {
@@ -138,6 +145,7 @@ public final class TabListLayouts {
             if (!anyChange) {
                 return;
             }
+            forcePlayerSync = false;
             for (TeamBand band : bands) {
                 lastIds.put(band.groupName(), Set.copyOf(nextIds.get(band.groupName())));
                 playerSubgroups.get(band.groupName())

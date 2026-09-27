@@ -20,4 +20,11 @@ public interface TabListLayout {
      * Refresh dynamic content (e.g. team player rows) before pack/flush.
      */
     void sync(@Nonnull GameTabListManager manager, @Nonnull Game game);
+
+    /**
+     * Force the next {@link #sync} to rebuild player rows even if the roster UUID set is unchanged
+     * (e.g. class / level / flag changed via scoreboard tab-name dirty marks).
+     */
+    default void forcePlayerSync() {
+    }
 }

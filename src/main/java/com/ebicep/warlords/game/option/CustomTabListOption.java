@@ -3,6 +3,7 @@ package com.ebicep.warlords.game.option;
 import com.ebicep.warlords.Warlords;
 import com.ebicep.warlords.game.Game;
 import com.ebicep.warlords.game.GameMode;
+import com.ebicep.warlords.player.ingame.WarlordsEntity;
 import com.ebicep.warlords.tablist.GameTabListManager;
 import com.ebicep.warlords.tablist.LobbyTabListManager;
 import com.ebicep.warlords.tablist.TabListLayout;
@@ -103,6 +104,16 @@ public class CustomTabListOption implements Option {
             manager.addViewerAndFlush(player.getUniqueId());
         });
         startPoller(game);
+    }
+
+    @Override
+    public void afterAllWarlordsEntitiesCreated(@Nonnull List<WarlordsEntity> players) {
+        if (manager == null) {
+            return;
+        }
+        // start() ran before WarlordsPlayers existed; rebuild rows with class/level/flag now.
+        manager.requestPlayerContentRefresh();
+        manager.getGame().onlinePlayers().forEach(entry -> manager.addViewerAndFlush(entry.getKey().getUniqueId()));
     }
 
     private void startPoller(@Nonnull Game game) {

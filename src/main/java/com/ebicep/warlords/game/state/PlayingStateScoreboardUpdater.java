@@ -2,15 +2,16 @@ package com.ebicep.warlords.game.state;
 
 import com.ebicep.warlords.Warlords;
 import com.ebicep.warlords.game.Game;
+import com.ebicep.warlords.game.option.CustomTabListOption;
 import com.ebicep.warlords.game.option.marker.scoreboard.ScoreboardHandler;
 import com.ebicep.warlords.player.general.CustomScoreboard;
-import com.ebicep.warlords.player.general.ExperienceManager;
 import com.ebicep.warlords.player.general.Specializations;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
 import com.ebicep.warlords.player.ingame.WarlordsPlayer;
 import com.ebicep.warlords.player.ingame.WarlordsPlayerDisguised;
 import com.ebicep.warlords.player.ingame.cooldowns.AbstractCooldown;
 import com.ebicep.warlords.player.ingame.instances.type.PlayerNameInstance;
+import com.ebicep.warlords.tablist.TabListPlayers;
 import com.ebicep.warlords.util.java.JavaUtils;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.TextComponent;
@@ -26,7 +27,6 @@ import java.util.*;
 
 public class PlayingStateScoreboardUpdater {
 
-    private static final TextComponent WHITE_FLAG = Component.text("⚑", NamedTextColor.WHITE);
     private static final TextComponent WHITE_FLAG_SPACE = Component.text(" ⚑", NamedTextColor.WHITE);
     private static final int UPDATE_INTERVAL = 10;
     private static final int NAME_INTERVAL = 2;
@@ -58,6 +58,7 @@ public class PlayingStateScoreboardUpdater {
     public void markTabNameDirty(WarlordsPlayer player) {
         dirtyTabNames.add(player.getUuid());
         markNamesDirty(player);
+        requestCustomTabPlayerRefresh();
     }
 
     private void markAllSidebarDirty() {
@@ -78,6 +79,12 @@ public class PlayingStateScoreboardUpdater {
         dirtyTargets.addAll(gamePlayers.keySet());
         dirtyTabNames.add(uuid);
         sidebarDirty.addAll(gamePlayers.keySet());
+        // PreLobby rows used team-colored names only; rebuild once WarlordsPlayers exist.
+        requestCustomTabPlayerRefresh();
+    }
+
+    private void requestCustomTabPlayerRefresh() {
+        CustomTabListOption.get(game).ifPresent(option -> option.manager().requestPlayerContentRefresh());
     }
 
     public void removePlayer(UUID uuid) {
@@ -153,23 +160,17 @@ public class PlayingStateScoreboardUpdater {
             dirtyTabNames.add(uuid);
             return;
         }
-        Component classComponent = getClassComponent(warlordsPlayer);
-        Component levelComponent = getLevelComponent(uuid, warlordsPlayer);
+        Component classComponent = TabListPlayers.classComponent(warlordsPlayer);
+        Component levelComponent = TabListPlayers.levelComponent(uuid, warlordsPlayer);
 
         TextComponent.Builder baseSuffix = Component.text().append(levelComponent);
-        TextComponent.Builder playerTabName = Component
-                .text()
-                .append(classComponent)
-                .append(Component.text(warlordsPlayer.getName(), warlordsPlayer.getTeam().getTeamColor()))
-                .append(levelComponent);
         if (warlordsPlayer.getCarriedFlag() != null) {
             baseSuffix.append(WHITE_FLAG_SPACE);
-            playerTabName.append(WHITE_FLAG);
         }
         WarlordsPlayerName name = cachedNames.computeIfAbsent(warlordsPlayer, k -> new WarlordsPlayerName());
         name.setBasePrefix(classComponent);
         name.setBaseSuffix(baseSuffix.build());
-        player.playerListName(playerTabName.build());
+        player.playerListName(TabListPlayers.gameDisplayName(warlordsPlayer));
         // Base parts feed above-head overlays; re-dirty in case names already flushed this period.
         markNamesDirty(warlordsPlayer);
     }
@@ -204,15 +205,6 @@ public class PlayingStateScoreboardUpdater {
                 markHealthDirty(uuid);
             }
         });
-    }
-
-    private static Component getClassComponent(WarlordsEntity p) {
-        return p.getSpec().getClassNameShortWithBrackets(p.getSpecClass().specType.getTextColor());
-    }
-
-    @Nonnull
-    private static Component getLevelComponent(UUID uuid, WarlordsEntity otherWarlordsPlayer) {
-        return ExperienceManager.getLevelStringBracket(ExperienceManager.getLevelForSpec(uuid, otherWarlordsPlayer.getSpecClass()));
     }
 
     public void updateBasedOnGameState(WarlordsPlayer warlordsPlayer) {
@@ -471,8 +463,8 @@ public class PlayingStateScoreboardUpdater {
         }
 
         public WarlordsPlayerName(WarlordsEntity warlordsPlayer) {
-            this.basePrefix = getClassComponent(warlordsPlayer).compact();
-            this.baseSuffix = getLevelComponent(warlordsPlayer.getUuid(), warlordsPlayer).compact();
+            this.basePrefix = TabListPlayers.classComponent(warlordsPlayer).compact();
+            this.baseSuffix = TabListPlayers.levelComponent(warlordsPlayer.getUuid(), warlordsPlayer).compact();
         }
 
         public Component getBasePrefix() {

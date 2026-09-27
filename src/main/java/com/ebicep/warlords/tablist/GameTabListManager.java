@@ -36,6 +36,14 @@ public class GameTabListManager extends AbstractTabListManager {
         return layout;
     }
 
+    /**
+     * Rebuild player mirror rows on the next {@link #tick()} / {@link #addViewerAndFlush} sync
+     * even if the online UUID set did not change.
+     */
+    public void requestPlayerContentRefresh() {
+        layout.forcePlayerSync();
+    }
+
     @Override
     public void tick() {
         layout.sync(this, game);
