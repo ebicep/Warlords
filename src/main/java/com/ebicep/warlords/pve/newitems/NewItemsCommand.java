@@ -276,18 +276,10 @@ public class NewItemsCommand extends BaseCommand {
                 });
     }
 
-    public static List<String> completePieces(List<String> args) {
+    public static List<String> completePieces() {
         List<String> pieces = new ArrayList<>();
         pieces.add("all");
-        NewItemsSetBonus setBonus = args.size() >= 2 ? findSet(args.get(1)) : null;
-        List<NewItemsSlot> slots = setBonus == null ? null : setBonus.getSlots();
-        if (slots == null || slots.isEmpty()) {
-            for (NewItemsSlot slot : NewItemsSlot.VALUES) {
-                pieces.add(slot.name());
-            }
-            return pieces;
-        }
-        for (NewItemsSlot slot : slots) {
+        for (NewItemsSlot slot : NewItemsSlot.VALUES) {
             pieces.add(slot.name());
         }
         return pieces;
@@ -384,23 +376,6 @@ public class NewItemsCommand extends BaseCommand {
 
     private static boolean isEntireSet(String piece) {
         return piece.equalsIgnoreCase("all") || piece.equalsIgnoreCase("set");
-    }
-
-    private static NewItemsSetBonus findSet(String name) {
-        if (name == null || name.isEmpty()) {
-            return null;
-        }
-        String normalized = name.replace(' ', '_');
-        for (NewItemsSetBonus setBonus : NewItemsSetBonus.VALUES) {
-            if (setBonus.name().equalsIgnoreCase(normalized)) {
-                return setBonus;
-            }
-            String displayName = setBonus.getName();
-            if (displayName != null && displayName.equalsIgnoreCase(name)) {
-                return setBonus;
-            }
-        }
-        return null;
     }
 
     private static NewItemsSlot findSlot(String piece) {
