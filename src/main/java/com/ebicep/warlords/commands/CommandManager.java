@@ -417,6 +417,7 @@ public class CommandManager {
                                                                                            .map(Enum::name)
                                                                                            .toList()
         );
+        commandCompletions.registerAsyncCompletion("newitempieces", context -> NewItemsCommand.completePieces(context.getArgs()));
     }
 
     public static void registerConditions() {
