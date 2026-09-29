@@ -57,12 +57,12 @@ public class DeathsDebtBranch extends AbstractUpgradeBranch<DeathsDebt> {
                 """
                         Death's Debt summons an infernal ritual. Death's Debt no longer deals damage but you take significantly reduced damage.
         
-                        For every 10,000 damage you take while Spirit's Respite is active, the totem releases a ritual wave, reducing nearby allies' cooldowns by 2 seconds and increasing their melee attack speed by 200% for 5s.
+                        For every 10,000 damage you take while Spirit's Respite is active, the totem releases a ritual wave, reducing nearby allies' cooldowns by 0.8 seconds and increasing their melee attack speed by 200% for 5s.
                         """,
                 50000,
                 () -> {
                     ability.setDamagePercent(0);
-                    ability.setDelayedDamageTaken(3);
+                    ability.setDelayedDamageTaken(5);
                 }
         );
         masterUpgrade2 = new Upgrade(

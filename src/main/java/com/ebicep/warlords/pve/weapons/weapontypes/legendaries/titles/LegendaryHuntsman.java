@@ -36,7 +36,7 @@ public class LegendaryHuntsman extends AbstractLegendaryWeapon implements Passiv
     public static final int RANGED_MIN_DISTANCE_BLOCKS = 12;
 
     public static final float RANGED_BONUS_PERCENT = 20f;
-    public static final float RANGED_BONUS_INC_PER_LEVEL = 7.5f;
+    public static final float RANGED_BONUS_INC_PER_LEVEL = 4.5f;
 
     public static final float MELEE_GUARD_DR_PERCENT = 25f;
     public static final float MELEE_GUARD_DR_INC_PER_LEVEL = 2.5f;
