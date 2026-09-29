@@ -417,6 +417,7 @@ public class CommandManager {
                                                                                            .map(Enum::name)
                                                                                            .toList()
         );
+        commandCompletions.registerStaticCompletion("newitempieces", NewItemsCommand.completePieces());
     }
 
     public static void registerConditions() {

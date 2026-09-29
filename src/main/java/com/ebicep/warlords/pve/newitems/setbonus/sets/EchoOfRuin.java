@@ -66,6 +66,9 @@ public class EchoOfRuin extends BaseSet {
                     if (event.getWarlordsEntity().getTeam().equals(warlordsPlayer.getTeam())) {
                         return;
                     }
+                    if (stacks >= 300) {
+                        return;
+                    }
                     stacks++;
                 }
             };

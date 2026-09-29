@@ -25,7 +25,7 @@ public class ProspectorI extends AbstractBounty implements TracksPostGame, Daily
 
     @Override
     public int getTarget() {
-        return 30;
+        return 9;
     }
 
     @Override

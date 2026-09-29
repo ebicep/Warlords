@@ -1331,7 +1331,7 @@
           "attributes": {
             "HEALTH": 25
           },
-          "description": "Each kill permanently increases your damage and damage taken by {{damage;%}}. All stacks are lost on death.",
+          "description": "Each kill permanently increases your damage dealt and damage taken by {{damage;%}}. All stacks are lost on death. (max 300 stacks)",
           "damagePerKillPercent": 0.4,
           "loseStacksOnDeath": true
         },
@@ -1517,7 +1517,7 @@
           },
           "description": "Enemies farther than {{blocks}} take {{damage;%}} increased damage from you, but enemies closer than {{blocks}} deal {{damage;%}} more damage to you.",
           "farDistance": 10,
-          "farDamageIncreasePercent": 50,
+          "farDamageIncreasePercent": 35,
           "nearDistance": 5,
           "nearDamageTakenIncreasePercent": 50
         },

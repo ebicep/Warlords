@@ -90,7 +90,7 @@ public class DeathsDebt extends AbstractTotem implements Duration, AbilityStats<
         if (pveMasterUpgrade) {
             data.spawnRiteTotemVisual();
         }
-        wp.getCooldownManager().limitCooldowns(RegularCooldown.class, DeathsDebtData.class, 2);
+
         RegularCooldown<DeathsDebtData> spiritsRespiteCooldown = new RegularCooldown<>(
                 "Spirits' Respite",
                 "RESP",
@@ -392,7 +392,7 @@ public class DeathsDebt extends AbstractTotem implements Duration, AbilityStats<
     private void reduceAllyCooldowns(WarlordsEntity ally) {
         ally.getAbilities().forEach(ability -> {
             if (ability.getCurrentCooldown() > 0) {
-                ability.subtractCurrentCooldownForce(1);
+                ability.subtractCurrentCooldownForce(0.3f);
                 AbstractAbility.playCooldownReductionEffect(ally);
             }
         });
