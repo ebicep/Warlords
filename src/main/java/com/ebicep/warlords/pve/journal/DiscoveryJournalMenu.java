@@ -39,7 +39,7 @@ public final class DiscoveryJournalMenu {
         menu.setItem(4, 0,
                 new ItemBuilder(Material.KNOWLEDGE_BOOK)
                         .name(Component.text("Discovery Journal", NamedTextColor.AQUA))
-                        .lore(WordWrap.wrap(Component.text("Track the enemies you have slain, every PvE resource, each playable gamemode, and every debuff.", NamedTextColor.GRAY), 160))
+                        .lore(WordWrap.wrap(Component.text("Track the enemies you have slain, every PvE resource, each playable gamemode, and every debuff players can apply.", NamedTextColor.GRAY), 160))
                         .get(),
                 ACTION_DO_NOTHING
         );
@@ -79,7 +79,7 @@ public final class DiscoveryJournalMenu {
                 new ItemBuilder(Material.FERMENTED_SPIDER_EYE)
                         .name(Component.text("Debuffs", NamedTextColor.RED))
                         .lore(
-                                WordWrap.wrap(Component.text("Every debuff in the game and what it does.", NamedTextColor.GRAY), 160)
+                                WordWrap.wrap(Component.text("Every debuff players can apply, and what it does.", NamedTextColor.GRAY), 160)
                         )
                         .addLore(Component.empty(), ComponentUtils.CLICK_TO_VIEW)
                         .get(),

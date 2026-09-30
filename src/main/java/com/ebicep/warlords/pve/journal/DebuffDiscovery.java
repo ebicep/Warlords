@@ -58,15 +58,15 @@ public final class DebuffDiscovery {
 
     private static final List<Entry> ENTRIES = List.of(
             entry("Crippling", "CRIP", Category.DEBUFF, Material.WOODEN_SWORD,
-                    "Reduces the damage you deal. The amount depends on the source. Crippling Strike starts at 10% and grows with extra strikes. Enavuris reduces the damage you deal by 25%."),
+                    "Reduces the damage you deal. Crippling Strike starts at 10% and grows with extra strikes. Healing Totem reduces it by 25%, or by 50% with its master upgrade."),
             entry("Wounding", "WND", Category.DEBUFF, Material.RED_DYE,
                     "Reduces healing you receive. Only the strongest wound applies. Wounding Strike reduces healing by 40% or 25%, depending on the specialization. Decay and Disaster Fragment reduce it by 25%."),
             entry("Leech", "LCH", Category.DEBUFF, Material.GHAST_TEAR,
                     "A share of the damage you take heals the player who applied it. Stacks raise that share, and in PvE each stack heals at most 300. The action bar shows the stack count."),
             entry("Silence", "SILENCE", Category.DEBUFF, Material.COBWEB,
-                    "You cannot use your melee attack. Trying to shows that you have been silenced. Applied by Soul Shackle and by some bosses, items, and events."),
+                    "You cannot use your melee attack. Trying to shows that you have been silenced."),
             entry("Burn", "BRN", Category.DEBUFF, Material.BLAZE_POWDER,
-                    "Deals 0.5% of your max health each second and makes you take 15% more damage. Aspect of the Infernal's burn makes you take 20% more damage instead."),
+                    "Deals 0.5% of your max health each second and makes you take 15% more damage."),
             entry("Ignite", "IGN", Category.DEBUFF, Material.FIRE_CHARGE,
                     "When it ends, your nearby allies take 450 to 650 true damage."),
             entry("Bleed", "BLEED", Category.DEBUFF, Material.REDSTONE,
@@ -101,17 +101,6 @@ public final class DebuffDiscovery {
                     "You are stunned for its duration. When it ends, nearby allies of the caster are healed for 10% of their missing health and gain energy."),
             entry("Soul Feast", "FEAST", Category.DEBUFF, Material.SOUL_SAND,
                     "Lasts until removed. Each stack reduces the damage you deal by 2.5%, up to 25%."),
-            entry("Shimmer", "SHM", Category.DEBUFF, Material.SLIME_BLOCK,
-                    "Deals 4% of your max health each second."),
-            entry("Blighted Scorch", "BLI", Category.DEBUFF, Material.FIRE_CORAL,
-                    "Deals 5% of your max health each second."),
-            entry("Chaos", "CHAOS", Category.DEBUFF, Material.ENDER_EYE,
-                    "Blinds you and slows you by 20%."),
-            entry("Wedge", "1/4", Category.DEBUFF, Material.STONE,
-                    "Tracks keystone stacks. The action bar shows your stacks out of the amount needed to settle. At the last stack it deals 900 to 1200 damage, and the attacker is slowed by 60%."),
-            entry("Poison", "POISON", Category.DEBUFF, Material.SPIDER_EYE,
-                    "Deals damage over time. Apothecary poison deals 50 damage each second and slows you by 10%. Cave spider poison deals 5 damage each second, cannot kill you, and is shown as POI."),
-
             entry("Vulnerable", "VULN", Category.STRONG_DEBUFF, Material.GLASS_BOTTLE,
                     "You take 10% more damage."),
             entry("Draining Miasma", "MIAS", Category.STRONG_DEBUFF, Material.LIME_DYE,
@@ -122,8 +111,6 @@ public final class DebuffDiscovery {
                     "Each stack reduces the damage you deal by 12%, up to 3 stacks."),
             entry("Wounding Strike (Defender)", "", Category.STRONG_DEBUFF, Material.IRON_SWORD,
                     "Reduces the damage you deal by 15%. The same hit also wounds you. It has no action bar abbreviation."),
-            entry("Silt Weakness", "SW", Category.STRONG_DEBUFF, Material.MUD,
-                    "You deal 20% less damage."),
 
             entry("Marked for Death", "AVE MARK", Category.TRUE_DEBUFF, Material.WITHER_ROSE,
                     "Upgrades Avenger's Mark into a true debuff. It deals 100 damage, slows you by 10%, and each Avenger's Strike extends it by 1 second, up to 3 extra seconds."),
@@ -137,7 +124,7 @@ public final class DebuffDiscovery {
             entry("Reckless Rampage", "RECK", Category.OTHER, Material.GOLDEN_SWORD,
                     "Strikes deal 25% more damage to you while it lasts."),
             entry("Stun", "", Category.OTHER, Material.IRON_BARS,
-                    "You cannot move, and mobs stop acting. Some abilities show IMMOBILIZED. It is not a cooldown.")
+                    "You cannot move. Some abilities show IMMOBILIZED. It is not a cooldown.")
     );
 
     static {
