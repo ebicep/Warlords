@@ -1,25 +1,22 @@
 package com.ebicep.warlords.guilds.bounty;
 
 import com.ebicep.warlords.pve.Spendable;
-import com.ebicep.warlords.pve.bountysystem.rewards.WeeklyRewardSpendable1;
-import com.ebicep.warlords.pve.bountysystem.rewards.WeeklyRewardSpendable2;
-import com.ebicep.warlords.pve.bountysystem.rewards.WeeklyRewardSpendable3;
-import com.ebicep.warlords.pve.bountysystem.rewards.WeeklyRewardSpendable4;
+import com.ebicep.warlords.pve.bountysystem.rewards.*;
 import org.bukkit.Material;
 
 import java.util.LinkedHashMap;
 
 public enum GuildBounty {
 
-    KILL_MOBS("Extermination", "Kill 200,000 mobs. Every guild member contributes to this counter.", 200_000, Material.IRON_SWORD, WeeklyRewardSpendable1.REWARD, 15_000, 30_000),
-    COMPLETE_EXTREME("United Front", "Complete Extreme Mode with 4 guild members.", 1, Material.NETHER_STAR, WeeklyRewardSpendable4.REWARD, 10_000, 30_000),
-    PLAY_GAMES("War Games", "Play 200 games. Every guild member contributes to this counter.", 200, Material.DIAMOND_SWORD, WeeklyRewardSpendable2.REWARD, 10_000, 30_000),
-    COMPLETE_ANOMALIES("Investigative Unit", "Successfully complete 30 Anomaly investigations with at least 1 other guild member in the party.", 30, Material.SPYGLASS, WeeklyRewardSpendable3.REWARD, 10_000, 30_000),
+    KILL_MOBS("Extermination", "Kill 200,000 mobs. Every guild member contributes to this counter.", 200_000, Material.IRON_SWORD, WeeklyRewardSpendable7.REWARD, 25_000, 30_000),
+    COMPLETE_EXTREME("United Front", "Complete Extreme Mode with 4 guild members.", 1, Material.NETHER_STAR, WeeklyRewardSpendable7.REWARD, 25_000, 30_000),
+    PLAY_GAMES("War Games", "Play 200 games. Every guild member contributes to this counter.", 200, Material.DIAMOND_SWORD, WeeklyRewardSpendable8.REWARD, 25_000, 30_000),
+    COMPLETE_ANOMALIES("Investigative Unit", "Successfully complete 30 Anomaly investigations with at least 1 other guild member in the party.", 30, Material.SPYGLASS, WeeklyRewardSpendable9.REWARD, 25_000, 30_000),
     //COMPLETE_REGNUM("Two Crowns, One Guild", "Complete the Regnum of Two Crowns raid with at least 4 guild members in the party.", 1, Material.GOLDEN_HELMET, WeeklyRewardSpendable4.REWARD, 25_000, 100_000),
-    KILL_SKELETONS("Bone Collector", "Kill 50,000 Skeletons. Every guild member contributes to this counter.", 20_000, Material.SKELETON_SKULL, WeeklyRewardSpendable2.REWARD, 10_000, 30_000),
-    REACH_ENDLESS_WAVE_100("Endless Resolve", "Reach Wave 100 in Endless with at least 4 guild members in the party.", 100, Material.BEACON, WeeklyRewardSpendable4.REWARD, 10_000, 50_000),
-    KILL_ZOMBIES("Graveyard Shift", "Kill 50,000 Zombies. Every guild member contributes to this counter.", 30_000, Material.ZOMBIE_HEAD, WeeklyRewardSpendable2.REWARD, 10_000, 30_000),
-    REACH_ONSLAUGHT_60_MINUTES("Hold the Line", "Reach 60 minutes in Onslaught with at least 3 guild members in the party.", 60 * 60, Material.CLOCK, WeeklyRewardSpendable4.REWARD, 10_000, 30_000),
+    KILL_SKELETONS("Bone Collector", "Kill 20,000 Skeletons. Every guild member contributes to this counter.", 20_000, Material.SKELETON_SKULL, WeeklyRewardSpendable2.REWARD, 25_000, 30_000),
+    REACH_ENDLESS_WAVE_100("Endless Resolve", "Reach Wave 100 in Endless with at least 4 guild members in the party.", 100, Material.BEACON, WeeklyRewardSpendable8.REWARD, 25_000, 50_000),
+    KILL_ZOMBIES("Graveyard Shift", "Kill 30,000 Zombies. Every guild member contributes to this counter.", 30_000, Material.ZOMBIE_HEAD, WeeklyRewardSpendable9.REWARD, 25_000, 30_000),
+    REACH_ONSLAUGHT_60_MINUTES("Hold the Line", "Reach 60 minutes in Onslaught with at least 3 guild members in the party.", 60 * 60, Material.CLOCK, WeeklyRewardSpendable4.REWARD, 25_000, 30_000),
 
     ;
 

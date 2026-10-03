@@ -6,6 +6,7 @@ import com.ebicep.warlords.events.player.ingame.WarlordsAbilityActivateEvent;
 import com.ebicep.warlords.player.general.AbstractPlayerClass;
 import com.ebicep.warlords.player.ingame.WarlordsPlayer;
 import com.ebicep.warlords.pve.items.types.AbstractItem;
+import com.ebicep.warlords.pve.newitems.NewItemsUtils;
 import com.ebicep.warlords.pve.newitems.setbonus.BaseSet;
 import com.ebicep.warlords.pve.newitems.setbonus.SetBonus;
 import net.kyori.adventure.text.Component;
@@ -70,6 +71,10 @@ public class Soothsayer extends BaseSet {
                         abilityStats.getAbilityStats().addTimesUsed();
                     }
                     AbstractPlayerClass.sendRightClickPacket(warlordsPlayer);
+                    NewItemsUtils.sendItemMessage(
+                            warlordsPlayer,
+                            (Component.text("Your Soothsayer randomly activated " + ability.getName() + "!", NamedTextColor.GREEN))
+                    );
                 }
             });
         }

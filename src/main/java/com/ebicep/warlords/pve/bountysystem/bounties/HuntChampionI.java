@@ -6,6 +6,7 @@ import com.ebicep.warlords.pve.bountysystem.AbstractBounty;
 import com.ebicep.warlords.pve.bountysystem.Bounty;
 import com.ebicep.warlords.pve.bountysystem.costs.WeeklyCost;
 import com.ebicep.warlords.pve.bountysystem.rewards.WeeklyRewardSpendable1;
+import com.ebicep.warlords.pve.bountysystem.rewards.WeeklyRewardSpendable6;
 import com.ebicep.warlords.pve.bountysystem.trackers.TracksDuringGame;
 import com.ebicep.warlords.pve.mobs.tiers.ChampionMob;
 import org.bukkit.event.EventHandler;
@@ -14,7 +15,7 @@ import org.springframework.data.annotation.Transient;
 
 import java.util.Objects;
 
-public class HuntChampionI extends AbstractBounty implements TracksDuringGame, WeeklyCost, WeeklyRewardSpendable1 {
+public class HuntChampionI extends AbstractBounty implements TracksDuringGame, WeeklyCost, WeeklyRewardSpendable6 {
 
     @Transient
     private int newKills = 0;

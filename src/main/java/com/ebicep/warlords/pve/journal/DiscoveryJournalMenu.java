@@ -398,6 +398,7 @@ public final class DiscoveryJournalMenu {
         String abbreviation = entry.abbreviation().isEmpty() ? "None" : "\"" + entry.abbreviation() + "\"";
         lore.add(Component.text("Applied by: ", NamedTextColor.GRAY)
                           .append(Component.text(entry.source().label, NamedTextColor.YELLOW)));
+        lore.add(Component.empty());
         lore.add(Component.text("Name abbreviation: ", NamedTextColor.GRAY)
                           .append(Component.text(abbreviation, entry.category().textColor)));
         lore.add(Component.empty());

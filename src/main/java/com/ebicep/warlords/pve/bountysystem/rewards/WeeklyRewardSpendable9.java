@@ -2,23 +2,20 @@ package com.ebicep.warlords.pve.bountysystem.rewards;
 
 import com.ebicep.warlords.pve.Currencies;
 import com.ebicep.warlords.pve.Spendable;
-import com.ebicep.warlords.pve.items.types.SpendableRandomItem;
+import com.ebicep.warlords.pve.mobs.MobDrop;
 import com.ebicep.warlords.pve.newitems.SpendableRandomNewItem;
 
 import java.util.LinkedHashMap;
 
-public interface WeeklyRewardSpendable4 extends RewardSpendable {
+public interface WeeklyRewardSpendable9 extends RewardSpendable{
 
     LinkedHashMap<Spendable, Long> REWARD = new LinkedHashMap<>() {{
-        put(Currencies.SYNTHETIC_SHARD, 350L);
-        put(Currencies.LEGEND_FRAGMENTS, 280L);
-        put(Currencies.RARE_STAR_PIECE, 1L);
-        put(SpendableRandomNewItem.EPIC, 1L);
+        put(Currencies.COIN, 50000L);
+        put(MobDrop.ZENITH_STAR, 2L);
     }};
 
     @Override
     default LinkedHashMap<Spendable, Long> getCurrencyReward() {
         return REWARD;
     }
-
 }
