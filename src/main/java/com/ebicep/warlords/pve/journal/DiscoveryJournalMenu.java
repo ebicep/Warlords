@@ -39,7 +39,7 @@ public final class DiscoveryJournalMenu {
         menu.setItem(4, 0,
                 new ItemBuilder(Material.KNOWLEDGE_BOOK)
                         .name(Component.text("Discovery Journal", NamedTextColor.AQUA))
-                        .lore(WordWrap.wrap(Component.text("Track the enemies you have slain, every PvE resource, each playable gamemode, and every debuff players can apply.", NamedTextColor.GRAY), 160))
+                        .lore(WordWrap.wrap(Component.text("Track the enemies you have slain, every PvE resource, each playable gamemode, and every debuff players and mobs can apply.", NamedTextColor.GRAY), 160))
                         .get(),
                 ACTION_DO_NOTHING
         );
@@ -79,7 +79,7 @@ public final class DiscoveryJournalMenu {
                 new ItemBuilder(Material.FERMENTED_SPIDER_EYE)
                         .name(Component.text("Debuffs", NamedTextColor.RED))
                         .lore(
-                                WordWrap.wrap(Component.text("Every debuff players can apply, and what it does.", NamedTextColor.GRAY), 160)
+                                WordWrap.wrap(Component.text("Every debuff players and mobs can apply, who applies it, and what it does.", NamedTextColor.GRAY), 160)
                         )
                         .addLore(Component.empty(), ComponentUtils.CLICK_TO_VIEW)
                         .get(),
@@ -395,10 +395,11 @@ public final class DiscoveryJournalMenu {
 
     private static ItemStack debuffItem(DebuffDiscovery.Entry entry) {
         List<Component> lore = new ArrayList<>();
-        if (!entry.abbreviation().isEmpty()) {
-            lore.add(Component.text(entry.abbreviation(), entry.category().textColor));
-        }
-        lore.add(Component.text(entry.category().displayName, entry.category().textColor));
+        String abbreviation = entry.abbreviation().isEmpty() ? "None" : "\"" + entry.abbreviation() + "\"";
+        lore.add(Component.text("Applied by: ", NamedTextColor.GRAY)
+                          .append(Component.text(entry.source().label, NamedTextColor.YELLOW)));
+        lore.add(Component.text("Name abbreviation: ", NamedTextColor.GRAY)
+                          .append(Component.text(abbreviation, entry.category().textColor)));
         lore.add(Component.empty());
         lore.addAll(WordWrap.wrap(Component.text(entry.effect(), NamedTextColor.GRAY), 160));
         lore.add(Component.empty());
