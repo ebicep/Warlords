@@ -159,30 +159,30 @@ public class NewItemEditorMenu {
                 Component.text("to change star piece selection", NamedTextColor.GRAY)
         ));
 
-        menu.setItem(5, 2,
-                new ItemBuilder(Material.NETHER_STAR)
-                        .name(Component.text("Apply a " + selectedStar.currency.name, NamedTextColor.GREEN))
-                        .lore(starLore)
-                        .get(),
-                (m, e) -> {
-                    if (e.getClick().isLeftClick()) {
-                        for (Map.Entry<Spendable, Long> currenciesLongEntry : starPieceCost.entrySet()) {
-                            Spendable spendable = currenciesLongEntry.getKey();
-                            Long cost = currenciesLongEntry.getValue();
-                            if (spendable.getFromPlayer(databasePlayer) < cost) {
-                                player.sendMessage(Component.text("You need ", NamedTextColor.RED)
-                                                            .append(spendable.getCostColoredName(cost))
-                                                            .append(Component.text(" to apply this star piece!"))
-                                );
-                                return;
-                            }
-                        }
-                        NewItemStarPieceMenu.openNewItemStarPieceMenu(player, databasePlayer, item, selectedStar, starPieceCost);
-                    } else if (e.getClick().isRightClick()) {
-                        open(player, item, selectedStar.next());
-                    }
-                }
-        );
+//        menu.setItem(5, 2,
+//                new ItemBuilder(Material.NETHER_STAR)
+//                        .name(Component.text("Apply a " + selectedStar.currency.name, NamedTextColor.GREEN))
+//                        .lore(starLore)
+//                        .get(),
+//                (m, e) -> {
+//                    if (e.getClick().isLeftClick()) {
+//                        for (Map.Entry<Spendable, Long> currenciesLongEntry : starPieceCost.entrySet()) {
+//                            Spendable spendable = currenciesLongEntry.getKey();
+//                            Long cost = currenciesLongEntry.getValue();
+//                            if (spendable.getFromPlayer(databasePlayer) < cost) {
+//                                player.sendMessage(Component.text("You need ", NamedTextColor.RED)
+//                                                            .append(spendable.getCostColoredName(cost))
+//                                                            .append(Component.text(" to apply this star piece!"))
+//                                );
+//                                return;
+//                            }
+//                        }
+//                        NewItemStarPieceMenu.openNewItemStarPieceMenu(player, databasePlayer, item, selectedStar, starPieceCost);
+//                    } else if (e.getClick().isRightClick()) {
+//                        open(player, item, selectedStar.next());
+//                    }
+//                }
+//        );
 
         int maxGemSlots = item.getMaxGemSlots();
         List<Component> gemLore = new ArrayList<>(WordWrap.wrap(Component.text(
