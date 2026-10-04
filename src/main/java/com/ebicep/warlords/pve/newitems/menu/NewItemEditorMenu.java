@@ -204,34 +204,54 @@ public class NewItemEditorMenu {
 //                (m, e) -> NewItemGemMenu.open(player, item)
 //        );
 
-        LinkedHashMap<Spendable, Long> salvageRewards = getSalvageRewards(item);
-        List<Component> salvageLore = getSalvageLore(salvageRewards);
-        menu.setItem(7, 2,
-                new ItemBuilder(Material.FURNACE)
-                        .name(Component.text("Salvage Item", NamedTextColor.GREEN))
-                        .lore(salvageLore)
-                        .get(),
-                (m, e) -> {
-                    Menu.openConfirmationMenu(player,
-                            "Confirm Salvage",
-                            3,
-                            salvageLore,
-                            Menu.GO_BACK,
-                            (m2, e2) -> {
-                                NewItemsManager itemsManager = databasePlayer.getPveStats().getNewItemsManager();
-                                itemsManager.removeItem(item);
-                                salvageRewards.forEach((spendable, amount) -> spendable.addToPlayer(databasePlayer, amount));
-                                DatabaseManager.queueUpdatePlayerAsync(databasePlayer);
-                                NewItemsUtils.sendItemMessage(player, getSalvageMessage(item, salvageRewards));
-                                player.playSound(player.getLocation(), Sound.BLOCK_ANVIL_BREAK, 2, 0.5f);
-                                player.playSound(player.getLocation(), "misc.weaponupgrade", 2, 0.6f);
-                                NewItemEquipMenu.openItemEquipMenuExternal(player, databasePlayer);
-                            },
-                            (m2, e2) -> NewItemEditorMenu.open(player, item),
-                            (m2) -> {}
-                    );
-                }
-        );
+        NewItemsManager itemsManager = databasePlayer.getPveStats().getNewItemsManager();
+        if (itemsManager.isEquipped(item)) {
+            menu.setItem(7, 2,
+                    new ItemBuilder(Material.BARRIER)
+                            .name(Component.text("Equipped", NamedTextColor.RED))
+                            .lore(Component.text("This item is equipped.", NamedTextColor.GRAY))
+                            .get(),
+                    Menu.ACTION_DO_NOTHING
+            );
+        } else {
+            LinkedHashMap<Spendable, Long> salvageRewards = getSalvageRewards(item);
+            List<Component> salvageLore = getSalvageLore(salvageRewards);
+            menu.setItem(7, 2,
+                    new ItemBuilder(Material.FURNACE)
+                            .name(Component.text("Salvage Item", NamedTextColor.GREEN))
+                            .lore(salvageLore)
+                            .get(),
+                    (m, e) -> {
+                        if (itemsManager.isEquipped(item)) {
+                            NewItemsUtils.sendItemMessage(player, Component.text("This item is equipped.", NamedTextColor.RED));
+                            open(player, item, selectedStar);
+                            return;
+                        }
+                        Menu.openConfirmationMenu(player,
+                                "Confirm Salvage",
+                                3,
+                                salvageLore,
+                                Menu.GO_BACK,
+                                (m2, e2) -> {
+                                    if (itemsManager.isEquipped(item)) {
+                                        NewItemsUtils.sendItemMessage(player, Component.text("This item is equipped.", NamedTextColor.RED));
+                                        open(player, item, selectedStar);
+                                        return;
+                                    }
+                                    itemsManager.removeItem(item);
+                                    salvageRewards.forEach((spendable, amount) -> spendable.addToPlayer(databasePlayer, amount));
+                                    DatabaseManager.queueUpdatePlayerAsync(databasePlayer);
+                                    NewItemsUtils.sendItemMessage(player, getSalvageMessage(item, salvageRewards));
+                                    player.playSound(player.getLocation(), Sound.BLOCK_ANVIL_BREAK, 2, 0.5f);
+                                    player.playSound(player.getLocation(), "misc.weaponupgrade", 2, 0.6f);
+                                    NewItemEquipMenu.openItemEquipMenuExternal(player, databasePlayer);
+                                },
+                                (m2, e2) -> NewItemEditorMenu.open(player, item),
+                                (m2) -> {}
+                        );
+                    }
+            );
+        }
 
         menu.setItem(4, 4, Menu.MENU_BACK, (m, e) -> NewItemEquipMenu.openItemEquipMenuExternal(player, databasePlayer));
         menu.openForPlayer(player);
