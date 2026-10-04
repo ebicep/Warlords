@@ -39,7 +39,7 @@ public final class DiscoveryJournalMenu {
         menu.setItem(4, 0,
                 new ItemBuilder(Material.KNOWLEDGE_BOOK)
                         .name(Component.text("Discovery Journal", NamedTextColor.AQUA))
-                        .lore(WordWrap.wrap(Component.text("Track the enemies you have slain, every PvE resource, and each playable gamemode.", NamedTextColor.GRAY), 160))
+                        .lore(WordWrap.wrap(Component.text("Track the enemies you have slain, every PvE resource, each playable gamemode, and every debuff players and mobs can apply.", NamedTextColor.GRAY), 160))
                         .get(),
                 ACTION_DO_NOTHING
         );
@@ -51,7 +51,7 @@ public final class DiscoveryJournalMenu {
             discovered += MobDiscovery.discoveredCount(databasePlayer, group);
         }
 
-        menu.setItem(2, 2,
+        menu.setItem(1, 2,
                 new ItemBuilder(Material.ZOMBIE_HEAD)
                         .name(Component.text("Mobs", NamedTextColor.GREEN))
                         .lore(
@@ -64,7 +64,7 @@ public final class DiscoveryJournalMenu {
                 (m, e) -> openMobs(player)
         );
 
-        menu.setItem(4, 2,
+        menu.setItem(3, 2,
                 new ItemBuilder(Material.COMPASS)
                         .name(Component.text("Activities", NamedTextColor.AQUA))
                         .lore(
@@ -75,7 +75,18 @@ public final class DiscoveryJournalMenu {
                 (m, e) -> openActivities(player, 1)
         );
 
-        menu.setItem(6, 2,
+        menu.setItem(5, 2,
+                new ItemBuilder(Material.FERMENTED_SPIDER_EYE)
+                        .name(Component.text("Debuffs", NamedTextColor.RED))
+                        .lore(
+                                WordWrap.wrap(Component.text("Every debuff players and mobs can apply, who applies it, and what it does.", NamedTextColor.GRAY), 160)
+                        )
+                        .addLore(Component.empty(), ComponentUtils.CLICK_TO_VIEW)
+                        .get(),
+                (m, e) -> openDebuffs(player)
+        );
+
+        menu.setItem(7, 2,
                 new ItemBuilder(Material.GOLD_NUGGET)
                         .name(Component.text("Resources", NamedTextColor.GOLD))
                         .lore(
@@ -183,6 +194,65 @@ public final class DiscoveryJournalMenu {
         }
 
         menu.setItem(4, 5, MENU_BACK, (m, e) -> open(player));
+        menu.openForPlayer(player);
+    }
+
+    public static void openDebuffs(Player player) {
+        Menu menu = new Menu("Debuff Journal", 9 * 4);
+
+        DebuffDiscovery.Category[] categories = DebuffDiscovery.Category.VALUES;
+        int startColumn = Math.max(1, (7 - categories.length) / 2 + 1);
+        for (int i = 0; i < categories.length; i++) {
+            DebuffDiscovery.Category category = categories[i];
+            int count = DebuffDiscovery.entries(category).size();
+            menu.setItem(startColumn + i, 1,
+                    new ItemBuilder(category.icon)
+                            .name(Component.text(category.displayName, category.textColor))
+                            .lore(
+                                    Component.text(count + (count == 1 ? " debuff" : " debuffs"), NamedTextColor.GRAY),
+                                    Component.empty(),
+                                    ComponentUtils.CLICK_TO_VIEW
+                            )
+                            .get(),
+                    (m, e) -> openDebuffCategory(player, category, 1)
+            );
+        }
+
+        menu.setItem(4, 3, MENU_BACK, (m, e) -> open(player));
+        menu.openForPlayer(player);
+    }
+
+    public static void openDebuffCategory(Player player, DebuffDiscovery.Category category, int page) {
+        Menu menu = new Menu(category.displayName, 9 * 6);
+        List<DebuffDiscovery.Entry> entries = DebuffDiscovery.entries(category);
+        int start = (page - 1) * ITEMS_PER_PAGE;
+        int end = Math.min(start + ITEMS_PER_PAGE, entries.size());
+
+        for (int i = start; i < end; i++) {
+            int slot = i - start;
+            menu.setItem(slot % ITEMS_PER_ROW + 1, slot / ITEMS_PER_ROW + 1, debuffItem(entries.get(i)), ACTION_DO_NOTHING);
+        }
+
+        if (page > 1) {
+            menu.setItem(0, 5,
+                    new ItemBuilder(Material.ARROW)
+                            .name(Component.text("Previous Page", NamedTextColor.GREEN))
+                            .lore(Component.text("Page " + (page - 1), NamedTextColor.YELLOW))
+                            .get(),
+                    (m, e) -> openDebuffCategory(player, category, page - 1)
+            );
+        }
+        if (end < entries.size()) {
+            menu.setItem(8, 5,
+                    new ItemBuilder(Material.ARROW)
+                            .name(Component.text("Next Page", NamedTextColor.GREEN))
+                            .lore(Component.text("Page " + (page + 1), NamedTextColor.YELLOW))
+                            .get(),
+                    (m, e) -> openDebuffCategory(player, category, page + 1)
+            );
+        }
+
+        menu.setItem(4, 5, MENU_BACK, (m, e) -> openDebuffs(player));
         menu.openForPlayer(player);
     }
 
@@ -319,6 +389,25 @@ public final class DiscoveryJournalMenu {
 
         return new ItemBuilder(entry.spendable().getItem())
                 .name(Component.text(entry.spendable().getName(), entry.spendable().getTextColor()))
+                .lore(lore)
+                .get();
+    }
+
+    private static ItemStack debuffItem(DebuffDiscovery.Entry entry) {
+        List<Component> lore = new ArrayList<>();
+        String abbreviation = entry.abbreviation().isEmpty() ? "None" : "\"" + entry.abbreviation() + "\"";
+        lore.add(Component.text("Applied by: ", NamedTextColor.GRAY)
+                          .append(Component.text(entry.source().label, NamedTextColor.YELLOW)));
+        lore.add(Component.empty());
+        lore.add(Component.text("Name abbreviation: ", NamedTextColor.GRAY)
+                          .append(Component.text(abbreviation, entry.category().textColor)));
+        lore.add(Component.empty());
+        lore.addAll(WordWrap.wrap(Component.text(entry.effect(), NamedTextColor.GRAY), 160));
+        lore.add(Component.empty());
+        lore.addAll(WordWrap.wrap(Component.text(entry.category().cleanseNote, NamedTextColor.GRAY), 160));
+
+        return new ItemBuilder(entry.icon())
+                .name(Component.text(entry.name(), entry.category().textColor))
                 .lore(lore)
                 .get();
     }

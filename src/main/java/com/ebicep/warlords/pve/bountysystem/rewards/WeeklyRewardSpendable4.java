@@ -10,8 +10,8 @@ import java.util.LinkedHashMap;
 public interface WeeklyRewardSpendable4 extends RewardSpendable {
 
     LinkedHashMap<Spendable, Long> REWARD = new LinkedHashMap<>() {{
-        put(Currencies.SYNTHETIC_SHARD, 250L);
-        put(Currencies.LEGEND_FRAGMENTS, 225L);
+        put(Currencies.SYNTHETIC_SHARD, 350L);
+        put(Currencies.LEGEND_FRAGMENTS, 280L);
         put(Currencies.RARE_STAR_PIECE, 1L);
         put(SpendableRandomNewItem.EPIC, 1L);
     }};

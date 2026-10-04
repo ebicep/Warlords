@@ -12,9 +12,14 @@ import com.ebicep.warlords.pve.mobs.tiers.EliteMob;
 import com.ebicep.warlords.pve.mobs.witherskeleton.Soulbinder;
 import com.ebicep.warlords.util.warlords.PlayerFilter;
 import com.ebicep.warlords.util.warlords.Utils;
+import net.minecraft.world.entity.PathfinderMob;
+import net.minecraft.world.entity.ai.util.DefaultRandomPos;
+import net.minecraft.world.phys.Vec3;
 import org.bukkit.Location;
 import org.bukkit.Particle;
 import org.bukkit.Sound;
+import org.bukkit.craftbukkit.entity.CraftEntity;
+import org.bukkit.entity.Entity;
 import org.bukkit.util.Vector;
 
 import javax.annotation.Nonnull;
@@ -33,14 +38,13 @@ public class BoundArcher extends AbstractMob implements EliteMob {
     private static final int SOUL_ARROW_DAMAGE = 400;
     private static final int SOUL_ARROW_SLOW_PERCENT = -20;
     private static final int SOUL_ARROW_SLOW_TICKS = 30;
-    private static final double BACKSTEP_STRENGTH = .18;
-
     @Nullable
     private final Soulbinder owner;
 
     private WarlordsEntity target;
     private int targetRefreshTicks = 0;
     private int shotCooldownTicks = INITIAL_SHOT_DELAY_TICKS;
+    private boolean retreating;
 
     public BoundArcher(Location spawnLocation) {
         this(spawnLocation, null);
@@ -108,6 +112,10 @@ public class BoundArcher extends AbstractMob implements EliteMob {
     }
 
     @Override
+    public void giveGoals() {
+    }
+
+    @Override
     public void onSpawn(PveOption option) {
         super.onSpawn(option);
         Utils.playGlobalSound(warlordsNPC.getLocation(), Sound.ENTITY_SKELETON_AMBIENT, 2, .6f);
@@ -155,6 +163,7 @@ public class BoundArcher extends AbstractMob implements EliteMob {
 
     private void tickMovement() {
         if (!isValidTarget(target, TARGET_RANGE)) {
+            retreating = false;
             removeTarget();
             return;
         }
@@ -162,11 +171,11 @@ public class BoundArcher extends AbstractMob implements EliteMob {
         double distanceSquared = target.getLocation().distanceSquared(warlordsNPC.getLocation());
 
         if (distanceSquared < PREFERRED_MIN_RANGE * PREFERRED_MIN_RANGE) {
-            removeTarget();
-            moveAwayFromTarget(target);
+            retreatFrom(target);
             return;
         }
 
+        retreating = false;
         if (distanceSquared > PREFERRED_MAX_RANGE * PREFERRED_MAX_RANGE) {
             setTarget(target);
             return;
@@ -207,16 +216,32 @@ public class BoundArcher extends AbstractMob implements EliteMob {
         Utils.playGlobalSound(warlordsNPC.getLocation(), Sound.ENTITY_SKELETON_SHOOT, 2, .6f);
     }
 
-    private void moveAwayFromTarget(WarlordsEntity target) {
-        Vector direction = warlordsNPC.getLocation().toVector().subtract(target.getLocation().toVector());
-        direction.setY(0);
-
-        if (direction.lengthSquared() == 0) {
+    private void retreatFrom(WarlordsEntity target) {
+        if (retreating && getNpc().getNavigator().isNavigating()) {
             return;
         }
 
-        direction.normalize().multiply(BACKSTEP_STRENGTH);
-        warlordsNPC.getEntity().setVelocity(direction);
+        Entity selfEntity = warlordsNPC.getEntity();
+        if (!(selfEntity instanceof CraftEntity craftEntity) || !(craftEntity.getHandle() instanceof PathfinderMob pathfinderMob)) {
+            retreating = false;
+            removeTarget();
+            return;
+        }
+        if (!(target.getEntity() instanceof CraftEntity targetEntity)) {
+            retreating = false;
+            removeTarget();
+            return;
+        }
+
+        Vec3 away = DefaultRandomPos.getPosAway(pathfinderMob, 16, 7, targetEntity.getHandle().position());
+        if (away == null) {
+            retreating = false;
+            removeTarget();
+            return;
+        }
+
+        getNpc().getNavigator().setTarget(new Location(selfEntity.getWorld(), away.x, away.y, away.z));
+        retreating = true;
     }
 
     private boolean isValidTarget(@Nullable WarlordsEntity target, int range) {

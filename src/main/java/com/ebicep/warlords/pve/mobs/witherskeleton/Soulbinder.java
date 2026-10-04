@@ -16,6 +16,7 @@ import net.kyori.adventure.text.format.NamedTextColor;
 import org.bukkit.Location;
 import org.bukkit.Particle;
 import org.bukkit.Sound;
+import org.bukkit.block.Block;
 import org.bukkit.util.Vector;
 
 import javax.annotation.Nonnull;
@@ -206,11 +207,7 @@ public class Soulbinder extends AbstractMob implements ChampionMob {
 
         for (int i = 0; i < MINIONS_TO_SUMMON; i++) {
             double angle = Math.PI * 2 * i / MINIONS_TO_SUMMON;
-            Location spawnLocation = warlordsNPC.getLocation().clone().add(
-                    Math.cos(angle) * MINION_SPAWN_RADIUS,
-                    0,
-                    Math.sin(angle) * MINION_SPAWN_RADIUS
-            );
+            Location spawnLocation = findArcherSpawn(warlordsNPC.getLocation(), angle);
 
             BoundArcher boundArcher = new BoundArcher(spawnLocation, this);
             option.spawnNewMob(boundArcher);
@@ -228,6 +225,23 @@ public class Soulbinder extends AbstractMob implements ChampionMob {
         }
 
         Utils.playGlobalSound(warlordsNPC.getLocation(), Sound.ENTITY_WITHER_SPAWN, 2, .65f);
+    }
+
+    private Location findArcherSpawn(Location origin, double angle) {
+        for (double radius = MINION_SPAWN_RADIUS; radius >= 1.5; radius -= 1) {
+            Location candidate = origin.clone().add(Math.cos(angle) * radius, 0, Math.sin(angle) * radius);
+            if (isOpenSpace(candidate)) {
+                return candidate;
+            }
+        }
+        return origin.clone();
+    }
+
+    private boolean isOpenSpace(Location location) {
+        Block feet = location.getBlock();
+        Block head = location.clone().add(0, 1, 0).getBlock();
+        Block ground = location.clone().add(0, -1, 0).getBlock();
+        return feet.isPassable() && head.isPassable() && ground.getType().isSolid();
     }
 
     public void onBoundArcherRemoved(BoundArcher boundArcher) {

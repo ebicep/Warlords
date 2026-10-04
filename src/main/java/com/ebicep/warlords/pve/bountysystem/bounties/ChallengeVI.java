@@ -2,17 +2,18 @@ package com.ebicep.warlords.pve.bountysystem.bounties;
 
 import com.ebicep.warlords.events.game.WarlordsGameTriggerWinEvent;
 import com.ebicep.warlords.game.Game;
+import com.ebicep.warlords.game.Team;
 import com.ebicep.warlords.player.ingame.WarlordsPlayer;
 import com.ebicep.warlords.pve.DifficultyIndex;
 import com.ebicep.warlords.pve.bountysystem.AbstractBounty;
 import com.ebicep.warlords.pve.bountysystem.Bounty;
 import com.ebicep.warlords.pve.bountysystem.BountyUtils;
 import com.ebicep.warlords.pve.bountysystem.costs.WeeklyCost;
-import com.ebicep.warlords.pve.bountysystem.rewards.WeeklyRewardSpendable4;
+import com.ebicep.warlords.pve.bountysystem.rewards.WeeklyRewardSpendable6;
 import com.ebicep.warlords.pve.bountysystem.trackers.TracksPostGame;
 import com.ebicep.warlords.util.warlords.PlayerFilter;
 
-public class ChallengeVI extends AbstractBounty implements TracksPostGame, WeeklyCost, WeeklyRewardSpendable4 {
+public class ChallengeVI extends AbstractBounty implements TracksPostGame, WeeklyCost, WeeklyRewardSpendable6 {
 
     @Override
     public String getName() {
@@ -45,7 +46,7 @@ public class ChallengeVI extends AbstractBounty implements TracksPostGame, Weekl
                                           .stream()
                                           .mapToInt(warlordsEntity -> warlordsEntity.getMinuteStats().total().getDeaths())
                                           .sum();
-        if (totalTeamDeaths < 5) {
+        if (totalTeamDeaths < 5 && gameWinEvent.getDeclaredWinner() == Team.BLUE) {
             value++;
         }
     }

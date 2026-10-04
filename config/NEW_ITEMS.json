@@ -846,7 +846,6 @@
             "HELMET",
             "CHESTPLATE",
             "LEGGINGS",
-            "GLOVES",
             "BOOTS"
           ],
           "attributes": {
@@ -855,9 +854,9 @@
             "KB_RES": 3
           },
           "description": "{{blue;%}} of attacks are dodged. Each dodge grants {{damage;%}} damage and healing for {{ticks}}, up to {{blue}} stacks.",
-          "dodgeChance": 15,
+          "dodgeChance": 20,
           "bonusPerStackPercent": 0.25,
-          "stackDurationSeconds": 8,
+          "stackDurationSeconds": 12,
           "maxStacks": 20
         },
         "sharpshooter": {
@@ -1104,7 +1103,7 @@
             "REGEN": 10
           },
           "description": "{{gold;%}} chance to inflict a random debuff on enemies for {{ticks}} when taking or dealing damage.",
-          "activationChance": 35,
+          "activationChance": 22,
           "duration": 3
         },
         "multiply": {
@@ -1263,7 +1262,7 @@
             "HEALTH": 100
           },
           "description": "Gain {{blue;%}} cooldown reduction on non-ultimate skills but your primary attack deals {{damage;%}} less damage and {{heal;%}} less healing.",
-          "nonUltimateCooldownReductionPercent": 30,
+          "nonUltimateCooldownReductionPercent": 25,
           "primaryDamagePenaltyPercent": 75,
           "primaryHealingPenaltyPercent": 75
         },
@@ -1582,7 +1581,7 @@
             "ECR": 2,
             "CDR": 1
           },
-          "description": "Healing a de-buffed ally is increased by {{heal;%}}. Every {{ticks}}, healing an ally also cleanses them.",
+          "description": "Healing on a de-buffed ally is increased by {{heal;%}}. Every {{ticks}}, healing an ally also cleanses them.",
           "healingIncreasePercent": 40,
           "cleanseCooldownSeconds": 3
         },
