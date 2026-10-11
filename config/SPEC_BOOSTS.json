@@ -837,7 +837,7 @@
         "difficulty": 2,
         "name": "Sanctuary of Retribution",
         "description": "Increase the damage reduction per {{yellow:FHEX}} granted by {{aqua:Sanctuary}} by {{damageReduction;%}}. During {{aqua:Sanctuary}}, allies with max stacks of {{yellow:FHEX}} now reflect damage reduced by {{yellow:FHEX}} back to the dealer.",
-        "sanctuaryDamageReductionPerHexStack": 5
+        "sanctuaryDamageReductionPerHexStack": 4
       },
       "loneSentinel": {
         "difficulty": 1,
