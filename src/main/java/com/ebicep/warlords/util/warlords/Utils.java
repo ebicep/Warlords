@@ -351,20 +351,23 @@ public class Utils {
     }
 
     public static ItemStack applyColorTo(@Nonnull Material armor, int red, int green, int blue, TrimMaterial material, TrimPattern pattern) {
-        ItemStack itemStack = new ItemStack(armor);
-        ArmorMeta armorMeta = (ArmorMeta) itemStack.getItemMeta();
-        armorMeta.setTrim(new ArmorTrim(material, pattern));
-        LeatherArmorMeta leatherArmorMeta = (LeatherArmorMeta) itemStack.getItemMeta();
-        leatherArmorMeta.setColor(Color.fromRGB(red, green, blue));
-        itemStack.setItemMeta(leatherArmorMeta);
-
-        return itemStack;
+        return applyTrimTo(applyColorTo(armor, red, green, blue), material, pattern);
     }
 
     public static ItemStack applyTrimTo(@Nonnull Material armor, TrimMaterial material, TrimPattern pattern) {
-        ItemStack itemStack = new ItemStack(armor);
-        ArmorMeta armorMeta = (ArmorMeta) itemStack.getItemMeta();
+        return applyTrimTo(new ItemStack(armor), material, pattern);
+    }
+
+    /**
+     * Applies an armor trim when the stack is armor. Other items, including helmet skulls, are returned unchanged.
+     */
+    public static ItemStack applyTrimTo(@Nonnull ItemStack armor, TrimMaterial material, TrimPattern pattern) {
+        ItemStack itemStack = armor.clone();
+        if (!(itemStack.getItemMeta() instanceof ArmorMeta armorMeta)) {
+            return armor;
+        }
         armorMeta.setTrim(new ArmorTrim(material, pattern));
+        itemStack.setItemMeta(armorMeta);
         return itemStack;
     }
 
@@ -546,6 +549,24 @@ public class Utils {
             this.chestplate = chestplate;
             this.leggings = leggings;
             this.boots = boots;
+        }
+
+        /**
+         * Applies the same armor trim to every armor piece that supports trims.
+         */
+        public SimpleEntityEquipment applyTrim(TrimMaterial material, TrimPattern pattern) {
+            helmet = applyTrimTo(helmet, material, pattern);
+            chestplate = applyTrimTo(chestplate, material, pattern);
+            leggings = applyTrimTo(leggings, material, pattern);
+            boots = applyTrimTo(boots, material, pattern);
+            return this;
+        }
+
+        private static ItemStack applyTrimTo(@Nullable ItemStack armor, TrimMaterial material, TrimPattern pattern) {
+            if (armor == null || armor.getType().isAir()) {
+                return armor;
+            }
+            return Utils.applyTrimTo(armor, material, pattern);
         }
 
         @Override
