@@ -22,6 +22,7 @@ public enum GameMode implements Mode {
     WAVE_DEFENSE(new WaveDefense()),
     ONSLAUGHT(new Onslaught()),
     TREASURE_HUNT(new TreasureHunt()),
+    DARK_DESCENT(new DarkDescent()),
     ANOMALY(new Anomaly()),
     RAID(new Raid()),
     DEBUG(new Debug()),

@@ -38,7 +38,7 @@ public class BountyOption implements Option {
                 }
                 DatabasePlayer databasePlayer = DatabaseManager.getPlayer(uniqueId, activeCollection);
                 List<AbstractBounty> trackableBounties = databasePlayer.getPveStats().getTrackableBounties();
-                addTracksDuringGameBounties(game, trackableBounties);
+                addTracksDuringGameBounties(game, trackableBounties, databasePlayer);
                 if (activeCollection == PlayersCollections.LIFETIME && DatabaseGameEvent.eventIsActive()) {
                     DatabaseGameEvent currentGameEvent = DatabaseGameEvent.currentGameEvent;
                     EventMode eventMode = currentGameEvent.getEvent().eventsStatsFunction
@@ -47,17 +47,17 @@ public class BountyOption implements Option {
                     if (eventMode == null) {
                         return;
                     }
-                    addTracksDuringGameBounties(game, eventMode.getTrackableBounties());
+                    addTracksDuringGameBounties(game, eventMode.getTrackableBounties(), databasePlayer);
                 }
-                trackedBounties.forEach(bounty -> bounty.init(databasePlayer));
             }
         });
     }
 
-    private void addTracksDuringGameBounties(@Nonnull Game game, List<AbstractBounty> trackableBounties) {
+    private void addTracksDuringGameBounties(@Nonnull Game game, List<AbstractBounty> trackableBounties, DatabasePlayer databasePlayer) {
         for (AbstractBounty bounty : trackableBounties) {
             if (bounty instanceof TracksDuringGame tracksDuringGame && tracksDuringGame.trackGame(game)) {
                 trackedBounties.add(bounty);
+                bounty.init(databasePlayer);
             }
         }
     }

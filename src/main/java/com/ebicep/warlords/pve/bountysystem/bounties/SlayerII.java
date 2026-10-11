@@ -1,6 +1,7 @@
 package com.ebicep.warlords.pve.bountysystem.bounties;
 
 import com.ebicep.warlords.events.player.ingame.WarlordsDeathEvent;
+import com.ebicep.warlords.player.ingame.WarlordsEntity;
 import com.ebicep.warlords.player.ingame.WarlordsNPC;
 import com.ebicep.warlords.pve.bountysystem.AbstractBounty;
 import com.ebicep.warlords.pve.bountysystem.Bounty;
@@ -11,6 +12,8 @@ import com.ebicep.warlords.pve.mobs.tiers.BossMob;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.springframework.data.annotation.Transient;
+
+import java.util.Objects;
 
 public class SlayerII extends AbstractBounty implements TracksDuringGame, DailyCost, DailyRewardSpendable1 {
 
@@ -29,7 +32,7 @@ public class SlayerII extends AbstractBounty implements TracksDuringGame, DailyC
 
     @Override
     public int getTarget() {
-        return 20;
+        return 10;
     }
 
     @Override
@@ -44,7 +47,11 @@ public class SlayerII extends AbstractBounty implements TracksDuringGame, DailyC
 
     @EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
     public void onKill(WarlordsDeathEvent event) {
-        if (event.getWarlordsEntity() instanceof WarlordsNPC warlordsNPC && warlordsNPC.getMob() instanceof BossMob) {
+        WarlordsEntity killer = event.getKiller();
+        if (killer == null) {
+            return;
+        }
+        if (Objects.equals(killer.getUuid(), uuid) && event.getWarlordsEntity() instanceof WarlordsNPC warlordsNPC && warlordsNPC.getMob() instanceof BossMob) {
             newKills++;
         }
     }

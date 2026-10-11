@@ -34,7 +34,13 @@ public enum Honorific {
     COLLATERAL("Collateral", "Deal 1 billion damage in a single game.", Material.TNT, null),
     TWO_FATES("Two Fates", "Complete the Regnum of Two Crowns raid.", Material.GOLDEN_SWORD, null),
     CROWNED_HEIR("Crowned Heir", "Complete Regnum of Two Crowns raid on Oblivion difficulty with only 4 players.", Material.GOLDEN_HELMET, null),
-    ASCENDED("Ascended", "Purchased from The Artificer.", Material.ECHO_SHARD, HonorificCost.of(Currencies.ASCENDANT_SHARD, 2_000));
+    ASCENDED("Ascended", "Purchased from The Artificer.", Material.ECHO_SHARD, HonorificCost.of(Currencies.ASCENDANT_SHARD, 2_000)),
+    LOSER("Loser", "Die 1,000 times.", Material.BONE, null),
+    GOOBER("Goober", "Die to your own damage.", Material.SLIME_BALL, null),
+    MONEYBAGS("Moneybags", "Earn 200,000 coins from a single game.", Material.GOLD_BLOCK, null),
+    PICKLE("Pickle", "?????", Material.SEA_PICKLE, null),
+    REAPER("Reaper", "Kill someone with the Sacrifice item.", Material.IRON_HOE, null),
+    NO_LIFE("No Life", "Play 10,000 games.", Material.RECOVERY_COMPASS, null);
 
     public static final Honorific[] VALUES = values();
 

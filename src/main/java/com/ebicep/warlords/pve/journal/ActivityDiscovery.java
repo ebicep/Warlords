@@ -56,7 +56,7 @@ public final class ActivityDiscovery {
             case CAPTURE_THE_FLAG, INTERCEPTION, TEAM_DEATHMATCH, DUEL, SIEGE,
                  WAVE_DEFENSE, ONSLAUGHT, TREASURE_HUNT, ANOMALY, RAID,
                  EVENT_WAVE_DEFENSE, TOWER_DEFENSE, EFFIGY_TRIALS, TUTORIAL -> true;
-            case LOBBY, DEBUG, PVE_DEBUG, WHACK_A_MOLE -> false;
+            case LOBBY, DEBUG, PVE_DEBUG, WHACK_A_MOLE, DARK_DESCENT -> false;
         };
     }
 
@@ -66,7 +66,7 @@ public final class ActivityDiscovery {
             case WAVE_DEFENSE, ONSLAUGHT, TREASURE_HUNT, ANOMALY, RAID,
                  EVENT_WAVE_DEFENSE, TOWER_DEFENSE, EFFIGY_TRIALS -> Category.PVE;
             case TUTORIAL -> Category.OTHER;
-            case LOBBY, DEBUG, PVE_DEBUG, WHACK_A_MOLE -> throw unexpected(gameMode);
+            case LOBBY, DEBUG, PVE_DEBUG, WHACK_A_MOLE, DARK_DESCENT -> throw unexpected(gameMode);
         };
     }
 
@@ -86,7 +86,7 @@ public final class ActivityDiscovery {
             case TOWER_DEFENSE -> Material.OAK_PLANKS;
             case EFFIGY_TRIALS -> Material.TRIAL_SPAWNER;
             case TUTORIAL -> Material.BOOK;
-            case LOBBY, DEBUG, PVE_DEBUG, WHACK_A_MOLE -> throw unexpected(gameMode);
+            case LOBBY, DEBUG, PVE_DEBUG, WHACK_A_MOLE, DARK_DESCENT -> throw unexpected(gameMode);
         };
     }
 
@@ -120,7 +120,7 @@ public final class ActivityDiscovery {
                     "Defeat the Effigies, charge through their trials, and take down the final boss.";
             case TUTORIAL ->
                     "A guided introduction to Warlords combat, abilities, and the basics of the game.";
-            case LOBBY, DEBUG, PVE_DEBUG, WHACK_A_MOLE -> throw unexpected(gameMode);
+            case LOBBY, DEBUG, PVE_DEBUG, WHACK_A_MOLE, DARK_DESCENT -> throw unexpected(gameMode);
         };
     }
 

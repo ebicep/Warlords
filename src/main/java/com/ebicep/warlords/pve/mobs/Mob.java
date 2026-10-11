@@ -68,6 +68,8 @@ import org.bukkit.enchantments.Enchantment;
 import org.bukkit.entity.EntityType;
 import org.bukkit.inventory.EntityEquipment;
 import org.bukkit.inventory.ItemStack;
+import org.bukkit.inventory.meta.trim.TrimMaterial;
+import org.bukkit.inventory.meta.trim.TrimPattern;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -795,10 +797,10 @@ public enum Mob {
     ),
     RAID_MITHRA(EntityType.WITHER_SKELETON, RaidMithra.class, RaidMithra::new, RaidMithra::new, new Utils.SimpleEntityEquipment(
             SkullUtils.getSkullFrom(SkullID.IRON_QUEEN),
-            new ItemStack(Material.NETHERITE_CHESTPLATE),
-            new ItemStack(Material.NETHERITE_LEGGINGS),
-            new ItemStack(Material.NETHERITE_BOOTS),
-            Weapons.WARLORDS_II_AWAKENED_LICHBLADE.getItem(),
+            Utils.applyTrimTo(Material.NETHERITE_CHESTPLATE, TrimMaterial.AMETHYST, TrimPattern.EYE),
+            Utils.applyTrimTo(Material.NETHERITE_LEGGINGS, TrimMaterial.AMETHYST, TrimPattern.EYE),
+            Utils.applyTrimTo(Material.NETHERITE_BOOTS, TrimMaterial.AMETHYST, TrimPattern.EYE),
+            Weapons.WARLORDS_II_REQUIEM_OF_THE_NINTH_ABYSS.getItem(),
             new ItemStack(Material.SHIELD)
     )
     ),

@@ -45,7 +45,7 @@ public class WeaponCraftMenu {
         DatabasePlayerPvE pveStats = databasePlayer.getPveStats();
         for (Map.Entry<Currencies, Long> currenciesLongEntry : LEGENDARY_COST.entrySet()) {
             if (pveStats.getCurrencyValue(currenciesLongEntry.getKey()) < currenciesLongEntry.getValue()) {
-                player.sendMessage(Component.text("You are not worthy of crafting a legendary weapon yet, bring me 6.000 Synthetic Shards and 600.000 Coins first!", NamedTextColor.RED));
+                player.sendMessage(Component.text("You are not worthy of crafting a legendary weapon yet, bring me 5.000 Synthetic Shards and 500.000 Coins first!", NamedTextColor.RED));
                 return;
             }
         }

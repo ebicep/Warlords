@@ -62,6 +62,10 @@ public class WarlordsDeathEvent extends AbstractWarlordsEntityEvent implements C
         return killer;
     }
 
+    public DeathInfo getDeathInfo() {
+        return deathInfo;
+    }
+
     public record DeathInfo(@Nullable Title title, @Nullable Runnable onDeathRunnable, boolean forced) {
 
     }
