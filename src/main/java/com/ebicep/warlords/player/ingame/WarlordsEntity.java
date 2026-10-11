@@ -1684,6 +1684,9 @@ public abstract class WarlordsEntity {
         });
         getSecondStats().getEntries().clear();
         getCooldownManager().clearAllCooldowns();
+        hitBy.clear();
+        healedBy.clear();
+        locations.clear();
     }
 
     @Nonnull

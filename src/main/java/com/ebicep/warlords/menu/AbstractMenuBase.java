@@ -9,6 +9,10 @@ import org.bukkit.metadata.FixedMetadataValue;
 public abstract class AbstractMenuBase {
     protected abstract Inventory getInventory();
 
+    public Inventory menuInventory() {
+        return getInventory();
+    }
+
     public abstract void doOnClickAction(InventoryClickEvent event);
 
     public void openForPlayer(Player player) {
