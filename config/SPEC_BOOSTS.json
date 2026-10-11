@@ -806,7 +806,7 @@
         "description": "Increase the pierce against enemies of {{aqua:Fortifying Hex}} by {{blue}} and the damage by {{damage;%}}, but increase the energy cost by {{energy}} and reduce the pierce for allies by {{blue}}.",
         "fortifyingHexEnemyPierceIncrease": 1,
         "fortifyingHexDamageIncreasePercent": 40,
-        "fortifyingHexEnergyCostIncrease": 10,
+        "fortifyingHexEnergyCostIncrease": 5,
         "fortifyingHexAllyPierceReduction": 1
       },
       "heavyShields": {
