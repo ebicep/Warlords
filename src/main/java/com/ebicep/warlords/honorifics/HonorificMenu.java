@@ -40,8 +40,8 @@ public final class HonorificMenu {
 
         for (int i = 0; i < Honorific.VALUES.length; i++) {
             Honorific honorific = Honorific.VALUES[i];
-            int x = 1 + i % 7;
-            int y = 1 + i / 7;
+            int x = i % 9;
+            int y = 1 + i / 9;
             boolean unlocked = profile.isUnlocked(honorific);
             boolean equipped = profile.getEquippedHonorific() == honorific;
             ItemBuilder builder = new ItemBuilder(honorific.getIcon())

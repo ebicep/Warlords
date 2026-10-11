@@ -23,6 +23,10 @@ public class HonorificProfile {
     private long highestSingleGameDamage;
     private boolean completedRegnumOfTwoCrowns;
     private boolean completedRegnumOblivionWithFourPlayers;
+    private boolean diedToOwnDamage;
+    private long highestSingleGameCoins;
+    private boolean wonWithPlikie;
+    private boolean sacrificedWithSacrifice;
 
     public HonorificProfile() {
         ensureDefaults();
@@ -201,6 +205,38 @@ public class HonorificProfile {
         if (oblivion && playerCount == 4) {
             completedRegnumOblivionWithFourPlayers = true;
         }
+    }
+
+    public boolean hasDiedToOwnDamage() {
+        return diedToOwnDamage;
+    }
+
+    public void recordOwnDamageDeath() {
+        diedToOwnDamage = true;
+    }
+
+    public long getHighestSingleGameCoins() {
+        return highestSingleGameCoins;
+    }
+
+    public void recordSingleGameCoins(long coins) {
+        highestSingleGameCoins = Math.max(highestSingleGameCoins, coins);
+    }
+
+    public boolean hasWonWithPlikie() {
+        return wonWithPlikie;
+    }
+
+    public void recordWinWithPlikie() {
+        wonWithPlikie = true;
+    }
+
+    public boolean hasSacrificedWithSacrifice() {
+        return sacrificedWithSacrifice;
+    }
+
+    public void recordSacrificeKill() {
+        sacrificedWithSacrifice = true;
     }
 
     private void ensureDefaults() {

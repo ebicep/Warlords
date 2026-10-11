@@ -60,6 +60,9 @@ public class Choir extends BaseSet {
                         if (event.getFlags().contains(InstanceFlags.RECURSIVE) || currentHealValue <= 0) {
                             return;
                         }
+                        if (event.getFlags().contains(InstanceFlags.DOT)) {
+                            return;
+                        }
                         WarlordsEntity healed = event.getWarlordsEntity();
                         if (!(healed instanceof WarlordsPlayer) || healed.equals(warlordsPlayer) || !healed.isTeammate(warlordsPlayer)) {
                             return;

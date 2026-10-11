@@ -125,7 +125,7 @@ public class Orbyz extends AbstractMob implements BossMob {
 
         mapCenter = new Location(warlordsNPC.getWorld(), 112.5, 11, 62.5);
 
-        rotatingRadialLasersAbility = new RotatingRadialLasersAbility(warlordsNPC, () -> mapCenter, 6, 45, 1, 80, 240, 1.2, 2, 1000, 2, 1, Color.AQUA, Color.RED);
+        rotatingRadialLasersAbility = new RotatingRadialLasersAbility(warlordsNPC, () -> mapCenter, 6, 45, 1, 80, 240, 1.2, 2, 2000, 2, 1, Color.AQUA, Color.RED);
         heavenlySpearAbilityOne = new HeavenlySpearAbility(warlordsNPC, () -> mapCenter, 8 * option.playerCount(), 38, 30, 5, 4000, 60, 35, 2.5, Material.PACKED_ICE, Particle.ITEM_SNOWBALL, Particle.SNOWFLAKE, Sound.ENTITY_ZOMBIE_VILLAGER_CURE, Sound.BLOCK_GLASS_BREAK);
         heavenlySpearAbilityInterval = new HeavenlySpearAbility(warlordsNPC, () -> mapCenter, 2 + option.playerCount(), 36, 50, 8, 5000, 400, 35, 3.5, Material.SNOW_BLOCK, Particle.ITEM_SNOWBALL, Particle.SNOWFLAKE, Sound.ENTITY_ZOMBIE_VILLAGER_CURE, Sound.BLOCK_GLASS_BREAK);
 

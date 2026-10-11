@@ -168,6 +168,12 @@ public final class HonorificManager {
             case COLLATERAL -> progress(profile.getHighestSingleGameDamage(), 1_000_000_000L);
             case TWO_FATES -> profile.hasCompletedRegnumOfTwoCrowns() ? "Completed" : "Not completed";
             case CROWNED_HEIR -> profile.hasCompletedRegnumOblivionWithFourPlayers() ? "Completed" : "Not completed";
+            case LOSER -> progress(databasePlayer.getDeaths(), 1_000);
+            case GOOBER -> profile.hasDiedToOwnDamage() ? "Completed" : "Not completed";
+            case MONEYBAGS -> progress(profile.getHighestSingleGameCoins(), 200_000);
+            case PICKLE -> profile.hasWonWithPlikie() ? "Completed" : "Not completed";
+            case REAPER -> profile.hasSacrificedWithSacrifice() ? "Completed" : "Not completed";
+            case NO_LIFE -> progress(databasePlayer.getPlays(), 10_000);
             default -> honorific.isPurchasable() ? "Purchasable" : "Challenge";
         };
     }
@@ -207,6 +213,34 @@ public final class HonorificManager {
 
     public static void recordRegnumCompletion(UUID uuid, boolean oblivion, int playerCount) {
         getProfile(uuid).recordRegnumCompletion(oblivion, playerCount);
+        refreshAndSave(uuid);
+    }
+
+    public static void recordOwnDamageDeath(UUID uuid) {
+        if (!honorificsEnabled()) {
+            return;
+        }
+        getProfile(uuid).recordOwnDamageDeath();
+        refreshAndSave(uuid);
+    }
+
+    public static void recordSingleGameCoins(UUID uuid, long coins) {
+        if (coins > 0) {
+            getProfile(uuid).recordSingleGameCoins(coins);
+            refreshAndSave(uuid);
+        }
+    }
+
+    public static void recordWinWithPlikie(UUID uuid) {
+        getProfile(uuid).recordWinWithPlikie();
+        refreshAndSave(uuid);
+    }
+
+    public static void recordSacrificeKill(UUID uuid) {
+        if (!honorificsEnabled()) {
+            return;
+        }
+        getProfile(uuid).recordSacrificeKill();
         refreshAndSave(uuid);
     }
 
@@ -276,6 +310,12 @@ public final class HonorificManager {
             case COLLATERAL -> profile.getHighestSingleGameDamage() >= 1_000_000_000L;
             case TWO_FATES -> profile.hasCompletedRegnumOfTwoCrowns();
             case CROWNED_HEIR -> profile.hasCompletedRegnumOblivionWithFourPlayers();
+            case LOSER -> databasePlayer.getDeaths() >= 1_000;
+            case GOOBER -> profile.hasDiedToOwnDamage();
+            case MONEYBAGS -> profile.getHighestSingleGameCoins() >= 200_000;
+            case PICKLE -> profile.hasWonWithPlikie();
+            case REAPER -> profile.hasSacrificedWithSacrifice();
+            case NO_LIFE -> databasePlayer.getPlays() >= 10_000;
             default -> false;
         };
     }

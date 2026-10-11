@@ -11,6 +11,7 @@ import com.google.common.collect.Sets;
 import net.minecraft.world.item.equipment.ArmorType;
 import org.bukkit.*;
 import org.bukkit.block.Block;
+import org.bukkit.block.banner.Pattern;
 import org.bukkit.craftbukkit.entity.CraftPlayer;
 import org.bukkit.entity.*;
 import org.bukkit.inventory.EntityEquipment;
@@ -18,6 +19,7 @@ import org.bukkit.inventory.EquipmentSlot;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ArmorMeta;
 import org.bukkit.inventory.meta.LeatherArmorMeta;
+import org.bukkit.inventory.meta.ShieldMeta;
 import org.bukkit.inventory.meta.trim.ArmorTrim;
 import org.bukkit.inventory.meta.trim.TrimMaterial;
 import org.bukkit.inventory.meta.trim.TrimPattern;
@@ -351,20 +353,43 @@ public class Utils {
     }
 
     public static ItemStack applyColorTo(@Nonnull Material armor, int red, int green, int blue, TrimMaterial material, TrimPattern pattern) {
-        ItemStack itemStack = new ItemStack(armor);
-        ArmorMeta armorMeta = (ArmorMeta) itemStack.getItemMeta();
-        armorMeta.setTrim(new ArmorTrim(material, pattern));
-        LeatherArmorMeta leatherArmorMeta = (LeatherArmorMeta) itemStack.getItemMeta();
-        leatherArmorMeta.setColor(Color.fromRGB(red, green, blue));
-        itemStack.setItemMeta(leatherArmorMeta);
-
-        return itemStack;
+        return applyTrimTo(applyColorTo(armor, red, green, blue), material, pattern);
     }
 
     public static ItemStack applyTrimTo(@Nonnull Material armor, TrimMaterial material, TrimPattern pattern) {
-        ItemStack itemStack = new ItemStack(armor);
-        ArmorMeta armorMeta = (ArmorMeta) itemStack.getItemMeta();
+        return applyTrimTo(new ItemStack(armor), material, pattern);
+    }
+
+    /**
+     * Applies an armor trim when the stack is armor. Other items, including helmet skulls, are returned unchanged.
+     */
+    public static ItemStack applyTrimTo(@Nonnull ItemStack armor, TrimMaterial material, TrimPattern pattern) {
+        ItemStack itemStack = armor.clone();
+        if (!(itemStack.getItemMeta() instanceof ArmorMeta armorMeta)) {
+            return armor;
+        }
         armorMeta.setTrim(new ArmorTrim(material, pattern));
+        itemStack.setItemMeta(armorMeta);
+        return itemStack;
+    }
+
+    public static ItemStack applyShield(@Nonnull DyeColor baseColor, Pattern... patterns) {
+        return applyShield(new ItemStack(Material.SHIELD), baseColor, patterns);
+    }
+
+    /**
+     * Sets a shield's base color and replaces its banner patterns. Items that are not shields are returned unchanged.
+     */
+    public static ItemStack applyShield(@Nonnull ItemStack shield, @Nonnull DyeColor baseColor, Pattern... patterns) {
+        ItemStack itemStack = shield.clone();
+        if (!(itemStack.getItemMeta() instanceof ShieldMeta shieldMeta)) {
+            return shield;
+        }
+        shieldMeta.setBaseColor(baseColor);
+        if (patterns.length > 0) {
+            shieldMeta.setPatterns(List.of(patterns));
+        }
+        itemStack.setItemMeta(shieldMeta);
         return itemStack;
     }
 
@@ -546,6 +571,40 @@ public class Utils {
             this.chestplate = chestplate;
             this.leggings = leggings;
             this.boots = boots;
+        }
+
+        /**
+         * Applies the same armor trim to every armor piece that supports trims.
+         */
+        public SimpleEntityEquipment applyTrim(TrimMaterial material, TrimPattern pattern) {
+            helmet = applyTrimTo(helmet, material, pattern);
+            chestplate = applyTrimTo(chestplate, material, pattern);
+            leggings = applyTrimTo(leggings, material, pattern);
+            boots = applyTrimTo(boots, material, pattern);
+            return this;
+        }
+
+        private static ItemStack applyTrimTo(@Nullable ItemStack armor, TrimMaterial material, TrimPattern pattern) {
+            if (armor == null || armor.getType().isAir()) {
+                return armor;
+            }
+            return Utils.applyTrimTo(armor, material, pattern);
+        }
+
+        /**
+         * Applies the same base color and banner patterns to every shield in either hand.
+         */
+        public SimpleEntityEquipment applyShield(DyeColor baseColor, Pattern... patterns) {
+            hand = applyShieldTo(hand, baseColor, patterns);
+            offHand = applyShieldTo(offHand, baseColor, patterns);
+            return this;
+        }
+
+        private static ItemStack applyShieldTo(@Nullable ItemStack item, DyeColor baseColor, Pattern... patterns) {
+            if (item == null || item.getType() != Material.SHIELD) {
+                return item;
+            }
+            return Utils.applyShield(item, baseColor, patterns);
         }
 
         @Override

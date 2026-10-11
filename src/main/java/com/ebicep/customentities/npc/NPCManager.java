@@ -51,6 +51,7 @@ public class NPCManager {
                 createWaveDefenseNPC();
                 createOnslaughtNPC();
                 createTreasureHuntNPC();
+                createDarkDescentNPC();
                 createMasterworksFairNPC();
                 createWeaponsManagerNPC();
                 createLegendaryWeaponNPC();
@@ -129,6 +130,16 @@ public class NPCManager {
 
         npc.data().set(NPC.Metadata.NAMEPLATE_VISIBLE, false);
         npc.spawn(new Location(StatsLeaderboardManager.MAIN_LOBBY_SPAWN.getWorld(), 67.5, 93, 212.5, -180, 0));
+    }
+
+    private static void createDarkDescentNPC() {
+        registerTrait(DarkDescentStartTrait.class, "DarkDescentStartTrait");
+
+        NPC npc = NPC_REGISTRY.createNPC(EntityType.PLAYER, "dark-descent-mode");
+        npc.addTrait(DarkDescentStartTrait.class);
+
+        npc.data().set(NPC.Metadata.NAMEPLATE_VISIBLE, false);
+        npc.spawn(new Location(StatsLeaderboardManager.MAIN_LOBBY_SPAWN.getWorld(), 2.5, 82, 158.5, -130, 0));
     }
 
     private static void createAnomalyNPC() {
