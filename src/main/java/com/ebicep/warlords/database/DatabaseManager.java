@@ -33,9 +33,9 @@ import com.ebicep.warlords.util.chat.ChatUtils;
 import com.mongodb.client.MongoClient;
 import com.mongodb.client.MongoClients;
 import com.mongodb.client.MongoDatabase;
-import org.bson.Document;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
+import org.bson.Document;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.bukkit.scheduler.BukkitRunnable;
@@ -231,23 +231,25 @@ public class DatabaseManager {
         applyPrestigeOrbLoginPatch(uuid, databasePlayer);
 
         // PATCHES
-        List<DatabasePlayerPatches> patchesApplied = databasePlayer.getPatchesApplied();
-        for (DatabasePlayerPatches patch : DatabasePlayerPatches.VALUES) {
-            if (patchesApplied.contains(patch)) {
-                continue;
-            }
-            ChatUtils.MessageType.WARLORDS.sendMessage("Applying " + patch + " patch to " + uuid);
-            try {
-                boolean applied = patch.run(uuid, databasePlayer);
-                if (applied) {
-                    ChatUtils.MessageType.WARLORDS.sendMessage("Applied " + patch + " patch to " + uuid);
-                    patchesApplied.add(patch);
-                } else {
-                    ChatUtils.MessageType.WARLORDS.sendErrorMessage("Failed to apply " + patch + " patch to " + uuid);
+        if (DatabasePlayerPatches.APPLY_ON_LOGIN) {
+            List<String> patchesApplied = databasePlayer.getPatchesApplied();
+            for (DatabasePlayerPatches patch : DatabasePlayerPatches.VALUES) {
+                if (patchesApplied.contains(patch.name())) {
+                    continue;
                 }
-            } catch (Exception e) {
-                ChatUtils.MessageType.WARLORDS.sendErrorMessage("Failed to apply " + patch + " patch to " + uuid);
-                ChatUtils.MessageType.WARLORDS.sendErrorMessage(e);
+                ChatUtils.MessageType.WARLORDS.sendMessage("Applying " + patch + " patch to " + uuid);
+                try {
+                    boolean applied = patch.run(uuid, databasePlayer);
+                    if (applied) {
+                        ChatUtils.MessageType.WARLORDS.sendMessage("Applied " + patch + " patch to " + uuid);
+                        patchesApplied.add(patch.name());
+                    } else {
+                        ChatUtils.MessageType.WARLORDS.sendErrorMessage("Failed to apply " + patch + " patch to " + uuid);
+                    }
+                } catch (Exception e) {
+                    ChatUtils.MessageType.WARLORDS.sendErrorMessage("Failed to apply " + patch + " patch to " + uuid);
+                    ChatUtils.MessageType.WARLORDS.sendErrorMessage(e);
+                }
             }
         }
 

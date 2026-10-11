@@ -71,18 +71,20 @@ public class GuildManager {
     public static void init() {
         GUILDS.forEach(Guild::reloadPlayerCache);
         GUILDS.forEach(guild -> {
-            for (Guild.Patches patch : Guild.Patches.VALUES) {
-                List<Guild.Patches> patchesApplied = guild.getPatchesApplied();
-                if (patchesApplied.contains(patch)) {
-                    continue;
-                }
-                ChatUtils.MessageType.WARLORDS.sendMessage("Applying " + patch + " patch to guild " + guild.getName());
-                boolean applied = patch.run(guild);
-                if (applied) {
-                    ChatUtils.MessageType.WARLORDS.sendMessage("Applied " + patch + " patch to guild " + guild.getName());
-                    patchesApplied.add(patch);
-                } else {
-                    ChatUtils.MessageType.WARLORDS.sendErrorMessage("Failed to apply " + patch + " patch to guild " + guild.getName());
+            if (Guild.Patches.APPLY_ON_INIT) {
+                for (Guild.Patches patch : Guild.Patches.VALUES) {
+                    List<String> patchesApplied = guild.getPatchesApplied();
+                    if (patchesApplied.contains(patch.name())) {
+                        continue;
+                    }
+                    ChatUtils.MessageType.WARLORDS.sendMessage("Applying " + patch + " patch to guild " + guild.getName());
+                    boolean applied = patch.run(guild);
+                    if (applied) {
+                        ChatUtils.MessageType.WARLORDS.sendMessage("Applied " + patch + " patch to guild " + guild.getName());
+                        patchesApplied.add(patch.name());
+                    } else {
+                        ChatUtils.MessageType.WARLORDS.sendErrorMessage("Failed to apply " + patch + " patch to guild " + guild.getName());
+                    }
                 }
             }
             queueUpdateGuild(guild);

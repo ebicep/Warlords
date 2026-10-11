@@ -214,6 +214,7 @@ public class PlayingState implements State, TimerDebugAble {
     @Override
     @SuppressWarnings("null")
     public void end() {
+        updater.clearCaches();
         this.getGame().forEachOfflineWarlordsEntity(e -> e.setActive(false));
         ChatUtils.MessageType.WARLORDS.sendMessage(" ----- GAME END ----- ");
         ChatUtils.MessageType.WARLORDS.sendMessage("RecordGames = " + RecordGamesCommand.recordGames);
