@@ -11,6 +11,7 @@ import com.google.common.collect.Sets;
 import net.minecraft.world.item.equipment.ArmorType;
 import org.bukkit.*;
 import org.bukkit.block.Block;
+import org.bukkit.block.banner.Pattern;
 import org.bukkit.craftbukkit.entity.CraftPlayer;
 import org.bukkit.entity.*;
 import org.bukkit.inventory.EntityEquipment;
@@ -18,6 +19,7 @@ import org.bukkit.inventory.EquipmentSlot;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ArmorMeta;
 import org.bukkit.inventory.meta.LeatherArmorMeta;
+import org.bukkit.inventory.meta.ShieldMeta;
 import org.bukkit.inventory.meta.trim.ArmorTrim;
 import org.bukkit.inventory.meta.trim.TrimMaterial;
 import org.bukkit.inventory.meta.trim.TrimPattern;
@@ -371,6 +373,26 @@ public class Utils {
         return itemStack;
     }
 
+    public static ItemStack applyShield(@Nonnull DyeColor baseColor, Pattern... patterns) {
+        return applyShield(new ItemStack(Material.SHIELD), baseColor, patterns);
+    }
+
+    /**
+     * Sets a shield's base color and replaces its banner patterns. Items that are not shields are returned unchanged.
+     */
+    public static ItemStack applyShield(@Nonnull ItemStack shield, @Nonnull DyeColor baseColor, Pattern... patterns) {
+        ItemStack itemStack = shield.clone();
+        if (!(itemStack.getItemMeta() instanceof ShieldMeta shieldMeta)) {
+            return shield;
+        }
+        shieldMeta.setBaseColor(baseColor);
+        if (patterns.length > 0) {
+            shieldMeta.setPatterns(List.of(patterns));
+        }
+        itemStack.setItemMeta(shieldMeta);
+        return itemStack;
+    }
+
     /**
      * @param from
      * @param vectorLocation initial center point
@@ -567,6 +589,22 @@ public class Utils {
                 return armor;
             }
             return Utils.applyTrimTo(armor, material, pattern);
+        }
+
+        /**
+         * Applies the same base color and banner patterns to every shield in either hand.
+         */
+        public SimpleEntityEquipment applyShield(DyeColor baseColor, Pattern... patterns) {
+            hand = applyShieldTo(hand, baseColor, patterns);
+            offHand = applyShieldTo(offHand, baseColor, patterns);
+            return this;
+        }
+
+        private static ItemStack applyShieldTo(@Nullable ItemStack item, DyeColor baseColor, Pattern... patterns) {
+            if (item == null || item.getType() != Material.SHIELD) {
+                return item;
+            }
+            return Utils.applyShield(item, baseColor, patterns);
         }
 
         @Override
