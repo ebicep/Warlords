@@ -16,10 +16,10 @@ import com.ebicep.warlords.database.repositories.player.pojos.cache.PushedStatTo
 import com.ebicep.warlords.database.repositories.player.pojos.cache.StatPushUp;
 import com.ebicep.warlords.database.repositories.player.pojos.general.classes.*;
 import com.ebicep.warlords.database.repositories.player.pojos.pve.DatabasePlayerPvE;
-import com.ebicep.warlords.honorifics.HonorificProfile;
 import com.ebicep.warlords.game.GameAddon;
 import com.ebicep.warlords.game.GameMode;
 import com.ebicep.warlords.game.Team;
+import com.ebicep.warlords.honorifics.HonorificProfile;
 import com.ebicep.warlords.player.general.*;
 import com.ebicep.warlords.player.general.settings.*;
 import com.ebicep.warlords.player.general.settings.actionbar.ActionBarSettings;
@@ -112,7 +112,7 @@ public class DatabasePlayer implements CachedMultiStatsGeneral, TracksMultiAbili
     private List<UUID> ignored = new ArrayList<>();
     private List<String> permissions = new ArrayList<>();
     @Field("patches_applied")
-    private List<DatabasePlayerPatches> patchesApplied = new ArrayList<>();
+    private List<String> patchesApplied = new ArrayList<>();
 
     @Field("game_logs")
     private List<StreamChaptersCommand.GameTime> gameLogs = new ArrayList<>();
@@ -592,7 +592,7 @@ public class DatabasePlayer implements CachedMultiStatsGeneral, TracksMultiAbili
         return permissions.contains(permission);
     }
 
-    public List<DatabasePlayerPatches> getPatchesApplied() {
+    public List<String> getPatchesApplied() {
         return patchesApplied;
     }
 
