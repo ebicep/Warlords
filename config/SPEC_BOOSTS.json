@@ -338,7 +338,7 @@
         "avengerStrikeEnergyCostIncrease": 10,
         "cleaveTargets": 2,
         "cleaveRange": 3.5,
-        "cleaveDamagePercent": 35,
+        "cleaveDamagePercent": 20,
         "energyStealPerCleave": 5,
         "wrathDamageBoostPercent": 25
       },
