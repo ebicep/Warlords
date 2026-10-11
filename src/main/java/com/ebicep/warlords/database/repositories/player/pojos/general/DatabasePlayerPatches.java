@@ -36,7 +36,7 @@ public enum DatabasePlayerPatches {
     EOD_ASCENDANT_SHARD_2 {
         @Override
         public boolean run(UUID uuid, DatabasePlayer databasePlayer) {
-            if (!databasePlayer.getPatchesApplied().contains(EOD_ASCENDANT_SHARD)) {
+            if (!databasePlayer.getPatchesApplied().contains(EOD_ASCENDANT_SHARD.name())) {
                 return true;
             }
             DatabasePlayerPvE pveStats = databasePlayer.getPveStats();
@@ -362,6 +362,11 @@ public enum DatabasePlayerPatches {
     },
 
     ;
+
+    /**
+     * Set to {@code true} to run login patches again.
+     */
+    public static final boolean APPLY_ON_LOGIN = false;
 
     public static final DatabasePlayerPatches[] VALUES = values();
 

@@ -91,6 +91,17 @@ public class PlayingStateScoreboardUpdater {
         pendingHealthViewers.remove(uuid);
     }
 
+    public void clearCaches() {
+        gamePlayers.clear();
+        cachedNames.clear();
+        dirtyViewers.clear();
+        dirtyTargets.clear();
+        dirtyTabNames.clear();
+        sidebarDirty.clear();
+        dirtyHealthTargets.clear();
+        pendingHealthViewers.clear();
+    }
+
     /**
      * Health, tab list names, and sidebar — distributed across {@link #UPDATE_INTERVAL} ticks.
      * Also flushes above-head names if still dirty (distributed across {@link #NAME_INTERVAL} ticks).

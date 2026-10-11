@@ -772,6 +772,7 @@ public final class Game implements Runnable, AutoCloseable {
         } catch (Throwable e) {
             exceptions.add(e);
         }
+        cachedPlayers.clear();
         forEachEnabledOption(option -> {
             try {
                 option.onGameCleanup(this);
