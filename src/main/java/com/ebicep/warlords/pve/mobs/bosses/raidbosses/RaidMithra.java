@@ -42,7 +42,7 @@ public class RaidMithra extends AbstractMob implements RaidBossMob {
     private static final double CRYSTAL_VERTICAL_AMPLITUDE = 0.6;
     private static final int CROWN_SHARD_COUNT = 6;
     private static final double CROWN_RADIUS = 4;
-    private static final float CROWN_SPIN_DEGREES = 0.5f;
+    private static final float CROWN_SPIN_DEGREES = -0.5f;
     private static final float CROWN_SHARD_WIDTH = 1.15f;
     private static final float CROWN_SHARD_HEIGHT = 2f;
     private static final double CROWN_HEIGHT_OFFSET = 1;
@@ -69,7 +69,7 @@ public class RaidMithra extends AbstractMob implements RaidBossMob {
     private int chessStep;
 
     public RaidMithra(Location spawnLocation) {
-        this(spawnLocation, "Mithra", 8_000_000, 0.18f, 20, 1200, 1600);
+        this(spawnLocation, "⋆୨୧˚ Mithra ˚୨୧⋆", 11_000_000, 0.18f, 30, 1200, 1600);
     }
 
     public RaidMithra(
@@ -99,7 +99,7 @@ public class RaidMithra extends AbstractMob implements RaidBossMob {
 
     @Override
     public Component getDescription() {
-        return Component.text(". ╰──╮ ♦ RAID BOSS ♦ ╭──╯ .", TextColor.color(225, 85, 115), TextDecoration.BOLD);
+        return Component.text(". ╰──╮ ♦ The Illusion Monarchy ♦ ╭──╯ .", TextColor.color(225, 105, 185), TextDecoration.BOLD);
     }
 
     @Override
