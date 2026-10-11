@@ -470,7 +470,7 @@
         "description": "Reduce the damage of {{aqua:Lightning Bolt}} and {{aqua:Chain Lightning}} by {{damageReduction;%}}. Enemies hit by {{aqua:Chain Lightning}} deal {{damageReduction;%}} less damage for {{ticks}}. This effect stacks up to {{blue}} times.",
         "damageReductionPercent": 5,
         "chainLightningDamageReductionPercent": 12,
-        "chainLightningDurationTicks": 90,
+        "chainLightningDurationTicks": 100,
         "maxStacks": 3
       },
       "symphonicWindfury": {
