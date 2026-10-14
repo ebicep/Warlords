@@ -43,7 +43,6 @@ import javax.annotation.Nullable;
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.List;
-import java.util.Random;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ThreadLocalRandom;
@@ -163,7 +162,7 @@ public class DarkDescentOption implements PveOption {
 
     private void startFloor(int floor) {
         this.floor = floor;
-        currentWave = floorMobs.getWave(floor, new Random());
+        currentWave = floorMobs.getWave(floor, ThreadLocalRandom.current());
         spawnsRemaining = currentWave.getMonsterCount();
         spawnDelay = currentWave.getDelay();
         spawnTicks = 0;
@@ -282,7 +281,7 @@ public class DarkDescentOption implements PveOption {
         return lines;
     }
 
-    public Location getFloorCenter() {
+    private Location getFloorCenter() {
         return floorCenters.get(floor - 1).clone();
     }
 
