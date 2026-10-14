@@ -69,6 +69,7 @@ public abstract class GameMap {
     public static final GameMap PLAINS_OF_DUNESTAR = new PlainsOfDunestar();
     public static final GameMap WHAT_ONCE_WAS = new WhatOnceWas();
     public static final GameMap ENDLESS_PARADOX = new EndlessParadox();
+    public static final GameMap DARK_DESCENT = new DarkDescentMap();
 
 
     public static final GameMap[] VALUES = {
@@ -125,7 +126,8 @@ public abstract class GameMap {
             ENDLESS_PARADOX,
             WHAT_ONCE_WAS,
             PLAINS_OF_DUNESTAR,
-            OPEX_ANOMALY
+            OPEX_ANOMALY,
+            DARK_DESCENT
     };
 
     public static GameMap getGameMap(String mapName) {

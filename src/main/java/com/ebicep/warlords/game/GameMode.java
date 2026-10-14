@@ -48,6 +48,7 @@ public enum GameMode implements Mode {
                 || mode == ONSLAUGHT
                 || mode == TREASURE_HUNT
                 || mode == ANOMALY
+                || mode == DARK_DESCENT
                 || mode == TOWER_DEFENSE
                 || mode == WHACK_A_MOLE
                 || mode == PVE_DEBUG
