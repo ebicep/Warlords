@@ -5,10 +5,10 @@ import com.ebicep.customentities.npc.NPCLabelHologram;
 import com.ebicep.customentities.npc.WarlordsTrait;
 import com.ebicep.warlords.Warlords;
 import com.ebicep.warlords.game.GameMode;
+import com.ebicep.warlords.game.option.pve.darkdescent.DarkDescentMenu;
 import com.ebicep.warlords.util.bukkit.ComponentBuilder;
 import net.citizensnpcs.api.event.NPCLeftClickEvent;
 import net.citizensnpcs.api.event.NPCRightClickEvent;
-import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
 import net.kyori.adventure.text.format.TextDecoration;
 
@@ -51,8 +51,7 @@ public class DarkDescentStartTrait extends WarlordsTrait implements HasNPCLabelH
         lastPlayerCountInLobby = playerCountInLobby;
         labelHologram.update(
                 npc,
-                ComponentBuilder.create("IN DEVELOPMENT", NamedTextColor.RED, TextDecoration.BOLD)
-                        .newLine("Dark Descent", NamedTextColor.DARK_PURPLE, TextDecoration.BOLD)
+                ComponentBuilder.create("Dark Descent", NamedTextColor.DARK_PURPLE, TextDecoration.BOLD)
                         .newLine(playerCountInLobby + " in Lobby", NamedTextColor.GRAY)
                         .newLine(playerCount + " Players", NamedTextColor.YELLOW, TextDecoration.BOLD)
                         .build()
@@ -61,11 +60,11 @@ public class DarkDescentStartTrait extends WarlordsTrait implements HasNPCLabelH
 
     @Override
     public void rightClick(NPCRightClickEvent event) {
-        event.getClicker().sendMessage(Component.text("Dark Descent is currently in development, check back later!", NamedTextColor.RED));
+        DarkDescentMenu.openDarkDescentMenu(event.getClicker());
     }
 
     @Override
     public void leftClick(NPCLeftClickEvent event) {
-        event.getClicker().sendMessage(Component.text("Dark Descent is currently in development, check back later!", NamedTextColor.RED));
+        DarkDescentMenu.openDarkDescentMenu(event.getClicker());
     }
 }
