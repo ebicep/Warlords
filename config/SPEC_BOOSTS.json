@@ -124,8 +124,8 @@
         "name": "Ice Block",
         "description": "Increase the duration of {{aqua:Ice Barrier}} by {{ticks}}. {{aqua:Ice Barrier}} can be recasted after {{ticks}}, reducing the duration by {{ticks}} and becoming {{aqua:Ice Block}}. {{aqua:Ice Block}} prevents jumping, tremendously reduces movement speed, but prevents knockback and grants {{damageReduction;%}} damage reduction.",
         "iceBarrierDurationIncreaseTicks": 40,
-        "iceBlockRecastDelayTicks": 20,
-        "recastDurationDecreaseTicks": 30,
+        "iceBlockRecastDelayTicks": 0,
+        "recastDurationDecreaseTicks": 20,
         "recastDamageReductionPercent": 80,
         "recastMovementSpeed": 0.4,
         "recastMovementSpeedFlag": 0.3
@@ -265,8 +265,8 @@
         "difficulty": 2,
         "name": "Fervent Force",
         "description": "Reduce the cooldown of {{aqua:Seismic Wave}} and {{aqua:Ground Slam}} by {{ticks;%}}.",
-        "seismicWaveCooldownReductionPercent": 14,
-        "groundSlamCooldownReductionPercent": 14
+        "seismicWaveCooldownReductionPercent": 15,
+        "groundSlamCooldownReductionPercent": 15
       },
       "heroicIntervention": {
         "difficulty": 2,
@@ -338,7 +338,7 @@
         "avengerStrikeEnergyCostIncrease": 10,
         "cleaveTargets": 2,
         "cleaveRange": 3.5,
-        "cleaveDamagePercent": 35,
+        "cleaveDamagePercent": 20,
         "energyStealPerCleave": 5,
         "wrathDamageBoostPercent": 25
       },
@@ -470,7 +470,7 @@
         "description": "Reduce the damage of {{aqua:Lightning Bolt}} and {{aqua:Chain Lightning}} by {{damageReduction;%}}. Enemies hit by {{aqua:Chain Lightning}} deal {{damageReduction;%}} less damage for {{ticks}}. This effect stacks up to {{blue}} times.",
         "damageReductionPercent": 5,
         "chainLightningDamageReductionPercent": 12,
-        "chainLightningDurationTicks": 90,
+        "chainLightningDurationTicks": 100,
         "maxStacks": 3
       },
       "symphonicWindfury": {
@@ -806,7 +806,7 @@
         "description": "Increase the pierce against enemies of {{aqua:Fortifying Hex}} by {{blue}} and the damage by {{damage;%}}, but increase the energy cost by {{energy}} and reduce the pierce for allies by {{blue}}.",
         "fortifyingHexEnemyPierceIncrease": 1,
         "fortifyingHexDamageIncreasePercent": 40,
-        "fortifyingHexEnergyCostIncrease": 10,
+        "fortifyingHexEnergyCostIncrease": 5,
         "fortifyingHexAllyPierceReduction": 1
       },
       "heavyShields": {
@@ -822,7 +822,7 @@
         "difficulty": 1,
         "name": "Divine Shields",
         "description": "Increase the shield health granted by {{aqua:Guardian Beam}} by {{damageReduction;%}} and its duration by {{ticks}}.",
-        "guardianBeamShieldIncreasePercent": 30,
+        "guardianBeamShieldIncreasePercent": 35,
         "guardianBeamShieldDurationIncreaseTicks": 30
       },
       "pactOfProtection": {
@@ -837,7 +837,7 @@
         "difficulty": 2,
         "name": "Sanctuary of Retribution",
         "description": "Increase the damage reduction per {{yellow:FHEX}} granted by {{aqua:Sanctuary}} by {{damageReduction;%}}. During {{aqua:Sanctuary}}, allies with max stacks of {{yellow:FHEX}} now reflect damage reduced by {{yellow:FHEX}} back to the dealer.",
-        "sanctuaryDamageReductionPerHexStack": 5
+        "sanctuaryDamageReductionPerHexStack": 4
       },
       "loneSentinel": {
         "difficulty": 1,
