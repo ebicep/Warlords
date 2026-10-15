@@ -14,7 +14,7 @@ public enum Raid {
     REGNUM_OF_TWO_CROWNS(
             "Regnum of Two Crowns",
             "Conquer the Heir of Two Crowns.",
-            70,
+            2000,
             GemTier.ONE
     ) {
         @Override
@@ -34,11 +34,6 @@ public enum Raid {
             return new LinkedHashMap<>() {{
                 put(Currencies.COIN, 400_000L);
                 put(GuildSpendable.GUILD_COIN, 15_000L);
-                put(Currencies.ASCENDANT_SHARD, 20L);
-                put(Currencies.LEGEND_FRAGMENTS, 10000L);
-                put(Currencies.ETHEREUM_CRYSTAL, 10L);
-                put(Currencies.ASCENDANT_STAR_PIECE, 3L);
-                put(Currencies.LIMIT_BREAKER, 3L);
                 put(Currencies.ITEM_LOCK_SCROLL, 1L);
             }};
         }
@@ -46,7 +41,7 @@ public enum Raid {
     OATH_OF_THE_FIRST_HEIR(
             "Oath of the First Heir",
             "PLACEHOLDER",
-            75,
+            2400,
             GemTier.ONE
     ) {
         @Override
@@ -73,10 +68,10 @@ public enum Raid {
             }};
         }
     },
-    THE_EVERGREEN_MANSION(
-            "The Evergreen Mansion",
+    CRUCIBLE_OF_SALVATION(
+            "Crucible of Salvation",
             "PLACEHOLDER",
-            80,
+            2900,
             GemTier.TWO
     ) {
         @Override
@@ -106,7 +101,7 @@ public enum Raid {
     SHADOWS_OF_THE_UNDERGROUND(
             "Shadows of the Underground",
             "PLACEHOLDER",
-            85,
+            3150,
             GemTier.TWO
     ) {
         @Override
@@ -236,13 +231,13 @@ public enum Raid {
 
     private final String name;
     private final String description;
-    private final int minimumClassLevel;
+    private final int minimumGearScore;
     private final GemTier gemTier;
 
-    Raid(String name, String description, int minimumClassLevel, GemTier gemTier) {
+    Raid(String name, String description, int minimumGearScore, GemTier gemTier) {
         this.name = name;
         this.description = description;
-        this.minimumClassLevel = minimumClassLevel;
+        this.minimumGearScore = minimumGearScore;
         this.gemTier = gemTier;
     }
 
@@ -277,8 +272,8 @@ public enum Raid {
         return description;
     }
 
-    public int getMinimumClassLevel() {
-        return minimumClassLevel;
+    public int getMinimumGearscore() {
+        return minimumGearScore;
     }
 
     public GemTier getGemTier() {
