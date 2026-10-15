@@ -6,8 +6,8 @@ import com.ebicep.warlords.game.option.pve.PveOption;
 import com.ebicep.warlords.player.ingame.WarlordsPlayer;
 import com.ebicep.warlords.pve.DifficultyIndex;
 import com.ebicep.warlords.pve.mobs.AbstractMob;
-import com.ebicep.warlords.pve.mobs.Aspect;
 import com.ebicep.warlords.pve.mobs.Mob;
+import com.ebicep.warlords.pve.newitems.setbonus.sets.Summoner;
 import com.ebicep.warlords.pve.weapons.weapontypes.legendaries.AbstractLegendaryWeapon;
 import com.ebicep.warlords.pve.weapons.weapontypes.legendaries.LegendaryTitles;
 import com.ebicep.warlords.pve.weapons.weapontypes.legendaries.PassiveCounter;
@@ -124,7 +124,9 @@ public class LegendaryRequiem extends AbstractLegendaryWeapon implements Passive
                     if (player.getTeam() == null) {
                         return;
                     }
+                    Summoner.applyToSummon(mob, player);
                     pveOption.spawnNewMob(mob, player.getTeam());
+                    Summoner.applyToSummon(mob, player);
                 }
                 new GameRunnable(game) {
                     @Override

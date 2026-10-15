@@ -35,6 +35,7 @@ public class RequiemGuardian extends AbstractMob implements PlayerMob, NoTargetA
 
     @Override
     public void onSpawn(PveOption option) {
+        super.onSpawn(option);
         if (warlordsNPC.getEntity() instanceof Zombie zombie) {
             zombie.setBaby(true);
         }
