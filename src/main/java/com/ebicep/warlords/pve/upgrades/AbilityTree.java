@@ -53,7 +53,7 @@ public class AbilityTree {
             return;
         }
         List<AutoUpgradeProfile.AutoUpgradeEntry> autoUpgradeEntries = autoUpgradeProfile.getAutoUpgradeEntries();
-        // handle free upgrades first
+        // Weapon free upgrades belong to a specific ability. Spend those before Synaptic Overload's global free upgrades.
         for (AutoUpgradeProfile.AutoUpgradeEntry entry : autoUpgradeEntries) {
             AbstractUpgradeBranch<?> upgradeBranch = abilityTree.getUpgradeBranches().get(entry.getBranchIndex());
             AutoUpgradeProfile.AutoUpgradeEntry.UpgradeType upgradeType = entry.getUpgradeType();
@@ -63,7 +63,25 @@ public class AbilityTree {
             if (upgrade.isUnlocked()) {
                 continue;
             }
-            if (abilityTree.getFreeUpgrades() > 0 || upgradeBranch.getFreeUpgrades() > 0 && upgradeIndex == 0) {
+            if (upgradeBranch.getFreeUpgrades() > 0 && upgradeIndex == 0) {
+                switch (upgradeType) {
+                    case A, B -> upgradeBranch.purchaseUpgrade(upgradeList, warlordsPlayer, upgrade, upgradeIndex, true);
+                }
+            }
+        }
+        if (!abilityTree.hasUnusedBranchFreeUpgrades()) {
+            for (AutoUpgradeProfile.AutoUpgradeEntry entry : autoUpgradeEntries) {
+                AbstractUpgradeBranch<?> upgradeBranch = abilityTree.getUpgradeBranches().get(entry.getBranchIndex());
+                AutoUpgradeProfile.AutoUpgradeEntry.UpgradeType upgradeType = entry.getUpgradeType();
+                List<Upgrade> upgradeList = upgradeType.getUpgradeFunction.apply(upgradeBranch);
+                int upgradeIndex = entry.getUpgradeIndex();
+                Upgrade upgrade = upgradeList.get(upgradeIndex);
+                if (upgrade.isUnlocked()) {
+                    continue;
+                }
+                if (abilityTree.getFreeUpgrades() <= 0) {
+                    break;
+                }
                 switch (upgradeType) {
                     case A, B -> upgradeBranch.purchaseUpgrade(upgradeList, warlordsPlayer, upgrade, upgradeIndex, true);
                 }
@@ -98,6 +116,14 @@ public class AbilityTree {
 
     public List<AbstractUpgradeBranch<?>> getUpgradeBranches() {
         return upgradeBranches;
+    }
+
+    public boolean hasUnusedBranchFreeUpgrades() {
+        return upgradeBranches.stream().anyMatch(branch -> branch.getFreeUpgrades() > 0);
+    }
+
+    public boolean canSpendGlobalFreeUpgrade() {
+        return freeUpgrades > 0 && !hasUnusedBranchFreeUpgrades();
     }
 
     public void resetAutoUpgradeProfile(DatabasePlayer databasePlayer) {
