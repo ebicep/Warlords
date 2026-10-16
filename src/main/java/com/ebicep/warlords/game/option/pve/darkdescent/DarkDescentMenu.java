@@ -42,6 +42,7 @@ public class DarkDescentMenu {
                                 Component.empty(),
                                 Component.text("Attempts remaining: ", NamedTextColor.GRAY)
                                          .append(Component.text(progress.getAttemptsRemaining() + "/" + DarkDescentProgress.MAX_ATTEMPTS, NamedTextColor.YELLOW)),
+                                Component.empty(),
                                 Component.text("Resets in ", NamedTextColor.GRAY).append(Component.text(timeTill, NamedTextColor.YELLOW))
                         )
                         .get(),
@@ -52,10 +53,8 @@ public class DarkDescentMenu {
             Pair<Spendable, Long> reward = weeklyRewards.get(floor - 1);
             boolean earned = progress.hasEarned(floor);
             List<Component> lore = new ArrayList<>();
+            lore.add(Component.empty());
             lore.add(reward.getA().getCostColoredName(reward.getB()));
-            if (floor % 10 == 0) {
-                lore.add(Component.text("A descendant waits on this floor", NamedTextColor.DARK_PURPLE));
-            }
             lore.add(Component.empty());
             lore.add(earned
                      ? Component.text("Earned this week", NamedTextColor.GREEN)

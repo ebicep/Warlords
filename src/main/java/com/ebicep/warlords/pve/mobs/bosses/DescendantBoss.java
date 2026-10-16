@@ -57,7 +57,7 @@ abstract class DescendantBoss extends AbstractMob implements BossMob {
         new CircleEffect(
                 warlordsNPC.getGame(),
                 warlordsNPC.getTeam(),
-                center.clone(),
+                center.clone().add(0, 1, 0),
                 radius,
                 new CircumferenceEffect(particle)
         ).playEffects();

@@ -29,7 +29,9 @@ public class MiniBossObjective implements DarkDescentObjective {
             return;
         }
         List<Mob> miniBosses = option.getMiniBosses();
-        boss = miniBosses.get(ThreadLocalRandom.current().nextInt(miniBosses.size())).createMob(option.randomArenaLocation(6));
+        boss = miniBosses.get(ThreadLocalRandom.current().nextInt(miniBosses.size())).createMob(option.randomArenaLocation(10));
+        float health = boss.getWarlordsNPC().getMaxHealth();
+        boss.getWarlordsNPC().setMaxHealthAndHeal(health * 4);
         option.spawnNewMob(boss);
     }
 

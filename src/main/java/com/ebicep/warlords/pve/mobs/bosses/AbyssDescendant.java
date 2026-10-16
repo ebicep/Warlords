@@ -24,9 +24,9 @@ public class AbyssDescendant extends DescendantBoss {
     private static final int METEOR_WINDUP_TICKS = 2 * 20;
     private static final int GRASP_WINDUP_TICKS = 30;
     private static final int ECLIPSE_TICKS = 6 * 20;
-    private static final double METEOR_RADIUS = 3;
-    private static final double GRASP_RANGE = 12;
-    private static final double ECLIPSE_SAFE_RADIUS = 3.5;
+    private static final double METEOR_RADIUS = 4.5;
+    private static final double GRASP_RANGE = 15;
+    private static final double ECLIPSE_SAFE_RADIUS = 4;
 
     private int cooldownTicks = 5 * 20;
     private boolean castMeteors = true;
@@ -40,7 +40,7 @@ public class AbyssDescendant extends DescendantBoss {
     private Location eclipseCenter;
 
     public AbyssDescendant(Location spawnLocation) {
-        this(spawnLocation, "Abyss Descendant", 36000, 0.28f, 18, 750, 1000);
+        this(spawnLocation, "Abyss Descendant", 110000, 0.3f, 30, 750, 1000);
     }
 
     public AbyssDescendant(
@@ -141,7 +141,7 @@ public class AbyssDescendant extends DescendantBoss {
             return;
         }
         for (Location meteor : meteors) {
-            damageAround(meteor, METEOR_RADIUS, 1300f, "Falling Dark");
+            damageAround(meteor, METEOR_RADIUS, 2000f, "Falling Dark");
             EffectUtils.playSphereAnimation(meteor, METEOR_RADIUS, Particle.WITCH, 1);
         }
         Utils.playGlobalSound(warlordsNPC.getLocation(), Sound.ENTITY_GENERIC_EXPLODE, 1.4f, 0.5f);
@@ -173,7 +173,7 @@ public class AbyssDescendant extends DescendantBoss {
             Utils.addKnockback("Abyssal Grasp", warlordsNPC.getLocation(), enemy, 1.8, 0.1);
             enemy.addSpeedModifier(warlordsNPC, "Abyssal Grasp", -50, 40);
         }
-        damageAround(warlordsNPC.getLocation(), GRASP_RANGE, 1500f, "Abyssal Grasp");
+        damageAround(warlordsNPC.getLocation(), GRASP_RANGE, 2500f, "Abyssal Grasp");
         Utils.playGlobalSound(warlordsNPC.getLocation(), Sound.ENTITY_ENDERMAN_TELEPORT, 1.5f, 0.5f);
         cooldownTicks = 7 * 20;
     }
@@ -213,7 +213,7 @@ public class AbyssDescendant extends DescendantBoss {
                     .damage()
                     .cause("Eclipse")
                     .source(warlordsNPC)
-                    .value(450)
+                    .value(1000)
             ));
         }
         if (eclipseTicks > 0) {

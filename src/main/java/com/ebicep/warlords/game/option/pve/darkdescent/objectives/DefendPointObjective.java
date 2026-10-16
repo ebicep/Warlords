@@ -22,7 +22,7 @@ public class DefendPointObjective implements DarkDescentObjective {
 
     public DefendPointObjective(DarkDescentOption option) {
         this.option = option;
-        this.point = option.randomArenaLocation(6);
+        this.point = option.randomArenaLocation(18);
         this.circleEffect = new CircleEffect(option.getGame(), Team.BLUE, point, RADIUS, new CircumferenceEffect(Particle.END_ROD));
     }
 

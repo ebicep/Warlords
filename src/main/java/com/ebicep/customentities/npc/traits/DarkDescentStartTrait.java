@@ -60,11 +60,11 @@ public class DarkDescentStartTrait extends WarlordsTrait implements HasNPCLabelH
 
     @Override
     public void rightClick(NPCRightClickEvent event) {
-        //DarkDescentMenu.openDarkDescentMenu(event.getClicker());
+        DarkDescentMenu.openDarkDescentMenu(event.getClicker());
     }
 
     @Override
     public void leftClick(NPCLeftClickEvent event) {
-        //DarkDescentMenu.openDarkDescentMenu(event.getClicker());
+        DarkDescentMenu.openDarkDescentMenu(event.getClicker());
     }
 }

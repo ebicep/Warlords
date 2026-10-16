@@ -40,8 +40,7 @@ public class BossRoomObjective implements DarkDescentObjective {
     @Override
     public Component getScoreboardLine() {
         if (!isComplete() && boss != null && boss.getWarlordsNPC() != null) {
-            int percent = (int) (boss.getWarlordsNPC().getCurrentHealth() / boss.getWarlordsNPC().getMaxHealth() * 100);
-            return Component.text("Boss: ").append(Component.text(boss.getName() + " " + percent + "%", NamedTextColor.DARK_PURPLE));
+            return Component.text("Boss: ").append(Component.text(boss.getName(), NamedTextColor.DARK_PURPLE));
         }
         return Component.text("Boss: ").append(Component.text(isComplete() ? "Slain" : "Approaching", isComplete() ? NamedTextColor.GREEN : NamedTextColor.YELLOW));
     }

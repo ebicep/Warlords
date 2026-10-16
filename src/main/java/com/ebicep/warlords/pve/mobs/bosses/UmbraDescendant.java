@@ -20,9 +20,9 @@ public class UmbraDescendant extends DescendantBoss {
 
     private static final int RING_WINDUP_TICKS = 2 * 20;
     private static final int MARK_WINDUP_TICKS = 2 * 20 + 10;
-    private static final double RING_RADIUS = 5;
-    private static final double ENRAGED_RING_RADIUS = 7;
-    private static final double MARK_RADIUS = 2.5;
+    private static final double RING_RADIUS = 7;
+    private static final double ENRAGED_RING_RADIUS = 11;
+    private static final double MARK_RADIUS = 5;
 
     private int cooldownTicks = 4 * 20;
     private boolean castRing = true;
@@ -32,7 +32,7 @@ public class UmbraDescendant extends DescendantBoss {
     private boolean ringActive;
 
     public UmbraDescendant(Location spawnLocation) {
-        this(spawnLocation, "Umbra Descendant", 20000, 0.3f, 12, 500, 700);
+        this(spawnLocation, "Umbra Descendant", 70000, 0.3f, 20, 800, 1000);
     }
 
     public UmbraDescendant(

@@ -29,8 +29,8 @@ public enum DarkDescentChest {
             .add(5, new Pair<>(MobDrop.ZENITH_STAR, 1L))
     ),
     MILESTONE(Material.ENDER_CHEST, new RandomCollection<Pair<Spendable, Long>>()
-            .add(50, new Pair<>(SpendableRandomNewItem.EPIC, 1L))
-            .add(35, new Pair<>(Currencies.LEGENDARY_STAR_PIECE, 1L))
+            .add(60, new Pair<>(SpendableRandomNewItem.EPIC, 1L))
+            .add(25, new Pair<>(MobDrop.ZENITH_STAR, 1L))
             .add(10, new Pair<>(SpendableRandomNewItem.LEGENDARY, 1L))
             .add(5, new Pair<>(Currencies.ASCENDANT_STAR_PIECE, 1L))
     );

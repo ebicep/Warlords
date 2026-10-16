@@ -26,7 +26,7 @@ public class LightOrbObjective implements DarkDescentObjective {
     public LightOrbObjective(DarkDescentOption option) {
         this.option = option;
         for (int i = 0; i < ORB_COUNT; i++) {
-            Location location = option.randomArenaLocation(8).add(0, 1, 0);
+            Location location = option.randomArenaLocation(20).add(0, 1, 0);
             orbs.add(location.getWorld().spawn(location, ItemDisplay.class, display -> {
                 display.setItemStack(new ItemStack(Material.GLOWSTONE));
                 display.setBillboard(Display.Billboard.CENTER);

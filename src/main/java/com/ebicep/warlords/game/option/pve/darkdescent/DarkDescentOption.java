@@ -16,14 +16,18 @@ import com.ebicep.warlords.game.option.pve.PveOption;
 import com.ebicep.warlords.game.option.pve.darkdescent.objectives.BossRoomObjective;
 import com.ebicep.warlords.game.option.pve.darkdescent.objectives.DarkDescentObjective;
 import com.ebicep.warlords.game.option.pve.rewards.PveRewards;
+import com.ebicep.warlords.game.option.pve.wavedefense.WaveDefenseOption;
 import com.ebicep.warlords.game.option.pve.wavedefense.waves.Wave;
 import com.ebicep.warlords.game.option.pve.wavedefense.waves.WaveList;
 import com.ebicep.warlords.game.state.EndState;
 import com.ebicep.warlords.player.ingame.WarlordsNPC;
 import com.ebicep.warlords.player.ingame.WarlordsPlayer;
+import com.ebicep.warlords.pve.DifficultyIndex;
 import com.ebicep.warlords.pve.Spendable;
 import com.ebicep.warlords.pve.mobs.AbstractMob;
 import com.ebicep.warlords.pve.mobs.Mob;
+import com.ebicep.warlords.pve.mobs.flags.BossLike;
+import com.ebicep.warlords.pve.mobs.tiers.PlayerMob;
 import com.ebicep.warlords.pve.rewards.RewardInventory;
 import com.ebicep.warlords.pve.upgrades.AbilityTree;
 import com.ebicep.warlords.util.java.DateUtil;
@@ -53,9 +57,9 @@ public class DarkDescentOption implements PveOption {
 
     public static final int FLOORS = 20;
     private static final int START_DELAY_TICKS = 10 * GameRunnable.SECOND;
-    private static final int NEXT_FLOOR_DELAY_TICKS = 3 * GameRunnable.SECOND;
-    private static final double OBJECTIVE_CHANCE = 0.2;
-    private static final double MOB_SPAWN_OFFSET = 8;
+    private static final int NEXT_FLOOR_DELAY_TICKS = 2 * GameRunnable.SECOND;
+    private static final double OBJECTIVE_CHANCE = 0.3;
+    private static final double MOB_SPAWN_OFFSET = 20;
 
     private final ConcurrentHashMap<AbstractMob, MobData> mobs = new ConcurrentHashMap<>();
     private final List<Location> floorCenters;
@@ -318,9 +322,32 @@ public class DarkDescentOption implements PveOption {
         return miniBosses;
     }
 
+    protected void modifyStats(WarlordsNPC warlordsNPC) {
+        warlordsNPC.getMob().onSpawn(DarkDescentOption.this);
+        // Flag check whether mob is a boss.
+        boolean bossFlagCheck = warlordsNPC.getMob() instanceof BossLike;
+        double scale = 500;
+        double modifier = (ticksElapsed / 10000D) / scale + 1;
+        // Multiply health & min/max melee damage by waveCounter + 1 ^ base damage.
+        int minMeleeDamage = (int) Math.pow(warlordsNPC.getMinMeleeDamage(), modifier);
+        int maxMeleeDamage = (int) Math.pow(warlordsNPC.getMaxMeleeDamage(), modifier);
+        float health = (float) Math.pow(warlordsNPC.getMaxBaseHealth(), modifier);
+
+        if (warlordsNPC.getMob() instanceof PlayerMob) {
+            warlordsNPC.setMaxHealthAndHeal(health);
+            warlordsNPC.setMinMeleeDamage(minMeleeDamage);
+            warlordsNPC.setMaxMeleeDamage(maxMeleeDamage);
+            return;
+        }
+
+        // Final health value after applying all modifiers.
+        float finalHealth = health * (bossFlagCheck ? 2 : 1);
+        warlordsNPC.setMaxHealthAndHeal(finalHealth);
+    }
+
     @Override
     public void spawnNewMob(AbstractMob mob, Team team) {
-        game.addNPC(mob.toNPC(game, team, warlordsNPC -> mob.onSpawn(this)));
+        game.addNPC(mob.toNPC(game, team, this::modifyStats));
         mobs.put(mob, new MobData(ticksElapsed));
         Bukkit.getPluginManager().callEvent(new WarlordsMobSpawnEvent(game, mob));
     }

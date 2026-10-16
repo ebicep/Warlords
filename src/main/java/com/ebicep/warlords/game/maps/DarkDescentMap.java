@@ -4,10 +4,7 @@ import com.ebicep.warlords.game.GameAddon;
 import com.ebicep.warlords.game.GameMap;
 import com.ebicep.warlords.game.GameMode;
 import com.ebicep.warlords.game.Team;
-import com.ebicep.warlords.game.option.BasicScoreboardOption;
-import com.ebicep.warlords.game.option.GraveOption;
-import com.ebicep.warlords.game.option.Option;
-import com.ebicep.warlords.game.option.SpawnpointOption;
+import com.ebicep.warlords.game.option.*;
 import com.ebicep.warlords.game.option.cuboid.AbstractCuboidOption;
 import com.ebicep.warlords.game.option.cuboid.BoundingBoxOption;
 import com.ebicep.warlords.game.option.marker.LobbyLocationMarker;
@@ -35,10 +32,11 @@ public class DarkDescentMap extends GameMap {
             120, 108, 96, 84, 72, 60, 48, 36, 24, 12
     };
     private static final List<Mob> MINI_BOSSES = List.of(
-            Mob.LANTERN_DREDGER,
-            Mob.BARNACLE_BRUTE,
-            Mob.ABYSS_WATCHER,
-            Mob.VOID_JAILER
+            Mob.NARMER_ACOLYTE,
+            Mob.ZENITH_LEGIONNAIRE,
+            Mob.ECHO_OF_BLADES,
+            Mob.CRYSTALLINE_PETAL,
+            Mob.FROST_VEIL
     );
 
     public DarkDescentMap() {
@@ -58,6 +56,11 @@ public class DarkDescentMap extends GameMap {
         options.add(SpawnpointOption.forTeam(spawn, Team.RED));
         options.add(new BoundingBoxOption(loc.getWorld(), AbstractCuboidOption.MAX_WORLD_SIZE_MINI));
         options.add(new GraveOption());
+        options.add(new ExperienceGainOption()
+                .guildExpMaxGameWinBonus(500)
+                .playerExpGameWinBonus(1000)
+                .playerExpPerXSec(2, 10)
+        );
         options.add(new BasicScoreboardOption());
         options.add(new NewItemOption());
         options.add(new CurrencyOnEventOption()
