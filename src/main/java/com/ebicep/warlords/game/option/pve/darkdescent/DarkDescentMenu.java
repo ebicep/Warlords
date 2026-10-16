@@ -2,6 +2,7 @@ package com.ebicep.warlords.game.option.pve.darkdescent;
 
 import com.ebicep.warlords.commands.debugcommands.game.GameStartCommand;
 import com.ebicep.warlords.database.DatabaseManager;
+import com.ebicep.warlords.database.repositories.player.pojos.general.DatabasePlayer;
 import com.ebicep.warlords.game.GameAddon;
 import com.ebicep.warlords.game.GameMap;
 import com.ebicep.warlords.game.GameMode;
@@ -15,12 +16,18 @@ import net.kyori.adventure.text.format.NamedTextColor;
 import net.kyori.adventure.text.format.TextDecoration;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
+import org.bukkit.inventory.ItemStack;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public class DarkDescentMenu {
 
     public static void openDarkDescentMenu(Player player) {
+        DarkDescentLeaderboard.loadCurrentWeek(fastest -> openDarkDescentMenu(player, fastest));
+    }
+
+    private static void openDarkDescentMenu(Player player, List<DatabasePlayer> fastest) {
         Menu menu = new Menu("Dark Descent", 9 * 6);
         DarkDescentProgress progress = DatabaseManager.getPlayer(player.getUniqueId()).getPveStats().getDarkDescentProgress();
         List<Pair<Spendable, Long>> weeklyRewards = DarkDescentChest.getWeeklyRewards();
@@ -80,8 +87,42 @@ public class DarkDescentMenu {
                     });
                 }
         );
+        menu.setItem(0, 5, getLeaderboardItem(fastest, progress), Menu.ACTION_DO_NOTHING);
         menu.setItem(8, 5, Menu.MENU_CLOSE, Menu.ACTION_CLOSE_MENU);
         menu.openForPlayer(player);
+    }
+
+    private static ItemStack getLeaderboardItem(List<DatabasePlayer> fastest, DarkDescentProgress progress) {
+        List<Component> lore = new ArrayList<>();
+        lore.add(Component.text("Fastest completions this week", NamedTextColor.GRAY));
+        lore.add(Component.empty());
+        if (fastest.isEmpty()) {
+            lore.add(Component.text("No one has conquered Dark Descent yet.", NamedTextColor.GRAY));
+        }
+        for (int i = 0; i < fastest.size(); i++) {
+            DatabasePlayer databasePlayer = fastest.get(i);
+            lore.add(Component.text("#" + (i + 1) + " ", NamedTextColor.YELLOW)
+                              .append(Component.text(databasePlayer.getName(), NamedTextColor.AQUA))
+                              .append(Component.text(" - ", NamedTextColor.GRAY))
+                              .append(Component.text(DarkDescentLeaderboard.formatTime(databasePlayer.getPveStats()
+                                                                                                     .getDarkDescentProgress()
+                                                                                                     .getCompletionTicks()), NamedTextColor.GREEN)));
+        }
+        lore.add(Component.empty());
+        lore.add(Component.text("Your time: ", NamedTextColor.GRAY)
+                          .append(progress.isCompleted()
+                                  ? Component.text(DarkDescentLeaderboard.formatTime(progress.getCompletionTicks()), NamedTextColor.GREEN)
+                                  : Component.text("N/A", NamedTextColor.RED)));
+        for (int place = 1; place <= DarkDescentLeaderboard.REWARDED_PLACES; place++) {
+            lore.add(Component.empty());
+            lore.add(Component.text("#" + place + " Weekly Rewards:", NamedTextColor.GOLD));
+            DarkDescentLeaderboard.getRewards(place).forEach((spendable, amount) ->
+                    lore.add(Component.text(" - ", NamedTextColor.GRAY).append(spendable.getCostColoredName(amount))));
+        }
+        return new ItemBuilder(Material.GOLD_BLOCK)
+                .name(Component.text("Leaderboard", NamedTextColor.GOLD))
+                .lore(lore)
+                .get();
     }
 
     /**
