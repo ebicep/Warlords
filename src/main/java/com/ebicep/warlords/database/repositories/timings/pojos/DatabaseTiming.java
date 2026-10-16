@@ -9,6 +9,7 @@ import com.ebicep.warlords.database.leaderboards.stats.StatsLeaderboardManager;
 import com.ebicep.warlords.database.repositories.illusionvendor.pojos.IllusionVendorWeeklyShop;
 import com.ebicep.warlords.database.repositories.player.PlayersCollections;
 import com.ebicep.warlords.database.repositories.player.pojos.general.DatabasePlayer;
+import com.ebicep.warlords.game.option.pve.darkdescent.DarkDescentLeaderboard;
 import com.ebicep.warlords.guilds.Guild;
 import com.ebicep.warlords.guilds.GuildManager;
 import com.ebicep.warlords.util.chat.ChatUtils;
@@ -97,6 +98,7 @@ public class DatabaseTiming {
                         ChatUtils.MessageType.TIMINGS.sendMessage("Weekly Reset Time Minute: " + minutesBetween + " > " + (timing.getTiming().minuteDuration - 30));
                         //30 min buffer so reset fires on the 10 UTC restart
                         if (minutesBetween > 0 && minutesBetween > timing.getTiming().minuteDuration - 30) {
+                            DarkDescentLeaderboard.awardWeeklyRewards(timing.getLastReset());
                             //updating date to current
                             timing.setLastReset(DateUtil.getResetDateCurrentWeek());
                             DatabaseManager.timingsService.update(timing);
