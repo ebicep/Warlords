@@ -18,6 +18,8 @@ public class DarkDescentProgress {
     private Set<Integer> floorsEarned = new HashSet<>();
     @Field("completed")
     private boolean completed;
+    @Field("completion_ticks")
+    private int completionTicks;
 
     public boolean canStart() {
         refresh();
@@ -49,9 +51,15 @@ public class DarkDescentProgress {
         attemptsUsed++;
     }
 
-    public void setCompleted() {
+    public int getCompletionTicks() {
+        refresh();
+        return completionTicks;
+    }
+
+    public void setCompleted(int completionTicks) {
         refresh();
         completed = true;
+        this.completionTicks = completionTicks;
     }
 
     private void refresh() {
@@ -63,5 +71,6 @@ public class DarkDescentProgress {
         attemptsUsed = 0;
         floorsEarned = new HashSet<>();
         completed = false;
+        completionTicks = 0;
     }
 }

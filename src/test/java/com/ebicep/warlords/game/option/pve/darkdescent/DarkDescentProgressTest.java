@@ -23,9 +23,10 @@ class DarkDescentProgressTest {
     @Test
     void completingLocksTheWeek() {
         DarkDescentProgress progress = new DarkDescentProgress();
-        progress.setCompleted();
+        progress.setCompleted(1200);
         assertFalse(progress.canStart());
         assertTrue(progress.isCompleted());
+        assertEquals(1200, progress.getCompletionTicks());
     }
 
     @Test
@@ -42,7 +43,7 @@ class DarkDescentProgressTest {
         DarkDescentProgress progress = new DarkDescentProgress();
         progress.earnFloor(10);
         progress.addFailedAttempt();
-        progress.setCompleted();
+        progress.setCompleted(1200);
 
         Field week = DarkDescentProgress.class.getDeclaredField("week");
         week.setAccessible(true);
@@ -50,6 +51,7 @@ class DarkDescentProgressTest {
 
         assertTrue(progress.canStart());
         assertFalse(progress.hasEarned(10));
+        assertEquals(0, progress.getCompletionTicks());
         assertEquals(DarkDescentProgress.MAX_ATTEMPTS, progress.getAttemptsRemaining());
     }
 }

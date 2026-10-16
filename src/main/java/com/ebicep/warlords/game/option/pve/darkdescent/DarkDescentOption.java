@@ -249,7 +249,10 @@ public class DarkDescentOption implements PveOption {
             );
         }
         if (floor == FLOORS) {
-            progress.setCompleted();
+            progress.setCompleted(ticksElapsed - START_DELAY_TICKS);
+            warlordsPlayer.sendMessage(Component.text("You conquered Dark Descent in " + DarkDescentLeaderboard.formatTime(progress.getCompletionTicks()) + "!",
+                    NamedTextColor.GOLD
+            ));
         }
         DatabaseManager.queueUpdatePlayerAsync(databasePlayer);
     }
