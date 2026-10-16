@@ -806,6 +806,23 @@ public enum Mob {
     ),
     MAGMATIC_OOZE(EntityType.MAGMA_CUBE, MagmaticOoze.class, MagmaticOoze::new, MagmaticOoze::new, null),
     ENAVURIS(EntityType.ENDERMAN, Enavuris.class, Enavuris::new, Enavuris::new, null),
+    UMBRA_DESCENDANT(EntityType.WITHER_SKELETON, UmbraDescendant.class, UmbraDescendant::new, UmbraDescendant::new, new Utils.SimpleEntityEquipment(
+            SkullUtils.getSkullFrom(SkullID.PURPLE_ENDERMAN),
+            Utils.applyColorTo(Material.LEATHER_CHESTPLATE, 120, 40, 180),
+            Utils.applyColorTo(Material.LEATHER_LEGGINGS, 90, 25, 140),
+            Utils.applyColorTo(Material.LEATHER_BOOTS, 50, 10, 80),
+            Weapons.VORPAL_SWORD.getItem()
+    )
+    ),
+    ABYSS_DESCENDANT(EntityType.WITHER_SKELETON, AbyssDescendant.class, AbyssDescendant::new, AbyssDescendant::new, new Utils.SimpleEntityEquipment(
+            SkullUtils.getSkullFrom(SkullID.VOID_KNIGHT),
+            Utils.applyColorTo(Material.LEATHER_CHESTPLATE, 35, 0, 55),
+            Utils.applyColorTo(Material.LEATHER_LEGGINGS, 25, 0, 40),
+            Utils.applyColorTo(Material.LEATHER_BOOTS, 15, 0, 25),
+            Weapons.VOID_EDGE.getItem(),
+            new ItemStack(Material.AMETHYST_CLUSTER)
+    )
+    ),
 
     // Boss minions
     BOLTARO_SHADOW(EntityType.ZOMBIE, BoltaroShadow.class, BoltaroShadow::new, BoltaroShadow::new, new Utils.SimpleEntityEquipment(
@@ -1452,6 +1469,8 @@ public enum Mob {
             CHRONARCH,
             PHYSIRA,
             ENAVURIS,
+            UMBRA_DESCENDANT,
+            ABYSS_DESCENDANT,
 //            RAID_MITHRA,
 //            VANGUARD,
 //            CENTURION,

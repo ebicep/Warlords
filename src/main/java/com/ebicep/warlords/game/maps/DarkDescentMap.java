@@ -24,6 +24,7 @@ import org.bukkit.Location;
 import java.util.Arrays;
 import java.util.EnumSet;
 import java.util.List;
+import java.util.Map;
 
 import static com.ebicep.warlords.util.warlords.GameRunnable.SECOND;
 
@@ -85,12 +86,6 @@ public class DarkDescentMap extends GameMap {
                         .add(0.2, Mob.GOLEM_APPRENTICE)
                         .add(0.1, Mob.WITCH_DEACON)
                 )
-                .add(10, new RandomSpawnWave(14, 5 * SECOND, null)
-                        .add(0.3, Mob.ZOMBIE_VANGUARD)
-                        .add(0.3, Mob.SKELETAL_ENTROPY)
-                        .add(0.2, Mob.WITCH_DEACON)
-                        .add(0.2, Mob.VOID_ZOMBIE)
-                )
                 .add(11, new RandomSpawnWave(14, 5 * SECOND, null)
                         .add(0.3, Mob.ZOMBIE_VANGUARD)
                         .add(0.2, Mob.SKELETAL_ENTROPY)
@@ -110,15 +105,12 @@ public class DarkDescentMap extends GameMap {
                         .add(0.3, Mob.FIRE_SPLITTER)
                         .add(0.3, Mob.RIFT_WALKER)
                         .add(0.1, Mob.SKELETAL_SORCERER)
-                )
-                .add(20, new RandomSpawnWave(20, 5 * SECOND, null)
-                        .add(0.3, Mob.FIRE_SPLITTER)
-                        .add(0.3, Mob.RIFT_WALKER)
-                        .add(0.2, Mob.VOID_ZOMBIE)
-                        .add(0.1, Mob.LANTERN_DREDGER)
-                        .add(0.1, Mob.ABYSS_WATCHER)
                 ),
-                MINI_BOSSES
+                MINI_BOSSES,
+                Map.of(
+                        10, Mob.UMBRA_DESCENDANT,
+                        20, Mob.ABYSS_DESCENDANT
+                )
         ));
         return options;
     }

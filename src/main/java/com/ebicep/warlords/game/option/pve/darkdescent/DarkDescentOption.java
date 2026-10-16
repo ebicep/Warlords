@@ -13,6 +13,7 @@ import com.ebicep.warlords.game.Team;
 import com.ebicep.warlords.game.option.marker.scoreboard.ScoreboardHandler;
 import com.ebicep.warlords.game.option.marker.scoreboard.SimpleScoreboardHandler;
 import com.ebicep.warlords.game.option.pve.PveOption;
+import com.ebicep.warlords.game.option.pve.darkdescent.objectives.BossRoomObjective;
 import com.ebicep.warlords.game.option.pve.darkdescent.objectives.DarkDescentObjective;
 import com.ebicep.warlords.game.option.pve.rewards.PveRewards;
 import com.ebicep.warlords.game.option.pve.wavedefense.waves.Wave;
@@ -43,6 +44,7 @@ import javax.annotation.Nullable;
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ThreadLocalRandom;
@@ -59,6 +61,7 @@ public class DarkDescentOption implements PveOption {
     private final List<Location> floorCenters;
     private final WaveList floorMobs;
     private final List<Mob> miniBosses;
+    private final Map<Integer, Mob> floorBosses;
 
     private Game game;
     private DarkDescentRewards rewards;
@@ -74,13 +77,14 @@ public class DarkDescentOption implements PveOption {
     @Nullable
     private DarkDescentObjective objective;
 
-    public DarkDescentOption(List<Location> floorCenters, WaveList floorMobs, List<Mob> miniBosses) {
+    public DarkDescentOption(List<Location> floorCenters, WaveList floorMobs, List<Mob> miniBosses, Map<Integer, Mob> floorBosses) {
         if (floorCenters.size() != FLOORS) {
             throw new IllegalArgumentException("Dark Descent requires " + FLOORS + " floors, got " + floorCenters.size());
         }
         this.floorCenters = floorCenters;
         this.floorMobs = floorMobs;
         this.miniBosses = miniBosses;
+        this.floorBosses = floorBosses;
     }
 
     @Override
@@ -162,11 +166,18 @@ public class DarkDescentOption implements PveOption {
 
     private void startFloor(int floor) {
         this.floor = floor;
-        currentWave = floorMobs.getWave(floor, ThreadLocalRandom.current());
-        spawnsRemaining = currentWave.getMonsterCount();
-        spawnDelay = currentWave.getDelay();
+        Mob boss = floorBosses.get(floor);
+        if (boss != null) {
+            currentWave = null;
+            spawnsRemaining = 0;
+            objective = new BossRoomObjective(this, boss);
+        } else {
+            currentWave = floorMobs.getWave(floor, ThreadLocalRandom.current());
+            spawnsRemaining = currentWave.getMonsterCount();
+            objective = ThreadLocalRandom.current().nextDouble() < OBJECTIVE_CHANCE ? DarkDescentObjective.random(this) : null;
+        }
+        spawnDelay = currentWave == null ? 0 : currentWave.getDelay();
         spawnTicks = 0;
-        objective = ThreadLocalRandom.current().nextDouble() < OBJECTIVE_CHANCE ? DarkDescentObjective.random(this) : null;
         floorActive = true;
 
         Location center = getFloorCenter();
@@ -179,9 +190,21 @@ public class DarkDescentOption implements PveOption {
     }
 
     private void tickFloor() {
+        if (currentWave != null && tickSpawns()) {
+            return;
+        }
+        if (objective != null) {
+            objective.tick();
+        }
+        if (spawnsRemaining == 0 && mobCount() == 0 && (objective == null || objective.isComplete())) {
+            completeFloor();
+        }
+    }
+
+    private boolean tickSpawns() {
         if (spawnDelay > 0) {
             spawnDelay--;
-            return;
+            return true;
         }
         int spawnTickPeriod = currentWave.getSpawnTickPeriod();
         if (spawnTickPeriod < 0) {
@@ -191,12 +214,7 @@ public class DarkDescentOption implements PveOption {
         } else if (spawnsRemaining > 0 && spawnTicks++ % spawnTickPeriod == 0) {
             spawnFloorMob();
         }
-        if (objective != null) {
-            objective.tick();
-        }
-        if (spawnsRemaining == 0 && mobCount() == 0 && (objective == null || objective.isComplete())) {
-            completeFloor();
-        }
+        return false;
     }
 
     private void spawnFloorMob() {
@@ -287,7 +305,7 @@ public class DarkDescentOption implements PveOption {
         return lines;
     }
 
-    private Location getFloorCenter() {
+    public Location getFloorCenter() {
         return floorCenters.get(floor - 1).clone();
     }
 
