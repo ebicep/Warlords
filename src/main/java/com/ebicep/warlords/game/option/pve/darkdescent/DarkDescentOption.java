@@ -235,6 +235,9 @@ public class DarkDescentOption implements PveOption {
     private void grantFloorChest(WarlordsPlayer warlordsPlayer) {
         DatabasePlayer databasePlayer = warlordsPlayer.getDatabasePlayer();
         DarkDescentProgress progress = databasePlayer.getPveStats().getDarkDescentProgress();
+        if (!DarkDescentChest.isRewardFloor(floor)) {
+            return;
+        }
         if (!progress.hasEarned(floor)) {
             Pair<Spendable, Long> reward = weeklyRewards.get(floor - 1);
             LinkedHashMap<Spendable, Long> chest = new LinkedHashMap<>();

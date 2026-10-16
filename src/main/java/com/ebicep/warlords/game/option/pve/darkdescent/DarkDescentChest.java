@@ -45,6 +45,10 @@ public enum DarkDescentChest {
         this.rewards = rewards;
     }
 
+    public static boolean isRewardFloor(int floor) {
+        return floor > 0 && floor % 2 == 0;
+    }
+
     public static DarkDescentChest forFloor(int floor) {
         if (floor % 10 == 0) {
             return MILESTONE;
@@ -53,13 +57,13 @@ public enum DarkDescentChest {
     }
 
     /**
-     * @return the reward of every floor for the current week, index 0 being floor 1
+     * @return this week's reward for every floor, index 0 being floor 1. Odd floors are null
      */
     public static List<Pair<Spendable, Long>> getWeeklyRewards() {
         Random random = new Random(DateUtil.getCurrentWeekStartEpochDay() ^ WEEKLY_SEED_SALT);
         List<Pair<Spendable, Long>> weeklyRewards = new ArrayList<>(DarkDescentOption.FLOORS);
         for (int floor = 1; floor <= DarkDescentOption.FLOORS; floor++) {
-            weeklyRewards.add(forFloor(floor).rewards.next(random));
+            weeklyRewards.add(isRewardFloor(floor) ? forFloor(floor).rewards.next(random) : null);
         }
         return weeklyRewards;
     }

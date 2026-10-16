@@ -37,8 +37,8 @@ public class DarkDescentMenu {
                 new ItemBuilder(Material.CLOCK)
                         .name(Component.text("Dark Descent", NamedTextColor.DARK_PURPLE, TextDecoration.BOLD))
                         .lore(
-                                Component.text("Descend " + DarkDescentOption.FLOORS + " floors alone, each floor", NamedTextColor.GRAY),
-                                Component.text("rewards its chest once per week.", NamedTextColor.GRAY),
+                                Component.text("Descend " + DarkDescentOption.FLOORS + " floors alone. Every other", NamedTextColor.GRAY),
+                                Component.text("floor holds a chest, once per week.", NamedTextColor.GRAY),
                                 Component.empty(),
                                 Component.text("Attempts remaining: ", NamedTextColor.GRAY)
                                          .append(Component.text(progress.getAttemptsRemaining() + "/" + DarkDescentProgress.MAX_ATTEMPTS, NamedTextColor.YELLOW)),
@@ -48,19 +48,22 @@ public class DarkDescentMenu {
                 Menu.ACTION_DO_NOTHING
         );
 
-        for (int floor = 1; floor <= DarkDescentOption.FLOORS; floor++) {
+        for (int floor = 2; floor <= DarkDescentOption.FLOORS; floor += 2) {
             Pair<Spendable, Long> reward = weeklyRewards.get(floor - 1);
             boolean earned = progress.hasEarned(floor);
+            List<Component> lore = new ArrayList<>();
+            lore.add(reward.getA().getCostColoredName(reward.getB()));
+            if (floor % 10 == 0) {
+                lore.add(Component.text("A descendant waits on this floor", NamedTextColor.DARK_PURPLE));
+            }
+            lore.add(Component.empty());
+            lore.add(earned
+                     ? Component.text("Earned this week", NamedTextColor.GREEN)
+                     : Component.text("Clear floor " + floor + " to earn this chest", NamedTextColor.GRAY));
             menu.setItem(getSlot(floor),
                     new ItemBuilder(earned ? Material.GREEN_WOOL : DarkDescentChest.forFloor(floor).getMaterial())
                             .name(Component.text("Floor " + floor, earned ? NamedTextColor.GREEN : NamedTextColor.DARK_PURPLE))
-                            .lore(
-                                    reward.getA().getCostColoredName(reward.getB()),
-                                    Component.empty(),
-                                    earned
-                                    ? Component.text("Earned this week", NamedTextColor.GREEN)
-                                    : Component.text("Clear floor " + floor + " to earn this chest", NamedTextColor.GRAY)
-                            )
+                            .lore(lore)
                             .get(),
                     Menu.ACTION_DO_NOTHING
             );
@@ -126,13 +129,14 @@ public class DarkDescentMenu {
     }
 
     /**
-     * Floors 1-9 and 11-19 fill rows 1 and 3, floors 10 and 20 sit centered in rows 2 and 4
+     * Floors 2, 4, 6 and 8 fill row 1, floors 12, 14, 16 and 18 fill row 3,
+     * and the boss floors 10 and 20 sit centered in rows 2 and 4
      */
     private static int getSlot(int floor) {
         if (floor % 10 == 0) {
             return 4 + floor / 10 * 2 * 9;
         }
         int row = floor < 10 ? 1 : 3;
-        return floor % 10 - 1 + row * 9;
+        return (floor % 10) / 2 * 2 - 1 + row * 9;
     }
 }
