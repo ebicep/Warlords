@@ -25,21 +25,28 @@ public class BossRoomObjective implements DarkDescentObjective {
 
     @Override
     public void tick() {
-        if (boss != null) {
+        if (spawned()) {
             return;
         }
-        boss = bossType.createMob(option.getFloorCenter().add(6, 0, 0));
-        option.spawnNewMob(boss);
+        AbstractMob spawning = bossType.createMob(option.getFloorCenter().add(6, 0, 0));
+        option.spawnNewMob(spawning);
+        if (spawning.getWarlordsNPC() != null) {
+            boss = spawning;
+        }
     }
 
     @Override
     public boolean isComplete() {
-        return boss != null && boss.getWarlordsNPC() != null && boss.getWarlordsNPC().isDead();
+        return spawned() && boss.getWarlordsNPC().isDead();
+    }
+
+    private boolean spawned() {
+        return boss != null && boss.getWarlordsNPC() != null;
     }
 
     @Override
     public Component getScoreboardLine() {
-        if (!isComplete() && boss != null && boss.getWarlordsNPC() != null) {
+        if (!isComplete() && spawned()) {
             return Component.text("Boss: ").append(Component.text(boss.getName(), NamedTextColor.DARK_PURPLE));
         }
         return Component.text("Boss: ").append(Component.text(isComplete() ? "Slain" : "Approaching", isComplete() ? NamedTextColor.GREEN : NamedTextColor.YELLOW));

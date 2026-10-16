@@ -25,24 +25,35 @@ public class MiniBossObjective implements DarkDescentObjective {
 
     @Override
     public void tick() {
-        if (boss != null) {
+        if (spawned()) {
             return;
         }
         List<Mob> miniBosses = option.getMiniBosses();
-        boss = miniBosses.get(ThreadLocalRandom.current().nextInt(miniBosses.size())).createMob(option.randomArenaLocation(10));
+        if (miniBosses.isEmpty()) {
+            return;
+        }
+        AbstractMob spawning = miniBosses.get(ThreadLocalRandom.current().nextInt(miniBosses.size())).createMob(option.randomArenaLocation(10));
+        option.spawnNewMob(spawning);
+        if (spawning.getWarlordsNPC() == null) {
+            return;
+        }
+        boss = spawning;
         float health = boss.getWarlordsNPC().getMaxHealth();
         boss.getWarlordsNPC().setMaxHealthAndHeal(health * 4);
-        option.spawnNewMob(boss);
     }
 
     @Override
     public boolean isComplete() {
-        return boss != null && boss.getWarlordsNPC().isDead();
+        return spawned() && boss.getWarlordsNPC().isDead();
+    }
+
+    private boolean spawned() {
+        return boss != null && boss.getWarlordsNPC() != null;
     }
 
     @Override
     public Component getScoreboardLine() {
-        if (boss == null) {
+        if (!spawned()) {
             return Component.text("Mini Boss: ").append(Component.text("Approaching", NamedTextColor.YELLOW));
         }
         return Component.text("Mini Boss: ").append(isComplete()
