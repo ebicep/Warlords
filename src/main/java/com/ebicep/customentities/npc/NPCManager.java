@@ -139,7 +139,7 @@ public class NPCManager {
         npc.addTrait(DarkDescentStartTrait.class);
 
         npc.data().set(NPC.Metadata.NAMEPLATE_VISIBLE, false);
-        npc.spawn(new Location(StatsLeaderboardManager.MAIN_LOBBY_SPAWN.getWorld(), 2.5, 82, 158.5, -130, 0));
+        npc.spawn(new Location(StatsLeaderboardManager.MAIN_LOBBY_SPAWN.getWorld(), -15.5, 81, 144.5, 0, 0));
     }
 
     private static void createAnomalyNPC() {

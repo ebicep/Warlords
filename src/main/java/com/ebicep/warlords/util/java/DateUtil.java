@@ -97,7 +97,11 @@ public class DateUtil {
      * @return UTC epoch day of the current weekly period start ({@link #getResetDateCurrentWeek()})
      */
     public static long getCurrentWeekStartEpochDay() {
-        return getResetDateCurrentWeek().atZone(ZoneOffset.UTC).toLocalDate().toEpochDay();
+        return getEpochDay(getResetDateCurrentWeek());
+    }
+
+    public static long getEpochDay(Instant instant) {
+        return instant.atZone(ZoneOffset.UTC).toLocalDate().toEpochDay();
     }
 
     /**

@@ -76,6 +76,9 @@ public class Soulflame extends BaseSet {
                 if (event.getFlags().contains(InstanceFlags.DOT)) {
                     return;
                 }
+                if (event.getFlags().contains(InstanceFlags.RECURSIVE)) {
+                    return;
+                }
                 PlayerFilter.entitiesAround(warlordsPlayer, 8, 8, 8)
                         .aliveTeammatesOfExcludingSelf(warlordsPlayer)
                         .forEach(ally -> {
@@ -84,6 +87,7 @@ public class Soulflame extends BaseSet {
                                     .value(currentDamageValue * 0.01f)
                                     .cause("Soulflame")
                                     .source(warlordsPlayer)
+                                    .flags(InstanceFlags.RECURSIVE)
                             );
                         }
                 );

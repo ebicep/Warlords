@@ -3,6 +3,7 @@ package com.ebicep.warlords.util.java;
 import javax.annotation.Nullable;
 import java.util.Map;
 import java.util.NavigableMap;
+import java.util.Random;
 import java.util.TreeMap;
 import java.util.concurrent.ThreadLocalRandom;
 
@@ -22,6 +23,11 @@ public class RandomCollection<E> {
 
     @Nullable
     public E next() {
+        return next(random);
+    }
+
+    @Nullable
+    public E next(Random random) {
         double value = random.nextDouble() * total;
         Map.Entry<Double, E> entry = map.higherEntry(value);
         if (entry == null) {

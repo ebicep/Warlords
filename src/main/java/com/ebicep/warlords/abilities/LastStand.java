@@ -112,11 +112,11 @@ public class LastStand extends AbstractAbility implements OrangeAbilityIcon, Dur
         List<FloatModifiable.FloatModifier> modifiers = new ArrayList<>();
         if (pveMasterUpgrade2) {
             for (SeismicWaveDefender ability : wp.getAbilitiesMatching(SeismicWaveDefender.class)) {
-                modifiers.add(ability.getCooldown().addModifier(FloatModifiable.ModifierType.ADDITIVE_MULTIPLIER, "Enduring Defense", -.5f));
+                modifiers.add(ability.getCooldown().addModifier(FloatModifiable.ModifierType.MULTIPLICATIVE_MULTIPLIER, "Enduring Defense", -.5f));
                 modifiers.add(ability.getEnergyCost().addModifier(FloatModifiable.ModifierType.OVERRIDING, "Enduring Defense", 30f));
             }
             for (GroundSlamDefender ability : wp.getAbilitiesMatching(GroundSlamDefender.class)) {
-                modifiers.add(ability.getCooldown().addModifier(FloatModifiable.ModifierType.ADDITIVE_MULTIPLIER, "Enduring Defense", -.5f));
+                modifiers.add(ability.getCooldown().addModifier(FloatModifiable.ModifierType.MULTIPLICATIVE_MULTIPLIER, "Enduring Defense", -.5f));
             }
         }
         RegularCooldown<LastStandData> lastStandCooldown = new RegularCooldown<>(

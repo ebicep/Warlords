@@ -37,6 +37,7 @@ import com.ebicep.warlords.database.repositories.player.pojos.pve.wavedefense.Wa
 import com.ebicep.warlords.events.player.AddCurrencyEvent;
 import com.ebicep.warlords.events.player.WeaponSalvageEvent;
 import com.ebicep.warlords.game.GameMode;
+import com.ebicep.warlords.game.option.pve.darkdescent.DarkDescentProgress;
 import com.ebicep.warlords.game.option.pve.onslaught.PouchReward;
 import com.ebicep.warlords.guilds.Guild;
 import com.ebicep.warlords.guilds.GuildManager;
@@ -140,6 +141,8 @@ public class DatabasePlayerPvE implements MultiPvEStats<
     private NewItemsManager newItemsManager = new NewItemsManager();
     @Field("consumable_manager")
     private ConsumableManager consumableManager = new ConsumableManager();
+    @Field("dark_descent_progress")
+    private DarkDescentProgress darkDescentProgress = new DarkDescentProgress();
 
     //CURRENCIES
     private Map<Currencies, Long> currencies = new LinkedHashMap<>() {{
@@ -502,6 +505,13 @@ public class DatabasePlayerPvE implements MultiPvEStats<
             consumableManager = new ConsumableManager();
         }
         return consumableManager;
+    }
+
+    public DarkDescentProgress getDarkDescentProgress() {
+        if (darkDescentProgress == null) {
+            darkDescentProgress = new DarkDescentProgress();
+        }
+        return darkDescentProgress;
     }
 
     public void addMobDrops(MobDrop mobDrop, long amount) {

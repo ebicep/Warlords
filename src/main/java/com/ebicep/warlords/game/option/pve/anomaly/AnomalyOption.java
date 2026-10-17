@@ -277,6 +277,7 @@ public class AnomalyOption extends AbstractAnomalyOption {
         }
         Location destination = getObjectiveMarker(nextObjective).getLocation().clone().add(0, 1, 0);
         playerRespawnLocation = destination.clone();
+        game.warlordsPlayers().forEach(warlordsPlayer -> warlordsPlayer.getCooldownManager().removeCooldownByName("Time Warp"));
         game.forEachOnlinePlayer((player, team) -> {
             player.teleport(destination);
             player.playSound(destination, Sound.ENTITY_ENDERMAN_TELEPORT, 1.5f, 1.1f);

@@ -98,6 +98,7 @@ public class Gravemind extends BaseSet {
                 mob.getEquipment().getItemInOffHand()
         ));
         mob.updateEquipment();
+        Summoner.applyToSummon(mob, warlordsPlayer);
         pveOption.spawnNewMob(mob, warlordsPlayer.getTeam());
         Summoner.applyToSummon(mob, warlordsPlayer);
         new GameRunnable(warlordsPlayer.getGame()) {
