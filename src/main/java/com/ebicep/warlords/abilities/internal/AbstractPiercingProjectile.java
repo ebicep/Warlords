@@ -237,12 +237,12 @@ public abstract class AbstractPiercingProjectile<T extends AbstractPiercingProje
             AABB aabb = nmsEntity.getBoundingBox().inflate(inflate);
             Optional<Vec3> vec3 = aabb.clip(currentPosition, nextPosition);
             if (vec3.isEmpty()) {
-                // clip() only detects entering the box. Projectiles that spawn inside a nearby
-                // entity (melee range, especially with inflated hitboxes) would otherwise miss.
-                if (aabb.contains(currentPosition)) {
-                    vec3 = Optional.of(currentPosition);
-                } else if (aabb.contains(nextPosition)) {
-                    vec3 = Optional.of(nextPosition);
+                // clip() only detects entering the box. A shot that spawns already inside a
+                // nearby entity (close range, especially with inflated hitboxes) would otherwise
+                // miss. Only the first tick uses this fallback: later ticks stay on clip() so a
+                // piercing projectile does not hit again on every tick it remains inside the box.
+                if (projectile.getTicksLived() == 0 && (aabb.contains(currentPosition) || aabb.contains(nextPosition))) {
+                    vec3 = Optional.of(aabb.contains(currentPosition) ? currentPosition : nextPosition);
                 } else {
                     continue;
                 }

@@ -186,7 +186,7 @@ public class FrostBolt extends AbstractPiercingProjectile<FrostBolt, FrostBolt.F
 
     @Override
     protected void onNonCancellingHit(@Nonnull InternalProjectile projectile, @Nonnull WarlordsEntity hit, @Nonnull Location impactLocation) {
-        if (!pveMasterUpgrade2) {
+        if (!pveMasterUpgrade2 || projectile.getHit().contains(hit)) {
             return;
         }
         WarlordsEntity shooter = projectile.getShooter();
