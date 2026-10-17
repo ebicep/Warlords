@@ -327,7 +327,7 @@ public class DarkDescentOption implements PveOption {
         // Flag check whether mob is a boss.
         boolean bossFlagCheck = warlordsNPC.getMob() instanceof BossLike;
         double scale = 500;
-        double modifier = (ticksElapsed / 10000D) / scale + 1;
+        double modifier = (ticksElapsed / 500D) / scale + 1;
         // Multiply health & min/max melee damage by waveCounter + 1 ^ base damage.
         int minMeleeDamage = (int) Math.pow(warlordsNPC.getMinMeleeDamage(), modifier);
         int maxMeleeDamage = (int) Math.pow(warlordsNPC.getMaxMeleeDamage(), modifier);

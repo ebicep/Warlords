@@ -52,19 +52,19 @@ public class DarkDescentStartTrait extends WarlordsTrait implements HasNPCLabelH
         labelHologram.update(
                 npc,
                 ComponentBuilder.create("Dark Descent", NamedTextColor.DARK_PURPLE, TextDecoration.BOLD)
-                        .newLine(playerCountInLobby + " in Lobby", NamedTextColor.GRAY)
                         .newLine(playerCount + " Players", NamedTextColor.YELLOW, TextDecoration.BOLD)
+                        .newLine("IN DEVELOPMENT", NamedTextColor.RED)
                         .build()
         );
     }
 
     @Override
     public void rightClick(NPCRightClickEvent event) {
-        DarkDescentMenu.openDarkDescentMenu(event.getClicker());
+        //DarkDescentMenu.openDarkDescentMenu(event.getClicker());
     }
 
     @Override
     public void leftClick(NPCLeftClickEvent event) {
-        DarkDescentMenu.openDarkDescentMenu(event.getClicker());
+        //DarkDescentMenu.openDarkDescentMenu(event.getClicker());
     }
 }
