@@ -1275,7 +1275,7 @@
           "attributes": {},
           "description": "Shield effectiveness increased by {{damageReduction;%}} but reduce max health by {{heal;%}}.",
           "shieldEffectivenessIncreasePercent": 200,
-          "maxHealthReductionPercent": 90
+          "maxHealthReductionPercent": 85
         },
         "bloodlettingBlade": {
           "tier": "SOVEREIGN",
@@ -1492,7 +1492,7 @@
             "HEALTH": 10
           },
           "description": "Attacking an enemy from behind causes your hits to deal {{damage;%}} more damage.",
-          "damageIncreasePercent": 40
+          "damageIncreasePercent": 30
         },
         "regenerate": {
           "tier": "SOVEREIGN",

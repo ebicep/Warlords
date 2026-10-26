@@ -1083,6 +1083,12 @@ public enum SkillBoosts {
                 }
             }
     ),
+    MIRROR_BLOSSOM("Mirror Blossom",
+            List.of(),
+            MirrorBlossom.class,
+            abstractAbility -> {
+            }
+    ),
     ORDER_OF_EVISCERATE("Order of Eviscerate",
             List.of(
                     Component.text("Increase the duration of Order of Eviscerate by "),

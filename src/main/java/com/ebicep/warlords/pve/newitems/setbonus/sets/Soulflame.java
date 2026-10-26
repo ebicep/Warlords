@@ -57,12 +57,12 @@ public class Soulflame extends BaseSet {
                     },
                     false,
                     (cooldown, ticksElapsed) -> {
-                        if (ticksElapsed % 20 == 0) {
+                        if (ticksElapsed % 30 == 0) {
                             warlordsPlayer.addInstance(InstanceBuilder.damage()
                                     .value(warlordsPlayer.getMaxHealth() * 0.05f)
                                     .cause("Soulflame")
                                     .source(warlordsPlayer)
-                                    .flags(InstanceFlags.NO_MESSAGE, InstanceFlags.NO_HIT_SOUND, InstanceFlags.RECURSIVE)
+                                    .flags(InstanceFlags.NO_MESSAGE, InstanceFlags.NO_HIT_SOUND, InstanceFlags.RECURSIVE, InstanceFlags.IGNORE_SOURCE_DAMAGE_BOOST)
                             );
                         }
                     }
