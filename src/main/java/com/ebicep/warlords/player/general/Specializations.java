@@ -99,7 +99,7 @@ public enum Specializations {
             List.of("ass"),
             Component.text("A damage-oriented Rogue specialization that is a master of stealth, rapidly taking out any enemies who cross them.", NamedTextColor.GRAY),
             SpecType.DAMAGE,
-            JUDGEMENT_STRIKE, INCENDIARY_CURSE, BLINDING_ASSAULT, SOUL_SWITCH, ORDER_OF_EVISCERATE
+            JUDGEMENT_STRIKE, INCENDIARY_CURSE, BLINDING_ASSAULT, SOUL_SWITCH, MIRROR_BLOSSOM, ORDER_OF_EVISCERATE
     ),
     VINDICATOR("Vindicator",
             List.of("vind"),

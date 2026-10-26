@@ -17,10 +17,10 @@ public class RequiemGuardian extends AbstractMob implements PlayerMob, NoTargetA
                 spawnLocation,
                 "Requiem Guardian",
                 6000,
-                0.35f,
-                20,
-                600,
-                800
+                0.3f,
+                15,
+                450,
+                700
         );
     }
 
