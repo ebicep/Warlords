@@ -657,7 +657,7 @@
             "REGEN": 20
           },
           "description": "Kills have a {{blue;%}} chance to summon an allied mob for {{ticks}}.",
-          "summonChance": 15,
+          "summonChance": 20,
           "duration": 30
         },
         "summoner": {
@@ -674,7 +674,7 @@
             "REGEN": 20
           },
           "description": "Your summoned mobs deal {{damage;%}} more damage and have {{speed;%}} more speed. Summons are guaranteed to be Aspects.",
-          "minionDamage": 50,
+          "minionDamage": 40,
           "minionSpeed": 50
         },
         "crownOfThorns": {
@@ -855,7 +855,7 @@
           },
           "description": "{{blue;%}} of attacks are dodged. Each dodge grants {{damage;%}} damage and healing for {{ticks}}, up to {{blue}} stacks.",
           "dodgeChance": 20,
-          "bonusPerStackPercent": 0.25,
+          "bonusPerStackPercent": 0.75,
           "stackDurationSeconds": 12,
           "maxStacks": 20
         },
@@ -1165,7 +1165,7 @@
           },
           "description": "For every {{energy;%}} movement speed, gain {{damage;%}} crit chance on your primary attack.",
           "movementSpeedPercent": 5,
-          "critChanceIncreasePercent": 1
+          "critChanceIncreasePercent": 2
         },
         "heartOfGlass": {
           "tier": "SOVEREIGN",
@@ -1274,8 +1274,8 @@
           ],
           "attributes": {},
           "description": "Shield effectiveness increased by {{damageReduction;%}} but reduce max health by {{heal;%}}.",
-          "shieldEffectivenessIncreasePercent": 250,
-          "maxHealthReductionPercent": 99
+          "shieldEffectivenessIncreasePercent": 200,
+          "maxHealthReductionPercent": 90
         },
         "bloodlettingBlade": {
           "tier": "SOVEREIGN",
