@@ -1,20 +1,15 @@
 package com.ebicep.warlords.pve.mobs.bosses.bossminions;
 
-import com.ebicep.warlords.commands.miscellaneouscommands.ChatCommand;
 import com.ebicep.warlords.events.player.ingame.WarlordsDamageHealingEvent;
 import com.ebicep.warlords.game.option.pve.PveOption;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
-import com.ebicep.warlords.player.ingame.WarlordsNPC;
 import com.ebicep.warlords.pve.mobs.AbstractMob;
 import com.ebicep.warlords.pve.mobs.Mob;
-import com.ebicep.warlords.pve.mobs.bosses.bossabilities.GiantLaserAbility;
 import com.ebicep.warlords.pve.mobs.bosses.bossabilities.LaserBarrageAbility;
 import com.ebicep.warlords.pve.mobs.tiers.BossMinionMob;
-import com.ebicep.warlords.pve.mobs.tiers.BossMob;
 import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.format.NamedTextColor;
 import net.kyori.adventure.text.format.TextDecoration;
-import net.kyori.adventure.text.serializer.legacy.LegacyComponentSerializer;
-import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Color;
 import org.bukkit.Location;
@@ -25,17 +20,17 @@ import org.joml.Quaternionf;
 import org.joml.Vector3f;
 
 import javax.annotation.Nonnull;
-import java.util.Collections;
 import java.util.List;
 import java.util.Random;
 
 public class LiliathEngima extends AbstractMob implements BossMinionMob {
 
     private LaserBarrageAbility laserBarrageAbility;
-    private List<WarlordsEntity> targets;
+    private final List<WarlordsEntity> targets;
     private WarlordsEntity target;
     private TextDisplay holo;
-    Random rand = new Random();
+    private int nextLaserTick;
+    private final Random rand = new Random();
 
     public LiliathEngima(Location spawnLocation, List<WarlordsEntity> targets) {
         super(
@@ -47,8 +42,10 @@ public class LiliathEngima extends AbstractMob implements BossMinionMob {
                 0,
                 0
         );
-        this.targets = targets;
-        this.target = targets.get(rand.nextInt(targets.size()));
+        this.targets = targets == null ? List.of() : List.copyOf(targets);
+        if (!this.targets.isEmpty()) {
+            this.target = this.targets.get(rand.nextInt(this.targets.size()));
+        }
     }
 
     public LiliathEngima(Location spawnLocation) {
@@ -61,6 +58,7 @@ public class LiliathEngima extends AbstractMob implements BossMinionMob {
                 0,
                 0
         );
+        this.targets = List.of();
     }
 
     public LiliathEngima(
@@ -81,17 +79,22 @@ public class LiliathEngima extends AbstractMob implements BossMinionMob {
                 minMeleeDamage,
                 maxMeleeDamage
         );
+        this.targets = List.of();
     }
 
     @Override
     public void onSpawn(PveOption option) {
         warlordsNPC.addKnockbackModifier(warlordsNPC, "KB RES", -100, 99999);
+        if (target == null) {
+            return;
+        }
         holo = warlordsNPC.getWorld().spawn(warlordsNPC.getLocation().clone().add(0, 3, 0), TextDisplay.class, td -> {
             td.setBillboard(Display.Billboard.CENTER);
             td.setSeeThrough(true);
             td.setBackgroundColor(Color.BLACK);
-            td.setText(ChatColor.BOLD + target.getName());
+            td.text(Component.text(target.getName(), NamedTextColor.WHITE, TextDecoration.BOLD));
             td.setLineWidth(150);
+            td.setTeleportDuration(0);
             td.setTransformation(new Transformation(
                     new Vector3f(),
                     new Quaternionf(),
@@ -122,6 +125,7 @@ public class LiliathEngima extends AbstractMob implements BossMinionMob {
 
         warlordsNPC.setMaxHealthAndHeal(newHealth);
         warlordsNPC.setName(ChatColor.BOLD + target.getName());
+        nextLaserTick = rand.nextInt(300, 600);
     }
 
     @Override
@@ -132,25 +136,27 @@ public class LiliathEngima extends AbstractMob implements BossMinionMob {
 
     @Override
     public void onDamageTaken(WarlordsEntity self, WarlordsEntity attacker, WarlordsDamageHealingEvent event) {
-        if (event.getSource() != target) {
+        if (target != null && event.getSource() != target) {
             event.setCancelled(true);
         }
     }
 
     @Override
     public void whileAlive(int ticksElapsed, PveOption option) {
-        if (!holo.isDead() && holo.getWorld() == warlordsNPC.getWorld()) {
+        if (holo != null && !holo.isDead() && holo.getWorld() == warlordsNPC.getWorld()) {
             holo.teleport(warlordsNPC.getLocation().clone().add(0, 3, 0));
         }
-
-        int randomInterval = rand.nextInt(300, 600);
-        if (ticksElapsed % randomInterval == 0 && ticksElapsed > 0) {
-            laserBarrageAbility.start(targets);
+        if (laserBarrageAbility == null || ticksElapsed < nextLaserTick) {
+            return;
         }
+        laserBarrageAbility.start(targets);
+        nextLaserTick = ticksElapsed + rand.nextInt(300, 600);
     }
 
     @Override
     public void onDeath(WarlordsEntity killer, Location deathLocation, @Nonnull PveOption option) {
-        holo.remove();
+        if (holo != null) {
+            holo.remove();
+        }
     }
 }
