@@ -22,6 +22,7 @@ import org.bukkit.*;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.HandlerList;
 import org.bukkit.event.Listener;
+import org.bukkit.event.player.PlayerTeleportEvent;
 
 import java.util.*;
 import java.util.function.BiConsumer;
@@ -190,17 +191,18 @@ public class CrystalConduitsAbility {
                         double targetZ = cNow.getZ() + Math.sin(n.angle) * n.radius;
                         Location target = new Location(cNow.getWorld(), targetX, y, targetZ);
 
-                        Location cur = n.crystal.getWarlordsNPC().getLocation();
-                        double t = followLerp;
-                        double newX = cur.getX() + (targetX - cur.getX()) * t;
-                        double newY = cur.getY() + (y       - cur.getY()) * t;
-                        double newZ = cur.getZ() + (targetZ - cur.getZ()) * t;
+                        WarlordsNPC crystalNpc = n.crystal.getWarlordsNPC();
+                        Location cur = crystalNpc.getLocation();
+                        double lerp = followLerp;
+                        double newX = cur.getX() + (targetX - cur.getX()) * lerp;
+                        double newY = cur.getY() + (y - cur.getY()) * lerp;
+                        double newZ = cur.getZ() + (targetZ - cur.getZ()) * lerp;
                         Location lerped = new Location(target.getWorld(), newX, newY, newZ);
-
-                        var bukkitEnt = n.crystal.getWarlordsNPC().getEntity();
-                        bukkitEnt.teleport(lerped);
-
-                        n.loc = lerped;
+                        if (crystalNpc.getNpc() != null && crystalNpc.getNpc().isSpawned()) {
+                            crystalNpc.getNpc().teleport(lerped, PlayerTeleportEvent.TeleportCause.PLUGIN);
+                        }
+                        crystalNpc.teleport(lerped);
+                        n.loc = crystalNpc.getLocation();
                     }
                 }
 
@@ -216,10 +218,11 @@ public class CrystalConduitsAbility {
                     drawLink(world, c, n.loc, linkDust);
                     EffectUtils.displayParticle(Particle.END_ROD, n.loc.clone().add(0, 0.35, 0), 1, 0, 0, 0, 0);
 
-                    // Optional: highlight the currently expected target a bit more
-                    int expectedIdx = order.get(expectIndex);
-                    if (n.index == expectedIdx) {
-                        drawRing(n.loc.clone().add(0, beaconYOffset + 0.1, 0), 1.35, ringDust);
+                    if (expectIndex < order.size()) {
+                        int expectedIdx = order.get(expectIndex);
+                        if (n.index == expectedIdx) {
+                            drawRing(n.loc.clone().add(0, beaconYOffset + 0.1, 0), 1.35, ringDust);
+                        }
                     }
                 }
 

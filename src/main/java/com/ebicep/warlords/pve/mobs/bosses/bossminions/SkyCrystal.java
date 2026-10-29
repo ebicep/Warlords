@@ -1,13 +1,13 @@
 package com.ebicep.warlords.pve.mobs.bosses.bossminions;
 
-import com.ebicep.warlords.abilities.internal.AbstractAbility;
-import com.ebicep.warlords.commands.miscellaneouscommands.ChatCommand;
 import com.ebicep.warlords.game.option.pve.PveOption;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
 import com.ebicep.warlords.pve.mobs.AbstractMob;
 import com.ebicep.warlords.pve.mobs.Mob;
 import com.ebicep.warlords.pve.mobs.tiers.BossMinionMob;
-import com.ebicep.warlords.util.chat.ChatChannels;
+import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.format.NamedTextColor;
+import net.kyori.adventure.text.format.TextDecoration;
 import org.bukkit.ChatColor;
 import org.bukkit.Color;
 import org.bukkit.Location;
@@ -73,8 +73,9 @@ public class SkyCrystal extends AbstractMob implements BossMinionMob {
             td.setBillboard(Display.Billboard.CENTER);
             td.setSeeThrough(true);
             td.setBackgroundColor(Color.BLACK);
-            td.setText(ChatColor.RED + warlordsNPC.getName());
+            td.text(Component.text(ChatColor.stripColor(warlordsNPC.getName()), NamedTextColor.RED, TextDecoration.BOLD));
             td.setLineWidth(20);
+            td.setTeleportDuration(0);
             td.setTransformation(new Transformation(
                     new Vector3f(),
                     new Quaternionf(),
@@ -86,14 +87,16 @@ public class SkyCrystal extends AbstractMob implements BossMinionMob {
 
     @Override
     public void whileAlive(int ticksElapsed, PveOption option) {
-        if (!holo.isDead() && holo.getWorld() == warlordsNPC.getWorld()) {
+        if (holo != null && !holo.isDead() && holo.getWorld() == warlordsNPC.getWorld()) {
             holo.teleport(warlordsNPC.getLocation().clone().add(0, 4, 0));
         }
     }
 
     @Override
     public void onDeath(WarlordsEntity killer, Location deathLocation, @Nonnull PveOption option) {
-        holo.remove();
+        if (holo != null) {
+            holo.remove();
+        }
     }
 
     @Override
