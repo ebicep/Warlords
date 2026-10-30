@@ -751,7 +751,7 @@
         "description": "Gain {{heal}} max health and {{energy}} max energy. Increase the healing of {{aqua:Energy Seer}} to {{heal;%}} and the energy granted by {{energy}}.",
         "healthIncrease": 500,
         "energyIncrease": 100,
-        "energySeerHealingMultiplier": 500,
+        "energySeerHealingMultiplier": 300,
         "energySeerEnergyIncrease": 10
       },
       "contagion": {
