@@ -260,7 +260,7 @@
         "name": "Striker",
         "description": "Increase the damage of {{aqua:Wounding Strike}} by {{damage;%}} and the wounding inflicted by {{damage;%}}. Increase wounding duration by {{ticks}}.",
         "woundingStrikeDamageIncreasePercent": 10,
-        "woundingIncreasePercent": 30,
+        "woundingIncreasePercent": 15,
         "woundingDurationIncreaseTicks": 40
       },
       "ferventForce": {
