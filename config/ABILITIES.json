@@ -711,10 +711,10 @@
         "hazeSlowness": 30,
         "hazeSlowDurationTicks": 20,
         "vulnerableTickDuration": 120,
-        "vulnerableDamageBonus": 10,
+        "vulnerableDamageBonus": 15,
         "damageValues": {
           "hazeDamage": {
-            "value": 160
+            "value": 200
           }
         },
         "healingValues": {
