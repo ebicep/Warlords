@@ -218,7 +218,7 @@
         "difficulty": 4,
         "name": "Mighty Fists",
         "description": "Every melee hit gives damage stacks. Each stack increases damage by {{damage;%}}, up to {{damage;%}}. Activating any ability removes 1 stack.",
-        "consecutiveHitIncreasePercent": 30,
+        "consecutiveHitIncreasePercent": 40,
         "maxIncreasePercent": 120
       },
       "seismicShift": {
