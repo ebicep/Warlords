@@ -519,7 +519,7 @@
       },
       "flameBreath": {
         "name": "Flame Breath",
-        "cooldown": 8,
+        "cooldown": 7.5,
         "energyCost": 60,
         "maxAnimationTime": 12,
         "maxAnimationEffects": 4,
