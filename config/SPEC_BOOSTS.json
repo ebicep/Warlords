@@ -692,9 +692,9 @@
       "auraOfRestoration": {
         "difficulty": 1,
         "name": "Aura of Restoration",
-        "description": "Increase the cooldown of {{aqua:Soothing Elixir}} by {{ticks}} and the healing over time by {{heal;%}}, which will now always affect allies hit by the initial impact. Increase the break range of {{aqua:Remedic Chains}} by {{blocks}}.",
-        "soothingElixirCooldownIncreaseSeconds": 1,
-        "puddleHealingIncreasePercent": 20,
+        "description": "Increase the healing over time by {{heal;%}}, which will now always affect allies hit by the initial impact. Increase the break range of {{aqua:Remedic Chains}} by {{blocks}}.",
+        "soothingElixirCooldownIncreaseSeconds": 0,
+        "puddleHealingIncreasePercent": 30,
         "remedicChainsBreakRadiusIncrease": 5
       },
       "alchemistsFury": {
