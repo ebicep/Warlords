@@ -9,7 +9,7 @@
         "difficulty": 1,
         "name": "Meteor",
         "description": "Increase the damage of {{aqua:Fireball}} by {{damage;%}}.",
-        "damageIncrease": 20
+        "damageIncrease": 35
       },
       "flameBreath": {
         "difficulty": 3,
@@ -77,7 +77,7 @@
         "description": "Gain {{energy}} energy per melee hit and {{heal}} max health. When {{aqua:Arcane Shield}} breaks, deal {{damage;%}} more damage and stun enemies within {{blocks}} for {{ticks}}.",
         "energyPerMelee": 6,
         "healthIncrease": 400,
-        "damageIncrease": 20,
+        "damageIncrease": 35,
         "range": 4,
         "stunTicks": 20
       },
@@ -766,8 +766,8 @@
         "difficulty": 2,
         "name": "Withering Plague",
         "description": "Increase the duration of {{dark_red:PHEX}} by {{ticks}}. For the duration of {{aqua:Astral Plague}}, increase the damage dealt to non-Tank enemies with max stacks of {{dark_red:PHEX}} by {{damage;%}}.",
-        "poisonousHexTicksIncrease": 40,
-        "damageIncrease": 20
+        "poisonousHexTicksIncrease": 60,
+        "damageIncrease": 35
       },
       "airStrike": {
         "difficulty": 5,
