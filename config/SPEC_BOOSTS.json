@@ -686,7 +686,7 @@
         "vindicateCooldownReductionSeconds": 7,
         "recastSpeedIncreasePercent": 65,
         "recastDurationTicks": 100,
-        "nextStrikeDamageIncreasePercent": 150,
+        "nextStrikeDamageIncreasePercent": 100,
         "nextStrikeCooldownReductionTicks": 60
       },
       "auraOfRestoration": {
