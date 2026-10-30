@@ -1313,8 +1313,8 @@
         "cooldown": 57,
         "energyCost": 40,
         "radius": 7,
-        "tickDuration": 120,
-        "damageReductionPercent": 40,
+        "tickDuration": 140,
+        "damageReductionPercent": 50,
         "allyHealMultiplierPercent": 100,
         "healingValues": {
           "castHealing": {
