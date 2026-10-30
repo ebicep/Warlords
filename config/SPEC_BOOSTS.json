@@ -343,7 +343,7 @@
         "cleaveRange": 3.5,
         "cleaveDamagePercent": 20,
         "energyStealPerCleave": 5,
-        "wrathDamageBoostPercent": 25
+        "wrathDamageBoostPercent": 10
       },
       "unstoppableSurge": {
         "difficulty": 2,
