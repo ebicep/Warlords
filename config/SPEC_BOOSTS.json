@@ -616,7 +616,7 @@
         "name": "Rift Ambush",
         "description": "Increase the damage reduction of {{aqua:Soul Switch}} by {{damageReduction;%}}. {{aqua:Soul Switch}} will now only teleport you to your target, deal {{damage}} damage, and trap the target in a {{blocks}} radius for {{ticks}}.",
         "soulSwitchDamageReductionIncreasePercent": 15,
-        "soulSwitchDamage": 400,
+        "soulSwitchDamage": 300,
         "tetherRadius": 2,
         "tetherTickDuration": 30,
         "soulSwitchVerticalLimit": 5
