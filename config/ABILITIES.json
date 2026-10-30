@@ -1620,13 +1620,13 @@
         "name": "Vampiric Chains",
         "cooldown": 18,
         "energyCost": 60,
-        "tickDuration": 160,
+        "tickDuration": 140,
         "enemiesAffected": 3,
         "linkBreakRadius": 18,
         "castRange": 12,
         "maxHealthDamage": 2.5,
-        "healRadius": 6,
-        "healCap": 700
+        "healRadius": 7,
+        "healCap": 600
       },
       "vitalityConcoction": {
         "name": "Vitality Concoction",
