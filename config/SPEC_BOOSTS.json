@@ -159,8 +159,8 @@
         "name": "Divine Purification",
         "description": "{{aqua:Water Breath}} now cleanses strong debuffs and grants those healed immunity to all debuffs for {{ticks}}. Reduce its cooldown by {{ticks;%}} and the energy cost by {{energy;%}}. {{aqua:Arcane Shield}} costs {{energy}} energy.",
         "waterBreathImmunityDurationTicks": 20,
-        "waterBreathCooldownReductionPercent": 15,
-        "waterBreathEnergyCostReductionPercent": 50,
+        "waterBreathCooldownReductionPercent": 10,
+        "waterBreathEnergyCostReductionPercent": 40,
         "arcaneShieldEnergyCost": 0
       },
       "clairvoyance": {
