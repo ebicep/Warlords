@@ -94,7 +94,7 @@
         "difficulty": 4,
         "name": "Blizzard Breath",
         "description": "{{aqua:Freezing Breath}} reduces all cooldowns by {{ticks;%}} per enemy hit and grants knockback and stun immunity for {{ticks}}. Each direct hit with {{aqua:Frostbolt}} reduces its cooldown by {{ticks}}. \n Replace {{aqua:Time Warp}} with {{aqua:Time Surge}}. {{aqua:Time Surge}} and {{aqua:Arcane Shield}} have reduced cooldowns, energy costs, and healing/shield by {{blue;%}}.",
-        "cooldownReductionPerEnemyHitPercent": 2,
+        "cooldownReductionPerEnemyHitPercent": 1.75,
         "immunityDurationTicks": 40,
         "frostboltDirectHitCooldownReductionTicks": 10,
         "productionValuesDecreasePercent": 30
