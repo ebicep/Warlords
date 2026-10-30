@@ -9,7 +9,7 @@
         "difficulty": 1,
         "name": "Meteor",
         "description": "Increase the damage of {{aqua:Fireball}} by {{damage;%}}.",
-        "damageIncrease": 35
+        "damageIncrease": 20
       },
       "flameBreath": {
         "difficulty": 3,
@@ -77,7 +77,7 @@
         "description": "Gain {{energy}} energy per melee hit and {{heal}} max health. When {{aqua:Arcane Shield}} breaks, deal {{damage;%}} more damage and stun enemies within {{blocks}} for {{ticks}}.",
         "energyPerMelee": 6,
         "healthIncrease": 400,
-        "damageIncrease": 35,
+        "damageIncrease": 20,
         "range": 4,
         "stunTicks": 20
       },
