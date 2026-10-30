@@ -104,13 +104,17 @@ public class PacketUtils {
         if (!ConfigManager.getGameConfigValue(ConfigManager.DEFAULT_NAMESPACES, "pingCompensationEnabled", boolean.class) || !(wp.getEntity() instanceof Player player)) {
             return 0;
         }
-        int ping = player.getPing();
+        int ping = Math.min(
+                player.getPing(),
+                ConfigManager.getGameConfigValue(ConfigManager.DEFAULT_NAMESPACES, "pingCompensationMax", int.class)
+        );
         int minPingStrikeRangeCompensation = ConfigManager.getGameConfigValue(ConfigManager.DEFAULT_NAMESPACES, "pingCompensationMin", int.class);
         float pingStrikeRangeCompensationDivisor = ConfigManager.getGameConfigValue(ConfigManager.DEFAULT_NAMESPACES, "pingCompensationDivisor", int.class);
         if (ping > minPingStrikeRangeCompensation) {
             float increase = Math.max(0, ping / pingStrikeRangeCompensationDivisor);
             if (ConfigManager.getGameConfigValue(ConfigManager.DEFAULT_NAMESPACES, "pingCompensationLog", boolean.class)) {
                 ChatChannels.sendDebugMessage(player, "Ping: " + player.getPing() +
+                        ", capped: " + ping +
                         ", min: " + minPingStrikeRangeCompensation +
                         ", comp: " + pingStrikeRangeCompensationDivisor +
                         ", increase: " + increase

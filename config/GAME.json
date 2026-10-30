@@ -12,6 +12,7 @@
       "pingCompensationEnabled": true,
       "pingCompensationLog": false,
       "pingCompensationMin": 100,
+      "pingCompensationMax": 250,
       "pingCompensationDivisor": 100,
       "ctf": {
         "spawnDamageTickDuration": 200,
