@@ -321,8 +321,9 @@
       "oneManArmy": {
         "difficulty": 3,
         "name": "One Man Army",
-        "description": "Increase the duration of {{aqua:Undying Army}} by {{ticks}} for the caster. {{aqua:Undying Army}} will no longer damage you after being revived.",
-        "undyingArmyTickDurationCaster": 200
+        "description": "Increase the duration of {{aqua:Undying Army}} by {{ticks}} for the caster. After you are revived by {{aqua:Undying Army}}, your health decays by {{damage;%}} of your max health every second.",
+        "undyingArmyTickDurationCaster": 200,
+        "undyingArmyCasterMaxHealthDamagePercent": 5
       },
       "conduit": {
         "difficulty": 1,
