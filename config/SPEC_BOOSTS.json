@@ -166,10 +166,8 @@
       "clairvoyance": {
         "difficulty": 3,
         "name": "Clairvoyance",
-        "description": "Gain {{heal}} max health, {{energy}} energy, and reduce the duration of {{aqua:Healing Rain}} by {{ticks}}, but increase the healing by {{heal;%}}. Replace {{aqua:Time Warp}} with {{aqua:Clairvoyance}}.",
-        "healthIncrease": 400,
+        "description": "Replace {{aqua:Time Warp}} with {{aqua:Clairvoyance}}. Gain {{energy}} max energy. Reduce the duration of {{aqua:Healing Rain}} by {{ticks}}, but increase the healing by {{heal;%}}.",
         "maxEnergyIncrease": 100,
-        "energyOnCast": 45,
         "healingRainDurationDecreaseTicks": 60,
         "healingRainHealIncreasePercent": 50
       },
