@@ -12,13 +12,17 @@ import java.util.List;
 
 public class Clairvoyance implements SpecBoostManager.SpecBoost<Clairvoyance> {
 
+    private int healthIncrease;
     private int maxEnergyIncrease;
+    private int energyOnCast;
     private int healingRainDurationDecreaseTicks;
     private float healingRainHealIncreasePercent;
 
     @Override
     public void init() {
+        this.healthIncrease = getValue("healthIncrease", int.class);
         this.maxEnergyIncrease = getValue("maxEnergyIncrease", int.class);
+        this.energyOnCast = getValue("energyOnCast", int.class);
         this.healingRainDurationDecreaseTicks = getValue("healingRainDurationDecreaseTicks", int.class);
         this.healingRainHealIncreasePercent = getValue("healingRainHealIncreasePercent", float.class);
     }
@@ -35,7 +39,7 @@ public class Clairvoyance implements SpecBoostManager.SpecBoost<Clairvoyance> {
 
     @Override
     public List<Object> getVariables() {
-        return List.of(maxEnergyIncrease, healingRainDurationDecreaseTicks, healingRainHealIncreasePercent);
+        return List.of(healthIncrease, energyOnCast, healingRainDurationDecreaseTicks, healingRainHealIncreasePercent);
     }
 
     @Override
@@ -53,6 +57,7 @@ public class Clairvoyance implements SpecBoostManager.SpecBoost<Clairvoyance> {
 
         @Override
         public void apply(WarlordsPlayer warlordsPlayer) {
+            warlordsPlayer.getHealth().addModifier(FloatModifiable.ModifierType.ADDITIVE, "Spec Boost (Base)", healthIncrease);
             warlordsPlayer.getEnergy().addModifier(FloatModifiable.ModifierType.ADDITIVE, "Spec Boost", maxEnergyIncrease);
             List<AbstractAbility> abilities = warlordsPlayer.getAbilities();
             for (int i = 0; i < abilities.size(); i++) {

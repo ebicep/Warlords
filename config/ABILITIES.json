@@ -209,6 +209,7 @@
         "name": "Clairvoyance",
         "cooldown": 28,
         "energyCost": 30,
+        "energyRestore": 45,
         "healingIncreasePercent": 30,
         "speedIncrease": 40,
         "tickDuration": 120,
