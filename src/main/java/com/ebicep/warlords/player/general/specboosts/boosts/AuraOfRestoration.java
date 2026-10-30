@@ -19,13 +19,11 @@ import java.util.List;
 
 public class AuraOfRestoration implements SpecBoostManager.SpecBoost<AuraOfRestoration> {
 
-    private float soothingElixirCooldownIncreaseSeconds;
     private float puddleHealingIncreasePercent;
     private float remedicChainsBreakRadiusIncrease;
 
     @Override
     public void init() {
-        this.soothingElixirCooldownIncreaseSeconds = getValue("soothingElixirCooldownIncreaseSeconds", float.class);
         this.puddleHealingIncreasePercent = getValue("puddleHealingIncreasePercent", float.class);
         this.remedicChainsBreakRadiusIncrease = getValue("remedicChainsBreakRadiusIncrease", float.class);
     }
@@ -38,7 +36,6 @@ public class AuraOfRestoration implements SpecBoostManager.SpecBoost<AuraOfResto
     @Override
     public List<Object> getVariables() {
         return List.of(
-                soothingElixirCooldownIncreaseSeconds,
                 puddleHealingIncreasePercent,
                 remedicChainsBreakRadiusIncrease
         );
@@ -62,7 +59,6 @@ public class AuraOfRestoration implements SpecBoostManager.SpecBoost<AuraOfResto
         public void apply(WarlordsPlayer warlordsPlayer) {
             this.warlordsEntity = warlordsPlayer;
             warlordsPlayer.getAbilitiesMatching(SoothingElixir.class).forEach(soothingElixir -> {
-                soothingElixir.getCooldown().addModifier(FloatModifiable.ModifierType.ADDITIVE, "Spec Boost", soothingElixirCooldownIncreaseSeconds);
                 soothingElixir.getHealValues().getElixirDOTHealing()
                               .forEachValue(floatModifiable -> floatModifiable.addModifier(FloatModifiable.ModifierType.ADDITIVE_MULTIPLIER,
                                       "Spec Boost", puddleHealingIncreasePercent / 100
