@@ -665,7 +665,7 @@
         "difficulty": 4,
         "name": "Righteous Rampage",
         "description": "Replace {{aqua:Heart to Heart}} with {{aqua:Bull Rush}}. Lose {{damageReduction;%}} damage reduction. {{aqua:Vindicate}} can be recasted to perform a huge leap, which upon landing will damage all enemies within {{blocks}} for {{damage}} damage, silence them for {{ticks}}, and deal massive knockback.",
-        "damageReductionDecrease": 10,
+        "damageReductionDecrease": 5,
         "vindicateLeapRadius": 6,
         "vindicateLeapDamage": {
           "min": 483,
