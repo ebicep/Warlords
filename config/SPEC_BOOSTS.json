@@ -94,7 +94,7 @@
         "difficulty": 4,
         "name": "Blizzard Breath",
         "description": "{{aqua:Freezing Breath}} reduces all cooldowns by {{ticks;%}} per enemy hit and grants knockback and stun immunity for {{ticks}}. Each direct hit with {{aqua:Frostbolt}} reduces its cooldown by {{ticks}}. \n Replace {{aqua:Time Warp}} with {{aqua:Time Surge}}. {{aqua:Time Surge}} and {{aqua:Arcane Shield}} have reduced cooldowns, energy costs, and healing/shield by {{blue;%}}.",
-        "cooldownReductionPerEnemyHitPercent": 2,
+        "cooldownReductionPerEnemyHitPercent": 1.75,
         "immunityDurationTicks": 40,
         "frostboltDirectHitCooldownReductionTicks": 10,
         "productionValuesDecreasePercent": 30
@@ -159,8 +159,8 @@
         "name": "Divine Purification",
         "description": "{{aqua:Water Breath}} now cleanses strong debuffs and grants those healed immunity to all debuffs for {{ticks}}. Reduce its cooldown by {{ticks;%}} and the energy cost by {{energy;%}}. {{aqua:Arcane Shield}} costs {{energy}} energy.",
         "waterBreathImmunityDurationTicks": 20,
-        "waterBreathCooldownReductionPercent": 15,
-        "waterBreathEnergyCostReductionPercent": 50,
+        "waterBreathCooldownReductionPercent": 10,
+        "waterBreathEnergyCostReductionPercent": 40,
         "arcaneShieldEnergyCost": 0
       },
       "clairvoyance": {
@@ -216,7 +216,7 @@
         "difficulty": 4,
         "name": "Mighty Fists",
         "description": "Every melee hit gives damage stacks. Each stack increases damage by {{damage;%}}, up to {{damage;%}}. Activating any ability removes 1 stack.",
-        "consecutiveHitIncreasePercent": 30,
+        "consecutiveHitIncreasePercent": 40,
         "maxIncreasePercent": 120
       },
       "seismicShift": {
@@ -258,7 +258,7 @@
         "name": "Striker",
         "description": "Increase the damage of {{aqua:Wounding Strike}} by {{damage;%}} and the wounding inflicted by {{damage;%}}. Increase wounding duration by {{ticks}}.",
         "woundingStrikeDamageIncreasePercent": 10,
-        "woundingIncreasePercent": 30,
+        "woundingIncreasePercent": 15,
         "woundingDurationIncreaseTicks": 40
       },
       "ferventForce": {
@@ -321,8 +321,9 @@
       "oneManArmy": {
         "difficulty": 3,
         "name": "One Man Army",
-        "description": "Increase the duration of {{aqua:Undying Army}} by {{ticks}} for the caster. {{aqua:Undying Army}} will no longer damage you after being revived.",
-        "undyingArmyTickDurationCaster": 200
+        "description": "Increase the duration of {{aqua:Undying Army}} by {{ticks}} for the caster. After you are revived by {{aqua:Undying Army}}, your health decays by {{damage;%}} of your max health every second.",
+        "undyingArmyTickDurationCaster": 200,
+        "undyingArmyCasterMaxHealthDamagePercent": 5
       },
       "conduit": {
         "difficulty": 1,
@@ -346,8 +347,8 @@
         "difficulty": 2,
         "name": "Unstoppable Surge",
         "description": "{{aqua:Light Infusion}} heals you for {{heal}} health, increase the speed granted by {{speed;%}} and the duration by {{ticks}}. Heal an additional {{heal}} health if Avenger's Strike was not used for {{ticks}} after activating Light Infusion. Gain permanent {{speed;%}} slow resistance and {{damageReduction;%}} knockback resistance.",
-        "lightInfusionHealing": 800,
-        "lightInfusionSpeedIncreasePercent": 15,
+        "lightInfusionHealing": 600,
+        "lightInfusionSpeedIncreasePercent": 10,
         "lightInfusionDurationIncreaseTicks": 40,
         "postLightInfusionHealing": 600,
         "postLightInfusionHealingDelay": 60,
@@ -573,8 +574,8 @@
         "name": "Augmented Chains",
         "description": "{{aqua:Earthen Spike}} reduces the cooldown of {{aqua:Chain Heal}} by {{ticks}} upon hitting a target. Increase the healing of {{aqua:Chain Heal}} by {{heal;%}} and reduce the energy cost by {{energy}}. Reduce the damage of {{aqua:Boulder}} by {{damage;%}}.",
         "chainHealCooldownReductionSeconds": 2,
-        "chainHealHealingIncreasePercent": 15,
-        "chainHealEnergyCostDecrease": 20,
+        "chainHealHealingIncreasePercent": 20,
+        "chainHealEnergyCostDecrease": 25,
         "boulderDamageDecreasePercent": 10
       },
       "totemicBoon": {
@@ -588,7 +589,7 @@
         "healingTotemSpeedMultiplier": 2,
         "healingTotemRadiusIncrease": 2,
         "healthTransferThresholdPercent": 90,
-        "healthTransferEffectivenessPercent": 60
+        "healthTransferEffectivenessPercent": 70
       },
       "trickster": {
         "difficulty": 3,
@@ -613,7 +614,7 @@
         "name": "Rift Ambush",
         "description": "Increase the damage reduction of {{aqua:Soul Switch}} by {{damageReduction;%}}. {{aqua:Soul Switch}} will now only teleport you to your target, deal {{damage}} damage, and trap the target in a {{blocks}} radius for {{ticks}}.",
         "soulSwitchDamageReductionIncreasePercent": 15,
-        "soulSwitchDamage": 400,
+        "soulSwitchDamage": 300,
         "tetherRadius": 2,
         "tetherTickDuration": 30,
         "soulSwitchVerticalLimit": 5
@@ -662,7 +663,7 @@
         "difficulty": 4,
         "name": "Righteous Rampage",
         "description": "Replace {{aqua:Heart to Heart}} with {{aqua:Bull Rush}}. Lose {{damageReduction;%}} damage reduction. {{aqua:Vindicate}} can be recasted to perform a huge leap, which upon landing will damage all enemies within {{blocks}} for {{damage}} damage, silence them for {{ticks}}, and deal massive knockback.",
-        "damageReductionDecrease": 10,
+        "damageReductionDecrease": 5,
         "vindicateLeapRadius": 6,
         "vindicateLeapDamage": {
           "min": 483,
@@ -683,15 +684,14 @@
         "vindicateCooldownReductionSeconds": 7,
         "recastSpeedIncreasePercent": 65,
         "recastDurationTicks": 100,
-        "nextStrikeDamageIncreasePercent": 150,
+        "nextStrikeDamageIncreasePercent": 100,
         "nextStrikeCooldownReductionTicks": 60
       },
       "auraOfRestoration": {
         "difficulty": 1,
         "name": "Aura of Restoration",
-        "description": "Increase the cooldown of {{aqua:Soothing Elixir}} by {{ticks}} and the healing over time by {{heal;%}}, which will now always affect allies hit by the initial impact. Increase the break range of {{aqua:Remedic Chains}} by {{blocks}}.",
-        "soothingElixirCooldownIncreaseSeconds": 1,
-        "puddleHealingIncreasePercent": 20,
+        "description": "Increase the healing over time by {{heal;%}}, which will now always affect allies hit by the initial impact. Increase the break range of {{aqua:Remedic Chains}} by {{blocks}}.",
+        "puddleHealingIncreasePercent": 30,
         "remedicChainsBreakRadiusIncrease": 5
       },
       "alchemistsFury": {
@@ -748,7 +748,7 @@
         "description": "Gain {{heal}} max health and {{energy}} max energy. Increase the healing of {{aqua:Energy Seer}} to {{heal;%}} and the energy granted by {{energy}}.",
         "healthIncrease": 500,
         "energyIncrease": 100,
-        "energySeerHealingMultiplier": 500,
+        "energySeerHealingMultiplier": 300,
         "energySeerEnergyIncrease": 10
       },
       "contagion": {
@@ -763,8 +763,8 @@
         "difficulty": 2,
         "name": "Withering Plague",
         "description": "Increase the duration of {{dark_red:PHEX}} by {{ticks}}. For the duration of {{aqua:Astral Plague}}, increase the damage dealt to non-Tank enemies with max stacks of {{dark_red:PHEX}} by {{damage;%}}.",
-        "poisonousHexTicksIncrease": 40,
-        "damageIncrease": 20
+        "poisonousHexTicksIncrease": 60,
+        "damageIncrease": 35
       },
       "airStrike": {
         "difficulty": 5,
@@ -774,8 +774,8 @@
         "ascendDurationTicks": 10,
         "airStrikeDurationTicks": 60,
         "flySpeed": 0.03,
-        "soulfireBeamDamageReductionPercent": 20,
-        "soulfireBeamRangeDecrease": 15,
+        "soulfireBeamDamageReductionPercent": 10,
+        "soulfireBeamRangeDecrease": 10,
         "soulfireBeamHitboxIncrease": 0.4,
         "maxBeamCastsNormal": 2,
         "maxBeamCastsOnCooldown": 2,
@@ -805,7 +805,7 @@
         "name": "Ruinous Hex",
         "description": "Increase the pierce against enemies of {{aqua:Fortifying Hex}} by {{blue}} and the damage by {{damage;%}}, but increase the energy cost by {{energy}} and reduce the pierce for allies by {{blue}}.",
         "fortifyingHexEnemyPierceIncrease": 1,
-        "fortifyingHexDamageIncreasePercent": 40,
+        "fortifyingHexDamageIncreasePercent": 30,
         "fortifyingHexEnergyCostIncrease": 5,
         "fortifyingHexAllyPierceReduction": 1
       },
@@ -831,7 +831,7 @@
         "description": "Reduce the cooldown of {{aqua:Mystical Barrier}} by {{ticks;%}}. {{aqua:Mystical Barrier}} grants {{damageReduction;%}} damage reduction but you receive {{damage;%}} more damage for the duration.",
         "mysticalBarrierCooldownReductionPercent": 35,
         "targetDamageReductionPercent": 25,
-        "selfDamageIncreasePercent": 20
+        "selfDamageIncreasePercent": 15
       },
       "sanctuaryOfRetribution": {
         "difficulty": 2,

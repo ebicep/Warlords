@@ -26,6 +26,7 @@ public class Clairvoyance extends AbstractAbility implements PurpleAbilityIcon, 
     private float healingIncreasePercent = 35;
     private int speedIncrease = 40;
     private int tickDuration = 100;
+    private float energyRestore = 45;
 
     public Clairvoyance() {
         super(AbstractAbilityBuilder.create("clairvoyance").pvp());
@@ -37,11 +38,13 @@ public class Clairvoyance extends AbstractAbility implements PurpleAbilityIcon, 
         this.healingIncreasePercent = ConfigManager.getAbilityConfigValue(builder.getNamespaces(), builder.getAppendedFieldName("healingIncreasePercent"), float.class);
         this.speedIncrease = ConfigManager.getAbilityConfigValue(builder.getNamespaces(), builder.getAppendedFieldName("speedIncrease"), int.class);
         this.tickDuration = ConfigManager.getAbilityConfigValue(builder.getNamespaces(), builder.getAppendedFieldName("tickDuration"), int.class);
+        this.energyRestore = ConfigManager.getAbilityConfigValue(builder.getNamespaces(), builder.getAppendedFieldName("energyRestore"), float.class);
     }
 
 
     @Override
     protected boolean onActivateInternal(@Nonnull WarlordsEntity wp) {
+        wp.addEnergy(wp, name, energyRestore);
         Utils.playGlobalSound(wp.getLocation(), "mage.timewarp.activation", 3, 1.5f);
         wp.addSpeedModifier(wp, name, speedIncrease, tickDuration);
         wp.addInstance(InstanceBuilder.healing().ability(this).source(wp).value(healingValues.healing));
@@ -76,7 +79,9 @@ public class Clairvoyance extends AbstractAbility implements PurpleAbilityIcon, 
     public void updateDescription(Player player) {
         description = AbilityDescriptionBuilder.create("Heal for ")
                                                .heal(healingValues.healing)
-                                               .text(" health and increase your healing output by ")
+                                               .text(" health, gain ")
+                                               .energy(energyRestore)
+                                               .text(" energy, and increase your healing output by ")
                                                .percent(healingIncreasePercent, NamedTextColor.GREEN)
                                                .text(" and speed by")
                                                .percent(speedIncrease, NamedTextColor.WHITE)

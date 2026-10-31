@@ -209,6 +209,7 @@
         "name": "Clairvoyance",
         "cooldown": 28,
         "energyCost": 30,
+        "energyRestore": 45,
         "healingIncreasePercent": 30,
         "speedIncrease": 40,
         "tickDuration": 120,
@@ -518,7 +519,7 @@
       },
       "flameBreath": {
         "name": "Flame Breath",
-        "cooldown": 8,
+        "cooldown": 7.5,
         "energyCost": 60,
         "maxAnimationTime": 12,
         "maxAnimationEffects": 4,
@@ -710,10 +711,10 @@
         "hazeSlowness": 30,
         "hazeSlowDurationTicks": 20,
         "vulnerableTickDuration": 120,
-        "vulnerableDamageBonus": 10,
+        "vulnerableDamageBonus": 15,
         "damageValues": {
           "hazeDamage": {
-            "value": 160
+            "value": 200
           }
         },
         "healingValues": {
@@ -1312,8 +1313,8 @@
         "cooldown": 57,
         "energyCost": 40,
         "radius": 7,
-        "tickDuration": 120,
-        "damageReductionPercent": 40,
+        "tickDuration": 140,
+        "damageReductionPercent": 50,
         "allyHealMultiplierPercent": 100,
         "healingValues": {
           "castHealing": {
@@ -1619,13 +1620,13 @@
         "name": "Vampiric Chains",
         "cooldown": 18,
         "energyCost": 60,
-        "tickDuration": 160,
+        "tickDuration": 140,
         "enemiesAffected": 3,
         "linkBreakRadius": 18,
         "castRange": 12,
         "maxHealthDamage": 2.5,
-        "healRadius": 6,
-        "healCap": 700
+        "healRadius": 7,
+        "healCap": 600
       },
       "vitalityConcoction": {
         "name": "Vitality Concoction",
