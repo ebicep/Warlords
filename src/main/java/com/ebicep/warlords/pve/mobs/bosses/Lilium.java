@@ -98,7 +98,7 @@ public class Lilium extends AbstractMob implements BossMob {
 
     public Lilium(Location spawnLocation) {
         super(spawnLocation,
-                "Lilium",
+                "Fragmented Lilium",
                 280000,
                 0.38f,
                 30,
@@ -134,7 +134,7 @@ public class Lilium extends AbstractMob implements BossMob {
 
     @Override
     public Component getDescription() {
-        return Component.text("Queen of Hearts", TextColor.color(218, 112, 214));
+        return Component.text("Serenade of a Bleeding Heart", TextColor.color(218, 112, 214));
     }
 
     @Override
@@ -330,8 +330,8 @@ public class Lilium extends AbstractMob implements BossMob {
                 Material.STRIPPED_CHERRY_LOG,
                 false,
                 2,
-                40,
-                6,
+                30,
+                8,
                 false
         );
         conduitsOne = createConduit(2, option);
