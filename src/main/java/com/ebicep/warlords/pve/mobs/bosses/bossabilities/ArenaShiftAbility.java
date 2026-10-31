@@ -1,8 +1,11 @@
 package com.ebicep.warlords.pve.mobs.bosses.bossabilities;
 
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
+import com.ebicep.warlords.player.ingame.WarlordsNPC;
+import net.citizensnpcs.api.npc.NPC;
 import org.bukkit.Location;
 import org.bukkit.World;
+import org.bukkit.event.player.PlayerTeleportEvent;
 
 import java.util.List;
 
@@ -26,6 +29,12 @@ public class ArenaShiftAbility {
     }
 
     public void teleportBoss(WarlordsEntity entity) {
+        if (entity instanceof WarlordsNPC warlordsNPC) {
+            NPC citizensNpc = warlordsNPC.getNpc();
+            if (citizensNpc != null && citizensNpc.isSpawned()) {
+                citizensNpc.teleport(bossLocation, PlayerTeleportEvent.TeleportCause.PLUGIN);
+            }
+        }
         entity.teleport(bossLocation);
     }
 
