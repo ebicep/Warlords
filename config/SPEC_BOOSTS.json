@@ -694,7 +694,7 @@
         "difficulty": 1,
         "name": "Aura of Restoration",
         "description": "Increase the healing over time by {{heal;%}}, which will now always affect allies hit by the initial impact. Increase the break range of {{aqua:Remedic Chains}} by {{blocks}}.",
-        "puddleHealingIncreasePercent": 30,
+        "puddleHealingIncreasePercent": 20,
         "remedicChainsBreakRadiusIncrease": 5
       },
       "alchemistsFury": {
