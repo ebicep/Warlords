@@ -1,6 +1,5 @@
 package com.ebicep.warlords.pve.mobs.bosses.bossminions;
 
-import com.ebicep.warlords.effects.EffectUtils;
 import com.ebicep.warlords.game.option.pve.PveOption;
 import com.ebicep.warlords.player.ingame.instances.InstanceBuilder;
 import com.ebicep.warlords.player.ingame.instances.InstanceFlags;
@@ -8,13 +7,11 @@ import com.ebicep.warlords.pve.mobs.AbstractMob;
 import com.ebicep.warlords.pve.mobs.Mob;
 import com.ebicep.warlords.pve.mobs.bosses.Lilium;
 import com.ebicep.warlords.pve.mobs.tiers.BossMinionMob;
-import com.ebicep.warlords.pve.mobs.tiers.BossMob;
 import com.ebicep.warlords.util.warlords.GameRunnable;
 import com.ebicep.warlords.util.warlords.PlayerFilter;
 import com.ebicep.warlords.util.warlords.Utils;
 import org.bukkit.Location;
 import org.bukkit.Sound;
-import org.bukkit.entity.Boss;
 
 public class EchoOfLilium extends AbstractMob implements BossMinionMob {
 
@@ -63,7 +60,7 @@ public class EchoOfLilium extends AbstractMob implements BossMinionMob {
                 @Override
                 public void run() {
                     t++;
-                    Lilium.bladeWaltsAbility(warlordsNPC);
+                    Lilium.bladeWaltzAbility(warlordsNPC);
                     if (t == 4) {
                         this.cancel();
                     }

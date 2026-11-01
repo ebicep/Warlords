@@ -454,7 +454,7 @@
         "max_melee_damage": 2500.0
       },
       "LILIUM": {
-        "name": "Lilium",
+        "name": "Fragmented Lilium",
         "max_health": 240000,
         "walk_speed": 0.38,
         "damage_resistance": 30.0,

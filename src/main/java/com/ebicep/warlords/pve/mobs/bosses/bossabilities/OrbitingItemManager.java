@@ -78,6 +78,7 @@ public class OrbitingItemManager {
                 disp.setItemStack(new ItemStack(orbitMaterial));
                 disp.setBillboard(Display.Billboard.FIXED);
                 disp.setInterpolationDuration(0);
+                disp.setTeleportDuration(0);
                 disp.setTransformation(new Transformation(
                         new Vector3f(0,0,0),
                         new Quaternionf(),              // leftRotation (dynamic yaw)

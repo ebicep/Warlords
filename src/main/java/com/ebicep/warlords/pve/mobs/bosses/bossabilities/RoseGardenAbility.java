@@ -299,6 +299,7 @@ public class RoseGardenAbility {
                 d.setTransformation(t);
                 d.setPersistent(true);
                 d.setInvulnerable(true);
+                d.setTeleportDuration(0);
                 d.setGlowing(false);
             });
 
@@ -341,6 +342,6 @@ public class RoseGardenAbility {
     }
 
     public void setRoseCount(int roseCount) {
-        this.roseCount = roseCount;
+        this.roseCount = Math.max(1, roseCount);
     }
 }
