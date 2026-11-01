@@ -15,10 +15,8 @@ import com.ebicep.warlords.database.repositories.player.pojos.general.FutureMess
 import com.ebicep.warlords.database.repositories.player.pojos.pve.DatabasePlayerPvE;
 import com.ebicep.warlords.pve.Spendable;
 import com.ebicep.warlords.pve.rewards.types.MasterworksFairReward;
-import com.ebicep.warlords.pve.weapons.WeaponsPvE;
 import com.ebicep.warlords.pve.weapons.weaponaddons.WeaponScore;
 import com.ebicep.warlords.util.chat.ChatChannels;
-import com.ebicep.warlords.util.java.NumberFormat;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
 import org.bukkit.Bukkit;
@@ -114,28 +112,7 @@ public class MasterworksFairCommand extends BaseCommand {
                     } else {
                         ChatChannels.sendDebugMessage(issuer, Component.text("Found fair with start date " + instant, NamedTextColor.GREEN));
                     }
-                    int fairNumber = masterworksFair.getFairNumber();
-                    HashMap<UUID, List<MasterworksFairEntry>> playerFairResults = new HashMap<>();
-                    for (WeaponsPvE rarity : WeaponsPvE.VALUES) {
-                        if (rarity.getPlayerEntries == null) {
-                            continue;
-                        }
-
-                        List<MasterworksFairPlayerEntry> playerEntries = rarity.getPlayerEntries.apply(masterworksFair);
-                        playerEntries.sort(Comparator.comparingDouble(o -> ((WeaponScore) o.getWeapon()).getWeaponScore()));
-                        Collections.reverse(playerEntries);
-
-                        for (int i = 0; i < playerEntries.size(); i++) {
-                            MasterworksFairPlayerEntry entry = playerEntries.get(i);
-                            MasterworksFairEntry playerRecordEntry = new MasterworksFairEntry(instant,
-                                    rarity,
-                                    i + 1,
-                                    Float.parseFloat(NumberFormat.formatOptionalHundredths(((WeaponScore) entry.getWeapon()).getWeaponScore())),
-                                    fairNumber
-                            );
-                            playerFairResults.computeIfAbsent(entry.getUuid(), k -> new ArrayList<>()).add(playerRecordEntry);
-                        }
-                    }
+                    HashMap<UUID, List<MasterworksFairEntry>> playerFairResults = masterworksFair.buildPlayerResults(instant);
                     Warlords.newChain()
                             .async(() -> {
                                 playerFairResults.forEach((uuid, masterworksFairEntries) -> {
@@ -152,23 +129,25 @@ public class MasterworksFairCommand extends BaseCommand {
                                                 }
                                                 boolean resent = false;
                                                 for (MasterworksFairEntry masterworksFairEntry : masterworksFairEntries) {
-                                                    WeaponsPvE rarity = masterworksFairEntry.getRarity();
-                                                    if (pveStats.getMasterworksFairEntries()
-                                                                .stream()
-                                                                .anyMatch(entry -> entry.getFairNumber() == masterworksFairEntry.getFairNumber() && entry.getRarity() == rarity)
-                                                    ) {
+                                                    if (hasMasterworksFairEntry(pveStats, masterworksFairEntry)) {
                                                         continue;
                                                     }
                                                     resent = true;
                                                     pveStats.addMasterworksFairEntry(masterworksFairEntry);
                                                     LinkedHashMap<Spendable, Long> rewards = masterworksFair.getRewards(masterworksFairEntry);
-                                                    pveStats.addReward(new MasterworksFairReward(rewards, instant, rarity));
+                                                    String category = masterworksFairEntry.isItemSubmission()
+                                                            ? masterworksFairEntry.getItemTier().getName() + " Item"
+                                                            : masterworksFairEntry.getRarity().name;
+                                                    pveStats.addReward(new MasterworksFairReward(rewards, instant, category));
+                                                    Component categoryLabel = masterworksFairEntry.isItemSubmission()
+                                                            ? Component.text(category, masterworksFairEntry.getItemTier().getTextColor())
+                                                            : masterworksFairEntry.getRarity().getTextColoredName();
                                                     ChatChannels.sendDebugMessage(
                                                             (CommandIssuer) null,
                                                             Component.text("Validating Fair - Gave ", NamedTextColor.GREEN)
                                                                      .append(Component.text(databasePlayer.getName(), NamedTextColor.AQUA))
                                                                      .append(Component.text(" their ", NamedTextColor.GREEN))
-                                                                     .append(rarity.getTextColoredName())
+                                                                     .append(categoryLabel)
                                                                      .append(Component.text(" reward", NamedTextColor.GREEN))
                                                     );
                                                 }
@@ -225,6 +204,18 @@ public class MasterworksFairCommand extends BaseCommand {
                     sendFairEntry(player, masterworksFair.getEpicPlayerEntries());
                 })
                 .execute();
+    }
+
+    private static boolean hasMasterworksFairEntry(DatabasePlayerPvE pveStats, MasterworksFairEntry expected) {
+        return pveStats.getMasterworksFairEntries().stream().anyMatch(stored -> {
+            if (stored.getFairNumber() != expected.getFairNumber()) {
+                return false;
+            }
+            if (expected.isItemSubmission()) {
+                return stored.isItemSubmission() && stored.getItemTier() == expected.getItemTier();
+            }
+            return !stored.isItemSubmission() && stored.getRarity() == expected.getRarity();
+        });
     }
 
     private void sendFairEntry(Player player, List<MasterworksFairPlayerEntry> entries) {

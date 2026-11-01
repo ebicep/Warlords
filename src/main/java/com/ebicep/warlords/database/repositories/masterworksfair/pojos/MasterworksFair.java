@@ -108,6 +108,10 @@ public class MasterworksFair {
         }
     }
 
+    public HashMap<UUID, List<MasterworksFairEntry>> buildPlayerResults(Instant time) {
+        return createResults(time);
+    }
+
     private HashMap<UUID, List<MasterworksFairEntry>> createResults(Instant time) {
         HashMap<UUID, List<MasterworksFairEntry>> playerFairResults = new HashMap<>();
         for (WeaponsPvE rarity : WeaponsPvE.VALUES) {
