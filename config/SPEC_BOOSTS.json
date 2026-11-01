@@ -358,12 +358,14 @@
       "markedForDeath": {
         "difficulty": 3,
         "name": "Marked for Death",
-        "description": "{{aqua:Avenger's Mark}} now deals {{damage}} damage and slows by {{speed;%}} for {{ticks}}. Each {{aqua:Avenger's Strike}} on the Marked target increases the duration of {{aqua:Avenger's Mark}} by {{ticks}}, up to {{ticks}}. Remove the energy cost of {{aqua:Holy Radiance}}.",
+        "description": "{{aqua:Avenger's Mark}} now deals {{damage}} damage, slows by {{speed;%}}, and increases damage taken by {{damage;%}} for {{ticks}}. Each {{aqua:Avenger's Strike}} on the Marked target increases the duration of {{aqua:Avenger's Mark}} by {{ticks}}, up to {{ticks}}. Remove the energy cost of {{aqua:Holy Radiance}}.",
         "avengerMarkDamage": 100,
         "avengerMarkSlowPercent": 10,
+        "avengerMarkIncreaseDamagePercent": 5,
         "strikeMarkDurationIncreaseTicks": 20,
         "maxStrikeMarkDurationIncreaseTicks": 60,
-        "avengerMarkDebuffTickDuration": 100
+        "avengerMarkDebuffTickDuration": 100,
+        "holyRadianceEnergyCost": 0
       },
       "wardingWrath": {
         "difficulty": 3,
