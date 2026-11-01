@@ -561,13 +561,14 @@
       "earthboundInfusion": {
         "difficulty": 2,
         "name": "Earthbound Infusion",
-        "description": "Gain {{heal}} max health. Reduce the cooldown of {{aqua:Earthliving Weapon}} by {{ticks}} and the duration by {{ticks}}. Increase the number of guaranteed hits by {{blue}}, and increase the healing by {{heal}} if you are the only player healed. Increase the range of {{aqua:Chain Heal}} by {{blocks}}.",
+        "description": "Gain {{heal}} max health. Reduce the cooldown of {{aqua:Earthliving Weapon}} by {{ticks}} and the duration by {{ticks}}. Increase the number of guaranteed hits by {{blue}}, and increase the healing by {{heal}} if you are the only player healed. Increase the range of {{aqua:Chain Heal}} by {{blocks}}. While {{aqua:Earthliving Weapon}} is active, gain {{damageReduction;%}} knockback resistance.",
         "healthIncrease": 500,
         "earthlivingCooldownReductionSeconds": 3,
-        "earthlivingDurationDecreaseTicks": 60,
+        "earthlivingDurationDecreaseTicks": 40,
         "earthlivingExtraGuaranteedHits": 1,
         "earthlivingSingleHealBonus": 150,
-        "chainHealRangeIncrease": 20
+        "chainHealRangeIncrease": 20,
+        "knockbackResistancePercent": 20
       },
       "augmentedChains": {
         "difficulty": 4,

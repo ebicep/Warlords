@@ -2,14 +2,18 @@ package com.ebicep.warlords.player.general.specboosts.boosts;
 
 import com.ebicep.warlords.abilities.ChainHeal;
 import com.ebicep.warlords.abilities.EarthlivingWeapon;
+import com.ebicep.warlords.events.player.ingame.WarlordsAddCooldownEvent;
 import com.ebicep.warlords.player.general.specboosts.SpecBoostManager;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
 import com.ebicep.warlords.player.ingame.WarlordsPlayer;
+import com.ebicep.warlords.player.ingame.cooldowns.AbstractCooldown;
 import com.ebicep.warlords.player.ingame.cooldowns.CooldownTypes;
 import com.ebicep.warlords.player.ingame.cooldowns.cooldowns.PermanentCooldown;
+import com.ebicep.warlords.player.ingame.cooldowns.cooldowns.RegularCooldown;
 import com.ebicep.warlords.player.ingame.instances.type.CustomInstanceFlags;
 import com.ebicep.warlords.player.ingame.instances.type.Modifier;
 import com.ebicep.warlords.util.warlords.modifiablevalues.FloatModifiable;
+import org.bukkit.event.EventHandler;
 
 import java.util.List;
 
@@ -21,6 +25,7 @@ public class EarthboundInfusion implements SpecBoostManager.SpecBoost<Earthbound
     private int earthlivingExtraGuaranteedHits;
     private int earthlivingSingleHealBonus;
     private int chainHealRangeIncrease;
+    private float knockbackResistancePercent;
 
     @Override
     public void init() {
@@ -30,6 +35,7 @@ public class EarthboundInfusion implements SpecBoostManager.SpecBoost<Earthbound
         this.earthlivingExtraGuaranteedHits = getValue("earthlivingExtraGuaranteedHits", int.class);
         this.earthlivingSingleHealBonus = getValue("earthlivingSingleHealBonus", int.class);
         this.chainHealRangeIncrease = getValue("chainHealRangeIncrease", int.class);
+        this.knockbackResistancePercent = getValue("knockbackResistancePercent", float.class);
     }
 
     @Override
@@ -49,7 +55,8 @@ public class EarthboundInfusion implements SpecBoostManager.SpecBoost<Earthbound
                 earthlivingDurationDecreaseTicks,
                 earthlivingExtraGuaranteedHits,
                 earthlivingSingleHealBonus,
-                chainHealRangeIncrease
+                chainHealRangeIncrease,
+                knockbackResistancePercent
         );
     }
 
@@ -65,8 +72,11 @@ public class EarthboundInfusion implements SpecBoostManager.SpecBoost<Earthbound
 
     public class Boost implements SpecBoostManager.Boost {
 
+        private WarlordsEntity warlordsEntity;
+
         @Override
         public void apply(WarlordsPlayer warlordsPlayer) {
+            this.warlordsEntity = warlordsPlayer;
             warlordsPlayer.getHealth().addModifier(FloatModifiable.ModifierType.ADDITIVE, "Spec Boost (Base)", healthIncrease);
             warlordsPlayer.getAbilitiesMatching(EarthlivingWeapon.class).forEach(earthlivingWeapon -> {
                 earthlivingWeapon.getCooldown().addModifier(FloatModifiable.ModifierType.ADDITIVE, "Spec Boost", -earthlivingCooldownReductionSeconds);
@@ -96,6 +106,21 @@ public class EarthboundInfusion implements SpecBoostManager.SpecBoost<Earthbound
                         }
                     }
             ));
+        }
+
+        @EventHandler(ignoreCancelled = true)
+        public void onCooldownAddEvent(WarlordsAddCooldownEvent event) {
+            if (!warlordsEntity.equals(event.getWarlordsEntity())) {
+                return;
+            }
+            AbstractCooldown<?> cooldown = event.getAbstractCooldown();
+            if (!(cooldown instanceof RegularCooldown<?> regularCooldown)) {
+                return;
+            }
+            if (!(cooldown.getCooldownObject() instanceof EarthlivingWeapon.EarthlivingData) || !cooldown.getFrom().equals(warlordsEntity)) {
+                return;
+            }
+            warlordsEntity.addKnockbackModifier(warlordsEntity, getStringName(), -knockbackResistancePercent, regularCooldown);
         }
 
     }
