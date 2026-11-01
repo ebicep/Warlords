@@ -133,19 +133,17 @@ public class DateUtil {
      * @return The 1st of the current month at 10 AM UTC (start of the current monthly period)
      */
     public static Instant getResetDateCurrentMonth() {
-        Instant instant = OffsetDateTime
+        OffsetDateTime reset = OffsetDateTime
                 .now(ZoneOffset.UTC)
                 .with(TemporalAdjusters.firstDayOfMonth())
                 .withHour(10)
                 .withMinute(0)
                 .withSecond(0)
-                .withNano(0)
-                .toInstant();
-        if (instant.isBefore(Instant.now())) {
-            return instant;
-        } else {
-            return instant.minus(1, ChronoUnit.MONTHS);
+                .withNano(0);
+        if (reset.toInstant().isBefore(Instant.now())) {
+            return reset.toInstant();
         }
+        return reset.minusMonths(1).toInstant();
     }
 
     public static String formatCurrentDateEST(String format) {
