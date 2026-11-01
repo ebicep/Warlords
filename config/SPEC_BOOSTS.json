@@ -652,7 +652,7 @@
         "description": "Gain {{heal}} max health. Reduce the cooldown of {{aqua:Heart to Heart}} by {{ticks}} and increase the healing by {{heal}}.",
         "healthIncrease": 400,
         "heartToHeartCooldownReductionSeconds": 2.5,
-        "heartToHeartHealingIncrease": 100
+        "heartToHeartHealingIncrease": 150
       },
       "sanctionBurst": {
         "difficulty": 4,
