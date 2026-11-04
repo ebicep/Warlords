@@ -28,9 +28,9 @@ public class LegendaryFractured extends AbstractLegendaryWeapon implements Libra
     public static final float BASE_CRIT_CHANCE_BONUS_PER_STACK = 2.5f;
     public static final float CRIT_CHANCE_BONUS_PER_STACK_PER_UPGRADE = .5f;
     public static final float BASE_CRIT_MULTIPLIER_BONUS_PER_STACK = 5f;
-    public static final float CRIT_MULTIPLIER_BONUS_PER_STACK_PER_UPGRADE = 1f;
+    public static final float CRIT_MULTIPLIER_BONUS_PER_STACK_PER_UPGRADE = 2f;
     public static final int MAX_STACKS = 10;
-    public static final int STACK_DURATION_SECONDS = 3;
+    public static final int STACK_DURATION_SECONDS = 6;
 
     @Transient
     private final Map<UUID, FracturedData> fracturedTargets = new HashMap<>();

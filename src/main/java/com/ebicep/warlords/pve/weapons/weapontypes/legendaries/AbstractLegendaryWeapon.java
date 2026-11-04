@@ -212,7 +212,7 @@ public abstract class AbstractLegendaryWeapon extends AbstractWeapon implements 
 
     @Override
     public int getMaxUpgradeLevel() {
-        return 5;
+        return 6;
     }
 
     @Override
@@ -243,6 +243,11 @@ public abstract class AbstractLegendaryWeapon extends AbstractWeapon implements 
                 cost.put(Currencies.COIN, 1_000_000L);
                 cost.put(Currencies.SYNTHETIC_SHARD, 10_000L);
                 cost.put(Currencies.LEGEND_FRAGMENTS, 10_000L);
+            }
+            default ->  {
+                cost.put(Currencies.COIN, 100_000_000L);
+                cost.put(Currencies.SYNTHETIC_SHARD, 100_000L);
+                cost.put(Currencies.LEGEND_FRAGMENTS, 100_000L);
             }
         }
         return cost;
@@ -773,6 +778,9 @@ public abstract class AbstractLegendaryWeapon extends AbstractWeapon implements 
                 cost.put(Currencies.LEGEND_FRAGMENTS, 10000L);
                 cost.put(MobDrop.ZENITH_STAR, 5L);
                 cost.put(Currencies.LIMIT_BREAKER, 3L);
+            }
+            default -> {
+                cost.put(Currencies.COIN, 100_000L);
             }
         }
         return cost;
