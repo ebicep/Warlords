@@ -33,7 +33,7 @@ public class LegendaryAftershock extends AbstractLegendaryWeapon implements Pass
         Instant nextReadyAt = Instant.EPOCH;
     }
 
-    public static final int RADIUS_BLOCKS = 5;
+    public static final int RADIUS_BLOCKS = 8;
     public static final int DURATION_SECONDS = 3;
     public static final int TICK_INTERVAL_TICKS = 5;
     public static final int COOLDOWN_SECONDS = 3;
@@ -65,7 +65,7 @@ public class LegendaryAftershock extends AbstractLegendaryWeapon implements Pass
     public TextComponent getPassiveEffect() {
         return Component.text("Dealing burst damage of at least ", NamedTextColor.GRAY)
                 .append(formatTitleUpgrade(getThresholdPercent(), "%"))
-                .append(Component.text(" of the target’s max health creates an Aftershock zone (5 blocks) at the target for 3 seconds. The zone deals ", NamedTextColor.GRAY))
+                .append(Component.text(" of the target’s max health creates an Aftershock zone (8 blocks) at the target for 3 seconds. The zone deals ", NamedTextColor.GRAY))
                 .append(formatTitleUpgrade(getZoneDamagePercent(), "%"))
                 .append(Component.text(" of the triggering hit over its duration and slows enemies by 25%. Only the first hit can trigger Aftershock. Has a " + COOLDOWN_SECONDS + " second cooldown.", NamedTextColor.GRAY));
     }

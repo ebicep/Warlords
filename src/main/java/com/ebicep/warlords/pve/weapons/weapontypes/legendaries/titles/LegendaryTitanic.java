@@ -20,7 +20,7 @@ import java.util.UUID;
 public class LegendaryTitanic extends AbstractLegendaryWeapon {
 
     private static final float HEALTH_INCREASE = 0.008f;
-    private static final float HEALTH_INCREASE_PER_UPGRADE = 0.0035f;
+    private static final float HEALTH_INCREASE_PER_UPGRADE = 0.003f;
 
     public LegendaryTitanic() {
     }
@@ -92,7 +92,7 @@ public class LegendaryTitanic extends AbstractLegendaryWeapon {
 
     @Override
     protected float getHealthBonusValue() {
-        return 1500;
+        return 1400;
     }
 
     @Override

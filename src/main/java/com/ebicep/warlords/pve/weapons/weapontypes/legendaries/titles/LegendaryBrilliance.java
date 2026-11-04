@@ -77,7 +77,7 @@ public class LegendaryBrilliance extends AbstractLegendaryWeapon implements Pass
 
     @Override
     protected float getHealthBonusValue() {
-        return 1200;
+        return 1000;
     }
 
     @Override

@@ -85,6 +85,8 @@ public class MysticalBarrier extends AbstractAbility implements BlueAbilityIcon,
             ) {
                 giveBarrier(wp, target);
             }
+        } else if (pveMasterUpgrade) {
+            giveBarrier(wp, wp);
         } else {
             List<WarlordsEntity> targets = PlayerFilter
                     .entitiesAround(wp, radius, radius, radius)

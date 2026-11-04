@@ -91,6 +91,9 @@ public class Vindicate extends AbstractAbility implements OrangeAbilityIcon, Dur
                     WarlordsEntity attacker = event.getSource();
                     if (pveMasterUpgrade && !Objects.equals(attacker, hit)) {
                         Utils.addKnockback(name, wp.getLocation(), attacker, -1, 0.15);
+                        if (event.getFlags().contains(InstanceFlags.REFLECTIVE_DAMAGE) || event.getFlags().contains(InstanceFlags.RECURSIVE)) {
+                            return;
+                        }
                         attacker.addInstance(InstanceBuilder
                                 .damage()
                                 .cause(name)

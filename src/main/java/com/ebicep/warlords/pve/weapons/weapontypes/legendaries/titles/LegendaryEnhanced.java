@@ -17,6 +17,7 @@ import com.ebicep.warlords.util.java.Pair;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.TextComponent;
 import net.kyori.adventure.text.format.NamedTextColor;
+import org.bukkit.Bukkit;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 
@@ -79,16 +80,13 @@ public class LegendaryEnhanced extends AbstractLegendaryWeapon {
             public void onSpeedModify(WarlordsAddSpeedModifierEvent event) {
                 WarlordsEntity eventPlayer = event.getWarlordsEntity();
                 MotionModifier modifier = event.getMotionModifier();
-                if (!(eventPlayer instanceof WarlordsNPC)) {
+                if (eventPlayer instanceof WarlordsNPC) {
                     return;
                 }
-                if (!modifier.getFrom().equals(player)) {
+                if (!eventPlayer.isTeammate(player)) {
                     return;
                 }
-                if (eventPlayer.isTeammate(player)) {
-                    return;
-                }
-                if (modifier.getModifier() > 0) {
+                if (modifier.getModifier() < 0) {
                     return;
                 }
                 if (event.isEnhanced()) {

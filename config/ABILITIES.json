@@ -1897,7 +1897,7 @@
       "exiledApostateFireball": {
         "name": "Fireball",
         "cooldown": 5.5,
-        "energyCost": 0,
+        "energyCost": 70,
         "maxFullDistance": 50,
         "directHitMultiplier": 15,
         "splashRadius": 4,
