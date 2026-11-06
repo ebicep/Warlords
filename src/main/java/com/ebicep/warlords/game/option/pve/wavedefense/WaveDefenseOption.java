@@ -18,6 +18,7 @@ import com.ebicep.warlords.game.option.marker.SpawnLocationMarker;
 import com.ebicep.warlords.game.option.marker.TimerSkipAbleMarker;
 import com.ebicep.warlords.game.option.marker.scoreboard.ScoreboardHandler;
 import com.ebicep.warlords.game.option.marker.scoreboard.SimpleScoreboardHandler;
+import com.ebicep.warlords.game.option.pve.PveMobKillTracker;
 import com.ebicep.warlords.game.option.pve.PveOption;
 import com.ebicep.warlords.game.option.pve.rewards.CoinGainOption;
 import com.ebicep.warlords.game.option.pve.rewards.PveRewards;
@@ -162,8 +163,7 @@ public class WaveDefenseOption implements PveOption {
                         }.runTaskLater(1);
 
                         if (killer instanceof WarlordsPlayer) {
-                            killer.getMinuteStats().addMobKill(mobToRemove.getName());
-                            we.getHitBy().forEach((assisted, value) -> assisted.getMinuteStats().addMobAssist(mobToRemove.getName()));
+                            PveMobKillTracker.recordKill(killer, we, mobToRemove);
 
                             if (coinGainOption == null) {
                                 return;

@@ -44,8 +44,8 @@ public class LegendaryVibrant extends AbstractLegendaryWeapon implements GardenO
     public static final int DAMAGE_TAKEN_PER_UPGRADE = 1;
     public static final int DAMAGE_CAP = 10_000;
     public static final int DAMAGE_CAP_PER_UPGRADE = 2_000;
-    public static final int ENERGY_CAP = 500;
-    public static final int ENERGY_CAP_PER_UPGRADE = 75;
+    public static final int ENERGY_CAP = 400;
+    public static final int ENERGY_CAP_PER_UPGRADE = 40;
 
     @Transient
     private int secondCounter = 0;
@@ -105,7 +105,7 @@ public class LegendaryVibrant extends AbstractLegendaryWeapon implements GardenO
 
     @Override
     public TextComponent getPassiveEffect() {
-        return Component.text("Every 6s, " + NUMBER_OF_ORBS + " energy orbs will be produced based on ", NamedTextColor.GRAY)
+        return Component.text("Every 8s, " + NUMBER_OF_ORBS + " energy orbs will be produced based on ", NamedTextColor.GRAY)
                         .append(formatTitleUpgrade(DAMAGE_TAKEN + DAMAGE_TAKEN_PER_UPGRADE * getTitleLevel(), "%"))
                         .append(Component.text(" of the damage taken for the last 10s. A max of " + NumberFormat.addCommas(DAMAGE_CAP) + " damage may be tabulated and a max of "))
                         .append(formatTitleUpgrade(ENERGY_CAP + ENERGY_CAP_PER_UPGRADE * getTitleLevel()))

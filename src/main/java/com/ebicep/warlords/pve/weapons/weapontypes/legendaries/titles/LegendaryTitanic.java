@@ -92,7 +92,7 @@ public class LegendaryTitanic extends AbstractLegendaryWeapon {
 
     @Override
     protected float getHealthBonusValue() {
-        return 1500;
+        return 1400;
     }
 
     @Override

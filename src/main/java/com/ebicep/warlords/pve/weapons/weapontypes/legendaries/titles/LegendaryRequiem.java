@@ -34,8 +34,8 @@ public class LegendaryRequiem extends AbstractLegendaryWeapon implements Passive
             .add(1, 6)
             .add(1, 7);
     public static final HashMap<DifficultyIndex, Mob> DIFFICULTY_SPAWNS = new HashMap<>() {{
-        put(DifficultyIndex.EASY, Mob.ZOMBIE_LAMENT);
-        put(DifficultyIndex.NORMAL, Mob.ZOMBIE_LAMENT);
+        put(DifficultyIndex.EASY, Mob.REQUIEM_GUARDIAN);
+        put(DifficultyIndex.NORMAL, Mob.REQUIEM_GUARDIAN);
         put(DifficultyIndex.HARD, Mob.REQUIEM_GUARDIAN);
         put(DifficultyIndex.EXTREME, Mob.REQUIEM_GUARDIAN);
         put(DifficultyIndex.ENDLESS, Mob.REQUIEM_GUARDIAN);
@@ -117,7 +117,7 @@ public class LegendaryRequiem extends AbstractLegendaryWeapon implements Passive
                 player.playSound(player.getLocation(), Sound.BLOCK_NOTE_BLOCK_PLING, 1, 2);
                 HashSet<AbstractMob> spawnedMobs = new HashSet<>();
                 for (int i = 0; i < spawnAmount; i++) {
-                    AbstractMob mob = DIFFICULTY_SPAWNS.getOrDefault(difficulty, Mob.ZOMBIE_LANCER).createMob(player.getLocation());
+                    AbstractMob mob = DIFFICULTY_SPAWNS.getOrDefault(difficulty, Mob.REQUIEM_GUARDIAN).createMob(player.getLocation());
                     updateMobEquipment(mob, player);
                     allSpawnedMobs.add(mob);
                     spawnedMobs.add(mob);

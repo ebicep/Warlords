@@ -6,6 +6,7 @@ import com.ebicep.warlords.events.player.ingame.WarlordsDamageHealingFinalEvent;
 import com.ebicep.warlords.events.player.ingame.WarlordsDeathEvent;
 import com.ebicep.warlords.game.Game;
 import com.ebicep.warlords.game.Team;
+import com.ebicep.warlords.game.option.pve.PveMobKillTracker;
 import com.ebicep.warlords.game.option.pve.PveOption;
 import com.ebicep.warlords.game.option.pve.rewards.PveRewards;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
@@ -71,10 +72,7 @@ public class EffigyTrialOption implements PveOption {
                             }
                         }.runTaskLater(1);
 
-                        if (killer instanceof WarlordsPlayer) {
-                            killer.getMinuteStats().addMobKill(mobToRemove.getName());
-                            we.getHitBy().forEach((assisted, value) -> assisted.getMinuteStats().addMobAssist(mobToRemove.getName()));
-                        }
+                        PveMobKillTracker.recordKill(killer, we, mobToRemove);
 
                     }
                     MobCommand.SPAWNED_MOBS.remove(mobToRemove);

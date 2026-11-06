@@ -12,6 +12,7 @@ import com.ebicep.warlords.game.option.Option;
 import com.ebicep.warlords.game.option.cuboid.BoundingBoxOption;
 import com.ebicep.warlords.game.option.marker.scoreboard.ScoreboardHandler;
 import com.ebicep.warlords.game.option.marker.scoreboard.SimpleScoreboardHandler;
+import com.ebicep.warlords.game.option.pve.PveMobKillTracker;
 import com.ebicep.warlords.game.option.pve.PveOption;
 import com.ebicep.warlords.game.option.pve.rewards.PveRewards;
 import com.ebicep.warlords.game.option.pve.wavedefense.waves.Wave;
@@ -128,10 +129,7 @@ public class OnslaughtOption implements PveOption {
                             }
                         }.runTaskLater(1);
 
-                        if (killer instanceof WarlordsPlayer) {
-                            killer.getMinuteStats().addMobKill(mobToRemove.getName());
-                            we.getHitBy().forEach((assisted, value) -> assisted.getMinuteStats().addMobAssist(mobToRemove.getName()));
-                        }
+                        PveMobKillTracker.recordKill(killer, we, mobToRemove);
                     }
                     MobCommand.SPAWNED_MOBS.remove(mobToRemove);
                 } else if (we instanceof WarlordsPlayer && killer instanceof WarlordsNPC) {

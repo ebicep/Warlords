@@ -1,5 +1,6 @@
 package com.ebicep.warlords.game.option.pve;
 
+import com.ebicep.warlords.honorifics.HonorificManager;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
 import com.ebicep.warlords.player.ingame.WarlordsPlayer;
 import com.ebicep.warlords.pve.mobs.AbstractMob;
@@ -15,5 +16,6 @@ public final class PveMobKillTracker {
         }
         killer.getMinuteStats().addMobKill(mob.getName());
         dead.getHitBy().forEach((assisted, value) -> assisted.getMinuteStats().addMobAssist(mob.getName()));
+        HonorificManager.recordTeamBossDefeat(killer, mob.getMobRegistry());
     }
 }

@@ -1,6 +1,7 @@
 package com.ebicep.warlords.pve.newitems.setbonus.sets;
 
 import com.ebicep.warlords.abilities.internal.AbstractAbility;
+import com.ebicep.warlords.abilities.internal.CanReduceCooldowns;
 import com.ebicep.warlords.player.ingame.WarlordsPlayer;
 import com.ebicep.warlords.player.ingame.cooldowns.CooldownTypes;
 import com.ebicep.warlords.player.ingame.cooldowns.cooldowns.PermanentCooldown;
@@ -56,6 +57,9 @@ public class Voidcarver extends BaseSet {
                             .aliveTeammatesOfExcludingSelf(warlordsPlayer)
                             .forEach(ally -> {
                                 for (AbstractAbility ability : ally.getSpec().getAbilities()) {
+                                    if (ability instanceof CanReduceCooldowns) {
+                                        return;
+                                    }
                                     float extraCooldownReduction = ability
                                             .getCooldownReductionPerTick()
                                             .getCalculatedValue() * cdrBoost / 100f;

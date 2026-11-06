@@ -6,8 +6,11 @@ import com.ebicep.warlords.featureflags.FeatureFlags;
 import com.ebicep.warlords.database.repositories.player.PlayersCollections;
 import com.ebicep.warlords.database.repositories.player.pojos.general.DatabasePlayer;
 import com.ebicep.warlords.database.repositories.player.pojos.pve.DatabasePlayerPvE;
+import com.ebicep.warlords.game.Game;
+import com.ebicep.warlords.game.GameAddon;
 import com.ebicep.warlords.player.general.CustomScoreboard;
 import com.ebicep.warlords.player.general.Specializations;
+import com.ebicep.warlords.player.ingame.WarlordsEntity;
 import com.ebicep.warlords.pve.mobs.Mob;
 import com.ebicep.warlords.util.java.NumberFormat;
 import net.kyori.adventure.text.Component;
@@ -152,8 +155,8 @@ public final class HonorificManager {
                 long fastest = getFastestExtremeTicks(pveStats);
                 yield fastest == 0 ? "No completed Extreme run" : formatTicks(fastest) + " / 08:00";
             }
-            case ONE_FOR_ALL -> progress(getMobKills(pveStats, Mob.ONE_OF_NINE), 1);
-            case THE_HEART_THIEF -> progress(getMobKills(pveStats, Mob.LILIUM), 1);
+            case ONE_FOR_ALL -> progress(getBossDefeats(profile, pveStats, Mob.ONE_OF_NINE), 1);
+            case THE_HEART_THIEF -> progress(getBossDefeats(profile, pveStats, Mob.LILIUM), 1);
             case BOUNDLESS -> progress(getHighestEndlessWave(pveStats), 200);
             case GOLEM -> progress(getIronGolemKills(pveStats), 50_000);
             case GOD_OF_WAR -> progress(getTotalMobKills(pveStats), 2_000_000);
@@ -244,6 +247,22 @@ public final class HonorificManager {
         refreshAndSave(uuid);
     }
 
+    public static void recordTeamBossDefeat(WarlordsEntity killer, Mob mob) {
+        if (!honorificsEnabled() || killer == null || mob == null) {
+            return;
+        }
+        if (mob != Mob.ONE_OF_NINE && mob != Mob.LILIUM) {
+            return;
+        }
+        Game game = killer.getGame();
+        if (game == null || game.getAddons().contains(GameAddon.CUSTOM_GAME)) {
+            return;
+        }
+        game.warlordsPlayers()
+                .filter(killer::isTeammate)
+                .forEach(teammate -> creditTeamBossDefeat(teammate.getUuid(), mob));
+    }
+
     public static void refreshDisplays(@Nullable Player player) {
         runSync(() -> {
             CustomScoreboard.updateLobbyPlayerNames();
@@ -294,8 +313,8 @@ public final class HonorificManager {
             case THE_MIGHTY_ROLLER -> profile.getItemRerolls() >= 90;
             case SYNTHESIZER -> profile.getStarPiecesSynthesized() >= 100;
             case EXTREMA -> getFastestExtremeTicks(pveStats) > 0 && getFastestExtremeTicks(pveStats) <= 8L * 60 * 20;
-            case ONE_FOR_ALL -> getMobKills(pveStats, Mob.ONE_OF_NINE) >= 1;
-            case THE_HEART_THIEF -> getMobKills(pveStats, Mob.LILIUM) >= 1;
+            case ONE_FOR_ALL -> getBossDefeats(profile, pveStats, Mob.ONE_OF_NINE) >= 1;
+            case THE_HEART_THIEF -> getBossDefeats(profile, pveStats, Mob.LILIUM) >= 1;
             case BOUNDLESS -> getHighestEndlessWave(pveStats) >= 200;
             case GOLEM -> getIronGolemKills(pveStats) >= 50_000;
             case GOD_OF_WAR -> getTotalMobKills(pveStats) >= 2_000_000;
@@ -320,11 +339,38 @@ public final class HonorificManager {
         };
     }
 
+    private static void creditTeamBossDefeat(UUID uuid, Mob mob) {
+        if (!DatabaseManager.inCache(uuid, PlayersCollections.LIFETIME)) {
+            return;
+        }
+        HonorificProfile profile = DatabaseManager.getPlayer(uuid).getHonorifics();
+        if (!profile.recordTeamBossDefeat(mob.name())) {
+            return;
+        }
+        refreshAndSave(uuid);
+    }
+
+    private static long getBossDefeats(HonorificProfile profile, DatabasePlayerPvE pveStats, Mob mob) {
+        if (profile.hasTeamBossDefeat(mob.name())) {
+            return 1;
+        }
+        long participation = getMobKills(pveStats, mob) + getMobAssists(pveStats, mob);
+        return participation > 0 ? 1 : 0;
+    }
+
     private static long getMobKills(DatabasePlayerPvE pveStats, Mob mob) {
         if (mob.name == null || mob.name.isEmpty()) {
             return 0;
         }
         return pveStats.getMobKillCount(mob.name);
+    }
+
+    private static long getMobAssists(DatabasePlayerPvE pveStats, Mob mob) {
+        if (mob.name == null || mob.name.isEmpty()) {
+            return 0;
+        }
+        Long assists = pveStats.getMobAssists().get(mob.name);
+        return assists == null ? 0 : assists;
     }
 
     private static long getSkeletonKills(DatabasePlayerPvE pveStats) {
