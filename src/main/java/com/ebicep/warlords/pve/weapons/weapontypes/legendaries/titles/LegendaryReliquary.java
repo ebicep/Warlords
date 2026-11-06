@@ -39,7 +39,8 @@ public class LegendaryReliquary extends AbstractLegendaryWeapon implements Event
 
     @Override
     public TextComponent getPassiveEffect() {
-        return Component.text("Incoming damage increased by " + INCOMING_DAMAGE_INCREASE + INCOMING_DAMAGE_INCREASE_PER_UPGRADE * getTitleLevel() + "%.", NamedTextColor.GRAY)
+        return Component.text("Incoming damage increased by ")
+                        .append(formatTitleUpgrade(INCOMING_DAMAGE_INCREASE + INCOMING_DAMAGE_INCREASE_PER_UPGRADE * getTitleLevel(), "%"))
                         .append(Component.newline())
                         .append(Component.text("Outgoing damage increased by "))
                         .append(formatTitleUpgrade(OUTGOING_DAMAGE_INCREASE + OUTGOING_DAMAGE_INCREASE_PER_UPGRADE * getTitleLevel(), "%"))
@@ -85,7 +86,7 @@ public class LegendaryReliquary extends AbstractLegendaryWeapon implements Event
     public void applyToWarlordsPlayer(WarlordsPlayer player, PveOption pveOption) {
         super.applyToWarlordsPlayer(player, pveOption);
 
-        float incomingDamageIncrease = 1 + INCOMING_DAMAGE_INCREASE / 100f;
+        float incomingDamageIncrease = 1 + (INCOMING_DAMAGE_INCREASE - INCOMING_DAMAGE_INCREASE_PER_UPGRADE * getTitleLevel()) / 100f;
         float outgoingDamageIncrease = 1 + (OUTGOING_DAMAGE_INCREASE + OUTGOING_DAMAGE_INCREASE_PER_UPGRADE * getTitleLevel()) / 100f;
         player.getCooldownManager().addCooldown(new PermanentCooldown<>(
                 "Reliquary",
