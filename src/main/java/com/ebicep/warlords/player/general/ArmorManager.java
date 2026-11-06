@@ -51,6 +51,8 @@ public class ArmorManager {
 
     public static void resetArmor(Player player) {
         DatabasePlayer databasePlayer = DatabaseManager.getPlayer(player);
+        boolean supporter = Permissions.isSupporter(databasePlayer);
+        normalizeSupporterCustomization(databasePlayer, supporter);
         WarlordsEntity entity = Warlords.getPlayer(player);
         boolean pvp = entity instanceof WarlordsPlayer warlordsPlayer && usesTeamTrim(warlordsPlayer.getGame());
         resetArmor(player,
@@ -59,7 +61,7 @@ public class ArmorManager {
                 databasePlayer.getWantedTeam(),
                 databasePlayer.getArmorCustomization(),
                 pvp,
-                Permissions.isSupporter(databasePlayer)
+                supporter
         );
     }
 
@@ -146,10 +148,17 @@ public class ArmorManager {
                         : trimMaterial(customization.getEffectiveMaterial(piece, supporter));
                 customized = Utils.applyTrimTo(customized, material, pattern.getTrimPattern());
             }
+            ItemBuilder builder = new ItemBuilder(customized);
             if (customization.getEffectiveGlint(piece, supporter)) {
-                customized = new ItemBuilder(customized).enchant(Enchantment.UNBREAKING, 1).get();
+                builder.enchant(Enchantment.UNBREAKING, 1);
             }
-            armor[piece.getArmorIndex()] = customized;
+            armor[piece.getArmorIndex()] = builder.get();
+        }
+    }
+
+    private static void normalizeSupporterCustomization(DatabasePlayer databasePlayer, boolean supporter) {
+        if (databasePlayer.getArmorCustomization().applySupporterDefaults(supporter)) {
+            DatabaseManager.queueUpdatePlayerAsync(databasePlayer);
         }
     }
 
@@ -159,13 +168,16 @@ public class ArmorManager {
 
     public static void resetArmor(Player player, WarlordsPlayer warlordsPlayer) {
         CosmeticSettings cosmeticSettings = warlordsPlayer.getCosmeticSettings();
+        DatabasePlayer databasePlayer = warlordsPlayer.getDatabasePlayer();
+        boolean supporter = Permissions.isSupporter(databasePlayer);
+        normalizeSupporterCustomization(databasePlayer, supporter);
         resetArmor(player,
                 cosmeticSettings.getHelmet(),
                 cosmeticSettings.getArmorSet(),
                 warlordsPlayer.getTeam(),
-                cosmeticSettings.getArmorCustomization(),
+                databasePlayer.getArmorCustomization(),
                 cosmeticSettings.isPvp(),
-                cosmeticSettings.isSupporter()
+                supporter
         );
     }
 

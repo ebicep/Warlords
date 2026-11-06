@@ -53,7 +53,7 @@ public enum ArmorPatternMaterial {
     }
 
     public HonorificCost getCost() {
-        return COST;
+        return supporterExclusive ? null : COST;
     }
 
 }

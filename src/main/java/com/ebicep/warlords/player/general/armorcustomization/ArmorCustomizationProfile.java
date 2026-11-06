@@ -105,11 +105,36 @@ public class ArmorCustomizationProfile {
     public boolean setEnchantEnabled(ArmorPiece piece, boolean enabled) {
         ensureDefaults();
         PieceSettings settings = settings(piece);
-        if (!settings.enchantUnlocked || settings.enchantEnabled == enabled) {
+        if (settings.enchantEnabled == enabled) {
             return false;
         }
         settings.enchantEnabled = enabled;
         return true;
+    }
+
+    public boolean applySupporterDefaults(boolean hasSupporter) {
+        ensureDefaults();
+        boolean changed = unlockedPatterns.removeIf(ArmorPattern::isSupporterExclusive);
+        changed |= unlockedMaterials.removeIf(ArmorPatternMaterial::isSupporterExclusive);
+        if (hasSupporter) {
+            return changed;
+        }
+        for (ArmorPiece piece : ArmorPiece.VALUES) {
+            PieceSettings settings = settings(piece);
+            if (settings.pattern != null && settings.pattern.isSupporterExclusive()) {
+                settings.pattern = null;
+                changed = true;
+            }
+            if (settings.material != null && settings.material.isSupporterExclusive()) {
+                settings.material = null;
+                changed = true;
+            }
+            if (settings.enchantEnabled) {
+                settings.enchantEnabled = false;
+                changed = true;
+            }
+        }
+        return changed;
     }
 
     @Nullable
@@ -140,8 +165,7 @@ public class ArmorCustomizationProfile {
 
     public boolean getEffectiveGlint(ArmorPiece piece, boolean hasSupporter) {
         ensureDefaults();
-        PieceSettings settings = settings(piece);
-        return hasSupporter && settings.enchantUnlocked && settings.enchantEnabled;
+        return hasSupporter && settings(piece).enchantEnabled;
     }
 
     public void ensureDefaults() {
@@ -165,10 +189,10 @@ public class ArmorCustomizationProfile {
         }
         for (ArmorPiece piece : ArmorPiece.VALUES) {
             PieceSettings settings = settings(piece);
-            if (settings.pattern != null && !unlockedPatterns.contains(settings.pattern)) {
+            if (settings.pattern != null && !settings.pattern.isSupporterExclusive() && !unlockedPatterns.contains(settings.pattern)) {
                 settings.pattern = null;
             }
-            if (settings.material != null && !unlockedMaterials.contains(settings.material)) {
+            if (settings.material != null && !settings.material.isSupporterExclusive() && !unlockedMaterials.contains(settings.material)) {
                 settings.material = null;
             }
             if (!settings.enchantUnlocked) {
@@ -178,15 +202,23 @@ public class ArmorCustomizationProfile {
     }
 
     private boolean canEquip(@Nullable ArmorPattern pattern, boolean hasSupporter) {
-        return pattern != null
-                && unlockedPatterns.contains(pattern)
-                && (!pattern.isSupporterExclusive() || hasSupporter);
+        if (pattern == null) {
+            return false;
+        }
+        if (pattern.isSupporterExclusive()) {
+            return hasSupporter;
+        }
+        return unlockedPatterns.contains(pattern);
     }
 
     private boolean canEquip(@Nullable ArmorPatternMaterial material, boolean hasSupporter) {
-        return material != null
-                && unlockedMaterials.contains(material)
-                && (!material.isSupporterExclusive() || hasSupporter);
+        if (material == null) {
+            return false;
+        }
+        if (material.isSupporterExclusive()) {
+            return hasSupporter;
+        }
+        return unlockedMaterials.contains(material);
     }
 
     private PieceSettings settings(ArmorPiece piece) {
