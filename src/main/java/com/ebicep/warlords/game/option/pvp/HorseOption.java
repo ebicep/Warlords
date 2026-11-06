@@ -1,8 +1,13 @@
 package com.ebicep.warlords.game.option.pvp;
 
-import com.ebicep.customentities.nms.CustomHorse;
 import com.ebicep.customentities.npc.NPCManager;
 import com.ebicep.warlords.Warlords;
+import com.ebicep.warlords.database.DatabaseManager;
+import com.ebicep.warlords.database.repositories.player.pojos.general.DatabasePlayer;
+import com.ebicep.warlords.permissions.Permissions;
+import com.ebicep.warlords.player.general.mounts.MountArmor;
+import com.ebicep.warlords.player.general.mounts.MountProfile;
+import com.ebicep.warlords.player.general.mounts.MountType;
 import com.ebicep.warlords.abilities.ShadowStep;
 import com.ebicep.warlords.commands.debugcommands.misc.MountCommand;
 import com.ebicep.warlords.database.repositories.config.ConfigManager;
@@ -35,6 +40,7 @@ import org.bukkit.event.Listener;
 import org.bukkit.event.block.Action;
 import org.bukkit.event.entity.CreatureSpawnEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
+import org.bukkit.inventory.EquipmentSlot;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.PlayerInventory;
 import org.bukkit.inventory.meta.ItemMeta;
@@ -260,7 +266,7 @@ public class HorseOption implements Option, Listener {
         private final FloatModifiable health = new FloatModifiable(0);
         private float currentCooldown = 0;
         private float currentHealth = 0;
-        private Horse horse;
+        private AbstractHorse horse;
         private NPC npc;
 
         public void tick() {
@@ -297,15 +303,28 @@ public class HorseOption implements Option, Listener {
                 }
                 controllable.mount(player);
             } else {
-                CustomHorse customHorse = new CustomHorse(player.getLocation());
-                this.horse = (Horse) customHorse.getBukkitEntity();
+                DatabasePlayer databasePlayer = DatabaseManager.getPlayer(player);
+                boolean hasSupporter = Permissions.isSupporter(player);
+                MountProfile mounts = databasePlayer.getMounts();
+                if (mounts.applySupporterDefaults(hasSupporter)) {
+                    DatabaseManager.queueUpdatePlayerAsync(databasePlayer);
+                }
+                MountType type = mounts.getEffectiveType(hasSupporter);
+                MountArmor armor = mounts.getEffectiveArmor(hasSupporter);
+                net.minecraft.world.entity.animal.equine.AbstractHorse customHorse = type.create(player.getLocation());
+                this.horse = (AbstractHorse) customHorse.getBukkitEntity();
                 horse.getAttribute(Attribute.MAX_HEALTH).setBaseValue(health.getCalculatedValue() == 0 ? 0 : 40);
                 horse.setTamed(true);
                 horse.getInventory().setSaddle(new ItemStack(Material.SADDLE));
+                if (armor != null) {
+                    horse.getEquipment().setItem(EquipmentSlot.BODY, armor.createItem());
+                }
                 horse.setOwner(player);
                 horse.setJumpStrength(0);
-                horse.setColor(Horse.Color.BROWN);
-                horse.setStyle(Horse.Style.NONE);
+                if (horse instanceof Horse colored && type.getColor() != null) {
+                    colored.setColor(type.getColor());
+                    colored.setStyle(Horse.Style.NONE);
+                }
                 horse.setAdult();
                 horse.getAttribute(Attribute.MOVEMENT_SPEED).setBaseValue(speed);
                 ((CraftWorld) player.getWorld()).getHandle().addFreshEntity(customHorse, CreatureSpawnEvent.SpawnReason.CUSTOM);

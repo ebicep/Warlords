@@ -15,6 +15,7 @@ import com.ebicep.warlords.menu.PlayerHotBarItemListener;
 import com.ebicep.warlords.permissions.Permissions;
 import com.ebicep.warlords.player.general.*;
 import com.ebicep.warlords.player.general.armorcustomization.ArmorCustomizationMenu;
+import com.ebicep.warlords.player.general.mounts.MountMenu;
 import com.ebicep.warlords.player.general.settings.ChatSettings;
 import com.ebicep.warlords.player.general.settings.CooldownDisplaySettings;
 import com.ebicep.warlords.player.general.settings.ParticleQuality;
@@ -557,6 +558,7 @@ public class WarlordsNewHotbarMenu {
             menu.setItem(3, 1, MENU_ARMOR_SETS, (m, e) -> openArmorMenu(player, 1));
 //            menu.setItem(4, 1, MENU_BOOSTS, (m, e) -> openSkillBoostMenu(player, PlayerSettings.getPlayerSettings(player.getUniqueId()).getSelectedSpec()));
             menu.setItem(4, 1, MENU_SPEC_BOOSTS, (m, e) -> SpecBoostMenu.open(player));
+            menu.setItem(5, 1, MountMenu.MENU_ICON, (m, e) -> MountMenu.open(player));
 
             menu.setItem(4, 3, MENU_CLOSE, ACTION_CLOSE_MENU);
 
