@@ -1,20 +1,33 @@
 package com.ebicep.warlords.player.general;
 
+import com.ebicep.warlords.Warlords;
 import com.ebicep.warlords.database.DatabaseManager;
 import com.ebicep.warlords.database.repositories.player.pojos.general.DatabasePlayer;
+import com.ebicep.warlords.game.Game;
+import com.ebicep.warlords.game.GameMode;
 import com.ebicep.warlords.game.Team;
+import com.ebicep.warlords.permissions.Permissions;
+import com.ebicep.warlords.player.general.armorcustomization.ArmorCustomizationProfile;
+import com.ebicep.warlords.player.general.armorcustomization.ArmorPattern;
+import com.ebicep.warlords.player.general.armorcustomization.ArmorPatternMaterial;
+import com.ebicep.warlords.player.general.armorcustomization.ArmorPiece;
 import com.ebicep.warlords.player.ingame.CosmeticSettings;
+import com.ebicep.warlords.player.ingame.WarlordsEntity;
 import com.ebicep.warlords.player.ingame.WarlordsPlayer;
 import com.ebicep.warlords.util.bukkit.ItemBuilder;
 import com.ebicep.warlords.util.bukkit.WordWrap;
+import com.ebicep.warlords.util.warlords.Utils;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
 import org.bukkit.Color;
 import org.bukkit.Material;
+import org.bukkit.enchantments.Enchantment;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.LeatherArmorMeta;
+import org.bukkit.inventory.meta.trim.TrimMaterial;
 
+import javax.annotation.Nullable;
 import java.util.List;
 
 public class ArmorManager {
@@ -28,16 +41,43 @@ public class ArmorManager {
             ), 160
     );
 
+    public static boolean usesTeamTrim(@Nullable Game game) {
+        if (game == null) {
+            return false;
+        }
+        GameMode mode = game.getGameMode();
+        return mode != GameMode.LOBBY && !GameMode.isPvE(mode);
+    }
+
     public static void resetArmor(Player player) {
         DatabasePlayer databasePlayer = DatabaseManager.getPlayer(player);
-        resetArmor(player, databasePlayer.getHelmet(), databasePlayer.getArmorSet(), databasePlayer.getWantedTeam());
+        WarlordsEntity entity = Warlords.getPlayer(player);
+        boolean pvp = entity instanceof WarlordsPlayer warlordsPlayer && usesTeamTrim(warlordsPlayer.getGame());
+        resetArmor(player,
+                databasePlayer.getHelmet(),
+                databasePlayer.getArmorSet(),
+                databasePlayer.getWantedTeam(),
+                databasePlayer.getArmorCustomization(),
+                pvp,
+                Permissions.isSupporter(databasePlayer)
+        );
     }
 
     public static void resetArmor(Player player, Helmets helmet, ArmorSets armorSet, Team team) {
-        player.getInventory().setArmorContents(getArmor(helmet, armorSet, team));
+        resetArmor(player, helmet, armorSet, team, null, false, false);
+    }
+
+    public static void resetArmor(Player player, Helmets helmet, ArmorSets armorSet, Team team,
+                                  @Nullable ArmorCustomizationProfile customization, boolean pvp, boolean supporter) {
+        player.getInventory().setArmorContents(getArmor(helmet, armorSet, team, customization, pvp, supporter));
     }
 
     public static ItemStack[] getArmor(Helmets helmet, ArmorSets armorSet, Team team) {
+        return getArmor(helmet, armorSet, team, null, false, false);
+    }
+
+    public static ItemStack[] getArmor(Helmets helmet, ArmorSets armorSet, Team team,
+                                       @Nullable ArmorCustomizationProfile customization, boolean pvp, boolean supporter) {
         boolean onBlueTeam = team == Team.BLUE;
         ItemStack[] armor = new ItemStack[4];
 
@@ -84,12 +124,49 @@ public class ArmorManager {
                     .get();
         }
 
+        applyCustomization(armor, team, customization, pvp, supporter);
         return armor;
+    }
+
+    private static void applyCustomization(ItemStack[] armor, Team team, @Nullable ArmorCustomizationProfile customization,
+                                           boolean pvp, boolean supporter) {
+        if (customization == null) {
+            return;
+        }
+        for (ArmorPiece piece : ArmorPiece.VALUES) {
+            ItemStack stack = armor[piece.getArmorIndex()];
+            if (stack == null) {
+                continue;
+            }
+            ItemStack customized = stack;
+            ArmorPattern pattern = customization.getEffectivePattern(piece, supporter);
+            if (pattern != null) {
+                TrimMaterial material = pvp
+                        ? (team == Team.BLUE ? TrimMaterial.LAPIS : TrimMaterial.REDSTONE)
+                        : trimMaterial(customization.getEffectiveMaterial(piece, supporter));
+                customized = Utils.applyTrimTo(customized, material, pattern.getTrimPattern());
+            }
+            if (customization.getEffectiveGlint(piece, supporter)) {
+                customized = new ItemBuilder(customized).enchant(Enchantment.UNBREAKING, 1).get();
+            }
+            armor[piece.getArmorIndex()] = customized;
+        }
+    }
+
+    private static TrimMaterial trimMaterial(@Nullable ArmorPatternMaterial material) {
+        return material == null ? TrimMaterial.COPPER : material.getTrimMaterial();
     }
 
     public static void resetArmor(Player player, WarlordsPlayer warlordsPlayer) {
         CosmeticSettings cosmeticSettings = warlordsPlayer.getCosmeticSettings();
-        resetArmor(player, cosmeticSettings.getHelmet(), cosmeticSettings.getArmorSet(), warlordsPlayer.getTeam());
+        resetArmor(player,
+                cosmeticSettings.getHelmet(),
+                cosmeticSettings.getArmorSet(),
+                warlordsPlayer.getTeam(),
+                cosmeticSettings.getArmorCustomization(),
+                cosmeticSettings.isPvp(),
+                cosmeticSettings.isSupporter()
+        );
     }
 
     public enum Helmets {
@@ -282,14 +359,15 @@ public class ArmorManager {
         public static final ArmorSets[] VALUES = values();
 
         public static ItemStack applyColor(ItemStack itemStack, boolean blueColor) {
-            LeatherArmorMeta leatherArmorMeta = (LeatherArmorMeta) itemStack.getItemMeta();
+            ItemStack colored = itemStack.clone();
+            LeatherArmorMeta leatherArmorMeta = (LeatherArmorMeta) colored.getItemMeta();
             if (blueColor) {
                 leatherArmorMeta.setColor(Color.fromRGB(51, 76, 178));
             } else {
                 leatherArmorMeta.setColor(Color.fromRGB(153, 51, 51));
             }
-            itemStack.setItemMeta(leatherArmorMeta);
-            return itemStack;
+            colored.setItemMeta(leatherArmorMeta);
+            return colored;
         }
 
         public final String name;
