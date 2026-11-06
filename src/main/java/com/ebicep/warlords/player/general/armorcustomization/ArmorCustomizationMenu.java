@@ -222,6 +222,12 @@ public final class ArmorCustomizationMenu {
             openPiece(player, piece, returnTo);
             return;
         }
+        if (!profile.isEnchantUnlocked(piece)) {
+            openPurchase(player, databasePlayer, "Purchase Enchant",
+                    Component.text(piece.getDisplayName() + " Enchant", NamedTextColor.LIGHT_PURPLE), ArmorPiece.ENCHANT_COST,
+                    () -> profile.isEnchantUnlocked(piece), () -> profile.unlockEnchant(piece), () -> openPiece(player, piece, returnTo));
+            return;
+        }
         profile.setEnchantEnabled(piece, !profile.isEnchantEnabled(piece));
         saveAndRefresh(player);
         openPiece(player, piece, returnTo);
@@ -260,6 +266,7 @@ public final class ArmorCustomizationMenu {
     }
 
     private static ItemStack enchantIcon(ArmorPiece piece, ArmorCustomizationProfile profile, boolean hasSupporter) {
+        boolean unlocked = profile.isEnchantUnlocked(piece);
         boolean enabled = profile.isEnchantEnabled(piece);
         ItemBuilder builder = new ItemBuilder(Material.ENCHANTED_BOOK)
                 .name(Component.text("Enchant", NamedTextColor.LIGHT_PURPLE));
@@ -271,6 +278,10 @@ public final class ArmorCustomizationMenu {
         lore.add(Component.empty());
         if (!hasSupporter) {
             lore.add(Component.text("Requires the Supporter rank", NamedTextColor.RED));
+        } else if (!unlocked) {
+            lore.addAll(ArmorPiece.ENCHANT_COST.getLore());
+            lore.add(Component.empty());
+            lore.add(Component.text("Click to purchase", NamedTextColor.YELLOW));
         } else if (enabled) {
             builder.glow();
             lore.add(Component.text("ENABLED", NamedTextColor.GREEN, TextDecoration.BOLD));
@@ -361,6 +372,9 @@ public final class ArmorCustomizationMenu {
     private static Component enchantStatus(ArmorPiece piece, ArmorCustomizationProfile profile, boolean hasSupporter) {
         if (!hasSupporter) {
             return Component.text("Supporter required", NamedTextColor.RED);
+        }
+        if (!profile.isEnchantUnlocked(piece)) {
+            return Component.text("Locked", NamedTextColor.RED);
         }
         return Component.text(profile.isEnchantEnabled(piece) ? "Enabled" : "Disabled",
                 profile.isEnchantEnabled(piece) ? NamedTextColor.GREEN : NamedTextColor.RED);

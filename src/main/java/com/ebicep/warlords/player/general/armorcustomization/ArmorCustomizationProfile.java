@@ -105,7 +105,7 @@ public class ArmorCustomizationProfile {
     public boolean setEnchantEnabled(ArmorPiece piece, boolean enabled) {
         ensureDefaults();
         PieceSettings settings = settings(piece);
-        if (settings.enchantEnabled == enabled) {
+        if (!settings.enchantUnlocked || settings.enchantEnabled == enabled) {
             return false;
         }
         settings.enchantEnabled = enabled;
@@ -165,7 +165,8 @@ public class ArmorCustomizationProfile {
 
     public boolean getEffectiveGlint(ArmorPiece piece, boolean hasSupporter) {
         ensureDefaults();
-        return hasSupporter && settings(piece).enchantEnabled;
+        PieceSettings settings = settings(piece);
+        return hasSupporter && settings.enchantUnlocked && settings.enchantEnabled;
     }
 
     public void ensureDefaults() {

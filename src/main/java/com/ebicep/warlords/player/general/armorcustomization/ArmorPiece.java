@@ -1,5 +1,7 @@
 package com.ebicep.warlords.player.general.armorcustomization;
 
+import com.ebicep.warlords.honorifics.HonorificCost;
+import com.ebicep.warlords.pve.Currencies;
 import org.bukkit.Material;
 
 public enum ArmorPiece {
@@ -12,6 +14,7 @@ public enum ArmorPiece {
     ;
 
     public static final ArmorPiece[] VALUES = values();
+    public static final HonorificCost ENCHANT_COST = HonorificCost.of(Currencies.FAIRY_ESSENCE, 200_000);
 
     private final String displayName;
     private final int armorIndex;
