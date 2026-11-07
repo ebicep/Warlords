@@ -1,4 +1,4 @@
-# Warlords 2.0 - 1.21.4
+# Warlords 2.0 - 1.21.11
 
 Warlords 2.0 is a remake of the infamous Warlords minigame available on the Hypixel Network.
 
@@ -11,7 +11,7 @@ You may use our work for your own purposes as long as we are credited.
 # Links
 
 - Discord: https://discord.gg/tkGFQvzwAd
-- Server IP: 46.202.179.172
+- Server IP: warlordstwo.cloudplay.fun
 
 # Requirements
 
@@ -19,7 +19,7 @@ You may use our work for your own purposes as long as we are credited.
 
 # Dependencies
 
-- Paper 1.21.4 ([Latest 1.21.4](https://papermc.io/downloads/all))
+- Paper 1.21.11 ([Latest 1.21.11](https://papermc.io/downloads/all))
 - Holographic Displays ([Latest](https://www.curseforge.com/minecraft/bukkit-plugins/holographic-displays/files/all?page=1&pageSize=20))
 - Citizens ([Latest](https://ci.citizensnpcs.co/job/Citizens2/))
 - ProtocolLib ([Latest](https://www.spigotmc.org/resources/protocollib.1997/updates))
