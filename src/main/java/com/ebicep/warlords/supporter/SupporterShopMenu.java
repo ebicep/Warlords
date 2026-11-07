@@ -48,9 +48,9 @@ public final class SupporterShopMenu {
                                 Component.text("Monthly recurring Supporter access.", NamedTextColor.GRAY),
                                 Component.text("Your rank remains active while the subscription is active.", NamedTextColor.GRAY),
                                 Component.empty(),
-                                checkoutLore(TebexService.getSubscriptionPackageId())
+                                checkoutLore(player, TebexService.getSubscriptionPackageId())
                         )
-                        .glow()
+                        .glow(!supporter)
                         .get(),
                 (m, e) -> openCheckout(player, TebexService.getSubscriptionPackageId(), "Supporter Subscription")
         );
@@ -62,7 +62,7 @@ public final class SupporterShopMenu {
                                 Component.text("One-time purchase with 30 days of Supporter access.", NamedTextColor.GRAY),
                                 Component.text("The entitlement automatically expires after 30 days.", NamedTextColor.GRAY),
                                 Component.empty(),
-                                checkoutLore(TebexService.getThirtyDayPackageId())
+                                checkoutLore(player, TebexService.getThirtyDayPackageId())
                         )
                         .get(),
                 (m, e) -> openCheckout(player, TebexService.getThirtyDayPackageId(), "Supporter - 30 Days")
@@ -72,7 +72,10 @@ public final class SupporterShopMenu {
         menu.openForPlayer(player);
     }
 
-    private static Component checkoutLore(String packageId) {
+    private static Component checkoutLore(Player player, String packageId) {
+        if (Permissions.isSupporter(player)) {
+            return Component.text("You already have the Supporter rank.", NamedTextColor.RED);
+        }
         if (!TebexService.hasSecret() || packageId == null) {
             return Component.text("Tebex is not configured on this server.", NamedTextColor.RED);
         }
@@ -80,6 +83,12 @@ public final class SupporterShopMenu {
     }
 
     private static void openCheckout(Player player, String packageId, String packageName) {
+        if (Permissions.isSupporter(player)) {
+            player.playSound(player.getLocation(), Sound.ENTITY_VILLAGER_NO, 1, 1);
+            player.sendMessage(Component.text("You already have the Supporter rank.", NamedTextColor.RED));
+            return;
+        }
+
         player.closeInventory();
         if (!TebexService.hasSecret() || packageId == null) {
             player.playSound(player.getLocation(), Sound.ENTITY_VILLAGER_NO, 1, 1);
