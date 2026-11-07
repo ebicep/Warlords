@@ -24,7 +24,7 @@ import java.util.Locale;
 public class PatreonReward extends AbstractReward implements Listener {
 
     public static final LinkedHashMap<Spendable, Long> PATREON_REWARDS = new LinkedHashMap<>() {{
-        put(Currencies.FAIRY_ESSENCE, 1000L);
+        put(Currencies.FAIRY_ESSENCE, 5000L);
     }};
 
     public static boolean giveMonthlyPatreonRewards(DatabasePlayer databasePlayer) {

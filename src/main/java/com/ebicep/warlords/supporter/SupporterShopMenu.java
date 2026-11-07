@@ -24,7 +24,7 @@ public final class SupporterShopMenu {
     }
 
     public static void open(Player player) {
-        Menu menu = new Menu("Support Warlords", 9 * 3);
+        Menu menu = new Menu("Support Warlords 2", 9 * 3);
 
         boolean supporter = Permissions.isSupporter(player);
         menu.setItem(4, 0,
@@ -32,8 +32,9 @@ public final class SupporterShopMenu {
                         .name(Component.text(supporter ? "Supporter Active" : "Become a Supporter", supporter ? NamedTextColor.GOLD : NamedTextColor.AQUA))
                         .lore(
                                 supporter
-                                        ? Component.text("Thank you for supporting Warlords!", NamedTextColor.GRAY)
+                                        ? Component.text("Thank you for supporting Warlords 2!", NamedTextColor.GRAY)
                                         : Component.text("Support the server and unlock Supporter perks.", NamedTextColor.GRAY),
+                                Component.empty(),
                                 Component.text("Purchases are completed securely through Tebex.", NamedTextColor.DARK_GRAY)
                         )
                         .get(),

@@ -43,7 +43,7 @@ public final class SupporterCelebration {
             if (!player.isOnline()) {
                 return;
             }
-            player.sendMessage(Component.text("Thank you for supporting Warlords! Your Supporter rank is now active.", NamedTextColor.GOLD));
+            player.sendMessage(Component.text("Thank you for supporting Warlords 2! Your Supporter rank is now active.", NamedTextColor.GOLD));
             player.playSound(player.getLocation(), Sound.ENTITY_FIREWORK_ROCKET_BLAST, 1, 1);
             EffectUtils.playFirework(player.getLocation().clone().add(0, 1, 0), FireworkEffect.builder()
                     .withColor(Color.YELLOW)
