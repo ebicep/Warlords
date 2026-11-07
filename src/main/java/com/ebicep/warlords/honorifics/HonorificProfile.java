@@ -6,6 +6,9 @@ import java.util.Set;
 
 public class HonorificProfile {
 
+    private static final String ONE_OF_NINE = "ONE_OF_NINE";
+    private static final String LILIUM = "LILIUM";
+
     private Set<Honorific> unlockedHonorifics = new HashSet<>();
     private Set<HonorificColor> unlockedColors = new HashSet<>();
     private Set<HonorificFont> unlockedFonts = new HashSet<>();
@@ -27,6 +30,7 @@ public class HonorificProfile {
     private long highestSingleGameCoins;
     private boolean wonWithPlikie;
     private boolean sacrificedWithSacrifice;
+    private Set<String> teamBossDefeats = new HashSet<>();
 
     public HonorificProfile() {
         ensureDefaults();
@@ -237,6 +241,24 @@ public class HonorificProfile {
 
     public void recordSacrificeKill() {
         sacrificedWithSacrifice = true;
+    }
+
+    public boolean hasTeamBossDefeat(String mobEnumName) {
+        return mobEnumName != null && teamBossDefeats != null && teamBossDefeats.contains(mobEnumName);
+    }
+
+    public boolean recordTeamBossDefeat(String mobEnumName) {
+        if (!ONE_OF_NINE.equals(mobEnumName) && !LILIUM.equals(mobEnumName)) {
+            return false;
+        }
+        return teamBossDefeats().add(mobEnumName);
+    }
+
+    private Set<String> teamBossDefeats() {
+        if (teamBossDefeats == null) {
+            teamBossDefeats = new HashSet<>();
+        }
+        return teamBossDefeats;
     }
 
     private void ensureDefaults() {
