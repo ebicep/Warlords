@@ -1,12 +1,14 @@
 package com.ebicep.warlords.game.option.pve.onslaught;
 
 import com.ebicep.warlords.database.repositories.player.pojos.general.DatabasePlayer;
+import com.ebicep.warlords.game.option.pve.wavedefense.WaveDefenseRewards;
 import com.ebicep.warlords.pve.Spendable;
 import com.ebicep.warlords.pve.newitems.NewItem;
 import com.ebicep.warlords.pve.newitems.NewItemsManager;
 import com.ebicep.warlords.pve.newitems.NewItemsUtils;
 import com.ebicep.warlords.pve.newitems.tiers.NewItemTier;
 import com.ebicep.warlords.pve.rewards.AbstractReward;
+import com.ebicep.warlords.util.java.Pair;
 import com.ebicep.warlords.util.java.RandomCollection;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
@@ -85,6 +87,14 @@ public class PouchReward extends AbstractReward {
 
         PouchType(String name) {
             this.name = name;
+        }
+
+        public RandomCollection<Pair<Spendable, Long>> getLootPool() {
+            return switch (this) {
+                case SYNTHETIC -> OnslaughtRewards.SYNTHETIC_POUCH_LOOT_POOL;
+                case ASPIRANT -> OnslaughtRewards.ASPIRANT_POUCH_LOOT_POOL;
+                case ASCENDANT -> WaveDefenseRewards.ASCENDANT_POUCH_LOOT_POOL;
+            };
         }
     }
 
