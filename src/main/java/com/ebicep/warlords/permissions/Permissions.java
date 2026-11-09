@@ -9,6 +9,7 @@ import com.ebicep.warlords.honorifics.HonorificManager;
 import com.ebicep.warlords.honorifics.HonorificProfile;
 import com.ebicep.warlords.player.general.CustomScoreboard;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
+import com.ebicep.warlords.supporter.SupporterCelebration;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
 import net.luckperms.api.LuckPerms;
@@ -62,8 +63,12 @@ public enum Permissions {
 
     public static void syncPermissionsToDatabase(UUID uuid, List<String> permissions) {
         List<String> normalized = normalizePermissions(permissions);
+        boolean nowSupporter = isSupporterPermissionList(normalized);
         for (PlayersCollections activeCollection : PlayersCollections.ACTIVE_COLLECTIONS) {
             DatabasePlayer databasePlayer = DatabaseManager.getPlayer(uuid, activeCollection);
+            if (activeCollection == PlayersCollections.LIFETIME) {
+                SupporterCelebration.onPermissionsSynced(uuid, databasePlayer, isSupporter(databasePlayer), nowSupporter);
+            }
             databasePlayer.setPermissions(normalized);
             DatabaseManager.queueUpdatePlayerAsync(databasePlayer, activeCollection);
         }

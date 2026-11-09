@@ -1000,7 +1000,7 @@
           "description": "When an ally drops below {{heal;%}} health, they glow and you gain {{speed;%}} movement speed toward them. Increase healing on that ally by {{heal;%}}.",
           "allyHealthThresholdPercent": 30,
           "movementSpeedBonusPercent": 100,
-          "healingBonusToAllyPercent": 20
+          "healingBonusToAllyPercent": 40
         },
         "bellicose": {
           "tier": "LEGENDARY",

@@ -43,12 +43,12 @@ public enum SupplyDropRewards {
     COINS_2000("2,000 Coins", 1500, WeaponsPvE.COMMON, Currencies.COIN, 2000),
     COINS_5000("5,000 Coins", 1000, WeaponsPvE.COMMON, Currencies.COIN, 5000),
     COINS_10000("10,000 Coins", 500, WeaponsPvE.COMMON, Currencies.COIN, 10000),
-    COINS_50000("50,000 Coins", 200, WeaponsPvE.RARE, Currencies.COIN, 50000),
-    COINS_100000("100,000 Coins", 50, WeaponsPvE.EPIC, Currencies.COIN, 100000),
-    FAIRY_ESSENCE_20("20 Fairy Essence", 500, WeaponsPvE.RARE, Currencies.FAIRY_ESSENCE, 20),
-    FAIRY_ESSENCE_40("40 Fairy Essence", 200, WeaponsPvE.RARE, Currencies.FAIRY_ESSENCE, 40),
+    COINS_50000("50,000 Coins", 100, WeaponsPvE.RARE, Currencies.COIN, 50000),
+    COINS_100000("100,000 Coins", 25, WeaponsPvE.EPIC, Currencies.COIN, 100000),
+    FAIRY_ESSENCE_20("20 Fairy Essence", 300, WeaponsPvE.RARE, Currencies.FAIRY_ESSENCE, 20),
+    FAIRY_ESSENCE_40("40 Fairy Essence", 100, WeaponsPvE.RARE, Currencies.FAIRY_ESSENCE, 40),
     COMMON_ITEM("Random Common Item", 100, WeaponsPvE.COMMON, SpendableRandomNewItem.COMMON),
-    RARE_ITEM("Random Rare Item", 50, WeaponsPvE.RARE, SpendableRandomNewItem.RARE),
+    RARE_ITEM("Random Rare Item", 25, WeaponsPvE.RARE, SpendableRandomNewItem.RARE),
     EPIC_ITEM("Random Epic Item", 10, WeaponsPvE.EPIC, SpendableRandomNewItem.EPIC),
 
     ;

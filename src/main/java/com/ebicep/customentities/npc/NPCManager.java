@@ -57,7 +57,7 @@ public class NPCManager {
                 createLegendaryWeaponNPC();
                 createSupplyDropFairNPC();
                 createBountyMenuNPC();
-                //createSupporterShopNPC();
+                createSupporterShopNPC();
                 createStarPieceSynthesizerNPC();
                 createItemCrafterNPC();
                 createIllusionVendorNPC();
@@ -265,7 +265,7 @@ public class NPCManager {
         lookClose.toggle();
 
         npc.data().set(NPC.Metadata.NAMEPLATE_VISIBLE, false);
-        Location location = new Location(StatsLeaderboardManager.MAIN_LOBBY_SPAWN.getWorld(), 29.5, 81, 166.5, 90, 0);
+        Location location = new Location(StatsLeaderboardManager.MAIN_LOBBY_SPAWN.getWorld(), 29.5, 81, 167.5, 90, 0);
         npc.spawn(location);
 
         HologramDataText hologramDataText = new HologramDataText.Builder<>(ComponentBuilder.create(
@@ -292,7 +292,7 @@ public class NPCManager {
         lookClose.toggle();
 
         npc.data().set(NPC.Metadata.NAMEPLATE_VISIBLE, false);
-        Location location = new Location(StatsLeaderboardManager.MAIN_LOBBY_SPAWN.getWorld(), 29.5, 81, 163.5, 90, 0);
+        Location location = new Location(StatsLeaderboardManager.MAIN_LOBBY_SPAWN.getWorld(), 29.5, 81, 165.5, 90, 0);
         npc.spawn(location);
 
         HologramDataText hologramDataText = new HologramDataText.Builder<>(ComponentBuilder.create(

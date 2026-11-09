@@ -113,6 +113,8 @@ public class DatabasePlayer implements CachedMultiStatsGeneral, TracksMultiAbili
     private List<Achievement.AbstractAchievementRecord<?>> achievements = new ArrayList<>();
     private List<UUID> ignored = new ArrayList<>();
     private List<String> permissions = new ArrayList<>();
+    @Field("pending_supporter_celebration")
+    private boolean pendingSupporterCelebration;
     @Field("patches_applied")
     private List<String> patchesApplied = new ArrayList<>();
 
@@ -588,6 +590,14 @@ public class DatabasePlayer implements CachedMultiStatsGeneral, TracksMultiAbili
 
     public void setPermissions(List<String> permissions) {
         this.permissions = permissions;
+    }
+
+    public boolean isPendingSupporterCelebration() {
+        return pendingSupporterCelebration;
+    }
+
+    public void setPendingSupporterCelebration(boolean pendingSupporterCelebration) {
+        this.pendingSupporterCelebration = pendingSupporterCelebration;
     }
 
     public boolean isPatreon() {
