@@ -68,8 +68,7 @@ public class EventRougeGrimoire extends EventGrimoire {
                 Ability.SOUL_SHACKLE,
                 Ability.SOOTHING_ELIXIR,
                 Ability.SOULFIRE_BEAM,
-                Ability.GUARDIAN_BEAM,
-                Ability.RAY_OF_LIGHT
+                Ability.GUARDIAN_BEAM
         );
     }
 
