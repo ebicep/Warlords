@@ -717,6 +717,7 @@ public class CommandManager {
 
         manager.registerCommand(new MyPositionCommand());
         manager.registerCommand(new CompensateCommand());
+        manager.registerCommand(new PouchCommand());
 
         manager.registerCommand(new QuestCommand());
         manager.registerCommand(new WeaponCommand());

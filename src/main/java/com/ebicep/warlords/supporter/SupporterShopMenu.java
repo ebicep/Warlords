@@ -24,7 +24,7 @@ public final class SupporterShopMenu {
     }
 
     public static void open(Player player) {
-        Menu menu = new Menu("Support Warlords", 9 * 3);
+        Menu menu = new Menu("Support Warlords 2", 9 * 3);
 
         boolean supporter = Permissions.isSupporter(player);
         menu.setItem(4, 0,
@@ -32,8 +32,9 @@ public final class SupporterShopMenu {
                         .name(Component.text(supporter ? "Supporter Active" : "Become a Supporter", supporter ? NamedTextColor.GOLD : NamedTextColor.AQUA))
                         .lore(
                                 supporter
-                                        ? Component.text("Thank you for supporting Warlords!", NamedTextColor.GRAY)
+                                        ? Component.text("Thank you for supporting Warlords 2!", NamedTextColor.GRAY)
                                         : Component.text("Support the server and unlock Supporter perks.", NamedTextColor.GRAY),
+                                Component.empty(),
                                 Component.text("Purchases are completed securely through Tebex.", NamedTextColor.DARK_GRAY)
                         )
                         .get(),
@@ -48,9 +49,9 @@ public final class SupporterShopMenu {
                                 Component.text("Monthly recurring Supporter access.", NamedTextColor.GRAY),
                                 Component.text("Your rank remains active while the subscription is active.", NamedTextColor.GRAY),
                                 Component.empty(),
-                                checkoutLore(TebexService.getSubscriptionPackageId())
+                                checkoutLore(player, TebexService.getSubscriptionPackageId())
                         )
-                        .glow()
+                        .glow(!supporter)
                         .get(),
                 (m, e) -> openCheckout(player, TebexService.getSubscriptionPackageId(), "Supporter Subscription")
         );
@@ -62,7 +63,7 @@ public final class SupporterShopMenu {
                                 Component.text("One-time purchase with 30 days of Supporter access.", NamedTextColor.GRAY),
                                 Component.text("The entitlement automatically expires after 30 days.", NamedTextColor.GRAY),
                                 Component.empty(),
-                                checkoutLore(TebexService.getThirtyDayPackageId())
+                                checkoutLore(player, TebexService.getThirtyDayPackageId())
                         )
                         .get(),
                 (m, e) -> openCheckout(player, TebexService.getThirtyDayPackageId(), "Supporter - 30 Days")
@@ -72,7 +73,10 @@ public final class SupporterShopMenu {
         menu.openForPlayer(player);
     }
 
-    private static Component checkoutLore(String packageId) {
+    private static Component checkoutLore(Player player, String packageId) {
+        if (Permissions.isSupporter(player)) {
+            return Component.text("You already have the Supporter rank.", NamedTextColor.RED);
+        }
         if (!TebexService.hasSecret() || packageId == null) {
             return Component.text("Tebex is not configured on this server.", NamedTextColor.RED);
         }
@@ -80,6 +84,12 @@ public final class SupporterShopMenu {
     }
 
     private static void openCheckout(Player player, String packageId, String packageName) {
+        if (Permissions.isSupporter(player)) {
+            player.playSound(player.getLocation(), Sound.ENTITY_VILLAGER_NO, 1, 1);
+            player.sendMessage(Component.text("You already have the Supporter rank.", NamedTextColor.RED));
+            return;
+        }
+
         player.closeInventory();
         if (!TebexService.hasSecret() || packageId == null) {
             player.playSound(player.getLocation(), Sound.ENTITY_VILLAGER_NO, 1, 1);

@@ -683,7 +683,7 @@ public class WaveDefenseOption implements PveOption {
                                         wp.getUuid(),
                                         WaveDefenseRewards.ASCENDANT_POUCH_LOOT_POOL,
                                         playerAscendantPouch,
-                                        Component.text("Ascendant Pouch", NamedTextColor.RED)
+                                        Component.text("Ascendant Pouch Wave " + (waveCounter - 1), NamedTextColor.RED)
                                 );
                             });
                         }

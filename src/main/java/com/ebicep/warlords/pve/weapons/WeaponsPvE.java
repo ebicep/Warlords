@@ -39,7 +39,7 @@ public enum WeaponsPvE {
             new ItemStack(Material.LIGHT_BLUE_STAINED_GLASS_PANE),
             MasterworksFair::getRarePlayerEntries,
             Currencies.RARE_STAR_PIECE,
-            100
+            200
     ),
     EPIC("Epic",
             EpicWeapon.class,
@@ -47,7 +47,7 @@ public enum WeaponsPvE {
             new ItemStack(Material.MAGENTA_STAINED_GLASS_PANE),
             MasterworksFair::getEpicPlayerEntries,
             Currencies.EPIC_STAR_PIECE,
-            200
+            400
     ),
     LEGENDARY("Legendary",
             AbstractLegendaryWeapon.class,
@@ -55,7 +55,7 @@ public enum WeaponsPvE {
             new ItemStack(Material.ORANGE_STAINED_GLASS_PANE),
             null,
             Currencies.LEGENDARY_STAR_PIECE,
-            500
+            1000
     );
 
     public static final WeaponsPvE[] VALUES = values();
