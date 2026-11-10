@@ -17,7 +17,7 @@ public class PoisonousHexBranch extends AbstractUpgradeBranch<PoisonousHex> {
 
         UpgradeTreeBuilder
                 .create(abilityTree, this)
-                .addUpgradeEnergy(ability)
+                .addUpgradeEnergy(ability, 3.75f)
                 .addUpgrade(new UpgradeTypes.UpgradeType() {
                     @Override
                     public String getDescription0(String value) {
@@ -36,31 +36,31 @@ public class PoisonousHexBranch extends AbstractUpgradeBranch<PoisonousHex> {
                 "Intrusive Hex",
                 "Poisonous Hex - Master Upgrade",
                 """
-                        +28 Pierce
+                        +20 Pierce
                         
                         Poisonous Hex damage occurs every 0.5s instead of 2s.
                         """,
                 50000,
                 () -> {
                     ability.setTicksBetweenDot(10);
-                    ability.setMaxEnemiesHit(ability.getMaxEnemiesHit() + 28);
+                    ability.setMaxEnemiesHit(ability.getMaxEnemiesHit() + 20);
                 }
         );
         masterUpgrade2 = new Upgrade(
                 "Baneful Hex",
                 "Poisonous Hex - Master Upgrade",
                 """
-                        +50% Damage
-                        +12 Pierce
+                        +40% Damage
+                        +10 Pierce
                         
                         PHEX can now stack up to 5 times.
                         """,
                 50000,
                 () -> {
                     Value.RangedValueCritable damage = ability.getDamageValues().getHexDamage();
-                    damage.min().addModifier(FloatModifiable.ModifierType.ADDITIVE_MULTIPLIER, "Master Upgrade Branch", .50f);
-                    damage.max().addModifier(FloatModifiable.ModifierType.ADDITIVE_MULTIPLIER, "Master Upgrade Branch", .50f);
-                    ability.setMaxEnemiesHit(ability.getMaxEnemiesHit() + 12);
+                    damage.min().addModifier(FloatModifiable.ModifierType.ADDITIVE_MULTIPLIER, "Master Upgrade Branch", .4f);
+                    damage.max().addModifier(FloatModifiable.ModifierType.ADDITIVE_MULTIPLIER, "Master Upgrade Branch", .4f);
+                    ability.setMaxEnemiesHit(ability.getMaxEnemiesHit() + 8);
                     ability.setMaxStacks(5);
                 }
         );
@@ -69,8 +69,8 @@ public class PoisonousHexBranch extends AbstractUpgradeBranch<PoisonousHex> {
     @Override
     public void runOnce() {
         Value.RangedValueCritable hexDamage = ability.getDamageValues().getHexDamage();
-        hexDamage.min().addModifier(FloatModifiable.ModifierType.ADDITIVE_MULTIPLIER, "PvE", .3f);
-        hexDamage.max().addModifier(FloatModifiable.ModifierType.ADDITIVE_MULTIPLIER, "PvE", .3f);
+        hexDamage.min().addModifier(FloatModifiable.ModifierType.ADDITIVE_MULTIPLIER, "PvE", .2f);
+        hexDamage.max().addModifier(FloatModifiable.ModifierType.ADDITIVE_MULTIPLIER, "PvE", .2f);
         ability.setMaxEnemiesHit(4);
     }
 
