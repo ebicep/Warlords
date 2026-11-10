@@ -21,6 +21,8 @@ import com.ebicep.warlords.game.GameMode;
 import com.ebicep.warlords.game.Team;
 import com.ebicep.warlords.honorifics.HonorificProfile;
 import com.ebicep.warlords.player.general.*;
+import com.ebicep.warlords.player.general.armorcustomization.ArmorCustomizationProfile;
+import com.ebicep.warlords.player.general.mounts.MountProfile;
 import com.ebicep.warlords.player.general.settings.*;
 import com.ebicep.warlords.player.general.settings.actionbar.ActionBarSettings;
 import org.bukkit.Bukkit;
@@ -121,6 +123,10 @@ public class DatabasePlayer implements CachedMultiStatsGeneral, TracksMultiAbili
 
     @Field("honorifics")
     private HonorificProfile honorifics = new HonorificProfile();
+    @Field("armor_customization")
+    private ArmorCustomizationProfile armorCustomization = new ArmorCustomizationProfile();
+    @Field("mounts")
+    private MountProfile mounts = new MountProfile();
 
     @Transient
     private Team wantedTeam = Team.BLUE;
@@ -615,6 +621,22 @@ public class DatabasePlayer implements CachedMultiStatsGeneral, TracksMultiAbili
             honorifics = new HonorificProfile();
         }
         return honorifics;
+    }
+
+    public ArmorCustomizationProfile getArmorCustomization() {
+        if (armorCustomization == null) {
+            armorCustomization = new ArmorCustomizationProfile();
+        }
+        armorCustomization.ensureDefaults();
+        return armorCustomization;
+    }
+
+    public MountProfile getMounts() {
+        if (mounts == null) {
+            mounts = new MountProfile();
+        }
+        mounts.ensureDefaults();
+        return mounts;
     }
 
     public AdvancedHoverMessages getAdvancedHoverMessages() {

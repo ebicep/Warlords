@@ -3,7 +3,7 @@ package com.ebicep.warlords.player.general.specboosts.boosts;
 import com.ebicep.warlords.abilities.CripplingStrike;
 import com.ebicep.warlords.events.player.ingame.WarlordsHorseAbilityDismountEvent;
 import com.ebicep.warlords.events.player.ingame.WarlordsRespawnEvent;
-import com.ebicep.warlords.game.option.pvp.HorseOption;
+import com.ebicep.warlords.game.option.pvp.MountOption;
 import com.ebicep.warlords.player.general.specboosts.SpecBoostManager;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
 import com.ebicep.warlords.player.ingame.WarlordsPlayer;
@@ -55,15 +55,15 @@ public class UndyingSteed implements SpecBoostManager.SpecBoost<UndyingSteed> {
                         floatModifiable.addModifier(FloatModifiable.ModifierType.ADDITIVE_MULTIPLIER, "Spec Boost", cripplingStrikeDamageIncreasePercent / 100)
                 );
             });
-            for (HorseOption horseOption : warlordsEntity.getGame().getOption(HorseOption.class)) {
-                horseOption.getHorseForPlayer(warlordsEntity).getHealth().addModifier(FloatModifiable.ModifierType.ADDITIVE, "Spec Boost", horseHealth);
+            for (MountOption mountOption : warlordsEntity.getGame().getOption(MountOption.class)) {
+                mountOption.getMountForPlayer(warlordsEntity).getHealth().addModifier(FloatModifiable.ModifierType.ADDITIVE, "Spec Boost", horseHealth);
             }
         }
 
         @Override
         public void unapply(WarlordsPlayer warlordsPlayer) {
-            for (HorseOption horseOption : warlordsEntity.getGame().getOption(HorseOption.class)) {
-                horseOption.getHorseForPlayer(warlordsEntity).getHealth().removeModifier("Spec Boost");
+            for (MountOption mountOption : warlordsEntity.getGame().getOption(MountOption.class)) {
+                mountOption.getMountForPlayer(warlordsEntity).getHealth().removeModifier("Spec Boost");
             }
         }
 
@@ -83,8 +83,8 @@ public class UndyingSteed implements SpecBoostManager.SpecBoost<UndyingSteed> {
             if (!warlordsEntity.equals(event.getWarlordsEntity())) {
                 return;
             }
-            for (HorseOption horseOption : warlordsEntity.getGame().getOption(HorseOption.class)) {
-                horseOption.getHorseForPlayer(warlordsEntity).setCurrentCooldown(0);
+            for (MountOption mountOption : warlordsEntity.getGame().getOption(MountOption.class)) {
+                mountOption.getMountForPlayer(warlordsEntity).setCurrentCooldown(0);
             }
         }
 

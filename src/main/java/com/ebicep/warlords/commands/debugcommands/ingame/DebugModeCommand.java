@@ -6,7 +6,7 @@ import co.aikar.commands.annotation.CommandPermission;
 import co.aikar.commands.annotation.Default;
 import co.aikar.commands.annotation.Description;
 import com.ebicep.warlords.abilities.internal.AbstractAbility;
-import com.ebicep.warlords.game.option.pvp.HorseOption;
+import com.ebicep.warlords.game.option.pvp.MountOption;
 import com.ebicep.warlords.player.ingame.WarlordsPlayer;
 import com.ebicep.warlords.util.chat.ChatChannels;
 import net.kyori.adventure.text.Component;
@@ -34,8 +34,8 @@ public class DebugModeCommand extends BaseCommand {
             ability.setCurrentCooldown(0);
             ability.queueUpdateItem();
         }
-        for (HorseOption horseOption : warlordsPlayer.getGame().getOption(HorseOption.class)) {
-            horseOption.getHorseForPlayer(warlordsPlayer).setCurrentCooldown(.05f);
+        for (MountOption mountOption : warlordsPlayer.getGame().getOption(MountOption.class)) {
+            mountOption.getMountForPlayer(warlordsPlayer).setCurrentCooldown(.05f);
         }
         if (gmc) {
             if (warlordsPlayer.getEntity() instanceof Player) {

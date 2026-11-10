@@ -10,7 +10,7 @@ import com.ebicep.warlords.game.GameMap;
 import com.ebicep.warlords.game.option.*;
 import com.ebicep.warlords.game.option.freeze.GameFreezeOption;
 import com.ebicep.warlords.game.option.pvp.ApplySpecBoostsOption;
-import com.ebicep.warlords.game.option.pvp.HorseOption;
+import com.ebicep.warlords.game.option.pvp.MountOption;
 import com.ebicep.warlords.game.option.respawn.NoRespawnIfOfflineOption;
 import com.ebicep.warlords.game.option.respawn.RespawnProtectionOption;
 import com.ebicep.warlords.game.option.respawn.RespawnWaveOption;
@@ -54,7 +54,7 @@ public class Siege implements Mode {
         options.add(new NoRespawnIfOfflineOption());
         options.add(new WeaponOption());
         options.add(new ApplySpecBoostsOption(addons.contains(GameAddon.RANDOM_SPEC_BOOST)));
-        options.add(new HorseOption());
+        options.add(new MountOption());
 
         options.add(new RespawnWaveOption()); // timers handled by siegeoption
         options.add(new RespawnProtectionOption(5, 10, false));

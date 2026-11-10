@@ -193,7 +193,7 @@ public class OrderOfEviscerate extends AbstractAbility implements OrangeAbilityI
                                             );
                                             regularCooldown.addModifier(Modifier.MODIFY_OUTGOING_DAMAGE_BEFORE_INTERVENE, (event, currentDamageValue) -> {
                                                 currentDamageValue.addModifier(FloatModifiable.ModifierType.MULTIPLICATIVE_MULTIPLIER,
-                                                        "Cloaked Engagement", 1 + 0.4f * stacks.get()
+                                                        "Cloaked Engagement", 1 + 0.3f * stacks.get()
                                                 );
                                                     }
                                             );

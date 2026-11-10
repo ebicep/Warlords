@@ -20,21 +20,7 @@ public class CustomHorse extends Horse {
 
     public CustomHorse(Location location) {
         super(EntityType.HORSE, ((CraftWorld) location.getWorld()).getHandle());
-
-        float yaw = location.getYaw();
-
-        setPos(location.getX(), location.getY(), location.getZ());
-        setRot(yaw, location.getPitch());
-        setYBodyRot(yaw);
-        setYHeadRot(yaw);
-        yBodyRotO = yaw;
-        yHeadRotO = yaw;
-
-        // Skips Mob.serverAiStep (sensing, goals, navigation, move/look/jump controls).
-        // LivingEntity still runs travelRidden while a player is the controlling passenger.
-        setNoAi(true);
-        setSilent(true);
-        setPersistenceRequired(true);
+        MountEntitySetup.prepare(this, location);
     }
 
     @Override

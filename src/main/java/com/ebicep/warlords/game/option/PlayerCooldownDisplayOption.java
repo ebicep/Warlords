@@ -13,6 +13,7 @@ import com.ebicep.warlords.database.repositories.player.pojos.general.DatabasePl
 import com.ebicep.warlords.events.player.ingame.WarlordsAbilityActivateEvent;
 import com.ebicep.warlords.events.player.ingame.WarlordsDeathEvent;
 import com.ebicep.warlords.game.Game;
+import com.ebicep.warlords.game.option.pvp.MountOption;
 import com.ebicep.warlords.game.Team;
 import com.ebicep.warlords.game.state.EndState;
 import com.ebicep.warlords.player.general.settings.CooldownDisplaySettings;
@@ -361,7 +362,7 @@ public class PlayerCooldownDisplayOption implements Option, Listener {
             double y = cachedLocation.getY() + 3;
             Entity vehicle = warlordsEntity.getEntity().getVehicle();
             if (vehicle != null) {
-                if (vehicle instanceof Horse) {
+                if (MountOption.isMount(vehicle)) {
                     y += vehicle.getHeight() / 2;
                 } else {
                     y += vehicle.getHeight();
