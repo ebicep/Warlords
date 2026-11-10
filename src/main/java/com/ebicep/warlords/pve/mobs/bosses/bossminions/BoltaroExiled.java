@@ -49,11 +49,6 @@ public class BoltaroExiled extends AbstractMob implements BossMinionMob {
     @Override
     public void onSpawn(PveOption option) {
         super.onSpawn(option);
-
-        if (option.getDifficulty() == DifficultyIndex.EXTREME) {
-            float newHealth = 2000;
-            warlordsNPC.setMaxHealthAndHeal(newHealth);
-        }
     }
 
     @Override

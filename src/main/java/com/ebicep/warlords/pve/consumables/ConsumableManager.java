@@ -1,14 +1,13 @@
 package com.ebicep.warlords.pve.consumables;
 
+import com.ebicep.warlords.util.java.DateUtil;
 import org.springframework.data.mongodb.core.mapping.Field;
 
-import java.time.DayOfWeek;
 import java.time.Instant;
-import java.time.LocalDate;
-import java.time.ZoneOffset;
-import java.time.temporal.TemporalAdjusters;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
+import java.util.List;
 import java.util.Map;
 
 public class ConsumableManager {
@@ -48,7 +47,6 @@ public class ConsumableManager {
         if (!consumable.isTimed()) {
             return;
         }
-        cleanupExpired();
         getActive().put(consumable.getActiveGroup(), new ActiveConsumable(
                 consumable.getId(),
                 Instant.now().plus(consumable.getDuration())
@@ -56,8 +54,11 @@ public class ConsumableManager {
     }
 
     public ActiveConsumable getActiveConsumable(String group) {
-        cleanupExpired();
-        return getActive().get(group);
+        ActiveConsumable activeConsumable = getActive().get(group);
+        if (activeConsumable == null || activeConsumable.isExpired()) {
+            return null;
+        }
+        return activeConsumable;
     }
 
     public Consumable getActiveDefinition(String group) {
@@ -65,22 +66,27 @@ public class ConsumableManager {
         return activeConsumable == null ? null : ConsumableRegistry.get(activeConsumable.getConsumableId());
     }
 
-    public void cleanupExpired() {
+    public List<ActiveConsumable> cleanupExpired() {
+        List<ActiveConsumable> expired = new ArrayList<>();
         Iterator<Map.Entry<String, ActiveConsumable>> iterator = getActive().entrySet().iterator();
         while (iterator.hasNext()) {
             ActiveConsumable value = iterator.next().getValue();
             if (value == null || value.isExpired()) {
+                if (value != null) {
+                    expired.add(value);
+                }
                 iterator.remove();
             }
         }
+        return expired;
     }
 
     public boolean hasPurchasedThisWeek(Consumable consumable) {
-        return getWeeklyPurchases().getOrDefault(consumable.getId(), Long.MIN_VALUE) == getCurrentWeekStartEpochDay();
+        return getWeeklyPurchases().getOrDefault(consumable.getId(), Long.MIN_VALUE) == DateUtil.getCurrentWeekStartEpochDay();
     }
 
     public void markPurchasedThisWeek(Consumable consumable) {
-        getWeeklyPurchases().put(consumable.getId(), getCurrentWeekStartEpochDay());
+        getWeeklyPurchases().put(consumable.getId(), DateUtil.getCurrentWeekStartEpochDay());
     }
 
     public Map<String, Integer> getInventory() {
@@ -102,11 +108,5 @@ public class ConsumableManager {
             weeklyPurchases = new HashMap<>();
         }
         return weeklyPurchases;
-    }
-
-    private static long getCurrentWeekStartEpochDay() {
-        return LocalDate.now(ZoneOffset.UTC)
-                        .with(TemporalAdjusters.previousOrSame(DayOfWeek.MONDAY))
-                        .toEpochDay();
     }
 }

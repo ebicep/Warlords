@@ -116,7 +116,7 @@ public class HolyRadianceProtector extends AbstractHolyRadiance implements Heals
                 markDuration * 20,
                 Collections.singletonList((cooldown, ticksLeft, ticksElapsed) -> {
                     if (ticksElapsed % 16 == 0) {
-                        EffectUtils.playCylinderAnimation(target.getLocation(), 1, 0, 255, 70, 8, 3, .3);
+                        EffectUtils.playCylinderAnimation(target.getLocation(), 1, 0, 255, 70, 6, 3, .4);
                     }
                     if (pveMasterUpgrade2) {
                         if (ticksElapsed % 20 == 0 && ticksElapsed != 0) {

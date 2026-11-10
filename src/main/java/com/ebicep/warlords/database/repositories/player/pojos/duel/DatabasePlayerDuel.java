@@ -5,12 +5,18 @@ import com.ebicep.warlords.database.repositories.games.pojos.duel.DatabaseGameDu
 import com.ebicep.warlords.database.repositories.games.pojos.duel.DatabaseGamePlayerDuel;
 import com.ebicep.warlords.database.repositories.player.PlayersCollections;
 import com.ebicep.warlords.database.repositories.player.pojos.StatsWarlordsSpecs;
+import com.ebicep.warlords.database.repositories.player.pojos.cache.PushedStatTotals;
+import com.ebicep.warlords.database.repositories.player.pojos.cache.PushedStatsWarlordsClasses;
 import com.ebicep.warlords.database.repositories.player.pojos.duel.classes.*;
 import com.ebicep.warlords.database.repositories.player.pojos.general.DatabasePlayer;
 import com.ebicep.warlords.game.GameMode;
 import com.ebicep.warlords.player.general.Classes;
+import org.springframework.data.annotation.Transient;
 
-public class DatabasePlayerDuel implements DuelStatsWarlordsClasses {
+public class DatabasePlayerDuel implements PushedStatsWarlordsClasses.Duel {
+
+    @Transient
+    private final PushedStatTotals pushedStats = new PushedStatTotals();
 
     private DatabaseMageDuel mage = new DatabaseMageDuel();
     private DatabaseWarriorDuel warrior = new DatabaseWarriorDuel();
@@ -42,5 +48,11 @@ public class DatabasePlayerDuel implements DuelStatsWarlordsClasses {
             PlayersCollections playersCollection
     ) {
         updateSpecStats(databasePlayer, databaseGame, gameMode, gamePlayer, result, multiplier, playersCollection);
+        pushedStats.applyGeneral(gamePlayer, result, multiplier);
+    }
+
+    @Override
+    public PushedStatTotals pushedStats() {
+        return pushedStats;
     }
 }

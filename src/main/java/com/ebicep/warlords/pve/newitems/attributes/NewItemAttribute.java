@@ -13,6 +13,7 @@ import java.util.Map;
 import java.util.Set;
 import java.util.function.Function;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 public enum NewItemAttribute implements Attribute, NamedEnum {
 
@@ -30,6 +31,7 @@ public enum NewItemAttribute implements Attribute, NamedEnum {
     MAX_ENERGY(new MaxEnergy()),
     ENERGY_PER_HIT(new EnergyPerHit()),
     THORNS(new Thorns()),
+    ATTACK_SPEED(new AttackSpeed()),
 
     ;
 
@@ -54,6 +56,21 @@ public enum NewItemAttribute implements Attribute, NamedEnum {
             THORNS,
     };
     public static final Set<NewItemAttribute> BONUS_ATTRIBUTE_SET = Set.of(BONUS_ATTRIBUTES);
+    /**
+     * Attributes that cannot be rolled onto an item and are only granted by gems. Kept out of {@link #BONUS_ATTRIBUTES}
+     * so item generation never picks an attribute that has no configured range.
+     */
+    public static final NewItemAttribute[] GEM_ONLY_ATTRIBUTES = {
+            ATTACK_SPEED,
+    };
+    /**
+     * Every attribute that can show up on an item, in the order it should be displayed.
+     */
+    public static final NewItemAttribute[] DISPLAY_ORDER = Stream
+            .of(BONUS_ATTRIBUTES, GEM_ONLY_ATTRIBUTES)
+            .flatMap(Arrays::stream)
+            .toArray(NewItemAttribute[]::new);
+    public static final Set<NewItemAttribute> DISPLAY_ORDER_SET = Set.of(DISPLAY_ORDER);
     private static final Map<String, NewItemAttribute> BY_DB_NAME = Arrays
             .stream(VALUES)
             .collect(Collectors.toUnmodifiableMap(

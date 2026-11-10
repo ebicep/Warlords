@@ -6,8 +6,8 @@ import com.ebicep.warlords.game.option.pve.PveOption;
 import com.ebicep.warlords.player.ingame.WarlordsPlayer;
 import com.ebicep.warlords.pve.DifficultyIndex;
 import com.ebicep.warlords.pve.mobs.AbstractMob;
-import com.ebicep.warlords.pve.mobs.Aspect;
 import com.ebicep.warlords.pve.mobs.Mob;
+import com.ebicep.warlords.pve.newitems.setbonus.sets.Summoner;
 import com.ebicep.warlords.pve.weapons.weapontypes.legendaries.AbstractLegendaryWeapon;
 import com.ebicep.warlords.pve.weapons.weapontypes.legendaries.LegendaryTitles;
 import com.ebicep.warlords.pve.weapons.weapontypes.legendaries.PassiveCounter;
@@ -34,8 +34,8 @@ public class LegendaryRequiem extends AbstractLegendaryWeapon implements Passive
             .add(1, 6)
             .add(1, 7);
     public static final HashMap<DifficultyIndex, Mob> DIFFICULTY_SPAWNS = new HashMap<>() {{
-        put(DifficultyIndex.EASY, Mob.ZOMBIE_LAMENT);
-        put(DifficultyIndex.NORMAL, Mob.ZOMBIE_LAMENT);
+        put(DifficultyIndex.EASY, Mob.REQUIEM_GUARDIAN);
+        put(DifficultyIndex.NORMAL, Mob.REQUIEM_GUARDIAN);
         put(DifficultyIndex.HARD, Mob.REQUIEM_GUARDIAN);
         put(DifficultyIndex.EXTREME, Mob.REQUIEM_GUARDIAN);
         put(DifficultyIndex.ENDLESS, Mob.REQUIEM_GUARDIAN);
@@ -69,66 +69,6 @@ public class LegendaryRequiem extends AbstractLegendaryWeapon implements Passive
         DifficultyIndex difficulty = pveOption.getDifficulty();
 
         Game game = player.getGame();
-//        game.registerEvents(new Listener() {
-//
-//            @EventHandler
-//            public void onAddCooldown(WarlordsAddCooldownEvent event) {
-//                AbstractCooldown<?> cooldown = event.getAbstractCooldown();
-//                if (!(cooldown.getCooldownObject() instanceof UndyingArmy.UndyingArmyData)) {
-//                    return;
-//                }
-//                if (!Objects.equals(event.getWarlordsEntity(), player)) {
-//                    return;
-//                }
-//                int alliedNPCs = (int) game.warlordsNPCs()
-//                                           .filter(warlordsNPC -> warlordsNPC.isTeammate(player))
-//                                           .count();
-//                int spawnAmount = MathUtils.generateRandomValueBetweenInclusive(2, 4);
-//                if (alliedNPCs + spawnAmount > SPAWN_LIMIT) {
-//                    spawnAmount = SPAWN_LIMIT - alliedNPCs;
-//                }
-//                if (spawnAmount <= 0) {
-//                    return;
-//                }
-//                List<WarlordsNPC> toConvert = PlayerFilterGeneric.playingGameWarlordsNPCs(game)
-//                                                                 .aliveEnemiesOf(player)
-//                                                                 .filter(warlordsNPC -> !(warlordsNPC.getMob() instanceof BossMob) && !(warlordsNPC.getMob() instanceof BossMinionMob))
-//                                                                 .filter(warlordsNPC -> warlordsNPC.getMob().getEquipment() != null)
-//                                                                 .limit(spawnAmount)
-//                                                                 .toList();
-//                toConvert.forEach(convertedEnemy -> {
-//                    EffectUtils.playCylinderAnimation(convertedEnemy.getLocation(), 1.05, Particle.HAPPY_VILLAGER, 1);
-//                    convertedEnemy.setTeam(warlordsPlayer.getTeam());
-//                    AbstractMob mob = DIFFICULTY_SPAWNS.getOrDefault(difficulty, Mob.ZOMBIE_LANCER).createMob(player.getLocation());
-//                    mob.setAspect(Aspect.getRandomAspect(List.of(Aspect.INFERNAL)));
-//                    updateMobEquipment(mob, player);
-//                    //removing teammate mobs that are aggroed on converted target
-//                    PlayerFilterGeneric.playingGameWarlordsNPCs(game)
-//                                       .aliveTeammatesOf(player)
-//                                       .filter(teammate -> {
-//                                           Entity target = teammate.getMob().getTarget();
-//                                           return target != null && Objects.equals(target, convertedEnemy.getEntity());
-//                                       })
-//                                       .forEach(teammate -> teammate.getMob().removeTarget());
-//                    mob.removeTarget();
-//                });
-//                Bukkit.getPluginManager().callEvent(new WarlordsMobConvertEvent(player, toConvert));
-//                new GameRunnable(game) {
-//
-//                    @Override
-//                    public void run() {
-//                        toConvert.forEach(convertedEnemy -> {
-//                            AbstractMob mob = convertedEnemy.getMob();
-//                            if (pveOption.getMobs().contains(mob)) {
-//                                mob.getWarlordsNPC().die(mob.getWarlordsNPC(), WarlordsDeathEvent.DeathInfoBuilder.create().setForced(true));
-//                            }
-//                        });
-//                        toConvert.clear();
-//                    }
-//                }.runTaskLater(20 * 180);
-//            }
-//
-//        });
         int cooldown = (COOLDOWN + COOLDOWN_INCREASE_PER_UPGRADE * getTitleLevel()) * 20;
 
         new GameRunnable(game) {
@@ -177,14 +117,16 @@ public class LegendaryRequiem extends AbstractLegendaryWeapon implements Passive
                 player.playSound(player.getLocation(), Sound.BLOCK_NOTE_BLOCK_PLING, 1, 2);
                 HashSet<AbstractMob> spawnedMobs = new HashSet<>();
                 for (int i = 0; i < spawnAmount; i++) {
-                    AbstractMob mob = DIFFICULTY_SPAWNS.getOrDefault(difficulty, Mob.ZOMBIE_LANCER).createMob(player.getLocation());
+                    AbstractMob mob = DIFFICULTY_SPAWNS.getOrDefault(difficulty, Mob.REQUIEM_GUARDIAN).createMob(player.getLocation());
                     updateMobEquipment(mob, player);
                     allSpawnedMobs.add(mob);
                     spawnedMobs.add(mob);
-                    if (warlordsPlayer.getTeam() == null) {
+                    if (player.getTeam() == null) {
                         return;
                     }
-                    pveOption.spawnNewMob(mob, warlordsPlayer.getTeam());
+                    Summoner.applyToSummon(mob, player);
+                    pveOption.spawnNewMob(mob, player.getTeam());
+                    Summoner.applyToSummon(mob, player);
                 }
                 new GameRunnable(game) {
                     @Override

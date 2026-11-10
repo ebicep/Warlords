@@ -143,7 +143,7 @@ public final class RaidBossUtils {
 
             String fullBar = "█".repeat(filled);
             String emptyBar = "█".repeat(HEALTH_BAR_LENGTH - filled);
-            int percent = (int) Math.round(healthPercent * 100);
+            int percent = (int) boss.getSpec().getDamageResistance();
 
             TextComponent.Builder builder = Component.text();
             builder.append(Component.text(name, NamedTextColor.WHITE).decorate(TextDecoration.BOLD));
@@ -160,7 +160,7 @@ public final class RaidBossUtils {
                             " / " +
                             NumberFormat.addCommaAndRound(Math.round(boss.getMaxHealth())) +
                             "  -  " +
-                            percent + "%",
+                            percent + "% ⛊",
                     NamedTextColor.WHITE,
                     TextDecoration.BOLD
             ));

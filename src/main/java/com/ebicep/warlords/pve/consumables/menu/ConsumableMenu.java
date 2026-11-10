@@ -1,5 +1,6 @@
 package com.ebicep.warlords.pve.consumables.menu;
 
+import com.ebicep.warlords.Warlords;
 import com.ebicep.warlords.database.DatabaseManager;
 import com.ebicep.warlords.database.repositories.player.pojos.general.DatabasePlayer;
 import com.ebicep.warlords.guilds.Guild;
@@ -11,6 +12,7 @@ import com.ebicep.warlords.menu.generalmenu.WarlordsNewHotbarMenu;
 import com.ebicep.warlords.pve.Currencies;
 import com.ebicep.warlords.pve.consumables.ActiveConsumable;
 import com.ebicep.warlords.pve.consumables.Consumable;
+import com.ebicep.warlords.pve.consumables.ConsumableListener;
 import com.ebicep.warlords.pve.consumables.ConsumableManager;
 import com.ebicep.warlords.pve.consumables.ConsumablePurchaseLimit;
 import com.ebicep.warlords.pve.consumables.ConsumableRegistry;
@@ -22,18 +24,31 @@ import com.ebicep.warlords.util.java.NumberFormat;
 import com.ebicep.warlords.util.java.Pair;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
+import net.kyori.adventure.text.serializer.plain.PlainTextComponentSerializer;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
+import org.bukkit.inventory.ItemStack;
+import org.bukkit.scheduler.BukkitRunnable;
+import org.bukkit.scheduler.BukkitTask;
 
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Map;
+import java.util.UUID;
+import java.util.concurrent.ConcurrentHashMap;
 
+import static com.ebicep.warlords.menu.Menu.ACTION_CLOSE_MENU;
+import static com.ebicep.warlords.menu.Menu.ACTION_DO_NOTHING;
 import static com.ebicep.warlords.menu.Menu.MENU_BACK;
 import static com.ebicep.warlords.menu.Menu.MENU_CLOSE;
-import static com.ebicep.warlords.menu.Menu.ACTION_CLOSE_MENU;
 
 public final class ConsumableMenu {
+
+    public static final String VIAL_INVENTORY_TITLE = "Vial Inventory";
+    private static final int ACTIVE_VIALS_SLOT = 4;
+    private static final int ACTIVE_VIALS_UPDATE_TICKS = 20 * 30;
+    private static final Map<UUID, BukkitTask> ACTIVE_VIALS_UPDATE_TASKS = new ConcurrentHashMap<>();
 
     private ConsumableMenu() {
     }
@@ -41,9 +56,11 @@ public final class ConsumableMenu {
     public static void openVialInventory(Player player) {
         DatabasePlayer databasePlayer = DatabaseManager.getPlayer(player);
         ConsumableManager manager = databasePlayer.getPveStats().getConsumableManager();
-        manager.cleanupExpired();
+        ConsumableListener.cleanupAndNotify(player, databasePlayer);
 
-        Menu menu = new Menu("Vial Inventory", 9 * 6);
+        Menu menu = new Menu(VIAL_INVENTORY_TITLE, 9 * 6);
+        menu.setItem(ACTIVE_VIALS_SLOT, 0, createActiveVialsItem(manager), ACTION_DO_NOTHING);
+
         int index = 0;
         for (Vial vial : Vial.VALUES) {
             int amount = manager.getAmount(vial);
@@ -102,6 +119,7 @@ public final class ConsumableMenu {
         menu.setItem(4, 5, MENU_CLOSE, ACTION_CLOSE_MENU);
         menu.setItem(5, 5, MENU_BACK, (m, e) -> WarlordsNewHotbarMenu.PvEMenu.openPvEMenu(player));
         menu.openForPlayer(player);
+        startActiveVialsUpdateTask(player);
     }
 
     public static void openPersonalShop(Player player) {
@@ -159,6 +177,74 @@ public final class ConsumableMenu {
 
         menu.setItem(4, 5, MENU_BACK, (m, e) -> openVialInventory(player));
         menu.openForPlayer(player);
+    }
+
+    public static ItemStack createActiveVialsItem(ConsumableManager manager) {
+        List<Component> lore = new ArrayList<>();
+        lore.add(Component.text("Currently active vial effects and remaining time.", NamedTextColor.GRAY));
+        boolean anyActive = false;
+        for (Vial vial : Vial.VALUES) {
+            ActiveConsumable active = manager.getActiveConsumable(vial.getActiveGroup());
+            if (active == null || !vial.getId().equals(active.getConsumableId())) {
+                continue;
+            }
+            anyActive = true;
+            lore.add(Component.empty());
+            lore.add(Component.text(vial.getName(), NamedTextColor.GREEN));
+            lore.add(Component.text("Time Remaining: ", NamedTextColor.GRAY)
+                              .append(Component.text(DateUtil.getTimeTill(active.getExpiresAt(), true, true, true, false), NamedTextColor.YELLOW)));
+        }
+        if (!anyActive) {
+            lore.add(Component.empty());
+            lore.add(Component.text("No vials currently active.", NamedTextColor.RED));
+        }
+        return new ItemBuilder(Material.CLOCK)
+                .name(Component.text("Active Vials", NamedTextColor.GOLD))
+                .lore(lore)
+                .get();
+    }
+
+    public static boolean isVialInventoryOpen(Player player) {
+        return PlainTextComponentSerializer.plainText()
+                                           .serialize(player.getOpenInventory().title())
+                                           .equals(VIAL_INVENTORY_TITLE);
+    }
+
+    public static void updateActiveVialsItem(Player player, ConsumableManager manager) {
+        if (!player.isOnline() || !isVialInventoryOpen(player)) {
+            return;
+        }
+        player.getOpenInventory().getTopInventory().setItem(ACTIVE_VIALS_SLOT, createActiveVialsItem(manager));
+    }
+
+    private static void startActiveVialsUpdateTask(Player player) {
+        UUID uuid = player.getUniqueId();
+        BukkitTask previous = ACTIVE_VIALS_UPDATE_TASKS.remove(uuid);
+        if (previous != null) {
+            previous.cancel();
+        }
+        BukkitTask task = new BukkitRunnable() {
+            @Override
+            public void run() {
+                if (!player.isOnline() || !isVialInventoryOpen(player)) {
+                    cancel();
+                    ACTIVE_VIALS_UPDATE_TASKS.remove(uuid);
+                    return;
+                }
+                DatabasePlayer databasePlayer = DatabaseManager.getPlayer(player);
+                ConsumableManager manager = databasePlayer.getPveStats().getConsumableManager();
+                ConsumableListener.cleanupAndNotify(player, databasePlayer);
+                updateActiveVialsItem(player, manager);
+            }
+        }.runTaskTimer(Warlords.getInstance(), ACTIVE_VIALS_UPDATE_TICKS, ACTIVE_VIALS_UPDATE_TICKS);
+        ACTIVE_VIALS_UPDATE_TASKS.put(uuid, task);
+    }
+
+    public static void cancelActiveVialsUpdateTask(UUID uuid) {
+        BukkitTask task = ACTIVE_VIALS_UPDATE_TASKS.remove(uuid);
+        if (task != null) {
+            task.cancel();
+        }
     }
 
     private static void confirmConsume(Player player, DatabasePlayer databasePlayer, Vial vial) {

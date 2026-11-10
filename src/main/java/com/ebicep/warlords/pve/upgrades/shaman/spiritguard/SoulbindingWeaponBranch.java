@@ -39,11 +39,10 @@ public class SoulbindingWeaponBranch extends AbstractUpgradeBranch<Soulbinding> 
                 """
                         Soulbinding weapon's buffs affect 2 additional allies.
                         
-                        Gain 1 energy for each soulbound target hit by Fallen Souls and Spirit Link, increase your own and the allied ability cooldown reduction by 0.3s
+                        Gain 1 energy for each soulbound target hit by Fallen Souls and Spirit Link, increase the allied ability cooldown reduction by 0.3s
                         """,
                 50000,
                 () -> {
-                    ability.setSelfCooldownReduction(ability.getSelfCooldownReduction() + 0.3f);
                     ability.setAllyCooldownReduction(ability.getAllyCooldownReduction() + 0.3f);
                     ability.setMaxAlliesHit(ability.getMaxAlliesHit() + 2);
                 }

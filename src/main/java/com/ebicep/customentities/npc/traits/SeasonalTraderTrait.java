@@ -148,7 +148,7 @@ public class SeasonalTraderTrait extends WarlordsTrait implements HasNPCLabelHol
         if (ticksElapsed++ % 300 != 0) {
             return;
         }
-        String timeTill = DateUtil.getTimeTill(DateUtil.getNextMonthFirstDay(),
+        String timeTill = DateUtil.getTimeTill(DateUtil.getNextMonthlyResetDate(),
                 true,
                 true,
                 true,

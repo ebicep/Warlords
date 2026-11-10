@@ -16,7 +16,6 @@ import com.ebicep.warlords.util.java.NumberFormat;
 import com.ebicep.warlords.util.java.Pair;
 import com.ebicep.warlords.util.warlords.GameRunnable;
 import com.ebicep.warlords.util.warlords.PlayerFilter;
-import com.google.common.util.concurrent.AtomicDouble;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.TextComponent;
 import net.kyori.adventure.text.format.NamedTextColor;
@@ -32,7 +31,11 @@ import java.util.stream.Collectors;
 
 public class LegendaryVibrant extends AbstractLegendaryWeapon implements GardenOfHesperidesTitle, PassiveCounter {
 
-    public static final int COOLDOWN = 6;
+    private static final class VibrantTabulation {
+        double damageTaken;
+    }
+
+    public static final int COOLDOWN = 8;
     public static final int NUMBER_OF_ORBS = 3;
     public static final ItemStack ORB_ITEM = new ItemStack(Material.SUNFLOWER);
     public static final float ORB_OFFSET = 1.75f;
@@ -41,8 +44,8 @@ public class LegendaryVibrant extends AbstractLegendaryWeapon implements GardenO
     public static final int DAMAGE_TAKEN_PER_UPGRADE = 1;
     public static final int DAMAGE_CAP = 10_000;
     public static final int DAMAGE_CAP_PER_UPGRADE = 2_000;
-    public static final int ENERGY_CAP = 500;
-    public static final int ENERGY_CAP_PER_UPGRADE = 100;
+    public static final int ENERGY_CAP = 400;
+    public static final int ENERGY_CAP_PER_UPGRADE = 40;
 
     @Transient
     private int secondCounter = 0;
@@ -70,7 +73,8 @@ public class LegendaryVibrant extends AbstractLegendaryWeapon implements GardenO
         super.applyToWarlordsPlayer(player, pveOption);
         this.secondCounter = 10;
 
-        AtomicDouble damageTaken = new AtomicDouble(0);
+        final VibrantTabulation tabulation = new VibrantTabulation();
+
         player.getCooldownManager().addCooldown(new PermanentCooldown<>(
                 getTitleName(),
                 null,
@@ -88,23 +92,25 @@ public class LegendaryVibrant extends AbstractLegendaryWeapon implements GardenO
                     secondCounter--;
                     if (secondCounter == 0) {
                         secondCounter = COOLDOWN;
-                        generateOrbs(player, (float) damageTaken.getAndSet(0));
+                        float accumulatedDamage = (float) tabulation.damageTaken;
+                        tabulation.damageTaken = 0;
+                        generateOrbs(player, accumulatedDamage);
                     }
                 }
         ).addModifier(Modifier.ON_INCOMING_DAMAGE, (event, currentDamageValue, isCrit) -> {
-                    damageTaken.addAndGet(currentDamageValue);
+                    tabulation.damageTaken += currentDamageValue;
                 }
         ));
     }
 
     @Override
     public TextComponent getPassiveEffect() {
-        return Component.text("Every 6s, " + NUMBER_OF_ORBS + " energy orbs will be produced based on ", NamedTextColor.GRAY)
+        return Component.text("Every 8s, " + NUMBER_OF_ORBS + " energy orbs will be produced based on ", NamedTextColor.GRAY)
                         .append(formatTitleUpgrade(DAMAGE_TAKEN + DAMAGE_TAKEN_PER_UPGRADE * getTitleLevel(), "%"))
                         .append(Component.text(" of the damage taken for the last 10s. A max of " + NumberFormat.addCommas(DAMAGE_CAP) + " damage may be tabulated and a max of "))
                         .append(formatTitleUpgrade(ENERGY_CAP + ENERGY_CAP_PER_UPGRADE * getTitleLevel()))
                         .append(Component.text("energy may be produced between all orbs. " +
-                                "Orbs last for 30s and any not claimed by a player will be sent back to the equipped player at only 30% of the original energy amount per orb."));
+                                "Orbs last for 15s and any not claimed by a player will be sent back to the equipped player at only 30% of the original energy amount per orb."));
     }
 
     @Override
@@ -205,7 +211,7 @@ public class LegendaryVibrant extends AbstractLegendaryWeapon implements GardenO
                     itemDisplays.remove(i);
                     i--;
                 }
-                if (ticksElapsed++ >= 30 * 20 || itemDisplays.isEmpty()) {
+                if (ticksElapsed++ >= 15 * 20 || itemDisplays.isEmpty()) {
                     for (ItemDisplay itemDisplay : itemDisplays) {
                         EffectUtils.playParticleLinkAnimation(itemDisplay.getLocation(), player.getLocation(), 255, 255, 0, 1);
                         player.playSound(player.getLocation(), Sound.ENTITY_EXPERIENCE_ORB_PICKUP, 1, 2);

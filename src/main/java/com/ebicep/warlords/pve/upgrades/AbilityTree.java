@@ -6,9 +6,13 @@ import com.ebicep.warlords.database.repositories.player.pojos.general.DatabasePl
 import com.ebicep.warlords.game.Game;
 import com.ebicep.warlords.game.option.pve.PveOption;
 import com.ebicep.warlords.menu.Menu;
+import com.ebicep.warlords.player.general.Specializations;
+import com.ebicep.warlords.player.general.SpecializationStatsLore;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
 import com.ebicep.warlords.player.ingame.WarlordsPlayer;
 import com.ebicep.warlords.pve.DifficultyMode;
+import com.ebicep.warlords.pve.consumables.menu.ConsumableMenu;
+import com.ebicep.warlords.pve.consumables.vials.Vial;
 import com.ebicep.warlords.util.bukkit.ItemBuilder;
 import com.ebicep.warlords.util.bukkit.WordWrap;
 import com.ebicep.warlords.util.chat.ChatUtils;
@@ -23,6 +27,7 @@ import net.kyori.adventure.text.format.TextDecoration;
 import org.bukkit.Material;
 import org.bukkit.Sound;
 import org.bukkit.entity.Player;
+import org.bukkit.inventory.ItemStack;
 import org.bukkit.scheduler.BukkitRunnable;
 import org.springframework.data.mongodb.core.mapping.Field;
 
@@ -48,7 +53,7 @@ public class AbilityTree {
             return;
         }
         List<AutoUpgradeProfile.AutoUpgradeEntry> autoUpgradeEntries = autoUpgradeProfile.getAutoUpgradeEntries();
-        // handle free upgrades first
+        // Weapon free upgrades belong to a specific ability. Spend those before Synaptic Overload's global free upgrades.
         for (AutoUpgradeProfile.AutoUpgradeEntry entry : autoUpgradeEntries) {
             AbstractUpgradeBranch<?> upgradeBranch = abilityTree.getUpgradeBranches().get(entry.getBranchIndex());
             AutoUpgradeProfile.AutoUpgradeEntry.UpgradeType upgradeType = entry.getUpgradeType();
@@ -58,7 +63,25 @@ public class AbilityTree {
             if (upgrade.isUnlocked()) {
                 continue;
             }
-            if (abilityTree.getFreeUpgrades() > 0 || upgradeBranch.getFreeUpgrades() > 0 && upgradeIndex == 0) {
+            if (upgradeBranch.getFreeUpgrades() > 0 && upgradeIndex == 0) {
+                switch (upgradeType) {
+                    case A, B -> upgradeBranch.purchaseUpgrade(upgradeList, warlordsPlayer, upgrade, upgradeIndex, true);
+                }
+            }
+        }
+        if (!abilityTree.hasUnusedBranchFreeUpgrades()) {
+            for (AutoUpgradeProfile.AutoUpgradeEntry entry : autoUpgradeEntries) {
+                AbstractUpgradeBranch<?> upgradeBranch = abilityTree.getUpgradeBranches().get(entry.getBranchIndex());
+                AutoUpgradeProfile.AutoUpgradeEntry.UpgradeType upgradeType = entry.getUpgradeType();
+                List<Upgrade> upgradeList = upgradeType.getUpgradeFunction.apply(upgradeBranch);
+                int upgradeIndex = entry.getUpgradeIndex();
+                Upgrade upgrade = upgradeList.get(upgradeIndex);
+                if (upgrade.isUnlocked()) {
+                    continue;
+                }
+                if (abilityTree.getFreeUpgrades() <= 0) {
+                    break;
+                }
                 switch (upgradeType) {
                     case A, B -> upgradeBranch.purchaseUpgrade(upgradeList, warlordsPlayer, upgrade, upgradeIndex, true);
                 }
@@ -93,6 +116,14 @@ public class AbilityTree {
 
     public List<AbstractUpgradeBranch<?>> getUpgradeBranches() {
         return upgradeBranches;
+    }
+
+    public boolean hasUnusedBranchFreeUpgrades() {
+        return upgradeBranches.stream().anyMatch(branch -> branch.getFreeUpgrades() > 0);
+    }
+
+    public boolean canSpendGlobalFreeUpgrade() {
+        return freeUpgrades > 0 && !hasUnusedBranchFreeUpgrades();
     }
 
     public void resetAutoUpgradeProfile(DatabasePlayer databasePlayer) {
@@ -165,6 +196,29 @@ public class AbilityTree {
         }
 
         Menu menu = new Menu("Upgrades", 9 * 5);
+
+        Specializations specClass = warlordsPlayer.getSpecClass();
+        menu.setItem(
+                0,
+                0,
+                new ItemBuilder(specClass.specType.itemStack)
+                        .name(Component.text(specClass.name, NamedTextColor.GREEN))
+                        .lore(SpecializationStatsLore.forPlayer(warlordsPlayer))
+                        .get(),
+                ACTION_DO_NOTHING
+        );
+
+        menu.setItem(
+                8,
+                0,
+                new ItemBuilder(Material.POTION)
+                    .name(Component.text("Vial Inventory", NamedTextColor.GREEN))
+                    .lore(Component.text("Click to open vial inventory", NamedTextColor.GRAY))
+                    .get(),
+                (m, e) -> {
+                    ConsumableMenu.openVialInventory(player);
+                }
+        );
 
         for (int i = 0; i < upgradeBranches.size(); i++) {
             AbstractUpgradeBranch<?> upgradeBranch = upgradeBranches.get(i);

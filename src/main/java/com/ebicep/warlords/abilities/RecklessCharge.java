@@ -96,7 +96,7 @@ public class RecklessCharge extends AbstractAbility implements RedAbilityIcon, H
         } else {
             inAir = false;
             //travels 7 at peak jump
-            chargeDistance = Math.max(Math.min(LocationUtils.getDistance(wp, .1) * 5, 7.2), 6.3);
+            chargeDistance = Math.max(Math.min(LocationUtils.getDistance(wp, .1) * 5, 6.5), 5.6);
         }
         chargeDistance += additionalBlocks;
         if (wp.hasFlag()) {

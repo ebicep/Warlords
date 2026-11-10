@@ -111,25 +111,39 @@ public class DatabaseGameCTF extends DatabaseGameBase<DatabaseGamePlayerCTF> {
     }
 
     public static void sendGamesBacklogJson(DatabaseGameCTF databaseGame) {
-        BotManager.DiscordServer comps = BotManager.getServer("comps");
-        if (comps == null) {
-            return;
-        }
-        if (BotManager.numberOfMessagesSentLast30Sec > 15) {
-            if (BotManager.numberOfMessagesSentLast30Sec < 20) {
-                comps.getChannel(BotManager.BotChannel.GAMES_BACKLOG)
-                     .ifPresent(textChannel -> textChannel.sendMessage("SOMETHING BROKEN DETECTED <@239929120035700737> <@253971614998331393>").queue());
-            }
-            return;
-        }
         if (databaseGame.getId() == null) {
             databaseGame.setId(new ObjectId().toHexString());
         }
         String json = buildGamesBacklogJson(databaseGame);
         byte[] jsonBytes = json.getBytes(StandardCharsets.UTF_8);
         String fileName = databaseGame.getId() + ".json";
-        comps.getChannel(BotManager.BotChannel.GAMES_BACKLOG)
-             .ifPresent(textChannel -> textChannel.sendFiles(FileUpload.fromData(jsonBytes, fileName)).queue());
+        ChatUtils.MessageType.DISCORD_BOT.sendMessage("Games-backlog JSON for game " + databaseGame.getId() + ":");
+        ChatUtils.MessageType.DISCORD_BOT.sendMessage(json);
+
+        BotManager.DiscordServer comps = BotManager.getServer("comps");
+        if (comps == null) {
+            ChatUtils.MessageType.DISCORD_BOT.sendMessage("Skipping games-backlog Discord send - comps server not configured");
+            sendGamesBacklogJsonToBalanceThread(jsonBytes, fileName);
+            return;
+        }
+        boolean rateLimited = BotManager.numberOfMessagesSentLast30Sec > 15;
+        if (rateLimited) {
+            ChatUtils.MessageType.DISCORD_BOT.sendMessage(
+                    "Skipping games-backlog channel send - rate limited (" + BotManager.numberOfMessagesSentLast30Sec + " messages in last 30s)"
+            );
+            if (BotManager.numberOfMessagesSentLast30Sec < 20) {
+                comps.getChannel(BotManager.BotChannel.GAMES_BACKLOG)
+                     .ifPresent(textChannel -> textChannel.sendMessage("SOMETHING BROKEN DETECTED <@239929120035700737> <@253971614998331393>").queue());
+            }
+        } else {
+            comps.getChannel(BotManager.BotChannel.GAMES_BACKLOG).ifPresentOrElse(
+                    textChannel -> textChannel.sendFiles(FileUpload.fromData(jsonBytes, fileName)).queue(
+                            success -> ChatUtils.MessageType.DISCORD_BOT.sendMessage("Sent games-backlog JSON " + fileName + " to games-backlog channel"),
+                            failure -> ChatUtils.MessageType.DISCORD_BOT.sendErrorMessage(failure)
+                    ),
+                    () -> ChatUtils.MessageType.DISCORD_BOT.sendMessage("Skipping games-backlog channel send - gamesBacklog channel not found")
+            );
+        }
         sendGamesBacklogJsonToBalanceThread(jsonBytes, fileName);
     }
 
@@ -145,6 +159,9 @@ public class DatabaseGameCTF extends DatabaseGameBase<DatabaseGamePlayerCTF> {
     private static void sendGamesBacklogJsonToBalanceThread(byte[] jsonBytes, String fileName) {
         long threadId = BalanceThreadContext.getLatestBalanceThreadId();
         if (threadId == 0 || BotManager.jda == null) {
+            ChatUtils.MessageType.DISCORD_BOT.sendMessage(
+                    "Skipping games-backlog balance-thread send - threadId=" + threadId + ", jda=" + (BotManager.jda != null)
+            );
             return;
         }
         ThreadChannel threadChannel = BotManager.jda.getThreadChannelById(threadId);
@@ -154,7 +171,10 @@ public class DatabaseGameCTF extends DatabaseGameBase<DatabaseGamePlayerCTF> {
             return;
         }
         threadChannel.sendFiles(FileUpload.fromData(jsonBytes, fileName)).queue(
-                success -> BalanceThreadContext.clearActiveBalanceThreadId(),
+                success -> {
+                    ChatUtils.MessageType.DISCORD_BOT.sendMessage("Sent games-backlog JSON " + fileName + " to balance thread " + threadId);
+                    BalanceThreadContext.clearActiveBalanceThreadId();
+                },
                 failure -> {
                     ChatUtils.MessageType.DISCORD_BOT.sendErrorMessage(failure);
                     BalanceThreadContext.clearActiveBalanceThreadId();

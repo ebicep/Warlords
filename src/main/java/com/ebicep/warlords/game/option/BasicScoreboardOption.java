@@ -1,6 +1,7 @@
 package com.ebicep.warlords.game.option;
 
 import com.ebicep.warlords.Warlords;
+import com.ebicep.warlords.events.player.ingame.WarlordsDeathEvent;
 import com.ebicep.warlords.game.Game;
 import com.ebicep.warlords.game.GameMode;
 import com.ebicep.warlords.game.option.marker.scoreboard.ScoreboardHandler;
@@ -10,6 +11,9 @@ import com.ebicep.warlords.util.java.DateUtil;
 import com.ebicep.warlords.util.warlords.GameRunnable;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
+import org.bukkit.event.EventHandler;
+import org.bukkit.event.EventPriority;
+import org.bukkit.event.Listener;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -17,15 +21,18 @@ import java.time.format.DateTimeFormatter;
 import java.util.Collections;
 import java.util.List;
 
-public class BasicScoreboardOption implements Option {
+public class BasicScoreboardOption implements Option, Listener {
+
+    private SimpleScoreboardHandler statsScoreboardHandler;
 
     @Override
     public void register(@Nonnull Game game) {
+        game.registerEvents(this);
         game.registerGameMarker(ScoreboardHandler.class, getDateScoreboard(game));
         game.registerGameMarker(ScoreboardHandler.class, getVersionScoreboard(game));
         GameMode gameMode = game.getGameMode();
         switch (gameMode) {
-            case INTERCEPTION, CAPTURE_THE_FLAG, TEAM_DEATHMATCH, DEBUG, SIEGE -> game.registerGameMarker(ScoreboardHandler.class, getStatsScoreboard(game));
+            case INTERCEPTION, CAPTURE_THE_FLAG, TEAM_DEATHMATCH, DEBUG, SIEGE -> game.registerGameMarker(ScoreboardHandler.class, getStatsScoreboard(game, this));
         }
         if (gameMode != GameMode.INTERCEPTION) {
             game.registerGameMarker(ScoreboardHandler.class, getSpecScoreboard(game));
@@ -60,9 +67,8 @@ public class BasicScoreboardOption implements Option {
         };
     }
 
-    private static SimpleScoreboardHandler getStatsScoreboard(Game game) {
-        // TODO trigger scoreboard update when the kills/assists changes
-        return new SimpleScoreboardHandler(Integer.MAX_VALUE - 10, "player-stats") {
+    private static SimpleScoreboardHandler getStatsScoreboard(Game game, BasicScoreboardOption option) {
+        return option.statsScoreboardHandler = new SimpleScoreboardHandler(Integer.MAX_VALUE - 10, "player-stats") {
             @Nonnull
             @Override
             public List<Component> computeLines(@Nullable WarlordsPlayer player) {
@@ -77,6 +83,13 @@ public class BasicScoreboardOption implements Option {
                 );
             }
         };
+    }
+
+    @EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
+    public void onDeath(WarlordsDeathEvent event) {
+        if (statsScoreboardHandler != null) {
+            statsScoreboardHandler.markChanged();
+        }
     }
 
     private static SimpleScoreboardHandler getSpecScoreboard(Game game) {

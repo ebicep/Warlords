@@ -18,7 +18,6 @@ import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.Particle;
 import org.bukkit.Sound;
-import org.bukkit.entity.ArmorStand;
 import org.jetbrains.annotations.Nullable;
 import org.springframework.data.mongodb.core.mapping.Field;
 
@@ -72,7 +71,7 @@ public abstract class AbstractHolyRadiance extends AbstractAbility implements Bl
                 .stream()
                 .collect(Collectors.toSet());
         for (WarlordsEntity radianceTarget : warlordsEntities) {
-            new FlyingArmorStand(
+            new FlyingRadiance(
                     wp.getGame(),
                     wp.getLocation(),
                     radianceTarget,
@@ -168,15 +167,15 @@ public abstract class AbstractHolyRadiance extends AbstractAbility implements Bl
 
     }
 
-    public static class FlyingArmorStand extends GameRunnable {
+    public static class FlyingRadiance extends GameRunnable {
 
         private final WarlordsEntity target;
         private final WarlordsEntity owner;
         private final double speed;
-        private final ArmorStand armorStand;
+        private final Location currentLocation;
         private final BiConsumer<WarlordsEntity, WarlordsEntity> healFunction;
 
-        public FlyingArmorStand(
+        public FlyingRadiance(
                 Game game,
                 Location location,
                 WarlordsEntity target,
@@ -185,7 +184,7 @@ public abstract class AbstractHolyRadiance extends AbstractAbility implements Bl
                 BiConsumer<WarlordsEntity, WarlordsEntity> healFunction
         ) {
             super(game);
-            this.armorStand = Utils.spawnArmorStand(location);
+            this.currentLocation = location.clone();
             this.target = target;
             this.speed = speed;
             this.owner = owner;
@@ -199,14 +198,13 @@ public abstract class AbstractHolyRadiance extends AbstractAbility implements Bl
                 return;
             }
 
-            if (target.getWorld() != armorStand.getWorld()) {
+            if (target.getWorld() != currentLocation.getWorld()) {
                 this.cancel();
                 return;
             }
 
             Location targetLocation = target.getLocation();
-            Location armorStandLocation = armorStand.getLocation();
-            double distance = targetLocation.distanceSquared(armorStandLocation);
+            double distance = targetLocation.distanceSquared(currentLocation);
 
             if (distance < speed * speed) {
                 healFunction.accept(owner, target);
@@ -214,20 +212,12 @@ public abstract class AbstractHolyRadiance extends AbstractAbility implements Bl
                 return;
             }
 
-            targetLocation.subtract(armorStandLocation);
-            //System.out.println(Math.max(speed * 3.25 / targetLocation.lengthSquared() / 2, speed / 10));
+            targetLocation.subtract(currentLocation);
             targetLocation.multiply(Math.max(speed * 3.25 / targetLocation.lengthSquared() / 2, speed / 10));
 
-            armorStandLocation.add(targetLocation);
-            this.armorStand.teleport(armorStandLocation);
+            currentLocation.add(targetLocation);
 
-            EffectUtils.displayParticle(Particle.EFFECT, armorStandLocation.add(0, 1.75, 0), 2, 0.01, 0, 0.01, 0.1);
-        }
-
-        @Override
-        public void cancel() {
-            super.cancel();
-            armorStand.remove();
+            EffectUtils.displayParticle(Particle.EFFECT, currentLocation.clone().add(0, 1.75, 0), 2, 0.01, 0, 0.01, 0.1);
         }
 
     }

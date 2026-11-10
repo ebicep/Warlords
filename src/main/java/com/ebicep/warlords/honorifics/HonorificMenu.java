@@ -2,6 +2,7 @@ package com.ebicep.warlords.honorifics;
 
 import com.ebicep.warlords.database.DatabaseManager;
 import com.ebicep.warlords.database.repositories.player.pojos.general.DatabasePlayer;
+import com.ebicep.warlords.featureflags.FeatureFlags;
 import com.ebicep.warlords.menu.Menu;
 import com.ebicep.warlords.permissions.Permissions;
 import com.ebicep.warlords.util.bukkit.ItemBuilder;
@@ -23,6 +24,10 @@ public final class HonorificMenu {
     }
 
     public static void open(Player player) {
+        if (!HonorificManager.honorificsEnabled(player)) {
+            FeatureFlags.sendDisabledMessage(player);
+            return;
+        }
         DatabasePlayer databasePlayer = DatabaseManager.getPlayer(player);
         HonorificManager.forceChallengeRefresh(databasePlayer, player);
         HonorificProfile profile = HonorificManager.getProfile(player);
@@ -35,8 +40,8 @@ public final class HonorificMenu {
 
         for (int i = 0; i < Honorific.VALUES.length; i++) {
             Honorific honorific = Honorific.VALUES[i];
-            int x = 1 + i % 7;
-            int y = 1 + i / 7;
+            int x = i % 9;
+            int y = 1 + i / 9;
             boolean unlocked = profile.isUnlocked(honorific);
             boolean equipped = profile.getEquippedHonorific() == honorific;
             ItemBuilder builder = new ItemBuilder(honorific.getIcon())
@@ -297,7 +302,6 @@ public final class HonorificMenu {
             }
             cost.take(databasePlayer);
             grant.run();
-            DatabaseManager.queueUpdatePlayerAsync(databasePlayer);
             saveAndRefresh(player);
             player.playSound(player.getLocation(), Sound.ENTITY_PLAYER_LEVELUP, 1, 1.2f);
             returnTo.run();
@@ -317,7 +321,7 @@ public final class HonorificMenu {
     }
 
     private static void saveAndRefresh(Player player) {
-        HonorificManager.saveAsync(player.getUniqueId());
+        DatabaseManager.queueUpdatePlayerAsync(DatabaseManager.getPlayer(player));
         HonorificManager.refreshDisplays(player);
     }
 }

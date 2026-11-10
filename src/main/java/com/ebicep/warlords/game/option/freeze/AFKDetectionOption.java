@@ -30,13 +30,15 @@ import javax.annotation.Nonnull;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+import java.util.UUID;
 
 public class AFKDetectionOption implements Option {
 
     public static boolean enabled = true;
     private static final int COUNTER_CHECK = 5;
 
-    private final HashMap<WarlordsPlayer, List<Location>> playerLocations = new HashMap<>();
+    private final Map<UUID, List<Location>> playerLocations = new HashMap<>();
 
     @Override
     public void register(@Nonnull Game game) {
@@ -49,7 +51,7 @@ public class AFKDetectionOption implements Option {
                 if (warlordsPlayer instanceof WarlordsPlayer) {
                     if (warlordsPlayer.getGame().equals(game)) {
                         //clearing player location list for clicking while standing still
-                        playerLocations.computeIfAbsent((WarlordsPlayer) warlordsPlayer, k -> new ArrayList<>()).clear();
+                        playerLocations.computeIfAbsent(warlordsPlayer.getUuid(), k -> new ArrayList<>()).clear();
                     }
                 }
             }
@@ -61,7 +63,7 @@ public class AFKDetectionOption implements Option {
                 if (warlordsPlayer instanceof WarlordsPlayer) {
                     if (warlordsPlayer.getGame().equals(game)) {
                         //clearing player location list for sneaking while standing still
-                        playerLocations.computeIfAbsent((WarlordsPlayer) warlordsPlayer, k -> new ArrayList<>()).clear();
+                        playerLocations.computeIfAbsent(warlordsPlayer.getUuid(), k -> new ArrayList<>()).clear();
                     }
                 }
             }
@@ -101,8 +103,9 @@ public class AFKDetectionOption implements Option {
                         if (we.isSneaking()) {
                             continue; //make sure no ppl that are sneaking are marked as AFK
                         }
-                        playerLocations.computeIfAbsent(we, k -> new ArrayList<>()).add(we.getLocation());
-                        List<Location> locations = playerLocations.get(we);
+                        UUID uuid = we.getUuid();
+                        playerLocations.computeIfAbsent(uuid, k -> new ArrayList<>()).add(we.getLocation());
+                        List<Location> locations = playerLocations.get(uuid);
                         List<Location> lastLocations = locations.subList(Math.max(locations.size() - COUNTER_CHECK, 0), locations.size());
                         int counter = 0;
                         for (int i = lastLocations.size() - 1; i >= 1; i--) {
@@ -136,6 +139,16 @@ public class AFKDetectionOption implements Option {
                 });
             }
         }.runTaskTimer(20 * 15 + 5, 50); //5 seconds after gates fall - every 2.5 seconds
+    }
+
+    @Override
+    public void onPlayerQuit(Player player) {
+        playerLocations.remove(player.getUniqueId());
+    }
+
+    @Override
+    public void onGameCleanup(@Nonnull Game game) {
+        playerLocations.clear();
     }
 
 }

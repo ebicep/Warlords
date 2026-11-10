@@ -115,7 +115,7 @@ public class PersistentCooldown<T> extends RegularCooldown<T> {
     }
 
     @Override
-    public Component getNameAbbreviation() {
+    public Component getNameAbbreviation(WarlordsEntity warlordsEntity) {
         if (hidden) {
             return Component.empty();
         }

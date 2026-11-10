@@ -11,11 +11,13 @@ public class Striker implements SpecBoostManager.SpecBoost<Striker> {
 
     private float woundingStrikeDamageIncreasePercent;
     private float woundingIncreasePercent;
+    private int woundingDurationIncreaseTicks;
 
     @Override
     public void init() {
         this.woundingStrikeDamageIncreasePercent = getValue("woundingStrikeDamageIncreasePercent", float.class);
         this.woundingIncreasePercent = getValue("woundingIncreasePercent", float.class);
+        this.woundingDurationIncreaseTicks = getValue("woundingDurationIncreaseTicks", int.class);
     }
 
     @Override
@@ -25,7 +27,7 @@ public class Striker implements SpecBoostManager.SpecBoost<Striker> {
 
     @Override
     public List<Object> getVariables() {
-        return List.of(woundingStrikeDamageIncreasePercent, woundingIncreasePercent);
+        return List.of(woundingStrikeDamageIncreasePercent, woundingIncreasePercent, woundingDurationIncreaseTicks);
     }
 
     @Override
@@ -47,6 +49,7 @@ public class Striker implements SpecBoostManager.SpecBoost<Striker> {
                         floatModifiable.addModifier(FloatModifiable.ModifierType.ADDITIVE_MULTIPLIER, "Spec Boost", woundingStrikeDamageIncreasePercent / 100)
                 );
                 woundingStrike.getWounding().addModifier(FloatModifiable.ModifierType.ADDITIVE, "Spec Boost", woundingIncreasePercent);
+                woundingStrike.setWoundingTickDuration(woundingStrike.getWoundingTickDuration() + woundingDurationIncreaseTicks);
             });
         }
 

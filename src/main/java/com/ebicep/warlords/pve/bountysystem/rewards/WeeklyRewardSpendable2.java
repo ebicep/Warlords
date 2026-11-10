@@ -10,8 +10,8 @@ public interface WeeklyRewardSpendable2 extends RewardSpendable {
     LinkedHashMap<Spendable, Long> REWARD = new LinkedHashMap<>() {{
         put(Currencies.COIN, 35000L);
         put(Currencies.SYNTHETIC_SHARD, 120L);
-        put(Currencies.LEGEND_FRAGMENTS, 160L);
-        put(Currencies.SUPPLY_DROP_TOKEN, 3L);
+        put(Currencies.LEGEND_FRAGMENTS, 200L);
+        put(Currencies.SUPPLY_DROP_TOKEN, 5L);
     }};
 
     @Override

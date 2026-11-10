@@ -7,16 +7,22 @@ import com.ebicep.warlords.database.repositories.games.pojos.siege.DatabaseGameP
 import com.ebicep.warlords.database.repositories.games.pojos.siege.DatabaseGameSiege;
 import com.ebicep.warlords.database.repositories.player.PlayersCollections;
 import com.ebicep.warlords.database.repositories.player.pojos.TracksAbilityStats;
+import com.ebicep.warlords.database.repositories.player.pojos.cache.PushedStatTotals;
+import com.ebicep.warlords.database.repositories.player.pojos.cache.PushedStatsWarlordsClasses;
 import com.ebicep.warlords.database.repositories.player.pojos.general.DatabasePlayer;
 import com.ebicep.warlords.database.repositories.player.pojos.siege.classes.*;
 import com.ebicep.warlords.game.GameMode;
 import com.ebicep.warlords.player.general.Classes;
+import org.springframework.data.annotation.Transient;
 import org.springframework.data.mongodb.core.mapping.Field;
 
 import java.util.HashMap;
 import java.util.Map;
 
-public class DatabasePlayerSiege implements SiegeStatsWarlordsClasses, TracksAbilityStats {
+public class DatabasePlayerSiege implements PushedStatsWarlordsClasses.Siege, TracksAbilityStats {
+
+    @Transient
+    private final PushedStatTotals pushedStats = new PushedStatTotals();
 
     private DatabaseMageSiege mage = new DatabaseMageSiege();
     private DatabaseWarriorSiege warrior = new DatabaseWarriorSiege();
@@ -47,7 +53,7 @@ public class DatabasePlayerSiege implements SiegeStatsWarlordsClasses, TracksAbi
                   .forEach((specializations, siegePlayer) -> getSpec(specializations).updateStats(databasePlayer,
                           databaseGame,
                           gameMode,
-                          gamePlayer,
+                          siegePlayer,
                           result,
                           multiplier,
                           playersCollection
@@ -78,5 +84,11 @@ public class DatabasePlayerSiege implements SiegeStatsWarlordsClasses, TracksAbi
             PlayersCollections playersCollection
     ) {
         updateSpecStats(databasePlayer, databaseGame, gameMode, gamePlayer, result, multiplier, playersCollection);
+        pushedStats.applyGeneral(gamePlayer, result, multiplier);
+    }
+
+    @Override
+    public PushedStatTotals pushedStats() {
+        return pushedStats;
     }
 }

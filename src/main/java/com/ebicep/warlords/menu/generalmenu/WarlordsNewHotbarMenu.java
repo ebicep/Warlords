@@ -4,7 +4,6 @@ import co.aikar.commands.BaseCommand;
 import co.aikar.commands.annotation.CommandAlias;
 import co.aikar.commands.annotation.Default;
 import com.ebicep.warlords.Warlords;
-import com.ebicep.warlords.abilities.internal.AbilityDescriptionBuilder;
 import com.ebicep.warlords.abilities.internal.AbstractAbility;
 import com.ebicep.warlords.database.DatabaseManager;
 import com.ebicep.warlords.database.repositories.config.ConfigManager;
@@ -25,6 +24,7 @@ import com.ebicep.warlords.pve.Currencies;
 import com.ebicep.warlords.pve.Spendable;
 import com.ebicep.warlords.pve.commands.AbilityTreeCommand;
 import com.ebicep.warlords.pve.consumables.menu.ConsumableMenu;
+import com.ebicep.warlords.pve.journal.DiscoveryJournalMenu;
 import com.ebicep.warlords.pve.mobs.MobDrop;
 import com.ebicep.warlords.pve.newitems.menu.NewItemEquipMenu;
 import com.ebicep.warlords.pve.rewards.RewardInventory;
@@ -35,7 +35,6 @@ import com.ebicep.warlords.pve.weapons.menu.WeaponManagerMenu;
 import com.ebicep.warlords.util.bukkit.ComponentUtils;
 import com.ebicep.warlords.util.bukkit.ItemBuilder;
 import com.ebicep.warlords.util.bukkit.WordWrap;
-import com.ebicep.warlords.util.java.NumberFormat;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.event.HoverEvent;
 import net.kyori.adventure.text.format.NamedTextColor;
@@ -106,32 +105,7 @@ public class WarlordsNewHotbarMenu {
         ItemBuilder icon = new ItemBuilder(selectedSpec.specType.itemStack)
                 .name(Component.text(selectedSpec.name, NamedTextColor.GREEN))
                 .lore(WordWrap.wrap(selectedSpec.getDescription(), 200));
-        icon.addLore(
-                Component.empty(),
-                Component.text("Specialization Stats:", NamedTextColor.GOLD),
-                Component.empty(),
-                Component.text("Health: ", NamedTextColor.GRAY).append(Component.text(NumberFormat.formatOptionalHundredths(apc.getMaxHealth()), NamedTextColor.GREEN)),
-                Component.empty(),
-                Component.text("Energy: ", NamedTextColor.GRAY)
-                         .append(Component.text(NumberFormat.formatOptionalHundredths(apc.getMaxEnergy()), NamedTextColor.YELLOW))
-                         .append(Component.text(" / "))
-                         .append(Component.text("+" + NumberFormat.formatOptionalHundredths(apc.getEnergyPerSec()), NamedTextColor.YELLOW))
-                         .append(Component.text(" per sec / "))
-                         .append(Component.text("+" + NumberFormat.formatOptionalHundredths(apc.getEnergyPerHit()), NamedTextColor.YELLOW))
-                         .append(Component.text(" per hit"))
-        );
-        boolean noDamageResistance = apc.getDamageResistance() == 0;
-        icon.addLore(Component.text("Damage Reduction: ", NamedTextColor.GRAY)
-                              .append(Component.text(noDamageResistance ? "None" : NumberFormat.formatOptionalTenths(apc.getDamageResistance()) + "%",
-                                      noDamageResistance ? NamedTextColor.RED : AbilityDescriptionBuilder.COLOR_BROWN
-                              ))
-        );
-        boolean noSpeed = apc.getSpeed() == 0;
-        icon.addLore(Component.text("Speed: ", NamedTextColor.GRAY)
-                              .append(Component.text(noSpeed ? "None" : NumberFormat.formatOptionalTenths(apc.getSpeed()) + "%",
-                                      noSpeed ? NamedTextColor.RED : NamedTextColor.WHITE
-                              ))
-        );
+        icon.addLore(SpecializationStatsLore.specializationStats(apc));
 
 
         // not including skill boost - these display base stats
@@ -914,10 +888,18 @@ public class WarlordsNewHotbarMenu {
                         ComponentUtils.CLICK_TO_VIEW
                 )
                 .get();
+        public static final ItemStack DISCOVERY_JOURNAL_MENU = new ItemBuilder(Material.KNOWLEDGE_BOOK)
+                .name(Component.text("Discovery Journal", NamedTextColor.AQUA))
+                .lore(WordWrap.wrap(Component.text("Browse discovered mobs, playable gamemodes, every PvE resource, and every debuff players and mobs can apply.", NamedTextColor.GRAY), 160))
+                .addLore(
+                        Component.empty(),
+                        ComponentUtils.CLICK_TO_VIEW
+                )
+                .get();
 
         public static void openPvEMenu(Player player) {
             DatabasePlayer databasePlayer = DatabaseManager.getPlayer(player);
-            Menu menu = new Menu("PvE Menu", 9 * 4);
+            Menu menu = new Menu("PvE Menu", 9 * 5);
 
             List<AbstractWeapon> weapons = databasePlayer.getPveStats().getWeaponInventory();
             Optional<AbstractWeapon> optionalWeapon = weapons
@@ -955,9 +937,10 @@ public class WarlordsNewHotbarMenu {
             menu.setItem(5, 1, REWARD_INVENTORY_MENU, (m, e) -> RewardInventory.openRewardInventory(player, 1));
             menu.setItem(6, 1, ABILITY_TREE_MENU, (m, e) -> AbilityTreeCommand.open(player));
             menu.setItem(7, 1, VIAL_INVENTORY_MENU, (m, e) -> ConsumableMenu.openVialInventory(player));
+            menu.setItem(1, 2, DISCOVERY_JOURNAL_MENU, (m, e) -> DiscoveryJournalMenu.open(player));
 
-            menu.setItem(3, 3, MENU_BACK, (m, e) -> WarlordsNewHotbarMenu.SelectionMenu.openWarlordsMenu(player));
-            menu.setItem(4, 3, MENU_CLOSE, ACTION_CLOSE_MENU);
+            menu.setItem(3, 4, MENU_BACK, (m, e) -> WarlordsNewHotbarMenu.SelectionMenu.openWarlordsMenu(player));
+            menu.setItem(4, 4, MENU_CLOSE, ACTION_CLOSE_MENU);
 
             menu.openForPlayer(player);
         }
@@ -1080,7 +1063,7 @@ public class WarlordsNewHotbarMenu {
                 ParticleQuality particleQuality = particleQualities[i];
 
                 menu.setItem(
-                        i + 3,
+                        i + 2,
                         1,
                         new ItemBuilder(particleQuality.item)
                                 .lore(WordWrap.wrap(particleQuality.description, 160))

@@ -186,19 +186,13 @@
           },
           "rerollCost": {
             "1": {
-              "ETHEREUM_CRYSTAL": 3,
-              "ASCENDANT_SHARD": 1,
-              "ZENITH_STAR": 1
+              "ETHEREUM_CRYSTAL": 5
             },
             "2": {
-              "ETHEREUM_CRYSTAL": 4,
-              "ASCENDANT_SHARD": 2,
-              "ZENITH_STAR": 2
+              "ETHEREUM_CRYSTAL": 10
             },
             "3": {
-              "ETHEREUM_CRYSTAL": 5,
-              "ASCENDANT_SHARD": 3,
-              "ZENITH_STAR": 3
+              "ETHEREUM_CRYSTAL": 15
             }
           },
           "lockScrollRerollCost": {
@@ -341,19 +335,19 @@
           },
           "rerollCost": {
             "1": {
-              "ETHEREUM_CRYSTAL": 4,
-              "ASCENDANT_SHARD": 2,
-              "ZENITH_STAR": 2
+              "ETHEREUM_CRYSTAL": 10,
+              "SYNTHETIC_SHARD": 1000,
+              "ZENITH_STAR": 1
             },
             "2": {
-              "ETHEREUM_CRYSTAL": 6,
-              "ASCENDANT_SHARD": 2,
-              "ZENITH_STAR": 2
+              "ETHEREUM_CRYSTAL": 15,
+              "SYNTHETIC_SHARD": 2000,
+              "ZENITH_STAR": 1
             },
             "3": {
-              "ETHEREUM_CRYSTAL": 8,
-              "ASCENDANT_SHARD": 2,
-              "ZENITH_STAR": 2
+              "ETHEREUM_CRYSTAL": 20,
+              "SYNTHETIC_SHARD": 3000,
+              "ZENITH_STAR": 1
             }
           },
           "lockScrollRerollCost": {
@@ -556,6 +550,19 @@
           "jumpHeight": 1,
           "airResist": 25
         },
+        "truePurpose": {
+          "tier": "LEGENDARY",
+          "name": "True Purpose",
+          "slots": [
+            "GLOVES",
+            "RING"
+          ],
+          "attributes": {
+            "HEALTH": 40,
+            "KB_RES": 2
+          },
+          "description": "All your attacks deal true damage (excluding bosses)."
+        },
         "soothsayer": {
           "tier": "LEGENDARY",
           "name": "Soothsayer",
@@ -650,7 +657,7 @@
             "REGEN": 20
           },
           "description": "Kills have a {{blue;%}} chance to summon an allied mob for {{ticks}}.",
-          "summonChance": 15,
+          "summonChance": 20,
           "duration": 30
         },
         "summoner": {
@@ -667,7 +674,7 @@
             "REGEN": 20
           },
           "description": "Your summoned mobs deal {{damage;%}} more damage and have {{speed;%}} more speed. Summons are guaranteed to be Aspects.",
-          "minionDamage": 50,
+          "minionDamage": 40,
           "minionSpeed": 50
         },
         "crownOfThorns": {
@@ -839,7 +846,6 @@
             "HELMET",
             "CHESTPLATE",
             "LEGGINGS",
-            "GLOVES",
             "BOOTS"
           ],
           "attributes": {
@@ -848,9 +854,9 @@
             "KB_RES": 3
           },
           "description": "{{blue;%}} of attacks are dodged. Each dodge grants {{damage;%}} damage and healing for {{ticks}}, up to {{blue}} stacks.",
-          "dodgeChance": 15,
-          "bonusPerStackPercent": 0.25,
-          "stackDurationSeconds": 8,
+          "dodgeChance": 20,
+          "bonusPerStackPercent": 0.75,
+          "stackDurationSeconds": 12,
           "maxStacks": 20
         },
         "sharpshooter": {
@@ -941,7 +947,7 @@
             "HEALTH": 55,
             "KB_RES": 5
           },
-          "description": "Every {{heal}} heal instances, you emit a global pulse that heals all for {{heal}} health.",
+          "description": "Every {{heal}} heal instances, you emit a global pulse that heals all allies for {{heal}} health.",
           "healsPerPulse": 10,
           "pulseHealAmount": 80
         },
@@ -994,7 +1000,7 @@
           "description": "When an ally drops below {{heal;%}} health, they glow and you gain {{speed;%}} movement speed toward them. Increase healing on that ally by {{heal;%}}.",
           "allyHealthThresholdPercent": 30,
           "movementSpeedBonusPercent": 100,
-          "healingBonusToAllyPercent": 20
+          "healingBonusToAllyPercent": 40
         },
         "bellicose": {
           "tier": "LEGENDARY",
@@ -1083,7 +1089,7 @@
           "bonusAttributeRanges": {},
           "description": "For every player below {{damage;%}} health, you heal {{heal;%}} more health.",
           "healthThresholdPercent": 75,
-          "healPercent": 8
+          "healPercent": 12
         },
         "decay": {
           "tier": "LEGENDARY",
@@ -1097,7 +1103,7 @@
             "REGEN": 10
           },
           "description": "{{gold;%}} chance to inflict a random debuff on enemies for {{ticks}} when taking or dealing damage.",
-          "activationChance": 35,
+          "activationChance": 22,
           "duration": 3
         },
         "multiply": {
@@ -1159,7 +1165,7 @@
           },
           "description": "For every {{energy;%}} movement speed, gain {{damage;%}} crit chance on your primary attack.",
           "movementSpeedPercent": 5,
-          "critChanceIncreasePercent": 1
+          "critChanceIncreasePercent": 2
         },
         "heartOfGlass": {
           "tier": "SOVEREIGN",
@@ -1256,7 +1262,7 @@
             "HEALTH": 100
           },
           "description": "Gain {{blue;%}} cooldown reduction on non-ultimate skills but your primary attack deals {{damage;%}} less damage and {{heal;%}} less healing.",
-          "nonUltimateCooldownReductionPercent": 30,
+          "nonUltimateCooldownReductionPercent": 25,
           "primaryDamagePenaltyPercent": 75,
           "primaryHealingPenaltyPercent": 75
         },
@@ -1268,12 +1274,12 @@
           ],
           "attributes": {},
           "description": "Shield effectiveness increased by {{damageReduction;%}} but reduce max health by {{heal;%}}.",
-          "shieldEffectivenessIncreasePercent": 250,
-          "maxHealthReductionPercent": 99
+          "shieldEffectivenessIncreasePercent": 200,
+          "maxHealthReductionPercent": 85
         },
         "bloodlettingBlade": {
           "tier": "SOVEREIGN",
-          "name": "Blodletting Blade",
+          "name": "Bloodletting Blade",
           "slots": [
             "TOME"
           ],
@@ -1324,7 +1330,7 @@
           "attributes": {
             "HEALTH": 25
           },
-          "description": "Each kill permanently increases your damage and damage taken by {{damage;%}}. All stacks are lost on death.",
+          "description": "Each kill permanently increases your damage dealt and damage taken by {{damage;%}}. All stacks are lost on death. (max 300 stacks)",
           "damagePerKillPercent": 0.4,
           "loseStacksOnDeath": true
         },
@@ -1471,9 +1477,9 @@
             "BOOTS"
           ],
           "attributes": {
-            "HEALTH": 10
+            "HEALTH": 20
           },
-          "description": "T.B.D."
+          "description": "Leave a trail of fire behind you for 3 seconds. Dealing damage equal to the mob’s current health every second for 3 seconds."
         },
         "silentExecution": {
           "tier": "LEGENDARY",
@@ -1486,7 +1492,7 @@
             "HEALTH": 10
           },
           "description": "Attacking an enemy from behind causes your hits to deal {{damage;%}} more damage.",
-          "damageIncreasePercent": 40
+          "damageIncreasePercent": 30
         },
         "regenerate": {
           "tier": "SOVEREIGN",
@@ -1510,7 +1516,7 @@
           },
           "description": "Enemies farther than {{blocks}} take {{damage;%}} increased damage from you, but enemies closer than {{blocks}} deal {{damage;%}} more damage to you.",
           "farDistance": 10,
-          "farDamageIncreasePercent": 50,
+          "farDamageIncreasePercent": 35,
           "nearDistance": 5,
           "nearDamageTakenIncreasePercent": 50
         },
@@ -1523,6 +1529,93 @@
           "attributes": {},
           "description": "+{{blue;%}} ability cooldown reduction on your purple rune skill.",
           "purpleRuneCooldownReductionPercent": 10
+        },
+        "wield": {
+          "tier": "EPIC",
+          "name": "Wield",
+          "slots": [
+            "BRACELET"
+          ],
+          "attributes": {
+            "HEALTH": 5
+          },
+          "description": "+{{damage;%}} ability damage on your primary skill.",
+          "primaryAbilityDamageIncreasePercent": 5
+        },
+        "contain": {
+          "tier": "EPIC",
+          "name": "Contain",
+          "slots": [
+            "BOOTS"
+          ],
+          "attributes": {
+            "HEALTH": 5
+          },
+          "description": "+{{blocks;%}} ability range on your primary skill (if applicable).",
+          "primaryAbilityRangeIncreasePercent": 15
+        },
+        "choir": {
+          "tier": "LEGENDARY",
+          "name": "Choir",
+          "slots": [
+            "LEGGINGS",
+            "BOOTS"
+          ],
+          "attributes": {
+            "HEALTH": 40,
+            "CDR": 1
+          },
+          "description": "Healing an ally also heals other allies within {{blocks}} for {{heal;%}} of that amount.",
+          "radius": 5,
+          "splashHealingPercent": 10
+        },
+        "panacea": {
+          "tier": "LEGENDARY",
+          "name": "Panacea",
+          "slots": [
+            "RING",
+            "TOME"
+          ],
+          "attributes": {
+            "HEALTH": 35,
+            "ECR": 2,
+            "CDR": 1
+          },
+          "description": "Healing on a de-buffed ally is increased by {{heal;%}}. Every {{ticks}}, healing an ally also cleanses them.",
+          "healingIncreasePercent": 40,
+          "cleanseCooldownSeconds": 3
+        },
+        "reservoir": {
+          "tier": "LEGENDARY",
+          "name": "Reservoir",
+          "slots": [
+            "CHESTPLATE",
+            "LEGGINGS"
+          ],
+          "attributes": {
+            "HEALTH": 50,
+            "REGEN": 15,
+            "CDR": 1
+          },
+          "description": "Excess healing on allies is stored, up to {{heal}}. When an ally falls below {{heal;%}} health, consume the store to heal them ({{ticks}} cooldown).",
+          "storedHealingCap": 1000,
+          "allyHealthThresholdPercent": 35,
+          "dumpCooldownSeconds": 5
+        },
+        "aspire": {
+          "tier": "LEGENDARY",
+          "name": "Aspire",
+          "slots": [
+            "HELMET",
+            "GLOVES"
+          ],
+          "attributes": {
+            "HEALTH": 25,
+            "ECR": 1
+          },
+          "description": "For every {{energy}} max energy, increase your energy per second by {{energy}}.",
+          "maxEnergyRequirement": 100,
+          "energyPerSecondPerStack": 1.5
         }
       }
     }

@@ -33,8 +33,9 @@ public class AnomalyMenu {
                         .name(Component.text("Rotation changes in ", NamedTextColor.GRAY)
                                 .append(Component.text(timeTill, NamedTextColor.YELLOW)))
                         .lore(
-                                Component.text("The active map, reward pools and", NamedTextColor.GRAY),
-                                Component.text("featured Legendary set rotate hourly.", NamedTextColor.GRAY)
+                                Component.text("The active map, reward pools, second", NamedTextColor.GRAY),
+                                Component.text("cache currency, and featured Legendary", NamedTextColor.GRAY),
+                                Component.text("set rotate hourly.", NamedTextColor.GRAY)
                         )
                         .get(),
                 Menu.ACTION_DO_NOTHING

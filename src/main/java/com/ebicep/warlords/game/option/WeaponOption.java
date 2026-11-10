@@ -12,6 +12,7 @@ import com.ebicep.warlords.player.ingame.WarlordsEntity;
 import com.ebicep.warlords.player.ingame.WarlordsPlayer;
 import com.ebicep.warlords.pve.weapons.AbstractWeapon;
 import com.ebicep.warlords.util.bukkit.ItemBuilder;
+import com.ebicep.warlords.util.warlords.GameRunnable;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
 import net.kyori.adventure.text.format.TextDecoration;
@@ -19,7 +20,6 @@ import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.inventory.InventoryClickEvent;
-import org.bukkit.scheduler.BukkitRunnable;
 import org.jetbrains.annotations.Nullable;
 
 import javax.annotation.Nonnull;
@@ -170,25 +170,25 @@ public class WeaponOption implements Option {
 
     @Override
     public void updateInventory(@Nonnull WarlordsPlayer warlordsPlayer, Player player) {
-        new BukkitRunnable() {
+        new GameRunnable(warlordsPlayer.getGame()) {
 
             @Override
             public void run() {
                 rightClick.accept(warlordsPlayer, player);
             }
-        }.runTaskLater(Warlords.getInstance(), 1);
+        }.runTaskLater(1);
     }
 
     @Override
     public void onSpecChange(@Nonnull WarlordsEntity player, Specializations oldSpec) {
         if (player instanceof WarlordsPlayer && player.getEntity() instanceof Player) {
-            new BukkitRunnable() {
+            new GameRunnable(player.getGame()) {
 
                 @Override
                 public void run() {
                     rightClick.accept((WarlordsPlayer) player, (Player) player.getEntity());
                 }
-            }.runTaskLater(Warlords.getInstance(), 1);
+            }.runTaskLater(1);
         }
     }
 

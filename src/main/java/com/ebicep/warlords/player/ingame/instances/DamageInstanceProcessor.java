@@ -15,7 +15,6 @@ import com.ebicep.warlords.events.player.ingame.WarlordsDeathEvent;
 import com.ebicep.warlords.game.option.marker.FlagHolder;
 import com.ebicep.warlords.player.general.settings.ChatSettings;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
-import com.ebicep.warlords.player.ingame.WarlordsPlayer;
 import com.ebicep.warlords.player.ingame.cooldowns.AbstractCooldown;
 import com.ebicep.warlords.player.ingame.cooldowns.CooldownFilter;
 import com.ebicep.warlords.player.ingame.cooldowns.cooldowns.LinkedCooldown;
@@ -92,7 +91,7 @@ public class DamageInstanceProcessor {
     private boolean isCrit;
 
     public DamageInstanceProcessor(InstanceDebugHoverable debugMessage, WarlordsDamageHealingEvent event) {
-        applyPreEventModifiers();
+        applyPreEventModifiers(event);
         this.debugMessage = debugMessage;
         this.event = event;
         this.target = event.getWarlordsEntity();
@@ -124,9 +123,10 @@ public class DamageInstanceProcessor {
         );
     }
 
-    private void applyPreEventModifiers() {
-        if (source != null) {
-            for (AbstractCooldown<?> abstractCooldown : source.getCooldownManager().getCooldownsDistinct()) {
+    private void applyPreEventModifiers(WarlordsDamageHealingEvent event) {
+        WarlordsEntity eventSource = event.getSource();
+        if (eventSource != null) {
+            for (AbstractCooldown<?> abstractCooldown : eventSource.getCooldownManager().getCooldownsDistinct()) {
                 abstractCooldown.applyModifiers(Modifier.MODIFY_OUTGOING_DAMAGE_BEFORE_VARIABLE_SET, m -> m.apply(event));
             }
         }
@@ -344,10 +344,7 @@ public class DamageInstanceProcessor {
      * Sends a simple damage message for self-inflicted damage (melee/fall)
      */
     private void sendTookDamageMessage(float damage, String damageType) {
-        DatabasePlayer databasePlayer = DatabaseManager.getPlayer(
-                target.getUuid(),
-                target instanceof WarlordsPlayer && target.getEntity() instanceof Player
-        );
+        DatabasePlayer databasePlayer = target.getDatabasePlayer();
         if (databasePlayer.getChatDamageMode() != ChatSettings.ChatDamage.ALL) {
             return;
         }
@@ -493,11 +490,23 @@ public class DamageInstanceProcessor {
 
     @SuppressWarnings("unchecked")
     private Optional<LinkedCooldown<Intervene.InterveneData>> findInterveneCooldown() {
-        return (Optional<LinkedCooldown<Intervene.InterveneData>>)
-                (Optional<?>) new CooldownFilter<>(target, LinkedCooldown.class)
-                        .filterCooldownClass(Intervene.InterveneData.class)
-                        .filter(regularCooldown -> !Objects.equals(regularCooldown.getFrom(), target))
-                        .findFirst();
+        for (AbstractCooldown<?> cooldown : targetCooldownsDistinct) {
+            if (!(cooldown instanceof LinkedCooldown<?> linkedCooldown)) {
+                continue;
+            }
+            Class<?> cooldownClass = linkedCooldown.getCooldownClass();
+            if (cooldownClass == null
+                    || !(Intervene.InterveneData.class.equals(cooldownClass)
+                    || Intervene.InterveneData.class.isAssignableFrom(cooldownClass))
+            ) {
+                continue;
+            }
+            if (Objects.equals(linkedCooldown.getFrom(), target)) {
+                continue;
+            }
+            return Optional.of((LinkedCooldown<Intervene.InterveneData>) linkedCooldown);
+        }
+        return Optional.empty();
     }
 
     private boolean validateIntervene(LinkedCooldown<Intervene.InterveneData> interveneCooldown) {
@@ -684,7 +693,7 @@ public class DamageInstanceProcessor {
             cooldown.applyModifiers(Modifier.MODIFY_OUTGOING_DAMAGE_AFTER_INTERVENE, m -> m.apply(event, damageValue));
             damageValue.removeModifierListener(absorbedConsumer, FloatModifiable.ModifierType.NON_OVERRIDE_TYPES);
         }
-        damageValue.removeModifierListener(InstanceManager.SOURCE_LABEL, FloatModifiable.ModifierType.ALL_TYPES);
+        damageValue.removeModifierListener(InstanceManager.SOURCE_LABEL_AI, FloatModifiable.ModifierType.ALL_TYPES);
         if (noSourceDamageBoost) {
             togglePositiveBoosts(InstanceFlags.IGNORE_SOURCE_DAMAGE_BOOST, false);
         }
@@ -709,11 +718,18 @@ public class DamageInstanceProcessor {
 
     @SuppressWarnings("unchecked")
     private Optional<RegularCooldown<Shield>> findShieldCooldown() {
-        return (Optional<RegularCooldown<Shield>>)
-                (Optional<?>) new CooldownFilter<>(target, RegularCooldown.class)
-                        .filterCooldownClass(Shield.class)
-                        .filter(RegularCooldown::hasTicksLeft)
-                        .findFirst();
+        for (AbstractCooldown<?> cooldown : targetCooldownsDistinct) {
+            if (!(cooldown instanceof RegularCooldown<?> regularCooldown) || !regularCooldown.hasTicksLeft()) {
+                continue;
+            }
+            Class<?> cooldownClass = regularCooldown.getCooldownClass();
+            if (cooldownClass == null
+                    || !(Shield.class.equals(cooldownClass) || Shield.class.isAssignableFrom(cooldownClass))) {
+                continue;
+            }
+            return Optional.of((RegularCooldown<Shield>) regularCooldown);
+        }
+        return Optional.empty();
     }
 
     private void processShield(RegularCooldown<Shield> cooldown) {
@@ -813,10 +829,7 @@ public class DamageInstanceProcessor {
     }
 
     private void sendPlayerMessage(WarlordsEntity entity, Component message) {
-        DatabasePlayer databasePlayer = DatabaseManager.getPlayer(
-                entity.getUuid(),
-                entity instanceof WarlordsPlayer && entity.getEntity() instanceof Player
-        );
+        DatabasePlayer databasePlayer = entity.getDatabasePlayer();
 
         switch (databasePlayer.getChatHealingMode()) {
             case ALL -> {
@@ -1146,10 +1159,7 @@ public class DamageInstanceProcessor {
      * Sends damage message to player based on their chat damage mode settings
      */
     private void sendDamageMessageBasedOnMode(WarlordsEntity entity, Component message) {
-        DatabasePlayer databasePlayer = DatabaseManager.getPlayer(
-                entity.getUuid(),
-                entity instanceof WarlordsPlayer && entity.getEntity() instanceof Player
-        );
+        DatabasePlayer databasePlayer = entity.getDatabasePlayer();
 
         Component finalMessage = message.hoverEvent(HoverEvent.showText(debugMessage.getDebugMessage()));
 

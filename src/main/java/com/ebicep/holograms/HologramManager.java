@@ -33,12 +33,16 @@ import org.bukkit.event.player.PlayerTeleportEvent;
 import org.bukkit.scheduler.BukkitRunnable;
 import org.bukkit.scheduler.BukkitTask;
 
-import java.util.*;
+import java.util.List;
+import java.util.Map;
+import java.util.Objects;
+import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
 
 public class HologramManager implements Listener {
 
     private static final int INTERACT_COOLDOWN_MS = 250;
+    private static final int TICK_INTERVAL = 20;
     private static final Map<UUID, Long> INTERACT_COOLDOWNS = new ConcurrentHashMap<>();
     private static final Map<String, Hologram> HOLOGRAMS = new ConcurrentHashMap<>();
     static int entityId = Integer.MAX_VALUE / 8;
@@ -48,14 +52,18 @@ public class HologramManager implements Listener {
     public static void init(Warlords instance) {
         TASK = new BukkitRunnable() {
 
+            private int tick = 0;
+
             @Override
             public void run() {
-                for (Hologram hologram : HOLOGRAMS.values()) {
+                Hologram[] holograms = HOLOGRAMS.values().toArray(Hologram[]::new);
+                int bucket = tick++ % TICK_INTERVAL;
+                for (int i = bucket; i < holograms.length; i += TICK_INTERVAL) {
+                    Hologram hologram = holograms[i];
                     Location location = hologram.getLocation();
                     World world = location.getWorld();
                     VisibilityManager visibilityManager = hologram.getVisibilityManager();
-                    List<Player> players = new ArrayList<>(world.getPlayers());
-                    for (Player player : players) {
+                    for (Player player : world.getPlayers()) {
                         boolean withinRange = hologram.withinRange(player);
                         boolean currentlyVisibleTo = visibilityManager.isCurrentlyVisibleTo(player);
                         switch (visibilityManager.getVisibilityType()) {
@@ -80,14 +88,14 @@ public class HologramManager implements Listener {
                 }
             }
 
-        }.runTaskTimerAsynchronously(instance, 0, 10);
+        }.runTaskTimer(instance, 0, 1);
         packetListener = new PacketAdapter(instance, ListenerPriority.NORMAL, PacketType.Play.Client.USE_ENTITY) {
             @Override
             public void onPacketReceiving(PacketEvent event) {
                 Player player = event.getPlayer();
-                PacketContainer packet = event.getPacket().deepClone();
+                PacketContainer packet = event.getPacket();
                 int entityID = packet.getIntegers().read(0);
-                List<WrappedEnumEntityUseAction> values = event.getPacket().getEnumEntityUseActions().getValues();
+                List<WrappedEnumEntityUseAction> values = packet.getEnumEntityUseActions().getValues();
                 WrappedEnumEntityUseAction wrappedEnumEntityUseAction = values.getFirst();
                 if (wrappedEnumEntityUseAction.getAction() == EnumWrappers.EntityUseAction.INTERACT) {
                     return;
@@ -200,6 +208,10 @@ public class HologramManager implements Listener {
         hologram.getVisibilityManager().removeCurrentViewer(player.getUniqueId());
     }
 
+    public static void removeInteractCooldown(UUID uuid) {
+        INTERACT_COOLDOWNS.remove(uuid);
+    }
+
     public static void updateHologram(Hologram hologram) {
         for (Player player : hologram.getLocation().getWorld().getPlayers()) {
             if (hologram.withinRange(player)) {
@@ -238,6 +250,38 @@ public class HologramManager implements Listener {
                         )
                 );
             }
+        }
+    }
+
+    /**
+     * Immediately sync whether {@code player} should see {@code hologram} based on its visibility settings.
+     */
+    public static void refreshVisibility(Player player, Hologram hologram) {
+        VisibilityManager visibilityManager = hologram.getVisibilityManager();
+        boolean currentlyVisible = visibilityManager.isCurrentlyVisibleTo(player);
+        if (!Objects.equals(hologram.getLocation().getWorld(), player.getWorld())) {
+            if (currentlyVisible) {
+                hideHologram(player, hologram);
+            }
+            return;
+        }
+        boolean shouldShow = switch (visibilityManager.getVisibilityType()) {
+            case ALL -> true;
+            case MANUAL -> visibilityManager.isViewer(player);
+        };
+        if (!shouldShow) {
+            if (currentlyVisible) {
+                hideHologram(player, hologram);
+            }
+            return;
+        }
+        boolean withinRange = hologram.withinRange(player);
+        if (withinRange && !currentlyVisible) {
+            showHologram(player, hologram);
+        } else if (!withinRange && currentlyVisible) {
+            hideHologram(player, hologram);
+        } else if (currentlyVisible) {
+            updateHologram(player, hologram);
         }
     }
 
@@ -298,6 +342,11 @@ public class HologramManager implements Listener {
             if (!hologram.withinRange(event.getPlayer())) {
                 return;
             }
+            VisibilityManager visibilityManager = hologram.getVisibilityManager();
+            if (visibilityManager.getVisibilityType() == VisibilityType.MANUAL
+                    && !visibilityManager.isViewer(event.getPlayer())) {
+                return;
+            }
             showHologram(event.getPlayer(), hologram);
         });
     }
@@ -324,6 +373,11 @@ public class HologramManager implements Listener {
                 hologram.getVisibilityManager().getCurrentViewers().remove(player.getUniqueId());
             }
             if (Objects.equals(hologram.getLocation().getWorld(), to) && hologram.withinRange(event.getPlayer())) {
+                VisibilityManager visibilityManager = hologram.getVisibilityManager();
+                if (visibilityManager.getVisibilityType() == VisibilityType.MANUAL
+                        && !visibilityManager.isViewer(event.getPlayer())) {
+                    return;
+                }
                 showHologram(event.getPlayer(), hologram);
             }
         });

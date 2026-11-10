@@ -12,6 +12,7 @@ import com.ebicep.warlords.events.player.ingame.WarlordsDamageHealingFinalEvent;
 import com.ebicep.warlords.events.player.ingame.pve.*;
 import com.ebicep.warlords.events.player.ingame.pve.drops.*;
 import com.ebicep.warlords.game.Game;
+import com.ebicep.warlords.game.GameMode;
 import com.ebicep.warlords.game.Team;
 import com.ebicep.warlords.game.option.pve.PveOption;
 import com.ebicep.warlords.permissions.Permissions;
@@ -67,11 +68,10 @@ import javax.annotation.Nullable;
 import java.util.*;
 import java.util.concurrent.ThreadLocalRandom;
 import java.util.function.Consumer;
-import java.util.function.Function;
 
 public abstract class AbstractMob implements Mob {
 
-    private static final double NEW_ITEM_DROP_CHANCE = 0.001;
+    private static final double NEW_ITEM_DROP_CHANCE = 0.0005;
 
     protected final String name;
     protected final int maxHealth;
@@ -191,9 +191,8 @@ public abstract class AbstractMob implements Mob {
             }
         }
 
-        this.npc.data().set(NPC.Metadata.JUMP_POWER_SUPPLIER, (Function<NPC, Float>) npc -> 0f);
         this.npc.data().set(NPC.Metadata.COLLIDABLE, true);
-        this.npc.data().set(NPC.Metadata.NAMEPLATE_VISIBLE, entityType != EntityType.PLAYER);
+        this.npc.data().set(NPC.Metadata.NAMEPLATE_VISIBLE, false);
         this.npc.data().set(NPC.Metadata.KEEP_CHUNK_LOADED, true);
 
         giveGoals();
@@ -497,6 +496,9 @@ public abstract class AbstractMob implements Mob {
 
     public void dropItem(WarlordsEntity killer) {
         Game game = killer.getGame();
+        if (game.getGameMode().equals(GameMode.PVE_DEBUG)) {
+            return;
+        }
         PlayerFilterGeneric.playingGameWarlordsPlayers(game)
                            .teammatesOf((WarlordsPlayer) killer)
                            .filter(wp -> wp.getEntity() instanceof Player)
@@ -508,6 +510,7 @@ public abstract class AbstractMob implements Mob {
                                    return;
                                }
                                NewItem item = NewItemsUtils.generateRandomItem();
+                               Bukkit.getPluginManager().callEvent(new WarlordsGiveNewItemEvent(warlordsPlayer, item));
                                DatabasePlayer databasePlayer = warlordsPlayer.getDatabasePlayer();
                                databasePlayer.getPveStats().getNewItemsManager().addItem(item);
                                DatabaseManager.queueUpdatePlayerAsync(databasePlayer);

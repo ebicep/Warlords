@@ -1,17 +1,18 @@
 package com.ebicep.warlords.commands.debugcommands.game;
 
 import com.ebicep.warlords.Warlords;
-import com.ebicep.warlords.commands.debugcommands.misc.AdminCommand;
 import com.ebicep.warlords.database.DatabaseManager;
 import com.ebicep.warlords.database.repositories.events.pojos.DatabaseGameEvent;
 import com.ebicep.warlords.database.repositories.player.pojos.general.DatabasePlayer;
 import com.ebicep.warlords.game.Game;
+import com.ebicep.warlords.game.GameAddon;
 import com.ebicep.warlords.game.GameManager;
 import com.ebicep.warlords.game.GameMap;
 import com.ebicep.warlords.game.GameMode;
 import com.ebicep.warlords.party.Party;
 import com.ebicep.warlords.party.PartyManager;
 import com.ebicep.warlords.party.PartyPlayer;
+import com.ebicep.warlords.featureflags.FeatureFlags;
 import com.ebicep.warlords.permissions.Permissions;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
 import com.ebicep.warlords.util.java.Pair;
@@ -31,10 +32,6 @@ import static com.ebicep.warlords.util.chat.ChatChannels.sendDebugMessage;
 public class GameStartCommand {
 
     public static void startGamePvE(Player player, GameMode gameMode, Consumer<GameManager.QueueEntryBuilder> entryEditor) {
-        if (Warlords.SENT_HALF_HOUR_REMINDER.get() && !AdminCommand.DISABLE_RESTART_CHECK) {
-            player.sendMessage(Component.text("You cannot start a new game 30 minutes before the server restarts.", NamedTextColor.RED));
-            return;
-        }
         startGame(player, false, entryEditor.andThen(queueEntryBuilder -> {
                     queueEntryBuilder
                             .setGameMode(gameMode)
@@ -53,7 +50,7 @@ public class GameStartCommand {
             boolean excludeStarter,
             Consumer<GameManager.QueueEntryBuilder> entryEditor
     ) {
-        if (GameManager.gameStartingDisabled) {
+        if (GameManager.isGameStartingDisabled()) {
             player.sendMessage(Component.text("Games are currently disabled.", NamedTextColor.RED));
             return;
         }
@@ -104,15 +101,23 @@ public class GameStartCommand {
             }
         }
 
+        GameMode gameMode = entryBuilder.getGameMode();
+        if (gameMode != null && !FeatureFlags.isGamemodeEnabled(gameMode, player)) {
+            FeatureFlags.sendDisabledMessage(player);
+            return;
+        }
+        for (GameAddon addon : entryBuilder.getRequestedGameAddons()) {
+            if (!FeatureFlags.isAddonEnabled(addon, player)) {
+                player.sendMessage(Component.text("The game addon " + addon.name() + " is currently unavailable.", NamedTextColor.RED));
+                return;
+            }
+        }
+
         Pair<GameManager.QueueResult, Game> resultGamePair = entryBuilder.queueNow();
         //entryBuilder.getOnResult().accept(resultGamePair.getA(), resultGamePair.getB());
     }
 
     public static void startGamePvERaid(Player player, Consumer<GameManager.QueueEntryBuilder> entryEditor) {
-        if (Warlords.SENT_HALF_HOUR_REMINDER.get() && !AdminCommand.DISABLE_RESTART_CHECK) {
-            player.sendMessage(Component.text("You cannot start a new game 30 minutes before the server restarts.", NamedTextColor.RED));
-            return;
-        }
         startGame(player, false, entryEditor.andThen(queueEntryBuilder -> {
                     queueEntryBuilder
                             .setGameMode(GameMode.RAID)
@@ -128,10 +133,6 @@ public class GameStartCommand {
     }
 
     public static void startGamePvEEvent(Player player, Consumer<GameManager.QueueEntryBuilder> entryEditor) {
-        if (Warlords.SENT_HALF_HOUR_REMINDER.get() && !AdminCommand.DISABLE_RESTART_CHECK) {
-            player.sendMessage(Component.text("You cannot start a new game 30 minutes before the server restarts.", NamedTextColor.RED));
-            return;
-        }
         DatabaseGameEvent currentGameEvent = DatabaseGameEvent.currentGameEvent;
         if (currentGameEvent == null || !currentGameEvent.isActive()) {
             player.sendMessage(Component.text("The event is over!", NamedTextColor.RED));

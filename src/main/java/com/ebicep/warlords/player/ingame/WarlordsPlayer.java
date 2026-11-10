@@ -11,8 +11,9 @@ import com.ebicep.warlords.database.repositories.player.pojos.general.DatabasePl
 import com.ebicep.warlords.events.player.ingame.WarlordsPlayerStunEvent;
 import com.ebicep.warlords.game.Game;
 import com.ebicep.warlords.game.Team;
-import com.ebicep.warlords.game.option.Option;
 import com.ebicep.warlords.game.option.marker.CompassTargetMarker;
+import com.ebicep.warlords.game.option.marker.FlagHolder;
+import com.ebicep.warlords.game.state.PlayingState;
 import com.ebicep.warlords.player.general.ArmorManager;
 import com.ebicep.warlords.player.general.Specializations;
 import com.ebicep.warlords.player.ingame.motionsystem.MotionModifierBuilder;
@@ -99,7 +100,6 @@ public class WarlordsPlayer extends WarlordsEntity implements Listener {
     @Nullable
     protected AbstractWeapon weapon;
     private int stunTicks = 0;
-    private boolean updateTabName = true;
     private float previousHealth = 1;
 
     public WarlordsPlayer() {
@@ -459,7 +459,7 @@ public class WarlordsPlayer extends WarlordsEntity implements Listener {
     }
 
     public void queueUpdateTabName() {
-        this.updateTabName = true;
+        game.getState(PlayingState.class).ifPresent(playingState -> playingState.getUpdater().markTabNameDirty(this));
     }
 
     public void resetPlayerAddons() {
@@ -521,6 +521,7 @@ public class WarlordsPlayer extends WarlordsEntity implements Listener {
             player.teleport(loc);
             this.entity = player;
             updateEntity();
+            FlagHolder.refreshCarrierRender(this);
         }
     }
 
@@ -548,14 +549,6 @@ public class WarlordsPlayer extends WarlordsEntity implements Listener {
 
     public CosmeticSettings getCosmeticSettings() {
         return cosmeticSettings;
-    }
-
-    public boolean isUpdateTabName() {
-        return updateTabName;
-    }
-
-    public void setUpdateTabName(boolean updateTabName) {
-        this.updateTabName = updateTabName;
     }
 
 }

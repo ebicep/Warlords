@@ -2,6 +2,7 @@ package com.ebicep.warlords.player.general;
 
 import com.ebicep.warlords.Warlords;
 import com.ebicep.warlords.database.DatabaseManager;
+import com.ebicep.warlords.game.Game;
 import com.ebicep.warlords.database.leaderboards.PlayerLeaderboardInfo;
 import com.ebicep.warlords.database.leaderboards.stats.StatsLeaderboard;
 import com.ebicep.warlords.database.leaderboards.stats.StatsLeaderboardManager;
@@ -28,7 +29,10 @@ import org.bukkit.entity.Player;
 import org.bukkit.scoreboard.*;
 
 import javax.annotation.Nonnull;
+import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
+import java.util.Locale;
 import java.util.Optional;
 import java.util.Set;
 import java.util.UUID;
@@ -65,6 +69,10 @@ public class CustomScoreboard {
 
     public static CustomScoreboard getPlayerScoreboard(UUID uuid) {
         return PLAYER_SCOREBOARDS.computeIfAbsent(uuid, CustomScoreboard::new);
+    }
+
+    public static void removePlayerScoreboard(UUID uuid) {
+        PLAYER_SCOREBOARDS.remove(uuid);
     }
 
     private void givePvESidebar(DatabasePlayerPvE pveStats, boolean forceClear) {
@@ -160,43 +168,150 @@ public class CustomScoreboard {
         }
     }
 
-    public static void updateLobbyPlayerNames() {
-        for (Player onlinePlayer : Bukkit.getOnlinePlayers()) {
-            if (Warlords.getGameManager().getPlayerGame(onlinePlayer.getUniqueId()).isPresent()) {
+    private record LobbyNameDisplay(String name, Permissions rank, String guildName, Component prefix, Component suffix, NamedTextColor color) {}
+
+    private static boolean isInLobby(Player player) {
+        return Warlords.getGameManager().getPlayerGame(player.getUniqueId()).isEmpty();
+    }
+
+    /**
+     * Sortable Bukkit team id so the client orders lobby tab by {@link Permissions} rank, then guild name, then player name.
+     * Unguilded players use {@code ~} so they sort after guilded players within the same rank.
+     */
+    private static String lobbyTabTeamName(Permissions rank, String guildName, String playerName) {
+        String guildKey = guildName == null || guildName.isEmpty()
+                ? "~"
+                : guildName.toLowerCase(Locale.ROOT);
+        return rank.ordinal() + "_" + guildKey + "_" + playerName;
+    }
+
+    private static LobbyNameDisplay buildLobbyNameDisplay(Player player) {
+        Component suffix = Component.empty();
+        String guildName = "";
+        Pair<Guild, GuildPlayer> guildPlayerPair = GuildManager.getGuildAndGuildPlayerFromPlayer(player.getUniqueId());
+        if (guildPlayerPair != null) {
+            Guild guild = guildPlayerPair.getA();
+            guildName = guild.getName();
+            if (guild.getTag() != null) {
+                GuildTag tag = guild.getTag();
+                suffix = Component.space().append(tag.getTag(false)).compact();
+            }
+        }
+        Permissions rank = Permissions.getPermission(player);
+        return new LobbyNameDisplay(
+                player.getName(),
+                rank,
+                guildName,
+                Permissions.getPrefixWithColor(player, false).compact(),
+                suffix,
+                rank.prefixColor
+        );
+    }
+
+    private static List<LobbyNameDisplay> buildLobbyNameDisplays() {
+        Collection<? extends Player> onlinePlayers = Bukkit.getOnlinePlayers();
+        List<LobbyNameDisplay> displays = new ArrayList<>(onlinePlayers.size());
+        for (Player onlinePlayer : onlinePlayers) {
+            if (!isInLobby(onlinePlayer)) {
                 continue;
             }
-            CustomScoreboard.getPlayerScoreboard(onlinePlayer).updateLobbyPlayerNamesInternal();
+            displays.add(buildLobbyNameDisplay(onlinePlayer));
         }
+        return displays;
+    }
+
+    private void applyLobbyNameDisplay(LobbyNameDisplay display) {
+        String expectedName = lobbyTabTeamName(display.rank(), display.guildName(), display.name());
+        Team current = scoreboard.getEntryTeam(display.name());
+        Team team;
+        if (current != null && current.getName().equals(expectedName)) {
+            team = current;
+        } else {
+            if (current != null) {
+                current.removeEntry(display.name());
+                if (current.getEntries().isEmpty() && !current.getName().startsWith("!team")) {
+                    current.unregister();
+                }
+            }
+            team = scoreboard.getTeam(expectedName);
+            if (team == null) {
+                team = scoreboard.registerNewTeam(expectedName);
+            }
+            if (!team.hasEntry(display.name())) {
+                team.addEntry(display.name());
+            }
+        }
+        if (!team.prefix().equals(display.prefix())) {
+            team.prefix(display.prefix());
+        }
+        if (!team.suffix().equals(display.suffix())) {
+            team.suffix(display.suffix());
+        }
+        if (!team.hasColor() || team.color() != display.color()) {
+            team.color(display.color());
+        }
+    }
+
+    private void applyLobbyNameDisplays(List<LobbyNameDisplay> displays) {
+        for (LobbyNameDisplay display : displays) {
+            applyLobbyNameDisplay(display);
+        }
+    }
+
+    public static void updateLobbyPlayerNames() {
+        List<LobbyNameDisplay> displays = buildLobbyNameDisplays();
+        for (Player onlinePlayer : Bukkit.getOnlinePlayers()) {
+            if (!isInLobby(onlinePlayer)) {
+                continue;
+            }
+            CustomScoreboard.getPlayerScoreboard(onlinePlayer).applyLobbyNameDisplays(displays);
+        }
+    }
+
+    public static void applyLobbyPlayerNameToOthers(Player joined) {
+        if (!isInLobby(joined)) {
+            return;
+        }
+        LobbyNameDisplay display = buildLobbyNameDisplay(joined);
+        UUID joinedUuid = joined.getUniqueId();
+        for (Player onlinePlayer : Bukkit.getOnlinePlayers()) {
+            if (onlinePlayer.getUniqueId().equals(joinedUuid) || !isInLobby(onlinePlayer)) {
+                continue;
+            }
+            CustomScoreboard.getPlayerScoreboard(onlinePlayer).applyLobbyNameDisplay(display);
+        }
+    }
+
+    /**
+     * Pushes lobby-style name color onto every online player's scoreboard in {@code game}
+     * so spectators are not white nametags for in-game viewers.
+     */
+    public static void applySpectatorNameToGame(Player spectator, Game game) {
+        LobbyNameDisplay display = buildLobbyNameDisplay(spectator);
+        UUID spectatorUuid = spectator.getUniqueId();
+        game.forEachOnlinePlayer((viewer, team) -> {
+            if (!viewer.getUniqueId().equals(spectatorUuid)) {
+                getPlayerScoreboard(viewer).applyLobbyNameDisplay(display);
+            }
+        });
+        // Existing spectators → new spectator's board (same white-name gap the other way)
+        game.spectators().forEach(uuid -> {
+            if (uuid.equals(spectatorUuid)) {
+                return;
+            }
+            Player other = Bukkit.getPlayer(uuid);
+            if (other != null) {
+                getPlayerScoreboard(spectator).applyLobbyNameDisplay(buildLobbyNameDisplay(other));
+            }
+        });
     }
 
     public void updateLobbyPlayerNamesInternal() {
         Player player = Bukkit.getPlayer(uuid);
-        if (player == null) {
+        if (player == null || !isInLobby(player)) {
             return;
         }
-        if (Warlords.getGameManager().getPlayerGame(uuid).isPresent()) {
-            return;
-        }
-        for (Player onlinePlayer : Bukkit.getOnlinePlayers()) {
-            if (Warlords.getGameManager().getPlayerGame(onlinePlayer.getUniqueId()).isPresent()) {
-                continue;
-            }
-            String name = onlinePlayer.getName();
-            Team team = scoreboard.getTeam(name);
-            if (team == null) {
-                team = scoreboard.registerNewTeam(name);
-            }
-            Pair<Guild, GuildPlayer> guildPlayerPair = GuildManager.getGuildAndGuildPlayerFromPlayer(onlinePlayer.getUniqueId());
-            if (guildPlayerPair != null && guildPlayerPair.getA().getTag() != null) {
-                GuildTag tag = guildPlayerPair.getA().getTag();
-                team.suffix(Component.space().append(tag.getTag(false)));
-            } else {
-                team.suffix(Component.empty());
-            }
-            team.prefix(Permissions.getPrefixWithColor(onlinePlayer, false));
-            team.addEntry(name);
-            team.color(Permissions.getColor(onlinePlayer));
-        }
+        applyLobbyNameDisplays(buildLobbyNameDisplays());
     }
 
     public static CustomScoreboard getPlayerScoreboard(Player player) {

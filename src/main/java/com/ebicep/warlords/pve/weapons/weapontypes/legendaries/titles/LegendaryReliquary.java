@@ -21,7 +21,7 @@ import java.util.UUID;
 public class LegendaryReliquary extends AbstractLegendaryWeapon implements EventTitle {
 
     public static final int INCOMING_DAMAGE_INCREASE = 50;
-    //    public static final int INCOMING_DAMAGE_INCREASE_PER_UPGRADE = 1;
+    public static final int INCOMING_DAMAGE_INCREASE_PER_UPGRADE = 2;
     public static final int OUTGOING_DAMAGE_INCREASE = 30;
     public static final float OUTGOING_DAMAGE_INCREASE_PER_UPGRADE = 2.5f;
 
@@ -39,7 +39,8 @@ public class LegendaryReliquary extends AbstractLegendaryWeapon implements Event
 
     @Override
     public TextComponent getPassiveEffect() {
-        return Component.text("Incoming damage increased by " + INCOMING_DAMAGE_INCREASE + "%.", NamedTextColor.GRAY)
+        return Component.text("Incoming damage increased by ")
+                        .append(formatTitleUpgrade(INCOMING_DAMAGE_INCREASE + INCOMING_DAMAGE_INCREASE_PER_UPGRADE * getTitleLevel(), "%"))
                         .append(Component.newline())
                         .append(Component.text("Outgoing damage increased by "))
                         .append(formatTitleUpgrade(OUTGOING_DAMAGE_INCREASE + OUTGOING_DAMAGE_INCREASE_PER_UPGRADE * getTitleLevel(), "%"))
@@ -85,7 +86,7 @@ public class LegendaryReliquary extends AbstractLegendaryWeapon implements Event
     public void applyToWarlordsPlayer(WarlordsPlayer player, PveOption pveOption) {
         super.applyToWarlordsPlayer(player, pveOption);
 
-        float incomingDamageIncrease = 1 + INCOMING_DAMAGE_INCREASE / 100f;
+        float incomingDamageIncrease = 1 + (INCOMING_DAMAGE_INCREASE - INCOMING_DAMAGE_INCREASE_PER_UPGRADE * getTitleLevel()) / 100f;
         float outgoingDamageIncrease = 1 + (OUTGOING_DAMAGE_INCREASE + OUTGOING_DAMAGE_INCREASE_PER_UPGRADE * getTitleLevel()) / 100f;
         player.getCooldownManager().addCooldown(new PermanentCooldown<>(
                 "Reliquary",
@@ -134,6 +135,10 @@ public class LegendaryReliquary extends AbstractLegendaryWeapon implements Event
                 new Pair<>(
                         formatTitleUpgrade(OUTGOING_DAMAGE_INCREASE + OUTGOING_DAMAGE_INCREASE_PER_UPGRADE * getTitleLevel(), "%"),
                         formatTitleUpgrade(OUTGOING_DAMAGE_INCREASE + OUTGOING_DAMAGE_INCREASE_PER_UPGRADE * getTitleLevelUpgraded(), "%")
+                ),
+                new Pair<>(
+                        formatTitleUpgrade(INCOMING_DAMAGE_INCREASE + INCOMING_DAMAGE_INCREASE_PER_UPGRADE * getTitleLevel(), "%"),
+                        formatTitleUpgrade(INCOMING_DAMAGE_INCREASE + INCOMING_DAMAGE_INCREASE_PER_UPGRADE * getTitleLevelUpgraded(), "%")
                 )
         );
     }

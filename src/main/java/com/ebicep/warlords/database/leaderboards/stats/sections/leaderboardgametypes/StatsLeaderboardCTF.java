@@ -21,8 +21,8 @@ public class StatsLeaderboardCTF extends AbstractStatsLeaderboardGameType<
 
     private static final List<StatsLeaderboardCategory<DatabaseGameCTF, DatabaseGamePlayerCTF, CTFStats>> CATEGORIES = new ArrayList<>() {{
 //        add(new StatsLeaderboardCategory<>(DatabasePlayer::getCtfStats, "All Queues", "All"));
-        add(new StatsLeaderboardCategory<>(databasePlayer -> databasePlayer.getCompStats().getCtfStats(), "Competitive Queue", "Comps", false));
-        add(new StatsLeaderboardCategory<>(databasePlayer -> databasePlayer.getPubStats().getCtfStats(), "Public Queue", "Pubs", false));
+        add(new StatsLeaderboardCategory<>(databasePlayer -> databasePlayer.getCompStats().getCtfStats(), "Competitive Queue", "Comps", true));
+        add(new StatsLeaderboardCategory<>(databasePlayer -> databasePlayer.getPubStats().getCtfStats(), "Public Queue", "Pubs", true));
     }};
 
     public StatsLeaderboardCTF() {

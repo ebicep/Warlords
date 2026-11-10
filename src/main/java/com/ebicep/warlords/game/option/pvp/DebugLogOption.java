@@ -15,8 +15,9 @@ public class DebugLogOption implements Option {
 
     @Override
     public void onGameEnding(@Nonnull Game game) {
+        UUID gameId = game.getGameId();
         game.warlordsPlayers().forEach(warlordsPlayer -> CACHED_DEBUG_LOG.put(warlordsPlayer.getName().toLowerCase(), new DebugLog(
-                        game.getGameId(),
+                        gameId,
                         warlordsPlayer.getDebugMessageLog()
                 )
         ));
@@ -27,7 +28,7 @@ public class DebugLogOption implements Option {
                 while (iterator.hasNext()) {
                     Map.Entry<String, DebugLog> entry = iterator.next();
                     DebugLog debugLog = entry.getValue();
-                    if (debugLog.gameID == game.getGameId()) {
+                    if (Objects.equals(debugLog.gameID(), gameId)) {
                         iterator.remove();
                     }
                 }

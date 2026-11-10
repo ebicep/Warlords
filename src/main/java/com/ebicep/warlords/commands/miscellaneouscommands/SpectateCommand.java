@@ -16,7 +16,9 @@ import org.bukkit.entity.Player;
 
 import java.util.Comparator;
 import java.util.List;
+import java.util.Objects;
 import java.util.Optional;
+import java.util.UUID;
 import java.util.stream.Collectors;
 
 import static com.ebicep.warlords.util.java.StringUtils.toTitleHumanCase;
@@ -58,16 +60,19 @@ public class SpectateCommand extends BaseCommand {
                     itemBuilder.addLore(Component.text(" - ", NamedTextColor.GRAY).append(Component.text(warlordsPlayer.getName(), NamedTextColor.AQUA)));
                 });
             }
+            UUID gameId = game.getGameId();
             menu.setItem(column,
                     row,
                     itemBuilder.get(),
                     (m, e) -> {
-                        if (game.isClosed()) {
+                        Optional<Game> resolvedGame = findActiveGameById(gameId);
+                        if (resolvedGame.isEmpty() || resolvedGame.get().isClosed()) {
                             player.sendMessage(Component.text("This game is no longer running", NamedTextColor.RED));
                             openSpectateMenu(player);
                             return;
                         }
-                        if (!game.acceptsSpectators()) {
+                        Game targetGame = resolvedGame.get();
+                        if (!targetGame.acceptsSpectators()) {
                             player.sendMessage(Component.text("This game does not accepts spectators", NamedTextColor.RED));
                             openSpectateMenu(player);
                             return;
@@ -75,11 +80,11 @@ public class SpectateCommand extends BaseCommand {
                         Optional<Game> currentGame = Warlords.getGameManager().getPlayerGame(player.getUniqueId());
                         if (currentGame.isPresent() && currentGame.get().getPlayerTeam(player.getUniqueId()) != null) {
                             player.sendMessage(Component.text("You cannot use this command inside a game!", NamedTextColor.RED));
-                        } else if (currentGame.isPresent() && currentGame.get().equals(game)) {
+                        } else if (currentGame.isPresent() && currentGame.get().getGameId().equals(gameId)) {
                             player.sendMessage(Component.text("You are already spectating this game", NamedTextColor.RED));
                         } else {
                             currentGame.ifPresent(value -> value.removePlayer(player.getUniqueId()));
-                            game.addPlayer(player, true);
+                            targetGame.addPlayer(player, true);
                         }
                     }
             );
@@ -116,6 +121,14 @@ public class SpectateCommand extends BaseCommand {
         }
 
         menu.openForPlayer(player);
+    }
+
+    private static Optional<Game> findActiveGameById(UUID gameId) {
+        return Warlords.getGameManager().getGames().stream()
+                       .map(GameHolder::getGame)
+                       .filter(Objects::nonNull)
+                       .filter(g -> g.getGameId().equals(gameId))
+                       .findFirst();
     }
 
     @Default

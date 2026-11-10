@@ -45,11 +45,12 @@ public class SanctifiedBeaconBranch extends AbstractUpgradeBranch<SanctifiedBeac
                         
                         Additionally, allies within the radius will have their crit multiplier increased by 30% and knockback resistance by 50%.
                         
-                        Enemies (excluding bosses) that walk through the beacon radius have their damage and movement speed permanently reduced by 30%.
+                        Enemies (excluding bosses) that walk through the beacon radius have their damage and movement speed permanently reduced by 15%.
                         """,
                 50000,
                 () -> {
                     ability.getHitBoxRadius().addModifier(FloatModifiable.ModifierType.MULTIPLICATIVE_MULTIPLIER, "Master Upgrade Branch", 2);
+                    ability.setDamageReductionPve(ability.getDamageReductionPve() + 15);
                 }
         );
     }

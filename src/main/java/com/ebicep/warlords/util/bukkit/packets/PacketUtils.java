@@ -8,24 +8,19 @@ import com.comphenix.protocol.events.PacketAdapter;
 import com.comphenix.protocol.events.PacketContainer;
 import com.comphenix.protocol.events.PacketEvent;
 import com.comphenix.protocol.reflect.StructureModifier;
-import com.comphenix.protocol.wrappers.EnumWrappers;
 import com.ebicep.warlords.Warlords;
-import com.ebicep.warlords.abilities.SanctifiedBeacon;
 import com.ebicep.warlords.commands.debugcommands.misc.MountCommand;
 import com.ebicep.warlords.database.repositories.config.ConfigManager;
-import com.ebicep.warlords.game.Team;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
 import com.ebicep.warlords.util.bukkit.packets.wrappers.WrapperPlayClientSteerVehicle;
-import com.ebicep.warlords.util.bukkit.packets.wrappers.WrapperPlayServerEntityEquipment;
 import com.ebicep.warlords.util.chat.ChatChannels;
 import net.minecraft.network.protocol.game.ClientboundAnimatePacket;
 import net.minecraft.network.protocol.game.ClientboundRemoveEntitiesPacket;
 import net.minecraft.network.protocol.game.ClientboundSoundPacket;
 import net.minecraft.world.entity.Entity;
-import org.bukkit.Material;
 import org.bukkit.Sound;
+import org.bukkit.entity.AbstractHorse;
 import org.bukkit.entity.Player;
-import org.bukkit.inventory.ItemStack;
 import org.bukkit.scheduler.BukkitRunnable;
 
 import java.util.List;
@@ -36,26 +31,6 @@ public class PacketUtils {
 
     public static void init(Warlords instance) {
         PROTOCOL_MANAGER.removePacketListeners(instance);
-        PROTOCOL_MANAGER.addPacketListener(
-                new PacketAdapter(instance, ListenerPriority.HIGHEST, PacketType.Play.Server.WORLD_PARTICLES) {
-                    int counter = 0;
-
-                    @Override
-                    public void onPacketSending(PacketEvent event) {
-                        // Item packets (id: 0x29)
-                        if (event.getPacketType() == PacketType.Play.Server.WORLD_PARTICLES) {
-                            Player player = event.getPlayer();
-                            WarlordsEntity warlordsEntity = Warlords.getPlayer(player);
-                            if (warlordsEntity == null) {
-                                return;
-                            }
-                            int particleReduction = warlordsEntity.getDatabasePlayer().getParticleQuality().particleReduction;
-                            if (counter++ % particleReduction == 0) {
-                                event.setCancelled(true);
-                            }
-                        }
-                    }
-                });
         List<Sound> blockedSounds = List.of(
                 Sound.ENTITY_PLAYER_ATTACK_NODAMAGE,
                 Sound.ENTITY_PLAYER_ATTACK_KNOCKBACK
@@ -77,33 +52,6 @@ public class PacketUtils {
                 }
         );
         PROTOCOL_MANAGER.addPacketListener(
-                new PacketAdapter(instance, PacketType.Play.Server.ENTITY_EQUIPMENT) {
-                    @Override
-                    public void onPacketSending(PacketEvent event) {
-                        PacketContainer packet = event.getPacket().deepClone();
-                        int entityID = packet.getIntegers().read(0);
-                        Team team = SanctifiedBeacon.BEACON_IDS.get(entityID);
-                        if (team == null) {
-                            return;
-                        }
-                        Player playerReceiving = event.getPlayer();
-                        WarlordsEntity warlordsPlayer = Warlords.getPlayer(playerReceiving);
-                        if (warlordsPlayer == null) {
-                            return;
-                        }
-                        if (warlordsPlayer.getTeam() == team) {
-                            return;
-                        }
-                        WrapperPlayServerEntityEquipment equipmentPacket = new WrapperPlayServerEntityEquipment();
-                        equipmentPacket.setEntity(entityID);
-                        equipmentPacket.setSlots(List.of(
-                                new com.comphenix.protocol.wrappers.Pair<>(EnumWrappers.ItemSlot.HEAD, new ItemStack(Material.BROWN_STAINED_GLASS_PANE))
-                        ));
-                        event.setPacket(equipmentPacket.getHandle());
-                    }
-                }
-        );
-        PROTOCOL_MANAGER.addPacketListener(
                 new PacketAdapter(instance, ListenerPriority.LOWEST, PacketType.Play.Client.STEER_VEHICLE) {
                     @Override
                     public void onPacketReceiving(PacketEvent event) {
@@ -111,12 +59,13 @@ public class PacketUtils {
                             return;
                         }
                         Player player = event.getPlayer();
-                        if (!MountCommand.PLAYER_MOUNT_TYPE.containsKey(player.getUniqueId())) {
+                        if (!(player.getVehicle() instanceof AbstractHorse)) {
                             return;
                         }
+                        boolean isDebugMount = MountCommand.PLAYER_MOUNT_TYPE.containsKey(player.getUniqueId());
                         WrapperPlayClientSteerVehicle steerVehiclePacket = new WrapperPlayClientSteerVehicle(event.getPacket());
                         steerVehiclePacket.setIsJumping(false);
-                        if (steerVehiclePacket.getIsShiftKeyDown()) {
+                        if (isDebugMount && steerVehiclePacket.getIsShiftKeyDown()) {
                             org.bukkit.entity.Entity vehicle = player.getVehicle();
                             if (vehicle != null) {
                                 event.setCancelled(true);
@@ -155,13 +104,17 @@ public class PacketUtils {
         if (!ConfigManager.getGameConfigValue(ConfigManager.DEFAULT_NAMESPACES, "pingCompensationEnabled", boolean.class) || !(wp.getEntity() instanceof Player player)) {
             return 0;
         }
-        int ping = player.getPing();
+        int ping = Math.min(
+                player.getPing(),
+                ConfigManager.getGameConfigValue(ConfigManager.DEFAULT_NAMESPACES, "pingCompensationMax", int.class)
+        );
         int minPingStrikeRangeCompensation = ConfigManager.getGameConfigValue(ConfigManager.DEFAULT_NAMESPACES, "pingCompensationMin", int.class);
         float pingStrikeRangeCompensationDivisor = ConfigManager.getGameConfigValue(ConfigManager.DEFAULT_NAMESPACES, "pingCompensationDivisor", int.class);
         if (ping > minPingStrikeRangeCompensation) {
             float increase = Math.max(0, ping / pingStrikeRangeCompensationDivisor);
             if (ConfigManager.getGameConfigValue(ConfigManager.DEFAULT_NAMESPACES, "pingCompensationLog", boolean.class)) {
                 ChatChannels.sendDebugMessage(player, "Ping: " + player.getPing() +
+                        ", capped: " + ping +
                         ", min: " + minPingStrikeRangeCompensation +
                         ", comp: " + pingStrikeRangeCompensationDivisor +
                         ", increase: " + increase

@@ -22,6 +22,7 @@ public enum GameMode implements Mode {
     WAVE_DEFENSE(new WaveDefense()),
     ONSLAUGHT(new Onslaught()),
     TREASURE_HUNT(new TreasureHunt()),
+    DARK_DESCENT(new DarkDescent()),
     ANOMALY(new Anomaly()),
     RAID(new Raid()),
     DEBUG(new Debug()),
@@ -47,6 +48,7 @@ public enum GameMode implements Mode {
                 || mode == ONSLAUGHT
                 || mode == TREASURE_HUNT
                 || mode == ANOMALY
+                || mode == DARK_DESCENT
                 || mode == TOWER_DEFENSE
                 || mode == WHACK_A_MOLE
                 || mode == PVE_DEBUG

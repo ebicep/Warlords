@@ -15,6 +15,7 @@ import com.ebicep.warlords.game.state.ClosedState;
 import com.ebicep.warlords.game.state.State;
 import com.ebicep.warlords.menu.debugmenu.DebugMenu;
 import com.ebicep.warlords.menu.debugmenu.DebugMenuGameOptions;
+import com.ebicep.warlords.player.general.CustomScoreboard;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
 import com.ebicep.warlords.player.ingame.WarlordsNPC;
 import com.ebicep.warlords.player.ingame.WarlordsPlayer;
@@ -410,6 +411,9 @@ public final class Game implements Runnable, AutoCloseable {
             p.getInventory().setHeldItemSlot(0);
             this.state.onPlayerReJoinGame(p);
             Warlords.getInstance().hideAndUnhidePeople(p);
+            if (asSpectator) {
+                CustomScoreboard.applySpectatorNameToGame(p, this);
+            }
         }
     }
 
@@ -527,7 +531,7 @@ public final class Game implements Runnable, AutoCloseable {
     }
 
     public Stream<WarlordsEntity> warlordsEntities() {
-        return this.players.keySet().stream().map(Warlords::getPlayer).filter(Objects::nonNull);
+        return new ArrayList<>(this.players.keySet()).stream().map(Warlords::getPlayer).filter(Objects::nonNull);
     }
 
     public void forEachOfflineWarlordsPlayer(Consumer<WarlordsPlayer> consumer) {
@@ -768,6 +772,7 @@ public final class Game implements Runnable, AutoCloseable {
         } catch (Throwable e) {
             exceptions.add(e);
         }
+        cachedPlayers.clear();
         forEachEnabledOption(option -> {
             try {
                 option.onGameCleanup(this);

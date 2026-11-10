@@ -250,7 +250,7 @@ public class Tartarus extends GameMap {
                 .disableCoinConversionUpgrade()
         );
         options.add(new ExperienceGainOption()
-                .playerExpGameWinBonus(2500)
+                .playerExpGameWinBonus(1500)
                 .playerExpPerXSec(15, 10)
                 .guildExpPerXSec(4, 10)
         );

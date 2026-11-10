@@ -22,6 +22,7 @@ import org.bukkit.*;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.HandlerList;
 import org.bukkit.event.Listener;
+import org.bukkit.event.player.PlayerTeleportEvent;
 
 import java.util.*;
 import java.util.function.BiConsumer;
@@ -157,7 +158,7 @@ public class CrystalConduitsAbility {
                     // Small cue at that crystal
                     World ww = hit.loc.getWorld();
                     if (ww != null) {
-                        ww.spawnParticle(Particle.TOTEM_OF_UNDYING, hit.loc, 10, 0.4, 0.4, 0.4, 0.02);
+                        EffectUtils.displayParticle(Particle.TOTEM_OF_UNDYING, hit.loc, 10, 0.4, 0.4, 0.4, 0.02);
                         Utils.playGlobalSound(hit.loc, Sound.ENTITY_PLAYER_LEVELUP, 500, 0.5f);
                     }
 
@@ -190,17 +191,18 @@ public class CrystalConduitsAbility {
                         double targetZ = cNow.getZ() + Math.sin(n.angle) * n.radius;
                         Location target = new Location(cNow.getWorld(), targetX, y, targetZ);
 
-                        Location cur = n.crystal.getWarlordsNPC().getLocation();
-                        double t = followLerp;
-                        double newX = cur.getX() + (targetX - cur.getX()) * t;
-                        double newY = cur.getY() + (y       - cur.getY()) * t;
-                        double newZ = cur.getZ() + (targetZ - cur.getZ()) * t;
+                        WarlordsNPC crystalNpc = n.crystal.getWarlordsNPC();
+                        Location cur = crystalNpc.getLocation();
+                        double lerp = followLerp;
+                        double newX = cur.getX() + (targetX - cur.getX()) * lerp;
+                        double newY = cur.getY() + (y - cur.getY()) * lerp;
+                        double newZ = cur.getZ() + (targetZ - cur.getZ()) * lerp;
                         Location lerped = new Location(target.getWorld(), newX, newY, newZ);
-
-                        var bukkitEnt = n.crystal.getWarlordsNPC().getEntity();
-                        bukkitEnt.teleport(lerped);
-
-                        n.loc = lerped;
+                        if (crystalNpc.getNpc() != null && crystalNpc.getNpc().isSpawned()) {
+                            crystalNpc.getNpc().teleport(lerped, PlayerTeleportEvent.TeleportCause.PLUGIN);
+                        }
+                        crystalNpc.teleport(lerped);
+                        n.loc = crystalNpc.getLocation();
                     }
                 }
 
@@ -214,12 +216,13 @@ public class CrystalConduitsAbility {
 
                     drawRing(n.loc.clone().add(0, beaconYOffset, 0), 1.1, ringDust);
                     drawLink(world, c, n.loc, linkDust);
-                    world.spawnParticle(Particle.END_ROD, n.loc.clone().add(0, 0.35, 0), 1, 0, 0, 0, 0);
+                    EffectUtils.displayParticle(Particle.END_ROD, n.loc.clone().add(0, 0.35, 0), 1, 0, 0, 0, 0);
 
-                    // Optional: highlight the currently expected target a bit more
-                    int expectedIdx = order.get(expectIndex);
-                    if (n.index == expectedIdx) {
-                        drawRing(n.loc.clone().add(0, beaconYOffset + 0.1, 0), 1.35, ringDust);
+                    if (expectIndex < order.size()) {
+                        int expectedIdx = order.get(expectIndex);
+                        if (n.index == expectedIdx) {
+                            drawRing(n.loc.clone().add(0, beaconYOffset + 0.1, 0), 1.35, ringDust);
+                        }
                     }
                 }
 
@@ -326,7 +329,7 @@ public class CrystalConduitsAbility {
             );
         }
         if (w != null) {
-            w.spawnParticle(Particle.EXPLOSION, center, 1, 0, 0, 0, 0);
+            EffectUtils.displayParticle(Particle.EXPLOSION, center, 1, 0, 0, 0, 0);
         }
     }
 
@@ -339,7 +342,7 @@ public class CrystalConduitsAbility {
         for (double a = 0; a < twoPi; a += angStep) {
             double x = center.getX() + Math.cos(a) * rad;
             double z = center.getZ() + Math.sin(a) * rad;
-            w.spawnParticle(Particle.DUST, x, y, z, 1, 0, 0, 0, 0.0, dust);
+            EffectUtils.displayParticle(Particle.DUST, new Location(w, x, y, z), 1, 0, 0, 0, 0.0, dust);
         }
     }
 
@@ -353,8 +356,8 @@ public class CrystalConduitsAbility {
         int samples = Math.max(1, (int) Math.ceil(len / 0.35));
         Location p = a.clone();
         for (int i = 0; i <= samples; i++) {
-            w.spawnParticle(Particle.DUST, p, 1, 0, 0, 0, 0.0, dust);
-            if ((i % 6) == 0) w.spawnParticle(Particle.ELECTRIC_SPARK, p, 1, 0, 0, 0, 0.0);
+            EffectUtils.displayParticle(Particle.DUST, p, 1, 0, 0, 0, 0.0, dust);
+            if ((i % 6) == 0) EffectUtils.displayParticle(Particle.ELECTRIC_SPARK, p, 1, 0, 0, 0, 0.0);
             p.add(dir);
         }
     }

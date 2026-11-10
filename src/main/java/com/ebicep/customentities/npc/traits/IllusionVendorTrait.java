@@ -207,7 +207,7 @@ public class IllusionVendorTrait extends WarlordsTrait implements HasNPCLabelHol
         if (ticksElapsed++ % 100 != 0) {
             return;
         }
-        String timeTill = DateUtil.getTimeTill(DateUtil.getResetDateLatestMonday(),
+        String timeTill = DateUtil.getTimeTill(DateUtil.getNextWeeklyResetDate(),
                 true,
                 true,
                 true,

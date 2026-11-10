@@ -5,6 +5,7 @@ import com.ebicep.warlords.events.player.ingame.pve.WarlordsGiveRespawnEvent;
 import com.ebicep.warlords.player.ingame.WarlordsPlayer;
 import com.ebicep.warlords.pve.newitems.setbonus.BaseSet;
 import com.ebicep.warlords.pve.newitems.setbonus.SetBonus;
+import com.ebicep.warlords.util.warlords.GameRunnable;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 
@@ -58,8 +59,13 @@ public class ThroneOfTheUndead extends BaseSet {
                     if (!Objects.equals(event.getWarlordsEntity(), warlordsPlayer)) {
                         return;
                     }
-                    event.getWarlordsEntity().setCurrentHealth(event.getWarlordsEntity().getMaxHealth() * (respawnHealthPercent / 100f));
-                    event.getWarlordsEntity().setCurrentEnergy(respawnEnergy);
+                    GameRunnable.create(warlordsPlayer.getGame(), () -> {
+                        if (warlordsPlayer.isDead()) {
+                            return;
+                        }
+                        warlordsPlayer.setCurrentHealth(warlordsPlayer.getMaxHealth() * (respawnHealthPercent / 100f));
+                        warlordsPlayer.setCurrentEnergy(respawnEnergy);
+                    }).runTask();
                 }
 
             });

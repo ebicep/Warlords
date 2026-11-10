@@ -9,6 +9,7 @@ import com.ebicep.warlords.database.repositories.player.pojos.pve.events.Databas
 import com.ebicep.warlords.database.repositories.player.pojos.pve.events.EventMode;
 import com.ebicep.warlords.events.game.WarlordsGameTriggerWinEvent;
 import com.ebicep.warlords.game.Game;
+import com.ebicep.warlords.game.GameMode;
 import com.ebicep.warlords.game.Team;
 import com.ebicep.warlords.game.option.pve.wavedefense.WaveDefenseOption;
 import com.ebicep.warlords.pve.DifficultyIndex;
@@ -122,6 +123,10 @@ public class BountyUtils {
 
     public static boolean lostGame(WarlordsGameTriggerWinEvent event) {
         return event.getDeclaredWinner() != Team.BLUE;
+    }
+
+    public static boolean completedAnomaly(Game game, WarlordsGameTriggerWinEvent event) {
+        return game.getGameMode() == GameMode.ANOMALY && !lostGame(event);
     }
 
     public static <T> Optional<T> getOptionFromGame(Game game, Class<T> optionClass) {

@@ -12,8 +12,8 @@ import com.ebicep.warlords.pve.newitems.setbonus.SetBonus;
 import com.ebicep.warlords.util.warlords.GameRunnable;
 import com.ebicep.warlords.util.warlords.modifiablevalues.FloatModifiable;
 
+import java.util.Collections;
 import java.util.List;
-import java.util.concurrent.ThreadLocalRandom;
 
 public class Summoner extends BaseSet {
 
@@ -24,45 +24,58 @@ public class Summoner extends BaseSet {
     private int minionSpeed;
 
     public static void applyToSummon(AbstractMob mob, WarlordsPlayer owner) {
-        if (!owner.getCooldownManager().hasCooldown(Summoner.class)) {
+        if (mob == null || owner == null || !owner.getCooldownManager().hasCooldown(Summoner.class)) {
             return;
         }
-        new GameRunnable(owner.getGame()) {
-
-            @Override
-            public void run() {
-                WarlordsNPC npc = mob.getWarlordsNPC();
-                if (npc == null) {
-                    return;
+        if (mob.getAspect() == null) {
+            mob.setAspect(Aspect.getRandomAspect(Collections.emptyList()));
+        }
+        WarlordsNPC npc = mob.getWarlordsNPC();
+        if (npc == null) {
+            new GameRunnable(owner.getGame()) {
+                @Override
+                public void run() {
+                    applySummonBuffs(mob, owner);
                 }
-                if (mob.getAspect() == null) {
-                    Aspect[] aspects = Aspect.values();
-                    Aspect aspect = aspects[ThreadLocalRandom.current().nextInt(aspects.length)];
-                    mob.setAspect(aspect);
-                    aspect.apply(npc);
-                }
-                npc.getCooldownManager().addCooldown(new PermanentCooldown<>(
-                        "Summoner - Damage",
-                        null,
-                        Summoner.class,
-                        null,
-                        npc,
-                        CooldownTypes.BUFF,
-                        cooldownManager -> {
-                        },
-                        false
-                ).addModifier(
-                        Modifier.MODIFY_OUTGOING_DAMAGE_BEFORE_INTERVENE,
-                        (damageEvent, currentDamageValue) -> currentDamageValue.addModifier(
-                                FloatModifiable.ModifierType.MULTIPLICATIVE_MULTIPLIER,
-                                "Summoner - Damage",
-                                1 + configuredMinionDamage / 100f
-                        )
-                ));
-                npc.addSpeedModifier(owner, "Summoner - Speed", configuredMinionSpeed, Integer.MAX_VALUE);
-            }
+            }.runTask();
+            return;
+        }
+        applySummonBuffs(mob, owner);
+    }
 
-        }.runTaskLater(1);
+    private static void applySummonBuffs(AbstractMob mob, WarlordsPlayer owner) {
+        WarlordsNPC npc = mob.getWarlordsNPC();
+        if (npc == null || npc.isDead()) {
+            return;
+        }
+        Aspect aspect = mob.getAspect();
+        if (aspect != null && !npc.getCooldownManager().hasCooldown(Aspect.class)) {
+            aspect.apply(npc);
+        }
+        if (!npc.getCooldownManager().hasCooldown(Summoner.class)) {
+            float damageMultiplier = 1 + configuredMinionDamage / 100f;
+            npc.getCooldownManager().addCooldown(new PermanentCooldown<>(
+                    "Summoner - Damage",
+                    null,
+                    Summoner.class,
+                    null,
+                    npc,
+                    CooldownTypes.BUFF,
+                    cooldownManager -> {
+                    },
+                    false
+            ).addModifier(
+                    Modifier.MODIFY_OUTGOING_DAMAGE_BEFORE_INTERVENE,
+                    (damageEvent, currentDamageValue) -> currentDamageValue.addModifier(
+                            FloatModifiable.ModifierType.MULTIPLICATIVE_MULTIPLIER,
+                            "Summoner - Damage",
+                            damageMultiplier
+                    )
+            ));
+            npc.addSpeedModifier(owner, "Summoner - Speed", configuredMinionSpeed, Integer.MAX_VALUE);
+        }
+        npc.getMobHologram().markTextDirty();
+        npc.getMobHologram().update();
     }
 
     @Override

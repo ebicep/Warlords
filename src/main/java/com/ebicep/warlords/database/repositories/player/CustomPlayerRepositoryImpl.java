@@ -2,25 +2,24 @@ package com.ebicep.warlords.database.repositories.player;
 
 import com.ebicep.warlords.database.DatabaseManager;
 import com.ebicep.warlords.database.repositories.player.pojos.general.DatabasePlayer;
+import com.ebicep.warlords.util.chat.ChatUtils;
 import com.mongodb.MongoNamespace;
-import com.mongodb.client.MongoCollection;
 import com.mongodb.client.model.RenameCollectionOptions;
 import org.bson.Document;
+import org.springframework.data.domain.Sort;
 import org.springframework.data.mongodb.core.BulkOperations;
 import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.data.mongodb.core.aggregation.Aggregation;
+import org.springframework.data.mongodb.core.index.Index;
 import org.springframework.data.mongodb.core.query.Criteria;
 import org.springframework.data.mongodb.core.query.Query;
 import org.springframework.data.mongodb.core.query.UpdateDefinition;
 import org.springframework.stereotype.Repository;
 
+import java.util.Comparator;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
-
-import static com.mongodb.client.model.Filters.eq;
-import static com.mongodb.client.model.Projections.include;
-import static com.mongodb.client.model.Updates.set;
 
 @Repository
 public class CustomPlayerRepositoryImpl implements CustomPlayerRepository {
@@ -38,20 +37,7 @@ public class CustomPlayerRepositoryImpl implements CustomPlayerRepository {
 
     @Override
     public DatabasePlayer save(DatabasePlayer player, PlayersCollections collection) {
-        if (collection != PlayersCollections.LIFETIME) {
-            return mongoTemplate.save(player, collection.collectionName);
-        }
-        synchronized (player) {
-            MongoCollection<Document> mongoCollection = mongoTemplate.getCollection(collection.collectionName);
-            Document existing = mongoCollection.find(eq("uuid", player.getUuid()))
-                    .projection(include("honorifics"))
-                    .first();
-            DatabasePlayer saved = mongoTemplate.save(player, collection.collectionName);
-            if (existing != null && existing.containsKey("honorifics")) {
-                mongoCollection.updateOne(eq("uuid", player.getUuid()), set("honorifics", existing.get("honorifics")));
-            }
-            return saved;
-        }
+        return mongoTemplate.save(player, collection.collectionName);
     }
 
     @Override
@@ -68,6 +54,7 @@ public class CustomPlayerRepositoryImpl implements CustomPlayerRepository {
     public void deleteAll(PlayersCollections collection) {
         mongoTemplate.dropCollection(collection.collectionName);
         mongoTemplate.createCollection(collection.collectionName);
+        ensureIndexes(collection);
     }
 
     @Override
@@ -119,5 +106,89 @@ public class CustomPlayerRepositoryImpl implements CustomPlayerRepository {
                 new MongoNamespace(DatabaseManager.warlordsDatabase.getName(), newCollectionName),
                 new RenameCollectionOptions().dropTarget(dropTarget)
         );
+    }
+
+    @Override
+    public void ensureIndexes() {
+        ChatUtils.MessageType.PLAYER_SERVICE.sendMessage("Ensuring player indexes on " + PlayersCollections.ACTIVE_COLLECTIONS.size() + " collections");
+        for (PlayersCollections collection : PlayersCollections.ACTIVE_COLLECTIONS) {
+            ensureIndexes(collection);
+        }
+        ChatUtils.MessageType.PLAYER_SERVICE.sendMessage("Finished ensuring player indexes");
+    }
+
+    private void ensureIndexes(PlayersCollections collection) {
+        ensureLastLoginIndex(collection);
+        ensureUuidUniqueIndex(collection);
+    }
+
+    private void ensureLastLoginIndex(PlayersCollections collection) {
+        Index lastLoginIndex = new Index().on("last_login", Sort.Direction.ASC);
+        try {
+            String indexName = mongoTemplate.indexOps(collection.collectionName).ensureIndex(lastLoginIndex);
+            ChatUtils.MessageType.PLAYER_SERVICE.sendMessage("Ensured last_login index on " + collection.collectionName + " (" + indexName + ")");
+        } catch (Exception e) {
+            ChatUtils.MessageType.PLAYER_SERVICE.sendErrorMessage("Failed to ensure last_login index on " + collection.collectionName);
+            ChatUtils.MessageType.PLAYER_SERVICE.sendErrorMessage(e);
+            throw e;
+        }
+    }
+
+    private void ensureUuidUniqueIndex(PlayersCollections collection) {
+        Index uuidIndex = new Index().on("uuid", Sort.Direction.ASC).unique();
+        try {
+            String indexName = mongoTemplate.indexOps(collection.collectionName).ensureIndex(uuidIndex);
+            ChatUtils.MessageType.PLAYER_SERVICE.sendMessage("Ensured unique uuid index on " + collection.collectionName + " (" + indexName + ")");
+        } catch (Exception e) {
+            ChatUtils.MessageType.PLAYER_SERVICE.sendMessage("Unique uuid index failed on " + collection.collectionName + ", deduping then retrying");
+            ChatUtils.MessageType.PLAYER_SERVICE.sendErrorMessage(e);
+            removeDuplicateUuids(collection);
+            try {
+                String indexName = mongoTemplate.indexOps(collection.collectionName).ensureIndex(uuidIndex);
+                ChatUtils.MessageType.PLAYER_SERVICE.sendMessage("Ensured unique uuid index on " + collection.collectionName + " after dedupe (" + indexName + ")");
+            } catch (Exception retry) {
+                ChatUtils.MessageType.PLAYER_SERVICE.sendErrorMessage("Failed to ensure unique uuid index on " + collection.collectionName);
+                ChatUtils.MessageType.PLAYER_SERVICE.sendErrorMessage(retry);
+                throw retry;
+            }
+        }
+    }
+
+    private void removeDuplicateUuids(PlayersCollections collection) {
+        Aggregation aggregation = Aggregation.newAggregation(
+                Aggregation.group("uuid").count().as("count"),
+                Aggregation.match(Criteria.where("count").gt(1))
+        );
+        List<Document> duplicateGroups = mongoTemplate.aggregate(aggregation, collection.collectionName, Document.class)
+                .getMappedResults();
+        int removed = 0;
+        for (Document group : duplicateGroups) {
+            Object rawUuid = group.get("_id");
+            if (rawUuid == null) {
+                continue;
+            }
+            UUID uuid = rawUuid instanceof UUID u ? u : UUID.fromString(rawUuid.toString());
+            List<DatabasePlayer> players = mongoTemplate.find(
+                    new Query(Criteria.where("uuid").is(uuid)),
+                    DatabasePlayer.class,
+                    collection.collectionName
+            );
+            if (players.size() < 2) {
+                continue;
+            }
+            DatabasePlayer keep = players.stream()
+                    .max(Comparator
+                            .comparing(DatabasePlayer::getLastLogin, Comparator.nullsFirst(Comparator.naturalOrder()))
+                            .thenComparingLong(DatabasePlayer::getExperience))
+                    .orElse(players.get(0));
+            for (DatabasePlayer player : players) {
+                if (player == keep || (keep.getId() != null && keep.getId().equals(player.getId()))) {
+                    continue;
+                }
+                mongoTemplate.remove(player, collection.collectionName);
+                removed++;
+            }
+        }
+        ChatUtils.MessageType.PLAYER_SERVICE.sendMessage("Removed " + removed + " duplicate uuid documents from " + collection.collectionName);
     }
 }

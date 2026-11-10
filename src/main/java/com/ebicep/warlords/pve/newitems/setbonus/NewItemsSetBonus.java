@@ -14,6 +14,7 @@ import java.util.Set;
 public enum NewItemsSetBonus implements SetBonus {
 
     AMBULANCE(new Ambulance()),
+    ASPIRE(new Aspire()),
     AXE(new Axe()),
     BATTERY(new Battery()),
     BELLICOSE(new Bellicose()),
@@ -22,6 +23,8 @@ public enum NewItemsSetBonus implements SetBonus {
     BULWARK(new Bulwark()),
     CENTURION(new Centurion()),
     CHARM(new Charm()),
+    CHOIR(new Choir()),
+    CONTAIN(new Contain()),
     CROSSFIRE(new Crossfire()),
     CROWN_OF_THORNS(new CrownOfThorns()),
     CELL(new Cell()),
@@ -60,10 +63,12 @@ public enum NewItemsSetBonus implements SetBonus {
     OMAMORI(new Omamori()),
     OMEN(new Omen()),
     OVERFLOW(new Overflow()),
+    PANACEA(new Panacea()),
     PHOENIX(new Phoenix()),
     PULSE_OF_AEONS(new PulseOfAeons()),
     PILLAGE(new Pillage()),
     REGENERATE(new Regenerate()),
+    RESERVOIR(new Reservoir()),
     RANDOM_EPIC(new RandomEpic()),
     RANDOM_RARE(new RandomRare()),
     RANDOM_COMMON(new RandomCommon()),
@@ -87,6 +92,7 @@ public enum NewItemsSetBonus implements SetBonus {
     VIAL(new Vial()),
     VOIDCARVER(new Voidcarver()),
     WELLSPRING(new Wellspring()),
+    WIELD(new Wield()),
 
     ;
 

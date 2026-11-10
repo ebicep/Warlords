@@ -12,6 +12,7 @@ import com.ebicep.warlords.player.ingame.WarlordsPlayer;
 import com.ebicep.warlords.player.ingame.cooldowns.CooldownTypes;
 import com.ebicep.warlords.player.ingame.cooldowns.cooldowns.RegularCooldown;
 import com.ebicep.warlords.player.ingame.instances.type.Modifier;
+import com.ebicep.warlords.util.bukkit.LocationUtils;
 import com.ebicep.warlords.util.java.MathUtils;
 import com.ebicep.warlords.util.warlords.modifiablevalues.FloatModifiable;
 import org.bukkit.Location;
@@ -19,6 +20,8 @@ import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
+import org.bukkit.event.player.PlayerMoveEvent;
+import org.bukkit.event.player.PlayerToggleFlightEvent;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -29,6 +32,7 @@ public class AirStrike implements SpecBoostManager.SpecBoost<AirStrike> {
     private float ascendHeight;
     private int ascendDurationTicks;
     private int airStrikeDurationTicks;
+    private float flySpeed;
     private float soulfireBeamDamageReductionPercent;
     private float soulfireBeamRangeDecrease;
     private float soulfireBeamHitboxIncrease;
@@ -40,6 +44,7 @@ public class AirStrike implements SpecBoostManager.SpecBoost<AirStrike> {
         this.ascendHeight = getValue("ascendHeight", float.class);
         this.ascendDurationTicks = getValue("ascendDurationTicks", int.class);
         this.airStrikeDurationTicks = getValue("airStrikeDurationTicks", int.class);
+        this.flySpeed = getValue("flySpeed", float.class);
         this.soulfireBeamDamageReductionPercent = getValue("soulfireBeamDamageReductionPercent", float.class);
         this.soulfireBeamRangeDecrease = getValue("soulfireBeamRangeDecrease", float.class);
         this.soulfireBeamHitboxIncrease = getValue("soulfireBeamHitboxIncrease", float.class);
@@ -136,7 +141,13 @@ public class AirStrike implements SpecBoostManager.SpecBoost<AirStrike> {
                                 warlordsEntity,
                                 CooldownTypes.SPEC_BOOST,
                                 cooldownManager1 -> {
-                                    warlordsEntity.teleportLocationOnly(location);
+                                    Location current = warlordsEntity.getLocation();
+                                    Location groundLocation = LocationUtils.getGroundLocation(current);
+                                    if (current.getY() - groundLocation.getY() <= ascendHeight) {
+                                        warlordsEntity.teleportLocationOnly(groundLocation);
+                                    } else {
+                                        warlordsEntity.teleportLocationOnly(current.clone().subtract(0, ascendHeight, 0));
+                                    }
                                 },
                                 cooldownManager1 -> {
                                     modifiers.forEach(FloatModifiable.FloatModifier::forceEnd);
@@ -209,6 +220,32 @@ public class AirStrike implements SpecBoostManager.SpecBoost<AirStrike> {
                                             event.setCancelled(true);
                                         }
                                     }
+
+                                    @EventHandler
+                                    public void onMove(PlayerMoveEvent event) {
+                                        if (!warlordsEntity.getEntity().equals(event.getPlayer())) {
+                                            return;
+                                        }
+                                        if (!event.getPlayer().isFlying()) {
+                                            return;
+                                        }
+                                        Location from = event.getFrom();
+                                        Location to = event.getTo();
+                                        if (to.getY() == from.getY()) {
+                                            return;
+                                        }
+                                        to.setY(from.getY());
+                                        event.setTo(to);
+                                    }
+
+                                    @EventHandler
+                                    public void onToggleFlight(PlayerToggleFlightEvent event) {
+                                        if (!warlordsEntity.getEntity().equals(event.getPlayer())) {
+                                            return;
+                                        }
+                                        event.setCancelled(true);
+                                        event.getPlayer().setFlying(true);
+                                    }
                                 };
                             }
                         }.addModifier(Modifier.MODIFY_OUTGOING_DAMAGE_BEFORE_INTERVENE, (e, currentDamageValue) -> {
@@ -226,7 +263,7 @@ public class AirStrike implements SpecBoostManager.SpecBoost<AirStrike> {
                         if (warlordsEntity.getEntity() instanceof Player player) {
                             player.setAllowFlight(true);
                             player.setFlying(true);
-                            player.setFlySpeed(0);
+                            player.setFlySpeed(flySpeed);
                         }
                         Location newLocation = new Location(location.getWorld(),
                                 MathUtils.lerp(location.getX(), targetLoc.getX(), ratio),

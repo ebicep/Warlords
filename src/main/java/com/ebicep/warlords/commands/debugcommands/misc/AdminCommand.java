@@ -28,7 +28,6 @@ public class AdminCommand extends BaseCommand {
 
     public static final Set<DatabasePlayerPvE> BYPASSED_PLAYER_CURRENCIES = new HashSet<>();
     public static final Set<UUID> BYPASS_INTERACT_CANCEL = new HashSet<>();
-    public static boolean DISABLE_RESTART_CHECK = false;
     public static boolean DISABLE_SPECTATOR_MESSAGES = false;
     public static boolean NEW_SWIMMING = false;
 
@@ -51,14 +50,6 @@ public class AdminCommand extends BaseCommand {
     public void disableGames(CommandIssuer issuer) {
         GameManager.gameStartingDisabled = !GameManager.gameStartingDisabled;
         ChatChannels.sendDebugMessage(issuer, Component.text("Disabled Games = " + GameManager.gameStartingDisabled, NamedTextColor.GREEN));
-    }
-
-    @Subcommand("disablerestartcheck")
-    @CommandPermission("group.administrator")
-    @Description("Removes restart check that prevents games from being started")
-    public void disableRestartCheck(CommandIssuer issuer) {
-        DISABLE_RESTART_CHECK = !DISABLE_RESTART_CHECK;
-        ChatChannels.sendDebugMessage(issuer, Component.text("Restart Check = " + DISABLE_RESTART_CHECK, NamedTextColor.GREEN));
     }
 
     @Subcommand("removenearbyentities")

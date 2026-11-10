@@ -83,7 +83,7 @@ public class NewItemsUtils {
         for (NewItemAttribute attribute : totalAttributeValues.keySet()) {
             if (attribute != NewItemAttribute.HEALTH && NewItemAttribute.BASIC_ATTRIBUTE_SET.contains(attribute)) {
                 basicAttributeCount++;
-            } else if (NewItemAttribute.BONUS_ATTRIBUTE_SET.contains(attribute)) {
+            } else if (NewItemAttribute.DISPLAY_ORDER_SET.contains(attribute)) {
                 bonusAttributeCount++;
             }
         }
@@ -107,7 +107,7 @@ public class NewItemsUtils {
         }
         if (bonusAttributeCount > 0) {
             components.add(Component.text("Bonus Attributes:", NamedTextColor.GRAY));
-            for (NewItemAttribute bonusAttribute : NewItemAttribute.BONUS_ATTRIBUTES) {
+            for (NewItemAttribute bonusAttribute : NewItemAttribute.DISPLAY_ORDER) {
                 Float value = totalAttributeValues.get(bonusAttribute);
                 if (value != null) {
                     components.add(bonusAttribute.formatValue(value, "+"));

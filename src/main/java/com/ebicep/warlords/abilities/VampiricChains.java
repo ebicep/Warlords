@@ -13,6 +13,7 @@ import com.ebicep.warlords.util.warlords.PlayerFilter;
 import com.ebicep.warlords.util.warlords.Utils;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
+import net.kyori.adventure.text.format.TextColor;
 import org.bukkit.Bukkit;
 import org.bukkit.Particle;
 import org.bukkit.entity.Player;
@@ -29,9 +30,9 @@ public class VampiricChains extends AbstractAbility implements BlueAbilityIcon, 
     private int enemiesAffected = 3;
     private int linkBreakRadius = 18;
     private int castRange = 12;
-    private float maxHealthDamage = 2;
+    private float maxHealthDamage = 4;
     private int healRadius = 6;
-    private float healCap = 500;
+    private float healCap = 700;
 
     public VampiricChains() {
         super(AbstractAbilityBuilder.create("vampiricChains").pvp());
@@ -98,7 +99,7 @@ public class VampiricChains extends AbstractAbility implements BlueAbilityIcon, 
                 Collections.singletonList((cooldown, ticksLeft, ticksElapsed) -> {
                     Set<WarlordsEntity> linkedEntities = cooldown.getLinkedEntities();
                     if (ticksElapsed % 20 == 0) {
-                        for (WarlordsEntity linked : linkedEntities) {
+                        for (WarlordsEntity linked : new HashSet<>(linkedEntities)) {
                             float healthDamage = linked.getMaxHealth() * maxHealthDamage / 100f;
                             healthDamage = DamageCheck.clamp(healthDamage);
                             linked.addInstance(InstanceBuilder
@@ -115,30 +116,33 @@ public class VampiricChains extends AbstractAbility implements BlueAbilityIcon, 
                     if (ticksElapsed % 8 != 0) {
                         return;
                     }
-                    Set<WarlordsEntity> toRemove = new HashSet<>();
-                    for (WarlordsEntity linked : linkedEntities) {
+                    for (WarlordsEntity linked : new HashSet<>(linkedEntities)) {
                         boolean outOfRange = wp.getLocation().distanceSquared(linked.getLocation()) > linkBreakRadius * linkBreakRadius;
+                        boolean dead = linked.isDead();
+                        if (!dead) {
+                            EffectUtils.playParticleLinkAnimation(wp.getLocation(), linked.getLocation(), 200, 50, 50, 1, 1.25f);
+                        }
+                        if (!outOfRange && !dead) {
+                            continue;
+                        }
+                        cooldown.unlink(linked);
                         if (outOfRange) {
-                            linked.getCooldownManager().removeCooldownNoForce(cooldown);
                             Utils.playGlobalSound(linked.getLocation(), "rogue.remedicchains.impact", 0.1f, 1.4f);
                             EffectUtils.displayParticle(Particle.DAMAGE_INDICATOR, linked.getLocation().add(0, 1, 0), 10, 0.5, 0.5, 0.5, 1);
                             stats.numberOfBrokenLinks++;
                         }
-                        EffectUtils.playParticleLinkAnimation(wp.getLocation(), linked.getLocation(), 200, 50, 50, 1, 1.25f);
-                        if (outOfRange || linked.isDead()) {
-                            toRemove.add(linked);
-                        }
-                    }
-                    linkedEntities.removeAll(toRemove);
-                    if (linkedEntities.isEmpty()) {
-                        cooldown.setTicksLeft(1);
                     }
                 }),
                 enemiesNear
-        );
-        wp.getCooldownManager().removeCooldown(VampiricChainsData.class, false);
+        ) {
+            @Override
+            public TextColor customActionBarColor(WarlordsEntity warlordsEntity) {
+                return warlordsEntity.equals(wp) ? NamedTextColor.GREEN : NamedTextColor.RED;
+            }
+        };
+        wp.getCooldownManager().removeCooldown(cd -> cd.getCooldownObject() instanceof VampiricChainsData && cd.getFrom().equals(wp), false);
         wp.getCooldownManager().addCooldown(vampiricChainsCooldown);
-        enemiesNear.forEach(entity -> entity.getCooldownManager().removeCooldown(VampiricChainsData.class, false));
+        enemiesNear.forEach(entity -> entity.getCooldownManager().removeCooldown(cd -> cd.getCooldownObject() instanceof VampiricChainsData && cd.getFrom().equals(wp), false));
         enemiesNear.forEach(entity -> entity.getCooldownManager().addCooldown(vampiricChainsCooldown));
         addSecondaryAbility(
                 1,

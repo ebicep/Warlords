@@ -64,6 +64,7 @@ public class ChainHeal extends AbstractChain<ChainHeal, ChainHeal.ChainHealStats
             }
             chain(wp.getLocation(), chainTarget.getLocation());
             hitCounter.add(chainTarget);
+            Bukkit.getPluginManager().callEvent(new WarlordsAbilityTargetEvent.WarlordsBlueAbilityTargetEvent(wp, name, chainTarget));
             additionalBounce(wp, hitCounter, chainTarget, new ArrayList<>(Arrays.asList(wp, chainTarget)), 0);
             break;
         }

@@ -85,6 +85,8 @@ public class MysticalBarrier extends AbstractAbility implements BlueAbilityIcon,
             ) {
                 giveBarrier(wp, target);
             }
+        } else if (pveMasterUpgrade) {
+            giveBarrier(wp, wp);
         } else {
             List<WarlordsEntity> targets = PlayerFilter
                     .entitiesAround(wp, radius, radius, radius)
@@ -255,12 +257,9 @@ public class MysticalBarrier extends AbstractAbility implements BlueAbilityIcon,
 
             @Override
             public PlayerNameData addPrefixFromOther() {
-                return new PlayerNameData(Component.text((int) (shield.getShieldHealth()), NamedTextColor.YELLOW), we -> we.isTeammate(from));
+                return PlayerNameData.shieldHealth(shield, we -> we.isTeammate(from), NamedTextColor.YELLOW);
             }
-        }.addModifier(Modifier.ON_OUTGOING_SHIELD_DAMAGE, (event, currentDamageValue, isCrit) -> {
-                    event.getWarlordsEntity().getCooldownManager().queueUpdatePlayerNames();
-                }
-        ));
+        });
     }
 
     @Override

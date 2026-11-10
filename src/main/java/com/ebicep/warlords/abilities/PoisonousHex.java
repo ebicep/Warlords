@@ -144,14 +144,17 @@ public class PoisonousHex extends AbstractPiercingProjectile<PoisonousHex, Poiso
 
             @Override
             public PlayerNameData addSuffixFromOther() {
-                boolean flag = new CooldownFilter<>(to, RegularCooldown.class).filterCooldownClass(PoisonousHex.class).stream().count() == fromHex.maxStacks;
-                return new PlayerNameData(Component.text("PHEX", CooldownTypes.HIGH_LEVEL_DEBUFF_COLOR).decoration(TextDecoration.BOLD, flag),
+                return PlayerNameData.dynamic(
+                        () -> {
+                            boolean flag = new CooldownFilter<>(to, RegularCooldown.class).filterCooldownClass(PoisonousHex.class).stream().count() == fromHex.maxStacks;
+                            return Component.text("PHEX", CooldownTypes.HIGH_LEVEL_DEBUFF_COLOR).decoration(TextDecoration.BOLD, flag);
+                        },
                         we -> we.isTeammate(from) && we.getSpecClass() == Specializations.CONJURER
                 );
             }
 
             @Override
-            public TextColor customActionBarColor() {
+            public TextColor customActionBarColor(WarlordsEntity warlordsEntity) {
                 return CooldownTypes.HIGH_LEVEL_DEBUFF_COLOR;
             }
         });

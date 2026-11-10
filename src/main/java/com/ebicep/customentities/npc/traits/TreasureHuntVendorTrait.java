@@ -1,5 +1,7 @@
 package com.ebicep.customentities.npc.traits;
 
+import com.ebicep.customentities.npc.HasNPCLabelHologram;
+import com.ebicep.customentities.npc.NPCLabelHologram;
 import com.ebicep.customentities.npc.WarlordsTrait;
 import com.ebicep.warlords.database.DatabaseManager;
 import com.ebicep.warlords.database.repositories.player.PlayersCollections;
@@ -12,13 +14,11 @@ import com.ebicep.warlords.pve.SpendableBuyShop;
 import com.ebicep.warlords.pve.mobs.Mob;
 import com.ebicep.warlords.pve.mobs.MobDrop;
 import com.ebicep.warlords.pve.weapons.menu.WeaponCraftMenu;
+import com.ebicep.warlords.util.bukkit.ComponentBuilder;
 import com.ebicep.warlords.util.bukkit.ItemBuilder;
-import com.ebicep.warlords.util.java.DateUtil;
 import net.citizensnpcs.api.event.NPCRightClickEvent;
-import net.citizensnpcs.trait.HologramTrait;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
-import org.bukkit.ChatColor;
 import org.bukkit.Material;
 import org.bukkit.Sound;
 import org.bukkit.entity.Player;
@@ -27,7 +27,9 @@ import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 
-public class TreasureHuntVendorTrait extends WarlordsTrait {
+public class TreasureHuntVendorTrait extends WarlordsTrait implements HasNPCLabelHologram {
+
+    private final NPCLabelHologram labelHologram = new NPCLabelHologram("lobby-treasure-hunt-vendor");
 
     private static final List<SpendableBuyShop> SHOP = List.of(
             new SpendableBuyShop(1, Currencies.VOID_STAR_PIECE, 1, 500),
@@ -116,28 +118,16 @@ public class TreasureHuntVendorTrait extends WarlordsTrait {
     }
 
     @Override
-    public void onAttach() {
-        HologramTrait hologramTrait = npc.getOrAddTrait(HologramTrait.class);
-        hologramTrait.setLine(0, ChatColor.GOLD + "Archimedes");
+    public NPCLabelHologram getLabelHologram() {
+        return labelHologram;
     }
 
-    private int ticksElapsed = 0;
-
     @Override
-    public void run() {
-//        if (ticksElapsed++ % 600 != 0) {
-//            return;
-//        }
-//        HologramTrait hologramTrait = npc.getOrAddTrait(HologramTrait.class);
-//        String timeTill = DateUtil.getTimeTill(DateUtil.getResetDateLatestMonday(),
-//                true,
-//                true,
-//                true,
-//                false
-//        );
-//        if (!timeTill.equals("0 seconds")) {
-//            hologramTrait.setLine(1, ChatColor.RED.toString() + ChatColor.BOLD + "Next Shipment in " + timeTill);
-//        }
+    public void onSpawn() {
+        labelHologram.update(
+                npc,
+                ComponentBuilder.create("Archimedes", NamedTextColor.GOLD).build()
+        );
     }
 
     @Override

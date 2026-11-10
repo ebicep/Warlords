@@ -174,16 +174,16 @@ public class ThunderLineBarrageAbility {
                     double x = a.getX() + dir.getX() * d;
                     double y = a.getY() + 0.2; // slightly above ground
                     double z = a.getZ() + dir.getZ() * d;
-                    w.spawnParticle(Particle.DUST, x, y, z, 1, 0, 0, 0, 0.0, telegraphDust);
+                    EffectUtils.displayParticle(Particle.DUST, new Location(w, x, y, z), 1, 0, 0, 0, 0.0, telegraphDust);
                 }
             }
         }
     }
 
     private void performStrike(World w, Location strikeLoc) {
-        w.spawnParticle(Particle.ELECTRIC_SPARK, strikeLoc.clone().add(0, 1.0, 0), 12, 0.25, 0.25, 0.25, 0.0);
-        w.spawnParticle(Particle.DUST, strikeLoc.clone().add(0, 0.5, 0), 4, 0.12, 0.12, 0.12, 0.0, strikeDust);
-        w.spawnParticle(Particle.END_ROD, strikeLoc.clone().add(0, 1.2, 0), 2, 0.03, 0.03, 0.03, 0.0);
+        EffectUtils.displayParticle(Particle.ELECTRIC_SPARK, strikeLoc.clone().add(0, 1.0, 0), 12, 0.25, 0.25, 0.25, 0.0);
+        EffectUtils.displayParticle(Particle.DUST, strikeLoc.clone().add(0, 0.5, 0), 4, 0.12, 0.12, 0.12, 0.0, strikeDust);
+        EffectUtils.displayParticle(Particle.END_ROD, strikeLoc.clone().add(0, 1.2, 0), 2, 0.03, 0.03, 0.03, 0.0);
         EffectUtils.strikeLightning(strikeLoc, false);
 
         Utils.playGlobalSound(strikeLoc, Sound.ENTITY_LIGHTNING_BOLT_THUNDER, 2.4f, 0.9f);

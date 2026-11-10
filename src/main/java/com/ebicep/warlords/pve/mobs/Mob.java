@@ -35,6 +35,7 @@ import com.ebicep.warlords.pve.mobs.pigzombie.PigAlleviator;
 import com.ebicep.warlords.pve.mobs.pigzombie.PigDisciple;
 import com.ebicep.warlords.pve.mobs.pigzombie.PigParticle;
 import com.ebicep.warlords.pve.mobs.pigzombie.PigShaman;
+import com.ebicep.warlords.pve.mobs.paradox.*;
 import com.ebicep.warlords.pve.mobs.player.*;
 import com.ebicep.warlords.pve.mobs.skeleton.*;
 import com.ebicep.warlords.pve.mobs.slime.LurkingSlime;
@@ -67,6 +68,8 @@ import org.bukkit.enchantments.Enchantment;
 import org.bukkit.entity.EntityType;
 import org.bukkit.inventory.EntityEquipment;
 import org.bukkit.inventory.ItemStack;
+import org.bukkit.inventory.meta.trim.TrimMaterial;
+import org.bukkit.inventory.meta.trim.TrimPattern;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -464,6 +467,49 @@ public enum Mob {
     )
     ),
 
+    // Endless Paradox fragment guardians
+    CHRONO_WARDEN(EntityType.ZOMBIE, ChronoWarden.class, ChronoWarden::new, ChronoWarden::new, new Utils.SimpleEntityEquipment(
+            SkullUtils.getSkullFrom(SkullID.HOURGLASS),
+            Utils.applyColorTo(Material.LEATHER_CHESTPLATE, 186, 142, 48),
+            Utils.applyColorTo(Material.LEATHER_LEGGINGS, 160, 118, 36),
+            Utils.applyColorTo(Material.LEATHER_BOOTS, 120, 88, 24),
+            Weapons.SILVER_PHANTASM_STAFF.getItem()
+    )
+    ),
+    AMETHYST_GUARD(EntityType.ZOMBIE, AmethystGuard.class, AmethystGuard::new, AmethystGuard::new, new Utils.SimpleEntityEquipment(
+            SkullUtils.getSkullFrom(SkullID.AMETHYST_KNIGHT),
+            Utils.applyColorTo(Material.LEATHER_CHESTPLATE, 140, 70, 210),
+            Utils.applyColorTo(Material.LEATHER_LEGGINGS, 110, 50, 175),
+            Utils.applyColorTo(Material.LEATHER_BOOTS, 80, 30, 140),
+            Weapons.SOUL_REAVER.getItem()
+    )
+    ),
+    CRYSTAL_SENTINEL(EntityType.ZOMBIE, CrystalSentinel.class, CrystalSentinel::new, CrystalSentinel::new, new Utils.SimpleEntityEquipment(
+            SkullUtils.getSkullFrom(SkullID.CRYSTAL_KNIGHT),
+            Utils.applyColorTo(Material.LEATHER_CHESTPLATE, 80, 210, 220),
+            Utils.applyColorTo(Material.LEATHER_LEGGINGS, 60, 175, 190),
+            Utils.applyColorTo(Material.LEATHER_BOOTS, 40, 140, 160),
+            Weapons.NETHERSTEEL_KATANA.getItem(),
+            new ItemStack(Material.SHIELD)
+    )
+    ),
+    PARADOX_SHADE(EntityType.WITHER_SKELETON, ParadoxShade.class, ParadoxShade::new, ParadoxShade::new, new Utils.SimpleEntityEquipment(
+            SkullUtils.getSkullFrom(SkullID.GHOST_KNIGHT),
+            Utils.applyColorTo(Material.LEATHER_CHESTPLATE, 45, 20, 70),
+            Utils.applyColorTo(Material.LEATHER_LEGGINGS, 30, 12, 50),
+            Utils.applyColorTo(Material.LEATHER_BOOTS, 18, 8, 32),
+            Weapons.FABLED_HEROICS_SCYTHE.getItem()
+    )
+    ),
+    CLOCKBOUND_PHANTOM(EntityType.SKELETON, ClockboundPhantom.class, ClockboundPhantom::new, ClockboundPhantom::new, new Utils.SimpleEntityEquipment(
+            SkullUtils.getSkullFrom(SkullID.GHOST_CLOCK_MASK),
+            Utils.applyColorTo(Material.LEATHER_CHESTPLATE, 220, 200, 140),
+            Utils.applyColorTo(Material.LEATHER_LEGGINGS, 190, 170, 110),
+            Utils.applyColorTo(Material.LEATHER_BOOTS, 150, 130, 80),
+            Weapons.SILVER_PHANTASM_SWORD.getItem()
+    )
+    ),
+
     // Champion
     NIGHTMARE_ZOMBIE(EntityType.ZOMBIE, NightmareZombie.class, NightmareZombie::new, NightmareZombie::new, new Utils.SimpleEntityEquipment(
             SkullUtils.getSkullFrom(SkullID.SHADOW_DEMON),
@@ -631,6 +677,14 @@ public enum Mob {
             Weapons.WALKING_STICK.getItem()
     )
     ),
+    ECHO_OF_GRADIENT(EntityType.ZOMBIE, EchoOfGradient.class, EchoOfGradient::new, EchoOfGradient::new, new Utils.SimpleEntityEquipment(
+            SkullUtils.getSkullFrom(SkullID.GHOST_GRAY),
+            Utils.applyColorTo(Material.LEATHER_CHESTPLATE, 150, 145, 135),
+            Utils.applyColorTo(Material.LEATHER_LEGGINGS, 120, 115, 105),
+            Utils.applyColorTo(Material.LEATHER_BOOTS, 90, 88, 80),
+            Weapons.WARLORDS_II_SOUL_COLLECTOR.getItem()
+    )
+    ),
     MITHRA(EntityType.ZOMBIE, Mithra.class, Mithra::new, Mithra::new, new Utils.SimpleEntityEquipment(
             SkullUtils.getSkullFrom(SkullID.IRON_QUEEN),
             Utils.applyColorTo(Material.LEATHER_CHESTPLATE, 200, 200, 200),
@@ -654,6 +708,15 @@ public enum Mob {
             Utils.applyColorTo(Material.LEATHER_LEGGINGS, 120, 120, 200),
             Utils.applyColorTo(Material.LEATHER_BOOTS, 120, 120, 200),
             Weapons.NEW_LEAF_SCYTHE.getItem()
+    )
+    ),
+    CHRONARCH(EntityType.ZOMBIE, Chronarch.class, Chronarch::new, Chronarch::new, new Utils.SimpleEntityEquipment(
+            SkullUtils.getSkullFrom(SkullID.STEAM_GOLEM_GOLDEN),
+            new ItemStack(Material.DIAMOND_CHESTPLATE),
+            new ItemStack(Material.DIAMOND_LEGGINGS),
+            new ItemStack(Material.DIAMOND_BOOTS),
+            Weapons.WARLORDS_II_WAXWEAVER.getItem(),
+            new ItemStack(Material.CLOCK)
     )
     ),
     TORMENT(EntityType.WITHER_SKELETON, Torment.class, Torment::new, Torment::new, new Utils.SimpleEntityEquipment(
@@ -734,15 +797,32 @@ public enum Mob {
     ),
     RAID_MITHRA(EntityType.WITHER_SKELETON, RaidMithra.class, RaidMithra::new, RaidMithra::new, new Utils.SimpleEntityEquipment(
             SkullUtils.getSkullFrom(SkullID.IRON_QUEEN),
-            Utils.applyColorTo(Material.LEATHER_CHESTPLATE, 240, 240, 250),
-            Utils.applyColorTo(Material.LEATHER_LEGGINGS, 35, 28, 48),
-            Utils.applyColorTo(Material.LEATHER_BOOTS, 225, 225, 238),
-            Weapons.WARLORDS_II_AWAKENED_LICHBLADE.getItem(),
+            Utils.applyTrimTo(Material.NETHERITE_CHESTPLATE, TrimMaterial.AMETHYST, TrimPattern.EYE),
+            Utils.applyTrimTo(Material.NETHERITE_LEGGINGS, TrimMaterial.AMETHYST, TrimPattern.EYE),
+            Utils.applyTrimTo(Material.NETHERITE_BOOTS, TrimMaterial.AMETHYST, TrimPattern.EYE),
+            Weapons.WARLORDS_II_REQUIEM_OF_THE_NINTH_ABYSS.getItem(),
             new ItemStack(Material.SHIELD)
     )
     ),
     MAGMATIC_OOZE(EntityType.MAGMA_CUBE, MagmaticOoze.class, MagmaticOoze::new, MagmaticOoze::new, null),
     ENAVURIS(EntityType.ENDERMAN, Enavuris.class, Enavuris::new, Enavuris::new, null),
+    UMBRA_DESCENDANT(EntityType.WITHER_SKELETON, UmbraDescendant.class, UmbraDescendant::new, UmbraDescendant::new, new Utils.SimpleEntityEquipment(
+            SkullUtils.getSkullFrom(SkullID.PURPLE_ENDERMAN),
+            Utils.applyColorTo(Material.LEATHER_CHESTPLATE, 120, 40, 180),
+            Utils.applyColorTo(Material.LEATHER_LEGGINGS, 90, 25, 140),
+            Utils.applyColorTo(Material.LEATHER_BOOTS, 50, 10, 80),
+            Weapons.VORPAL_SWORD.getItem()
+    )
+    ),
+    ABYSS_DESCENDANT(EntityType.WITHER_SKELETON, AbyssDescendant.class, AbyssDescendant::new, AbyssDescendant::new, new Utils.SimpleEntityEquipment(
+            SkullUtils.getSkullFrom(SkullID.VOID_KNIGHT),
+            Utils.applyColorTo(Material.LEATHER_CHESTPLATE, 35, 0, 55),
+            Utils.applyColorTo(Material.LEATHER_LEGGINGS, 25, 0, 40),
+            Utils.applyColorTo(Material.LEATHER_BOOTS, 15, 0, 25),
+            Weapons.VOID_EDGE.getItem(),
+            new ItemStack(Material.AMETHYST_CLUSTER)
+    )
+    ),
 
     // Boss minions
     BOLTARO_SHADOW(EntityType.ZOMBIE, BoltaroShadow.class, BoltaroShadow::new, BoltaroShadow::new, new Utils.SimpleEntityEquipment(
@@ -1308,13 +1388,14 @@ public enum Mob {
     public static final Mob[] INTERMEDIATE = {
             HOUND, INTERMEDIATE_WARRIOR_BERSERKER, SKELETAL_WARLOCK, PIG_SHAMAN,
             BLAZING_KINDLE, WANDER_KNIGHTS, ZOMBIE_SWORDSMAN, ZOMBIE_LAMENT, IVORY_RONIN,
-            GRAVE_KNIGHT, ASHEN_PHYSICIAN, VEILED_CULTIST, SUNKEN_DELVER
+            GRAVE_KNIGHT, ASHEN_PHYSICIAN, VEILED_CULTIST, SUNKEN_DELVER,
+            WITCH_DEACON, PIG_ALLEVIATOR, CLOCKBOUND_PHANTOM
     };
     public static final Mob[] ADVANCED = {
-            ILLUMINATION, GOLEM_APPRENTICE, SCRUPULOUS_ZOMBIE, CELESTIAL_BOW_WIELDER,
+            ILLUMINATION, GOLEM_APPRENTICE, CELESTIAL_BOW_WIELDER,
             ZOMBIE_VANGUARD, ADVANCED_WARRIOR_BERSERKER,
-            ZOMBIE_RAIDER, SKELETAL_ENTROPY, WITCH_DEACON, PIG_ALLEVIATOR, PALE_SERAPH,
-            DUNE_JACKAL, ROTVEIL_MARAUDER
+            ZOMBIE_RAIDER, SKELETAL_ENTROPY, PALE_SERAPH,
+            DUNE_JACKAL, ROTVEIL_MARAUDER, WANDER_WALKER
     };
     public static final Mob[] ELITE = {
             CELESTIAL_SWORD_WIELDER,
@@ -1327,9 +1408,11 @@ public enum Mob {
             SKELETAL_MESMER,
             ZOMBIE_KNIGHT,
             VOID_ZOMBIE,
-            WANDER_WALKER,
             SLIME_GUARD,
-            FIRE_SPLITTER
+            FIRE_SPLITTER,
+            SCRUPULOUS_ZOMBIE,
+            CELESTIAL_OPUS,
+            SOVEREIGN_GUARDIAN
     };
     public static final Mob[] CHAMPION = {
             NIGHTMARE_ZOMBIE,
@@ -1337,11 +1420,18 @@ public enum Mob {
             EXTREME_ZEALOT,
             SMART_SKELETON,
             SKELETAL_SORCERER,
-            CELESTIAL_OPUS,
             OBSIDIAN_SENTINEL,
             SLIMY_CHESS,
-            SOVEREIGN_GUARDIAN,
-            ABYSS_WATCHER
+            ABYSS_WATCHER,
+            ENDERMAN_ANOMALY,
+            LANTERN_DREDGER,
+            BARNACLE_BRUTE,
+            SILTSTALKER,
+            VOID_JAILER,
+            SOULBINDER,
+            DEVOURING_IDOL,
+            ENAVURITE,
+            VANISHING_ENAVURITE
     };
     public static final Mob[] BOSS_MINIONS = {
             BOLTARO_SHADOW,
@@ -1365,18 +1455,26 @@ public enum Mob {
             BOLTARO,
             GHOULCALLER,
             NARMER,
+            ECHO_OF_GRADIENT,
             MITHRA,
             ZENITH,
             MAGMATIC_OOZE,
             ILLUMINA,
             VOID,
             TORMENT,
-            ONE_OF_NINE,
             ORBYZ,
+            ONE_OF_NINE,
             LILIUM,
-            VEILKEEPER,
-            CENTURION,
-            VANGUARD
+            CHESSKING,
+            CHRONARCH,
+            PHYSIRA,
+            ENAVURIS,
+            UMBRA_DESCENDANT,
+            ABYSS_DESCENDANT,
+//            RAID_MITHRA,
+//            VANGUARD,
+//            CENTURION,
+//            VEILKEEPER,
     };
     public static final Mob[] EVENT_BOSSES = {
             EVENT_BOLTARO, EVENT_NARMER, EVENT_MITHRA, EVENT_ILLUSION_CORE, EVENT_EXILED_CORE, EVENT_CALAMITY_CORE, EVENT_ILLUMINA,

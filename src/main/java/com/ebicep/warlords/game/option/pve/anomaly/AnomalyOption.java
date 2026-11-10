@@ -32,21 +32,24 @@ import java.util.concurrent.ThreadLocalRandom;
 public class AnomalyOption extends AbstractAnomalyOption {
 
     public static final int OBJECTIVE_COUNT = 3;
-    public static final int OBJECTIVE_DURATION_TICKS = 120 * GameRunnable.SECOND;
-    private static final int MOB_SPAWN_INTERVAL = 10; // ticks
+    public static final int OBJECTIVE_DURATION_TICKS = 100 * GameRunnable.SECOND;
+    private static final int MOB_SPAWN_INTERVAL = 8;
     private static final int BASE_RELIC_HEALTH = 25_000;
     private static final int[] BOSS_TRIGGER_TICKS = {
-            30 * GameRunnable.SECOND,
-            60 * GameRunnable.SECOND,
-            90 * GameRunnable.SECOND
+            25 * GameRunnable.SECOND,
+            50 * GameRunnable.SECOND,
+            75 * GameRunnable.SECOND
     };
     private static final Mob[] RELIC_BOSSES = {
             Mob.GHOULCALLER,
             Mob.MITHRA,
-            Mob.BOLTARO
+            Mob.BOLTARO,
+            Mob.ECHO_OF_GRADIENT,
+            Mob.CHESSKING
     };
 
     private final boolean[] objectiveSuccess = new boolean[OBJECTIVE_COUNT];
+    private final List<Mob> availableRelicBosses = new ArrayList<>();
 
     private AnomalyRelic activeRelic;
     private AbstractMob activeBoss;
@@ -56,6 +59,7 @@ public class AnomalyOption extends AbstractAnomalyOption {
     private int bossPhasesStarted;
     private int preparationTicks = START_DELAY_TICKS;
     private boolean defeated;
+    private SimpleScoreboardHandler objectiveScoreboardHandler;
 
     @Override
     public void register(@Nonnull Game game) {
@@ -77,13 +81,18 @@ public class AnomalyOption extends AbstractAnomalyOption {
                 respawnLocation.setPitch(playerRespawnLocation.getPitch());
             }
         });
-        game.registerGameMarker(ScoreboardHandler.class, new SimpleScoreboardHandler(5, "anomaly_objective") {
+        game.registerGameMarker(ScoreboardHandler.class, objectiveScoreboardHandler = new SimpleScoreboardHandler(5, "anomaly_objective") {
             @Nonnull
             @Override
             public List<Component> computeLines(@Nullable WarlordsPlayer player) {
                 return getObjectiveScoreboard();
             }
         });
+    }
+
+    @Override
+    protected boolean[] getCacheEligibility() {
+        return objectiveSuccess;
     }
 
     @Override
@@ -113,6 +122,9 @@ public class AnomalyOption extends AbstractAnomalyOption {
                     return;
                 }
                 incrementTicks();
+                if (objectiveScoreboardHandler != null && getTicksElapsed() % 20 == 0) {
+                    objectiveScoreboardHandler.markChanged();
+                }
                 if (preparationTicks > 0) {
                     preparationTicks--;
                 }
@@ -152,6 +164,12 @@ public class AnomalyOption extends AbstractAnomalyOption {
         objectiveTicks = 0;
         bossPhasesStarted = 0;
         activeBoss = null;
+        availableRelicBosses.clear();
+        for (Mob relicBoss : RELIC_BOSSES) {
+            if (!availableRelicBosses.contains(relicBoss)) {
+                availableRelicBosses.add(relicBoss);
+            }
+        }
         clearHostileMobs();
         AnomalyObjectiveMarker marker = getObjectiveMarker(objectiveIndex);
         playerRespawnLocation = marker.getLocation().clone().add(0, 1, 0);
@@ -161,6 +179,13 @@ public class AnomalyOption extends AbstractAnomalyOption {
         game.addNPC(relicNpc);
         announce(Component.text("Defend Relic " + (objectiveIndex + 1) + " for 2 minutes!", NamedTextColor.YELLOW));
         game.forEachOnlinePlayer((player, team) -> player.playSound(player.getLocation(), Sound.BLOCK_BEACON_ACTIVATE, 2, 1));
+        markObjectiveScoreboardChanged();
+    }
+
+    private void markObjectiveScoreboardChanged() {
+        if (objectiveScoreboardHandler != null) {
+            objectiveScoreboardHandler.markChanged();
+        }
     }
 
     private void completeCurrentObjective() {
@@ -175,6 +200,7 @@ public class AnomalyOption extends AbstractAnomalyOption {
         clearHostileMobs();
         teleportToNextObjective();
         scheduleNextObjective();
+        markObjectiveScoreboardChanged();
     }
 
     private void failAnomaly() {
@@ -190,6 +216,7 @@ public class AnomalyOption extends AbstractAnomalyOption {
         removeActiveRelic();
         clearHostileMobs();
         Bukkit.getPluginManager().callEvent(new WarlordsGameTriggerWinEvent(game, this, Team.RED));
+        markObjectiveScoreboardChanged();
     }
 
     private boolean shouldStartBossPhase() {
@@ -197,9 +224,14 @@ public class AnomalyOption extends AbstractAnomalyOption {
     }
 
     private void startBossPhase() {
+        if (availableRelicBosses.isEmpty()) {
+            bossPhasesStarted = BOSS_TRIGGER_TICKS.length;
+            return;
+        }
+
         clearHostileMobs();
 
-        Mob bossType = RELIC_BOSSES[(activeObjective + bossPhasesStarted) % RELIC_BOSSES.length];
+        Mob bossType = availableRelicBosses.remove(ThreadLocalRandom.current().nextInt(availableRelicBosses.size()));
         Location spawnLocation = getBossSpawnLocation();
         activeBoss = bossType.createMob(spawnLocation);
         bossPhasesStarted++;
@@ -245,10 +277,11 @@ public class AnomalyOption extends AbstractAnomalyOption {
         }
         Location destination = getObjectiveMarker(nextObjective).getLocation().clone().add(0, 1, 0);
         playerRespawnLocation = destination.clone();
+        game.warlordsPlayers().forEach(warlordsPlayer -> warlordsPlayer.getCooldownManager().removeCooldownByName("Time Warp"));
         game.forEachOnlinePlayer((player, team) -> {
             player.teleport(destination);
             player.playSound(destination, Sound.ENTITY_ENDERMAN_TELEPORT, 1.5f, 1.1f);
-            player.playSound(destination, "raid.church.ding", 1, 0.5f);
+            player.playSound(destination, "raid.church.ding", 1.5f, 0.5f);
         });
         announce(Component.text("The party has been transported to Relic " + (nextObjective + 1) + ".", NamedTextColor.YELLOW));
     }
@@ -289,7 +322,7 @@ public class AnomalyOption extends AbstractAnomalyOption {
         if (progress < 0.34) {
             pool = Mob.BASIC;
         } else if (progress < 0.67) {
-            pool = ThreadLocalRandom.current().nextBoolean() ? Mob.BASIC : Mob.INTERMEDIATE;
+            pool = Mob.INTERMEDIATE;
         } else {
             int roll = ThreadLocalRandom.current().nextInt(3);
             pool = roll == 0 ? Mob.BASIC : roll == 1 ? Mob.ADVANCED : Mob.ELITE;
@@ -373,6 +406,7 @@ public class AnomalyOption extends AbstractAnomalyOption {
     @Override
     public void onGameCleanup(@Nonnull Game game) {
         activeBoss = null;
+        availableRelicBosses.clear();
         playerRespawnLocation = null;
         removeActiveRelic();
         super.onGameCleanup(game);

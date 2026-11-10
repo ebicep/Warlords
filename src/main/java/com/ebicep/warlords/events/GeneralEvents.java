@@ -196,6 +196,7 @@ public class GeneralEvents implements Listener {
         world.setGameRule(GameRules.RANDOM_TICK_SPEED, 0);
         world.setGameRule(GameRules.ADVANCE_TIME, false);
         world.setGameRule(GameRules.SPAWN_MOBS, false);
+        world.setGameRule(GameRules.LOCATOR_BAR, false);
         world.setTime(4000);
     }
 

@@ -9,7 +9,6 @@ import com.ebicep.warlords.Warlords;
 import com.ebicep.warlords.database.leaderboards.stats.StatsLeaderboardManager;
 import com.ebicep.warlords.effects.EffectUtils;
 import com.ebicep.warlords.game.option.pve.ReadyUpOption;
-import com.ebicep.warlords.pve.events.mastersworkfair.MasterworksFairManager;
 import com.ebicep.warlords.util.bukkit.ComponentBuilder;
 import com.ebicep.warlords.util.chat.ChatUtils;
 import net.citizensnpcs.api.CitizensAPI;
@@ -52,12 +51,13 @@ public class NPCManager {
                 createWaveDefenseNPC();
                 createOnslaughtNPC();
                 createTreasureHuntNPC();
+                createDarkDescentNPC();
                 createMasterworksFairNPC();
                 createWeaponsManagerNPC();
                 createLegendaryWeaponNPC();
                 createSupplyDropFairNPC();
                 createBountyMenuNPC();
-                //createSupporterShopNPC();
+                createSupporterShopNPC();
                 createStarPieceSynthesizerNPC();
                 createItemCrafterNPC();
                 createIllusionVendorNPC();
@@ -69,7 +69,7 @@ public class NPCManager {
                 createWeeklyItemTraderNPC();
                 createTreasureHuntVendorNPC();
                 //createAscendantWeaponNPC();
-                createTutorialGuideNPC();
+                //createTutorialGuideNPC();
                 createMainLobbySetupNPC();
                 registerTrait(ReadyUpOption.ReadyUpTrait.class, "ReadyUpTrait");
                 ChatUtils.MessageType.GAME.sendMessage("Done adding game join NPCs");
@@ -132,6 +132,16 @@ public class NPCManager {
         npc.spawn(new Location(StatsLeaderboardManager.MAIN_LOBBY_SPAWN.getWorld(), 67.5, 93, 212.5, -180, 0));
     }
 
+    private static void createDarkDescentNPC() {
+        registerTrait(DarkDescentStartTrait.class, "DarkDescentStartTrait");
+
+        NPC npc = NPC_REGISTRY.createNPC(EntityType.PLAYER, "dark-descent-mode");
+        npc.addTrait(DarkDescentStartTrait.class);
+
+        npc.data().set(NPC.Metadata.NAMEPLATE_VISIBLE, false);
+        npc.spawn(new Location(StatsLeaderboardManager.MAIN_LOBBY_SPAWN.getWorld(), -15.5, 81, 144.5, 0, 0));
+    }
+
     private static void createAnomalyNPC() {
         registerTrait(AnomalyStartTrait.class, "AnomalyStartTrait");
 
@@ -144,9 +154,6 @@ public class NPCManager {
     }
 
     public static void createMasterworksFairNPC() {
-        if (!MasterworksFairManager.enabled) {
-            return;
-        }
         registerTrait(MasterworksFairTrait.class, "MasterworksFairTrait");
 
         NPC npc = NPC_REGISTRY.createNPC(EntityType.ZOMBIFIED_PIGLIN, "masterworks-fair");
@@ -258,7 +265,7 @@ public class NPCManager {
         lookClose.toggle();
 
         npc.data().set(NPC.Metadata.NAMEPLATE_VISIBLE, false);
-        Location location = new Location(StatsLeaderboardManager.MAIN_LOBBY_SPAWN.getWorld(), 29.5, 81, 166.5, 90, 0);
+        Location location = new Location(StatsLeaderboardManager.MAIN_LOBBY_SPAWN.getWorld(), 29.5, 81, 167.5, 90, 0);
         npc.spawn(location);
 
         HologramDataText hologramDataText = new HologramDataText.Builder<>(ComponentBuilder.create(
@@ -285,7 +292,7 @@ public class NPCManager {
         lookClose.toggle();
 
         npc.data().set(NPC.Metadata.NAMEPLATE_VISIBLE, false);
-        Location location = new Location(StatsLeaderboardManager.MAIN_LOBBY_SPAWN.getWorld(), 29.5, 81, 163.5, 90, 0);
+        Location location = new Location(StatsLeaderboardManager.MAIN_LOBBY_SPAWN.getWorld(), 29.5, 81, 165.5, 90, 0);
         npc.spawn(location);
 
         HologramDataText hologramDataText = new HologramDataText.Builder<>(ComponentBuilder.create(

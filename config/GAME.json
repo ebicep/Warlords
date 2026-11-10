@@ -12,6 +12,7 @@
       "pingCompensationEnabled": true,
       "pingCompensationLog": false,
       "pingCompensationMin": 100,
+      "pingCompensationMax": 250,
       "pingCompensationDivisor": 100,
       "ctf": {
         "spawnDamageTickDuration": 200,
@@ -25,6 +26,7 @@
         "flagReturnSpawnFlagMultiplierDecrease": 0.5,
         "flagMultiplierCap": 100,
         "flagKillRepickTickCooldown": 10,
+        "flagHitboxPadding": 0.6,
         "horseCooldown": 15,
         "pointsToWin": 1500,
         "pointsFlagCap": 250,

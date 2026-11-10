@@ -47,7 +47,7 @@ public class Physira extends AbstractMob implements BossMob {
         super(
                 spawnLocation,
                 "Physira",
-                10000,
+                8000000,
                 0,
                 0,
                 3000,

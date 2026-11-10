@@ -2,22 +2,22 @@ package com.ebicep.warlords.honorifics;
 
 import com.ebicep.warlords.Warlords;
 import com.ebicep.warlords.database.DatabaseManager;
+import com.ebicep.warlords.featureflags.FeatureFlags;
 import com.ebicep.warlords.database.repositories.player.PlayersCollections;
 import com.ebicep.warlords.database.repositories.player.pojos.general.DatabasePlayer;
 import com.ebicep.warlords.database.repositories.player.pojos.pve.DatabasePlayerPvE;
-import com.ebicep.warlords.database.repositories.player.pojos.pve.onslaught.OnslaughtStats;
-import com.ebicep.warlords.database.repositories.player.pojos.pve.wavedefense.WaveDefenseStats;
+import com.ebicep.warlords.game.Game;
+import com.ebicep.warlords.game.GameAddon;
 import com.ebicep.warlords.player.general.CustomScoreboard;
 import com.ebicep.warlords.player.general.Specializations;
+import com.ebicep.warlords.player.ingame.WarlordsEntity;
 import com.ebicep.warlords.pve.mobs.Mob;
-import com.ebicep.warlords.util.chat.ChatUtils;
 import com.ebicep.warlords.util.java.NumberFormat;
-import com.mongodb.client.MongoCollection;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
-import org.bson.Document;
 import org.bukkit.Bukkit;
 import org.bukkit.Sound;
+import org.bukkit.command.CommandSender;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Player;
 import org.bukkit.scheduler.BukkitRunnable;
@@ -25,27 +25,32 @@ import org.bukkit.scheduler.BukkitRunnable;
 import javax.annotation.Nullable;
 import java.util.Arrays;
 import java.util.HashSet;
-import java.util.Locale;
+import java.util.Map;
 import java.util.Set;
 import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.atomic.AtomicBoolean;
 
-import static com.mongodb.client.model.Filters.eq;
-import static com.mongodb.client.model.Projections.include;
-import static com.mongodb.client.model.Updates.set;
-
 public final class HonorificManager {
 
-    private static final String PLAYER_COLLECTION_NAME = "Players_Information";
-    private static final String LEGACY_COLLECTION_NAME = "Player_Honorifics";
-    private static final String HONORIFICS_FIELD = "honorifics";
+    private static final Set<String> SKELETON_MOB_NAMES = mobDisplayNames(Arrays.stream(Mob.VALUES)
+            .filter(mob -> mob.entityType == EntityType.SKELETON
+                    || mob.entityType == EntityType.WITHER_SKELETON
+                    || mob.entityType == EntityType.STRAY)
+            .toArray(Mob[]::new));
+    private static final Set<String> CHAMPION_MOB_NAMES = mobDisplayNames(Mob.CHAMPION);
+    private static final Set<String> IRON_GOLEM_MOB_NAMES = mobDisplayNames(Arrays.stream(Mob.VALUES)
+            .filter(mob -> mob.entityType == EntityType.IRON_GOLEM)
+            .toArray(Mob[]::new));
     private static final long REFRESH_INTERVAL_MILLIS = 15_000;
-    private static final ConcurrentHashMap<UUID, HonorificProfile> PROFILES = new ConcurrentHashMap<>();
     private static final ConcurrentHashMap<UUID, Long> LAST_CHALLENGE_REFRESH = new ConcurrentHashMap<>();
     private static final AtomicBoolean INITIALIZED = new AtomicBoolean();
 
     private HonorificManager() {
+    }
+
+    public static void removeCachedPlayer(UUID uuid) {
+        LAST_CHALLENGE_REFRESH.remove(uuid);
     }
 
     public static void init() {
@@ -60,6 +65,9 @@ public final class HonorificManager {
         new BukkitRunnable() {
             @Override
             public void run() {
+                if (!honorificsEnabled()) {
+                    return;
+                }
                 for (Player player : Bukkit.getOnlinePlayers()) {
                     UUID uuid = player.getUniqueId();
                     if (!DatabaseManager.inCache(uuid, PlayersCollections.LIFETIME)) {
@@ -68,7 +76,7 @@ public final class HonorificManager {
                     LAST_CHALLENGE_REFRESH.put(uuid, System.currentTimeMillis());
                     DatabasePlayer databasePlayer = DatabaseManager.getPlayer(uuid);
                     if (refreshChallengeUnlocks(databasePlayer, player)) {
-                        saveAsync(uuid);
+                        queueSave(uuid);
                     }
                 }
             }
@@ -77,9 +85,8 @@ public final class HonorificManager {
 
     public static HonorificProfile getProfile(UUID uuid) {
         init();
-        HonorificProfile profile = PROFILES.computeIfAbsent(uuid, HonorificManager::loadProfile);
         refreshChallengesIfDue(uuid);
-        return profile;
+        return DatabaseManager.getPlayer(uuid).getHonorifics();
     }
 
     public static HonorificProfile getProfile(Player player) {
@@ -87,20 +94,7 @@ public final class HonorificManager {
     }
 
     public static HonorificProfile getProfile(DatabasePlayer databasePlayer) {
-        return getProfile(databasePlayer.getUuid());
-    }
-
-    public static void preload(UUID uuid) {
-        init();
-        PROFILES.computeIfAbsent(uuid, HonorificManager::loadProfile);
-    }
-
-    public static void unload(UUID uuid) {
-        HonorificProfile profile = PROFILES.remove(uuid);
-        LAST_CHALLENGE_REFRESH.remove(uuid);
-        if (profile != null) {
-            saveSnapshotAsync(uuid, profile.toEmbeddedDocument());
-        }
+        return databasePlayer.getHonorifics();
     }
 
     public static Component getHonorificComponent(UUID uuid) {
@@ -121,12 +115,15 @@ public final class HonorificManager {
     public static void forceChallengeRefresh(DatabasePlayer databasePlayer, @Nullable Player player) {
         LAST_CHALLENGE_REFRESH.put(databasePlayer.getUuid(), System.currentTimeMillis());
         if (refreshChallengeUnlocks(databasePlayer, player)) {
-            saveAsync(databasePlayer.getUuid());
+            queueSave(databasePlayer.getUuid());
         }
     }
 
     public static boolean refreshChallengeUnlocks(DatabasePlayer databasePlayer, @Nullable Player player) {
-        HonorificProfile profile = PROFILES.computeIfAbsent(databasePlayer.getUuid(), HonorificManager::loadProfile);
+        if (!honorificsEnabled()) {
+            return false;
+        }
+        HonorificProfile profile = databasePlayer.getHonorifics();
         DatabasePlayerPvE pveStats = databasePlayer.getPveStats();
         profile.setMinimumItemRerolls(pveStats.getNewItemsManager().getItemInventory().stream()
                 .mapToLong(item -> item.getRerollCostsHistory().size()).sum());
@@ -158,10 +155,10 @@ public final class HonorificManager {
                 long fastest = getFastestExtremeTicks(pveStats);
                 yield fastest == 0 ? "No completed Extreme run" : formatTicks(fastest) + " / 08:00";
             }
-            case ONE_FOR_ALL -> progress(getMobKills(pveStats, "oneofnine"), 1);
-            case THE_HEART_THIEF -> progress(getMobKills(pveStats, "lilium"), 1);
+            case ONE_FOR_ALL -> progress(getBossDefeats(profile, pveStats, Mob.ONE_OF_NINE), 1);
+            case THE_HEART_THIEF -> progress(getBossDefeats(profile, pveStats, Mob.LILIUM), 1);
             case BOUNDLESS -> progress(getHighestEndlessWave(pveStats), 200);
-            case GOLEM -> progress(getMobKills(pveStats, "irongolem"), 50_000);
+            case GOLEM -> progress(getIronGolemKills(pveStats), 50_000);
             case GOD_OF_WAR -> progress(getTotalMobKills(pveStats), 2_000_000);
             case EXPLORER -> progress(profile.getHighestAncientRenegadesFloor(), 30);
             case TREASURER -> progress(profile.getHighestAncientRenegadesFloor(), 100);
@@ -174,6 +171,12 @@ public final class HonorificManager {
             case COLLATERAL -> progress(profile.getHighestSingleGameDamage(), 1_000_000_000L);
             case TWO_FATES -> profile.hasCompletedRegnumOfTwoCrowns() ? "Completed" : "Not completed";
             case CROWNED_HEIR -> profile.hasCompletedRegnumOblivionWithFourPlayers() ? "Completed" : "Not completed";
+            case LOSER -> progress(databasePlayer.getDeaths(), 1_000);
+            case GOOBER -> profile.hasDiedToOwnDamage() ? "Completed" : "Not completed";
+            case MONEYBAGS -> progress(profile.getHighestSingleGameCoins(), 200_000);
+            case PICKLE -> profile.hasWonWithPlikie() ? "Completed" : "Not completed";
+            case REAPER -> profile.hasSacrificedWithSacrifice() ? "Completed" : "Not completed";
+            case NO_LIFE -> progress(databasePlayer.getPlays(), 10_000);
             default -> honorific.isPurchasable() ? "Purchasable" : "Challenge";
         };
     }
@@ -216,11 +219,48 @@ public final class HonorificManager {
         refreshAndSave(uuid);
     }
 
-    public static void saveAsync(UUID uuid) {
-        HonorificProfile profile = PROFILES.get(uuid);
-        if (profile != null) {
-            saveSnapshotAsync(uuid, profile.toEmbeddedDocument());
+    public static void recordOwnDamageDeath(UUID uuid) {
+        if (!honorificsEnabled()) {
+            return;
         }
+        getProfile(uuid).recordOwnDamageDeath();
+        refreshAndSave(uuid);
+    }
+
+    public static void recordSingleGameCoins(UUID uuid, long coins) {
+        if (coins > 0) {
+            getProfile(uuid).recordSingleGameCoins(coins);
+            refreshAndSave(uuid);
+        }
+    }
+
+    public static void recordWinWithPlikie(UUID uuid) {
+        getProfile(uuid).recordWinWithPlikie();
+        refreshAndSave(uuid);
+    }
+
+    public static void recordSacrificeKill(UUID uuid) {
+        if (!honorificsEnabled()) {
+            return;
+        }
+        getProfile(uuid).recordSacrificeKill();
+        refreshAndSave(uuid);
+    }
+
+    public static void recordTeamBossDefeat(WarlordsEntity killer, Mob mob) {
+        if (!honorificsEnabled() || killer == null || mob == null) {
+            return;
+        }
+        if (mob != Mob.ONE_OF_NINE && mob != Mob.LILIUM) {
+            return;
+        }
+        Game game = killer.getGame();
+        if (game == null || game.getAddons().contains(GameAddon.CUSTOM_GAME)) {
+            return;
+        }
+        game.warlordsPlayers()
+                .filter(killer::isTeammate)
+                .forEach(teammate -> creditTeamBossDefeat(teammate.getUuid(), mob));
     }
 
     public static void refreshDisplays(@Nullable Player player) {
@@ -243,11 +283,17 @@ public final class HonorificManager {
         if (DatabaseManager.inCache(uuid, PlayersCollections.LIFETIME)) {
             refreshChallengeUnlocks(DatabaseManager.getPlayer(uuid), Bukkit.getPlayer(uuid));
         }
-        saveAsync(uuid);
+        queueSave(uuid);
+    }
+
+    private static void queueSave(UUID uuid) {
+        if (DatabaseManager.inCache(uuid, PlayersCollections.LIFETIME)) {
+            DatabaseManager.queueUpdatePlayerAsync(DatabaseManager.getPlayer(uuid));
+        }
     }
 
     private static void refreshChallengesIfDue(UUID uuid) {
-        if (!DatabaseManager.inCache(uuid, PlayersCollections.LIFETIME)) {
+        if (!honorificsEnabled() || !DatabaseManager.inCache(uuid, PlayersCollections.LIFETIME)) {
             return;
         }
         long now = System.currentTimeMillis();
@@ -257,7 +303,7 @@ public final class HonorificManager {
         LAST_CHALLENGE_REFRESH.put(uuid, now);
         DatabasePlayer databasePlayer = DatabaseManager.getPlayer(uuid);
         if (refreshChallengeUnlocks(databasePlayer, Bukkit.getPlayer(uuid))) {
-            saveAsync(uuid);
+            queueSave(uuid);
         }
     }
 
@@ -267,10 +313,10 @@ public final class HonorificManager {
             case THE_MIGHTY_ROLLER -> profile.getItemRerolls() >= 90;
             case SYNTHESIZER -> profile.getStarPiecesSynthesized() >= 100;
             case EXTREMA -> getFastestExtremeTicks(pveStats) > 0 && getFastestExtremeTicks(pveStats) <= 8L * 60 * 20;
-            case ONE_FOR_ALL -> getMobKills(pveStats, "oneofnine") >= 1;
-            case THE_HEART_THIEF -> getMobKills(pveStats, "lilium") >= 1;
+            case ONE_FOR_ALL -> getBossDefeats(profile, pveStats, Mob.ONE_OF_NINE) >= 1;
+            case THE_HEART_THIEF -> getBossDefeats(profile, pveStats, Mob.LILIUM) >= 1;
             case BOUNDLESS -> getHighestEndlessWave(pveStats) >= 200;
-            case GOLEM -> getMobKills(pveStats, "irongolem") >= 50_000;
+            case GOLEM -> getIronGolemKills(pveStats) >= 50_000;
             case GOD_OF_WAR -> getTotalMobKills(pveStats) >= 2_000_000;
             case EXPLORER -> profile.getHighestAncientRenegadesFloor() >= 30;
             case TREASURER -> profile.getHighestAncientRenegadesFloor() >= 100;
@@ -283,64 +329,98 @@ public final class HonorificManager {
             case COLLATERAL -> profile.getHighestSingleGameDamage() >= 1_000_000_000L;
             case TWO_FATES -> profile.hasCompletedRegnumOfTwoCrowns();
             case CROWNED_HEIR -> profile.hasCompletedRegnumOblivionWithFourPlayers();
+            case LOSER -> databasePlayer.getDeaths() >= 1_000;
+            case GOOBER -> profile.hasDiedToOwnDamage();
+            case MONEYBAGS -> profile.getHighestSingleGameCoins() >= 200_000;
+            case PICKLE -> profile.hasWonWithPlikie();
+            case REAPER -> profile.hasSacrificedWithSacrifice();
+            case NO_LIFE -> databasePlayer.getPlays() >= 10_000;
             default -> false;
         };
     }
 
-    private static long getMobKills(DatabasePlayerPvE pveStats, String target) {
-        return pveStats.getMobKills().entrySet().stream()
-                .filter(entry -> compact(entry.getKey()).contains(target))
-                .mapToLong(entry -> entry.getValue() == null ? 0 : entry.getValue()).sum();
+    private static void creditTeamBossDefeat(UUID uuid, Mob mob) {
+        if (!DatabaseManager.inCache(uuid, PlayersCollections.LIFETIME)) {
+            return;
+        }
+        HonorificProfile profile = DatabaseManager.getPlayer(uuid).getHonorifics();
+        if (!profile.recordTeamBossDefeat(mob.name())) {
+            return;
+        }
+        refreshAndSave(uuid);
+    }
+
+    private static long getBossDefeats(HonorificProfile profile, DatabasePlayerPvE pveStats, Mob mob) {
+        if (profile.hasTeamBossDefeat(mob.name())) {
+            return 1;
+        }
+        long participation = getMobKills(pveStats, mob) + getMobAssists(pveStats, mob);
+        return participation > 0 ? 1 : 0;
+    }
+
+    private static long getMobKills(DatabasePlayerPvE pveStats, Mob mob) {
+        if (mob.name == null || mob.name.isEmpty()) {
+            return 0;
+        }
+        return pveStats.getMobKillCount(mob.name);
+    }
+
+    private static long getMobAssists(DatabasePlayerPvE pveStats, Mob mob) {
+        if (mob.name == null || mob.name.isEmpty()) {
+            return 0;
+        }
+        Long assists = pveStats.getMobAssists().get(mob.name);
+        return assists == null ? 0 : assists;
     }
 
     private static long getSkeletonKills(DatabasePlayerPvE pveStats) {
-        Mob[] skeletonMobs = Arrays.stream(Mob.VALUES)
-                .filter(mob -> mob.entityType == EntityType.SKELETON
-                        || mob.entityType == EntityType.WITHER_SKELETON
-                        || mob.entityType == EntityType.STRAY)
-                .toArray(Mob[]::new);
-        return getMobGroupKills(pveStats, skeletonMobs);
+        return getMobGroupKills(pveStats, SKELETON_MOB_NAMES);
     }
 
     private static long getChampionKills(DatabasePlayerPvE pveStats) {
-        return getMobGroupKills(pveStats, Mob.CHAMPION);
+        return getMobGroupKills(pveStats, CHAMPION_MOB_NAMES);
     }
 
-    private static long getMobGroupKills(DatabasePlayerPvE pveStats, Mob[] mobs) {
-        Set<String> aliases = new HashSet<>();
-        for (Mob mob : mobs) {
-            aliases.add(compact(mob.name()));
-            if (mob.name != null) {
-                aliases.add(compact(mob.name));
+    private static long getIronGolemKills(DatabasePlayerPvE pveStats) {
+        return getMobGroupKills(pveStats, IRON_GOLEM_MOB_NAMES);
+    }
+
+    private static long getMobGroupKills(DatabasePlayerPvE pveStats, Set<String> mobNames) {
+        Map<String, Long> mobKills = pveStats.getMobKills();
+        long sum = 0;
+        for (String mobName : mobNames) {
+            Long value = mobKills.get(mobName);
+            if (value != null) {
+                sum += value;
             }
         }
-        return pveStats.getMobKills().entrySet().stream()
-                .filter(entry -> aliases.contains(compact(entry.getKey())))
-                .mapToLong(entry -> entry.getValue() == null ? 0 : entry.getValue())
-                .sum();
+        return sum;
+    }
+
+    private static Set<String> mobDisplayNames(Mob[] mobs) {
+        Set<String> names = new HashSet<>();
+        for (Mob mob : mobs) {
+            if (mob.name != null && !mob.name.isEmpty()) {
+                names.add(mob.name);
+            }
+        }
+        return Set.copyOf(names);
     }
 
     private static long getTotalMobKills(DatabasePlayerPvE pveStats) {
-        return pveStats.getMobKills().values().stream().mapToLong(value -> value == null ? 0 : value).sum();
-    }
-
-    private static String compact(String value) {
-        return value.toLowerCase(Locale.ROOT).replaceAll("[^a-z0-9]", "");
+        return pveStats.getTotalMobKills();
     }
 
     private static long getFastestExtremeTicks(DatabasePlayerPvE pveStats) {
-        return pveStats.getWaveDefenseStats().getExtremeStats().getStats().stream()
-                .mapToLong(WaveDefenseStats::getFastestGameFinished).filter(value -> value > 0).min().orElse(0);
+        return pveStats.getWaveDefenseStats().getExtremeStats().getFastestGameFinished();
     }
 
     private static int getHighestEndlessWave(DatabasePlayerPvE pveStats) {
-        return pveStats.getWaveDefenseStats().getEndlessStats().getStats().stream()
-                .mapToInt(WaveDefenseStats::getHighestWaveCleared).max().orElse(0);
+        return pveStats.getWaveDefenseStats().getEndlessStats().getHighestWaveCleared();
     }
 
     private static long getLongestOnslaughtTicks(DatabasePlayerPvE pveStats) {
-        return pveStats.getOnslaughtStats().getStats().stream()
-                .mapToLong(OnslaughtStats::getLongestTicksLived).max().orElse(0);
+        return pveStats.getOnslaughtStats().getLongestTicksLived();
     }
 
     private static int getHighestPrestige(DatabasePlayer databasePlayer) {
@@ -355,63 +435,6 @@ public final class HonorificManager {
     private static String formatTicks(long ticks) {
         long totalSeconds = Math.max(0, ticks / 20);
         return String.format("%02d:%02d", totalSeconds / 60, totalSeconds % 60);
-    }
-
-    private static HonorificProfile loadProfile(UUID uuid) {
-        if (!DatabaseManager.enabled || DatabaseManager.warlordsDatabase == null) {
-            return new HonorificProfile();
-        }
-        try {
-            Document playerDocument = getPlayerCollection().find(eq("uuid", uuid))
-                    .projection(include(HONORIFICS_FIELD))
-                    .first();
-            if (playerDocument != null) {
-                Object embedded = playerDocument.get(HONORIFICS_FIELD);
-                if (embedded instanceof Document honorificDocument) {
-                    return HonorificProfile.fromDocument(honorificDocument);
-                }
-            }
-
-            Document legacyDocument = getLegacyCollection().find(eq("_id", uuid.toString())).first();
-            HonorificProfile migrated = HonorificProfile.fromDocument(legacyDocument);
-            if (legacyDocument != null && !migrated.isEmptyExceptDefaults()) {
-                saveSnapshotAsync(uuid, migrated.toEmbeddedDocument());
-            }
-            return migrated;
-        } catch (Exception exception) {
-            ChatUtils.MessageType.WARLORDS.sendErrorMessage(exception);
-            return new HonorificProfile();
-        }
-    }
-
-    private static void saveSnapshotAsync(UUID uuid, Document snapshot) {
-        if (!DatabaseManager.enabled || DatabaseManager.warlordsDatabase == null) {
-            return;
-        }
-        Warlords.newChain().async(() -> {
-            try {
-                DatabasePlayer databasePlayer = DatabaseManager.inCache(uuid, PlayersCollections.LIFETIME)
-                        ? DatabaseManager.getPlayer(uuid)
-                        : null;
-                if (databasePlayer == null) {
-                    getPlayerCollection().updateOne(eq("uuid", uuid), set(HONORIFICS_FIELD, snapshot));
-                } else {
-                    synchronized (databasePlayer) {
-                        getPlayerCollection().updateOne(eq("uuid", uuid), set(HONORIFICS_FIELD, snapshot));
-                    }
-                }
-            } catch (Exception exception) {
-                ChatUtils.MessageType.WARLORDS.sendErrorMessage(exception);
-            }
-        }).execute();
-    }
-
-    private static MongoCollection<Document> getPlayerCollection() {
-        return DatabaseManager.warlordsDatabase.getCollection(PLAYER_COLLECTION_NAME);
-    }
-
-    private static MongoCollection<Document> getLegacyCollection() {
-        return DatabaseManager.warlordsDatabase.getCollection(LEGACY_COLLECTION_NAME);
     }
 
     private static void notifyUnlock(@Nullable Player player, Honorific honorific) {
@@ -431,5 +454,13 @@ public final class HonorificManager {
         } else {
             Bukkit.getScheduler().runTask(Warlords.getInstance(), runnable);
         }
+    }
+
+    public static boolean honorificsEnabled() {
+        return honorificsEnabled(null);
+    }
+
+    public static boolean honorificsEnabled(@Nullable CommandSender sender) {
+        return FeatureFlags.isFeatureEnabled(FeatureFlags.HONORIFICS, sender);
     }
 }

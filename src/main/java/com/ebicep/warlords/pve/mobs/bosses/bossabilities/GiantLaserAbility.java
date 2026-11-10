@@ -1,4 +1,5 @@
 package com.ebicep.warlords.pve.mobs.bosses.bossabilities;
+import com.ebicep.warlords.effects.EffectUtils;
 
 import com.ebicep.warlords.game.Game;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
@@ -157,16 +158,16 @@ public class GiantLaserAbility {
             double y = origin.getY() + u.getY() * d;
             double z = origin.getZ() + u.getZ() * d;
 
-            w.spawnParticle(Particle.DUST, x, y, z, 1, 0, 0, 0, 0.0, dust);
+            EffectUtils.displayParticle(Particle.DUST, new Location(w, x, y, z), 1, 0, 0, 0, 0.0, dust);
 
             // “electric” accent
             if (electric) {
-                w.spawnParticle(Particle.ELECTRIC_SPARK, x, y, z, 2, 0, 0, 0, 0.0);
+                EffectUtils.displayParticle(Particle.ELECTRIC_SPARK, new Location(w, x, y, z), 2, 0, 0, 0, 0.0);
             }
         }
         // endpoint highlight
         Location tip = origin.clone().add(u.multiply(len));
-        w.spawnParticle(Particle.END_ROD, tip, 2, 0.03, 0.03, 0.03, 0.0);
+        EffectUtils.displayParticle(Particle.END_ROD, tip, 2, 0.03, 0.03, 0.03, 0.0);
     }
 
     private void applyDamageAlongBeam(Location origin, Vector dir, double len) {

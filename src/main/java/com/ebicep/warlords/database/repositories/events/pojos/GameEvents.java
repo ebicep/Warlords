@@ -769,7 +769,8 @@ public enum GameEvents {
                 add(new SpendableBuyShop(3, Currencies.LEGEND_FRAGMENTS, -1, 3_000));
                 add(new SpendableBuyShop(3, Currencies.SKILL_BOOST_MODIFIER, 3, 75_000));
                 add(new SpendableBuyShop(1, Currencies.LIMIT_BREAKER, 1, 500_000));
-                add(new SpendableBuyShop(1, FixedItems.DISASTER_FRAGMENT, 1, 500_000));
+                add(new SpendableBuyShop(1, MobDrop.ZENITH_STAR, 3, 500_000));
+                add(new SpendableBuyShop(10, Currencies.ETHEREUM_CRYSTAL, 3, 300_000));
             }}
     ) {
         @Override

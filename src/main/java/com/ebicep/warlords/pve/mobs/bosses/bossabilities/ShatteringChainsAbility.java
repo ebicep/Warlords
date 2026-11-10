@@ -125,7 +125,7 @@ public class ShatteringChainsAbility {
                     Utils.playGlobalSound(c, Sound.BLOCK_CHAIN_BREAK, 200, 0.5f);
                     Utils.playGlobalSound(c, "rogue.hearttoheart.activation", 200, 0.5f);
                     Utils.playGlobalSound(c, "rogue.hearttoheart.activation.alt", 200, 0.5f);
-                    world.spawnParticle(Particle.SONIC_BOOM, c, 10, 0.5,0.5,.5, 0.0);
+                    EffectUtils.displayParticle(Particle.SONIC_BOOM, c, 10, 0.5, 0.5, .5, 0.0);
                 }
 
                 // Damage while active (interval)
@@ -141,7 +141,7 @@ public class ShatteringChainsAbility {
                 if (tick > telegraphTicks + activeTicks) {
                     // shatter VFX along anchors
                     for (Chain ch : chains) {
-                        world.spawnParticle(Particle.EXPLOSION, ch.anchor, 2, 0,0,0, 0.0);
+                        EffectUtils.displayParticle(Particle.EXPLOSION, ch.anchor, 2, 0, 0, 0, 0.0);
                     }
                     Utils.playGlobalSound(c, Sound.BLOCK_CHAIN_PLACE, 200, 0.5f);
                     Utils.playGlobalSound(c, "rogue.hearttoheart.activation", 200, 0.5f);
@@ -181,9 +181,9 @@ public class ShatteringChainsAbility {
 
         Location p = new Location(w, center.getX(), y, center.getZ());
         for (int i = 0; i <= samples; i++) {
-            w.spawnParticle(Particle.DUST, p, 1, 0,0,0, 0.0, dust);
+            EffectUtils.displayParticle(Particle.DUST, p, 1, 0, 0, 0, 0.0, dust);
             if (!telegraphLook && (i % 6) == 0) {
-                w.spawnParticle(Particle.ELECTRIC_SPARK, p, 1, 0,0,0, 0.0);
+                EffectUtils.displayParticle(Particle.ELECTRIC_SPARK, p, 1, 0, 0, 0, 0.0);
             }
             p.add(stepVec);
         }

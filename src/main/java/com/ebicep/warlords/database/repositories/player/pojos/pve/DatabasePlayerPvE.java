@@ -19,8 +19,12 @@ import com.ebicep.warlords.database.repositories.games.pojos.pve.wavedefense.Dat
 import com.ebicep.warlords.database.repositories.games.pojos.pve.wavedefense.DatabaseGamePvEWaveDefense;
 import com.ebicep.warlords.database.repositories.masterworksfair.pojos.MasterworksFair;
 import com.ebicep.warlords.database.repositories.player.PlayersCollections;
+import com.ebicep.warlords.database.repositories.player.pojos.Stats;
 import com.ebicep.warlords.database.repositories.player.pojos.TracksAbilityStats;
 import com.ebicep.warlords.database.repositories.player.pojos.TracksMultiAbilityStats;
+import com.ebicep.warlords.database.repositories.player.pojos.cache.PushedMultiPvEStats;
+import com.ebicep.warlords.database.repositories.player.pojos.cache.PushedStatTotals;
+import com.ebicep.warlords.database.repositories.player.pojos.cache.StatPushUp;
 import com.ebicep.warlords.database.repositories.player.pojos.general.DatabasePlayer;
 import com.ebicep.warlords.database.repositories.player.pojos.pve.anomaly.AnomalyStatsWarlordsClasses;
 import com.ebicep.warlords.database.repositories.player.pojos.pve.anomaly.DatabasePlayerAnomalyStats;
@@ -33,10 +37,12 @@ import com.ebicep.warlords.database.repositories.player.pojos.pve.wavedefense.Wa
 import com.ebicep.warlords.events.player.AddCurrencyEvent;
 import com.ebicep.warlords.events.player.WeaponSalvageEvent;
 import com.ebicep.warlords.game.GameMode;
+import com.ebicep.warlords.game.option.pve.darkdescent.DarkDescentProgress;
 import com.ebicep.warlords.game.option.pve.onslaught.PouchReward;
 import com.ebicep.warlords.guilds.Guild;
 import com.ebicep.warlords.guilds.GuildManager;
 import com.ebicep.warlords.guilds.GuildPlayer;
+import com.ebicep.warlords.player.general.Classes;
 import com.ebicep.warlords.player.general.CustomScoreboard;
 import com.ebicep.warlords.player.general.Specializations;
 import com.ebicep.warlords.pve.Currencies;
@@ -48,9 +54,10 @@ import com.ebicep.warlords.pve.events.mastersworkfair.MasterworksFairEntry;
 import com.ebicep.warlords.pve.events.mastersworkfair.MasterworksFairManager;
 import com.ebicep.warlords.pve.events.supplydrop.SupplyDropEntry;
 import com.ebicep.warlords.pve.items.ItemsManager;
-import com.ebicep.warlords.pve.items.types.AbstractItem;
-import com.ebicep.warlords.pve.mobs.MobDrop;
+import com.ebicep.warlords.pve.newitems.NewItem;
 import com.ebicep.warlords.pve.newitems.NewItemsManager;
+import com.ebicep.warlords.pve.newitems.gems.Gem;
+import com.ebicep.warlords.pve.mobs.MobDrop;
 import com.ebicep.warlords.pve.quests.Quests;
 import com.ebicep.warlords.pve.rewards.types.BountyReward;
 import com.ebicep.warlords.pve.rewards.types.CompensationReward;
@@ -82,11 +89,14 @@ public class DatabasePlayerPvE implements MultiPvEStats<
         DatabaseGamePlayerPvEBase,
         PvEStats<DatabaseGamePvEBase<DatabaseGamePlayerPvEBase>, DatabaseGamePlayerPvEBase>,
         PvEStatsWarlordsSpecs<DatabaseGamePvEBase<DatabaseGamePlayerPvEBase>, DatabaseGamePlayerPvEBase, PvEStats<DatabaseGamePvEBase<DatabaseGamePlayerPvEBase>, DatabaseGamePlayerPvEBase>>>,
-        TracksMultiAbilityStats {
+        TracksMultiAbilityStats,
+        PushedMultiPvEStats {
 
 
     @Transient
     private DatabasePlayer databasePlayer;
+    @Transient
+    private final PushedStatTotals pushedStats = new PushedStatTotals();
 
     @Field("wave_defense_stats")
     private DatabasePlayerWaveDefenseStats waveDefenseStats = new DatabasePlayerWaveDefenseStats();
@@ -131,6 +141,8 @@ public class DatabasePlayerPvE implements MultiPvEStats<
     private NewItemsManager newItemsManager = new NewItemsManager();
     @Field("consumable_manager")
     private ConsumableManager consumableManager = new ConsumableManager();
+    @Field("dark_descent_progress")
+    private DarkDescentProgress darkDescentProgress = new DarkDescentProgress();
 
     //CURRENCIES
     private Map<Currencies, Long> currencies = new LinkedHashMap<>() {{
@@ -141,6 +153,9 @@ public class DatabasePlayerPvE implements MultiPvEStats<
     //MOB DROPS
     @Field("mob_drops")
     private Map<MobDrop, Long> mobDrops = new LinkedHashMap<>();
+    //GEMS
+    @Field("gems")
+    private Map<Gem, Long> gems = new LinkedHashMap<>();
     @Field("completed_tutorial")
     private boolean completedTutorial = false;
     //OLD
@@ -201,19 +216,21 @@ public class DatabasePlayerPvE implements MultiPvEStats<
         //COINS
         addCurrency(Currencies.COIN, gamePlayer.getCoinsGained() * multiplier);
         //GUILDS
-        Pair<Guild, GuildPlayer> guildGuildPlayerPair = GuildManager.getGuildAndGuildPlayerFromPlayer(gamePlayer.getUuid());
-        if (playersCollection == PlayersCollections.LIFETIME && guildGuildPlayerPair != null) {
-            Guild guild = guildGuildPlayerPair.getA();
-            GuildPlayer guildPlayer = guildGuildPlayerPair.getB();
-            guild.addCurrentCoins(gamePlayer.getGuildCoinsGained() * multiplier);
-            guild.addExperience(gamePlayer.getGuildExpGained() * multiplier);
-            guildPlayer.addCoins(gamePlayer.getGuildCoinsGained() * multiplier);
-            guildPlayer.addExperience(gamePlayer.getGuildExpGained() * multiplier);
-            guild.queueUpdate();
+        if (playersCollection == PlayersCollections.LIFETIME) {
+            Pair<Guild, GuildPlayer> guildGuildPlayerPair = GuildManager.getGuildAndGuildPlayerFromPlayer(gamePlayer.getUuid());
+            if (guildGuildPlayerPair != null) {
+                Guild guild = guildGuildPlayerPair.getA();
+                GuildPlayer guildPlayer = guildGuildPlayerPair.getB();
+                guild.addCurrentCoins(gamePlayer.getGuildCoinsGained() * multiplier);
+                guild.addExperience(gamePlayer.getGuildExpGained() * multiplier);
+                guildPlayer.addCoins(gamePlayer.getGuildCoinsGained() * multiplier);
+                guildPlayer.addExperience(gamePlayer.getGuildExpGained() * multiplier);
+                guild.queueUpdate();
+            }
         }
         //WEAPONS / ITEMS
         List<AbstractWeapon> weaponsFound = gamePlayer.getWeaponsFound();
-        List<AbstractItem> itemsFound = gamePlayer.getItemsFound();
+        List<NewItem> newItemsFound = gamePlayer.getNewItemsFound();
         if (playersCollection == PlayersCollections.LIFETIME) {
             if (multiplier > 0) {
                 int maxWeaponInventorySize = databasePlayer.isPatreon() ? WeaponManagerMenu.MAX_WEAPONS_PATREON : WeaponManagerMenu.MAX_WEAPONS;
@@ -236,7 +253,6 @@ public class DatabasePlayerPvE implements MultiPvEStats<
                 } else {
                     weaponInventory.addAll(weaponsFound);
                 }
-                itemsManager.getItemInventory().addAll(itemsFound);
             } else {
                 //need to search by uuid incase weapon got upgraded or changed
                 for (AbstractWeapon weapon : weaponsFound) {
@@ -258,8 +274,8 @@ public class DatabasePlayerPvE implements MultiPvEStats<
                         ChatChannels.sendDebugMessage((CommandIssuer) null, gamePlayer.getName() + " - Removed weapon from inventory");
                     }
                 }
-                for (AbstractItem item : itemsFound) {
-                    itemsManager.getItemInventory().removeIf(abstractItem -> abstractItem.getUUID().equals(item.getUUID()));
+                for (NewItem item : newItemsFound) {
+                    newItemsManager.getItemInventory().removeIf(newItem -> newItem.getUUID().equals(item.getUUID()));
                 }
             }
         }
@@ -271,21 +287,155 @@ public class DatabasePlayerPvE implements MultiPvEStats<
         gamePlayer.getMobDropsGained().forEach((mob, integer) -> addMobDrops(mob, integer * multiplier));
 
         //UPDATE GAME MODE STATS
+        boolean modeStatsUpdated = false;
         if (databaseGame instanceof DatabaseGamePvEEvent gamePvEEvent && gamePlayer instanceof DatabaseGamePlayerPvEEvent gamePlayerPvEEvent) {
-            eventStats.updateStats(databasePlayer, gamePvEEvent, gameMode, gamePlayerPvEEvent, result, multiplier, playersCollection);
+            modeStatsUpdated = eventStats.updateModeStats(databasePlayer, gamePvEEvent, gameMode, gamePlayerPvEEvent, result, multiplier, playersCollection);
             addCurrency(gamePvEEvent.getEvent().currency, Math.min(((DatabaseGamePlayerPvEEvent) gamePlayer).getPoints(), gamePvEEvent.getPointLimit()) * multiplier);
         } else {
             if (GameMode.isWaveDefense(gameMode) && databaseGame instanceof DatabaseGamePvEWaveDefense gamePvEWaveDefense && gamePlayer instanceof DatabaseGamePlayerPvEWaveDefense gamePlayerPvEWaveDefense) {
-                waveDefenseStats.updateStats(databasePlayer, gamePvEWaveDefense, gamePlayerPvEWaveDefense, multiplier, playersCollection);
+                modeStatsUpdated = waveDefenseStats.updateModeStats(databasePlayer, gamePvEWaveDefense, gameMode, gamePlayerPvEWaveDefense, result, multiplier, playersCollection);
             } else if (gameMode == GameMode.ONSLAUGHT && databaseGame instanceof DatabaseGamePvEOnslaught gamePvEOnslaught && gamePlayer instanceof DatabaseGamePlayerPvEOnslaught gamePlayerPvEOnslaught) {
-                onslaughtStats.updateStats(databasePlayer, gamePvEOnslaught, gamePlayerPvEOnslaught, multiplier, playersCollection);
+                modeStatsUpdated = onslaughtStats.updateModeStats(databasePlayer, gamePvEOnslaught, gameMode, gamePlayerPvEOnslaught, result, multiplier, playersCollection);
             } else if (gameMode == GameMode.ANOMALY && databaseGame instanceof DatabaseGamePvEAnomaly gamePvEAnomaly && gamePlayer instanceof DatabaseGamePlayerPvEAnomaly gamePlayerPvEAnomaly) {
-                getAnomalyStats().updateStats(databasePlayer, gamePvEAnomaly, gamePlayerPvEAnomaly, multiplier, playersCollection);
+                modeStatsUpdated = getAnomalyStats().updateModeStats(databasePlayer, gamePvEAnomaly, gameMode, gamePlayerPvEAnomaly, result, multiplier, playersCollection);
             } else {
                 ChatUtils.MessageType.GAME.sendErrorMessage("Unable to update stats for " + databaseGame.getClass().getSimpleName() + " and " + gamePlayer.getClass()
                                                                                                                                                           .getSimpleName());
             }
         }
+        if (modeStatsUpdated) {
+            StatPushUp.applyPvE(pushedStats, gamePlayer, result, databaseGame, multiplier);
+        }
+    }
+
+    @Override
+    public PushedStatTotals pushedStats() {
+        return pushedStats;
+    }
+
+    @Override
+    public void warmPushedStats() {
+        pushedStats.warm(() -> {
+            pushedStats.fillGeneral(
+                    MultiPvEStats.super.getKills(),
+                    MultiPvEStats.super.getAssists(),
+                    MultiPvEStats.super.getDeaths(),
+                    MultiPvEStats.super.getWins(),
+                    MultiPvEStats.super.getLosses(),
+                    MultiPvEStats.super.getPlays(),
+                    MultiPvEStats.super.getDamage(),
+                    MultiPvEStats.super.getHealing(),
+                    MultiPvEStats.super.getAbsorbed(),
+                    MultiPvEStats.super.getExperience()
+            );
+            pushedStats.fillPvE(
+                    MultiPvEStats.super.getTotalTimePlayed(),
+                    MultiPvEStats.super.getMobKills(),
+                    MultiPvEStats.super.getMobAssists(),
+                    MultiPvEStats.super.getMobDeaths()
+            );
+            long[] classXp = new long[Classes.VALUES.length];
+            for (Classes classes : Classes.VALUES) {
+                classXp[classes.ordinal()] = MultiPvEStats.super.getStat(classes, Stats::getExperience, Long::sum, 0L);
+            }
+            pushedStats.fillClassExperience(classXp);
+        });
+    }
+
+    @Override
+    public int getKills() {
+        return PushedMultiPvEStats.super.getKills();
+    }
+
+    @Override
+    public int getAssists() {
+        return PushedMultiPvEStats.super.getAssists();
+    }
+
+    @Override
+    public int getDeaths() {
+        return PushedMultiPvEStats.super.getDeaths();
+    }
+
+    @Override
+    public int getWins() {
+        return PushedMultiPvEStats.super.getWins();
+    }
+
+    @Override
+    public int getLosses() {
+        return PushedMultiPvEStats.super.getLosses();
+    }
+
+    @Override
+    public int getPlays() {
+        return PushedMultiPvEStats.super.getPlays();
+    }
+
+    @Override
+    public long getDamage() {
+        return PushedMultiPvEStats.super.getDamage();
+    }
+
+    @Override
+    public long getHealing() {
+        return PushedMultiPvEStats.super.getHealing();
+    }
+
+    @Override
+    public long getAbsorbed() {
+        return PushedMultiPvEStats.super.getAbsorbed();
+    }
+
+    @Override
+    public long getExperience() {
+        return PushedMultiPvEStats.super.getExperience();
+    }
+
+    @Override
+    public long getClassExperience(Classes classes) {
+        return pushedClassExperience(classes);
+    }
+
+    @Override
+    public long getTotalTimePlayed() {
+        return PushedMultiPvEStats.super.getTotalTimePlayed();
+    }
+
+    @Override
+    public Map<String, Long> getMobKills() {
+        return PushedMultiPvEStats.super.getMobKills();
+    }
+
+    @Override
+    public Map<String, Long> getMobAssists() {
+        return PushedMultiPvEStats.super.getMobAssists();
+    }
+
+    @Override
+    public Map<String, Long> getMobDeaths() {
+        return PushedMultiPvEStats.super.getMobDeaths();
+    }
+
+    public int treeWalkKills() {
+        return MultiPvEStats.super.getKills();
+    }
+
+    public Map<String, Long> treeWalkMobKills() {
+        return MultiPvEStats.super.getMobKills();
+    }
+
+    @Override
+    public long getTotalMobKills() {
+        return PushedMultiPvEStats.super.getTotalMobKills();
+    }
+
+    public long getMobKillCount(String mobName) {
+        return pushedMobKillCount(mobName);
+    }
+
+    public long getMobDeathCount(String mobName) {
+        return pushedMobDeathCount(mobName);
     }
 
 
@@ -357,6 +507,13 @@ public class DatabasePlayerPvE implements MultiPvEStats<
         return consumableManager;
     }
 
+    public DarkDescentProgress getDarkDescentProgress() {
+        if (darkDescentProgress == null) {
+            darkDescentProgress = new DarkDescentProgress();
+        }
+        return darkDescentProgress;
+    }
+
     public void addMobDrops(MobDrop mobDrop, long amount) {
         if (AdminCommand.BYPASSED_PLAYER_CURRENCIES.contains(this)) {
             return;
@@ -366,6 +523,24 @@ public class DatabasePlayerPvE implements MultiPvEStats<
         } else {
             this.mobDrops.put(mobDrop, this.mobDrops.get(mobDrop) + amount);
         }
+    }
+
+    public void addGems(Gem gem, long amount) {
+        if (AdminCommand.BYPASSED_PLAYER_CURRENCIES.contains(this)) {
+            return;
+        }
+        this.gems.merge(gem, amount, Long::sum);
+    }
+
+    public long getGems(Gem gem) {
+        if (AdminCommand.BYPASSED_PLAYER_CURRENCIES.contains(this)) {
+            return Long.MAX_VALUE;
+        }
+        return this.gems.getOrDefault(gem, 0L);
+    }
+
+    public Map<Gem, Long> getGems() {
+        return gems;
     }
 
     public void subtractCurrency(Currencies currency, Long amount) {

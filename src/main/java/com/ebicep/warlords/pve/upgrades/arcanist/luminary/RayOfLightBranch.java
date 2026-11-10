@@ -35,17 +35,16 @@ public class RayOfLightBranch extends AbstractUpgradeBranch<RayOfLight> {
                 }
         );
         masterUpgrade2 = new Upgrade(
-                "Volatile Rays",
+                "Radiant Orb",
                 "Ray of Light - Master Upgrade",
                 """
-                        +45% Crit Multiplier
+                        +30% Cooldown
                         
-                        Ray of Light fires two additional beams.
+                        Casting Ray of Light summons a floating orb above you for 12 seconds. Every 3 seconds, the orb fires 2 Ray of Light beams towards the nearest players.
                         """,
                 50000,
                 () -> {
-                    ability.getHealValues().getRayHealing().critMultiplier().addModifier(FloatModifiable.ModifierType.ADDITIVE, "Master Upgrade Branch", 45);
-                    ability.setShotsFiredAtATime(3);
+                    ability.getCooldown().addModifier(FloatModifiable.ModifierType.ADDITIVE_MULTIPLIER, "Master Upgrade Branch", 0.3f);
                 }
         );
     }

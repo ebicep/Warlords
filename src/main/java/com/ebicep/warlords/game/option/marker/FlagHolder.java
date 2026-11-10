@@ -4,6 +4,8 @@ import com.ebicep.warlords.Warlords;
 import com.ebicep.warlords.game.Game;
 import com.ebicep.warlords.game.Team;
 import com.ebicep.warlords.game.flags.*;
+import com.ebicep.warlords.game.option.Option;
+import com.ebicep.warlords.game.option.pvp.FlagSpawnPointOption;
 import com.ebicep.warlords.game.state.EndState;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
 import net.kyori.adventure.text.Component;
@@ -99,23 +101,27 @@ public interface FlagHolder extends CompassTargetMarker, GameMarker {
     }
 
     static boolean dropFlagForPlayer(WarlordsEntity player, boolean manual) {
+        return dropFlagForPlayer(player, manual, false);
+    }
+
+    static boolean dropFlagForPlayer(WarlordsEntity player, boolean manual, boolean immediate) {
         Game game = player.getGame();
         for (FlagHolder holder : game.getMarkers(FlagHolder.class)) {
             FlagInfo info = holder.getInfo();
-            boolean drop = info.getFlag() instanceof PlayerFlagLocation && ((PlayerFlagLocation) info.getFlag()).getPlayer().equals(player);
+            boolean drop = info.getFlag() instanceof PlayerFlagLocation playerFlag && playerFlag.getPlayer().equals(player);
             if (drop) {
-                if (game.getState() instanceof EndState || game.isClosed()) {
+                if (immediate || game.getState() instanceof EndState || game.isClosed()) {
                     holder.update(i ->
-                            i.getFlag() instanceof PlayerFlagLocation &&
-                                    ((PlayerFlagLocation) i.getFlag()).getPlayer().equals(player) ? new GroundFlagLocation((PlayerFlagLocation) i.getFlag(), manual) : null
+                            i.getFlag() instanceof PlayerFlagLocation playerFlagLocation &&
+                                    playerFlagLocation.getPlayer().equals(player) ? new GroundFlagLocation(playerFlagLocation, manual) : null
                     );
                 } else {
                     new BukkitRunnable() {
                         @Override
                         public void run() {
                             holder.update(i ->
-                                    i.getFlag() instanceof PlayerFlagLocation &&
-                                            ((PlayerFlagLocation) i.getFlag()).getPlayer().equals(player) ? new GroundFlagLocation((PlayerFlagLocation) i.getFlag(), manual) : null
+                                    i.getFlag() instanceof PlayerFlagLocation playerFlagLocation &&
+                                            playerFlagLocation.getPlayer().equals(player) ? new GroundFlagLocation(playerFlagLocation, manual) : null
                             );
                         }
                     }.runTaskLater(Warlords.getInstance(), 1);
@@ -124,6 +130,21 @@ public interface FlagHolder extends CompassTargetMarker, GameMarker {
             }
         }
         return false;
+    }
+
+    static void refreshCarrierRender(WarlordsEntity player) {
+        if (!isPlayerHolderFlag(player)) {
+            return;
+        }
+        Game game = player.getGame();
+        for (Option option : game.getOptions()) {
+            if (option instanceof FlagSpawnPointOption flagOption) {
+                FlagLocation flag = flagOption.getInfo().getFlag();
+                if (flag instanceof PlayerFlagLocation playerFlag && playerFlag.getPlayer().equals(player)) {
+                    flagOption.getRenderer().forceRender();
+                }
+            }
+        }
     }
 
     static boolean isPlayerHolderFlag(WarlordsEntity player) {

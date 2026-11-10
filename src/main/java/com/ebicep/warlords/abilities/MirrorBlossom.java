@@ -17,6 +17,7 @@ import com.ebicep.warlords.util.warlords.GameRunnable;
 import com.ebicep.warlords.util.warlords.PlayerFilter;
 import com.ebicep.warlords.util.warlords.Utils;
 import com.ebicep.warlords.util.warlords.modifiablevalues.FloatModifiable;
+import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
 import org.bukkit.*;
 import org.bukkit.entity.Player;
@@ -98,23 +99,27 @@ public class MirrorBlossom extends AbstractAbility implements BlueAbilityIcon, H
                                     );
                                     enemy.addSpeedModifier(wp, getName(), -slowness, 20 * 2);
 
-                                    wp.getCooldownManager().removeCooldownByName(name + " Debuff");
-                                    wp.getCooldownManager().addCooldown(new RegularCooldown<>(
+                                    enemy.getCooldownManager().limitCooldowns(RegularCooldown.class, MirrorBlossomData.class, 1);
+                                    enemy.getCooldownManager().addCooldown(new RegularCooldown<>(
                                             name + " Debuff",
                                             null,
-                                            MirrorBlossom.class,
+                                            MirrorBlossomData.class,
                                             null,
                                             wp,
                                             CooldownTypes.LOW_LEVEL_DEBUFF,
                                             cm -> {},
                                             10 * 20
                                     ).addModifier(Modifier.ON_INCOMING_DAMAGE, (event, currentDamageValue, isCrit) -> {
-                                        if (event.getCause().contains("Mirror Blossom")) {
+                                        if (event.getCause().contains("Mirror")) {
                                             stacks.getAndIncrement();
                                         }
                                     }).addModifier(Modifier.MODIFY_INCOMING_DAMAGE_AFTER_INTERVENE, (event, currentDamageValue) -> {
-                                        if (event.getCause().contains("Judgement Strike") && pveMasterUpgrade) {
-                                            currentDamageValue.addModifier(FloatModifiable.ModifierType.MULTIPLICATIVE_MULTIPLIER, name, 1 + (stacks.get() * .05f));
+                                        if (!pveMasterUpgrade) {
+                                            return;
+                                        }
+                                        if (event.getCause().contains("Judgement")) {
+                                            float multiplier = Math.clamp(1 + (stacks.get() * .05f), 1, 2);
+                                            currentDamageValue.addModifier(FloatModifiable.ModifierType.MULTIPLICATIVE_MULTIPLIER, name, multiplier);
                                         }
                                     }));
                                 });
@@ -165,6 +170,10 @@ public class MirrorBlossom extends AbstractAbility implements BlueAbilityIcon, H
         }, false, secondaryAbility -> !wp.getCooldownManager().hasCooldown(MirrorBlossom.class));
 
         return true;
+    }
+
+    public static class MirrorBlossomData {
+
     }
 
     @Override

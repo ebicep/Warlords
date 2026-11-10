@@ -238,8 +238,10 @@ public class ChatUtils {
         }
 
         private static boolean isDiscordErrorSuppressed(String error) {
-            return error.contains("MinecraftClientException")
-                    && error.contains("Failed to read from");
+            return (error.contains("MinecraftClientException")
+                    && error.contains("Failed to read from"))
+                    || (error.contains("MinecraftClientHttpException")
+                    && error.contains("status=429"));
         }
 
         public void sendErrorMessage(Throwable throwable) {

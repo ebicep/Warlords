@@ -226,7 +226,19 @@ public enum SkullID implements Skull {
     CULTIST("ODJiOTlhMDMzNjEzZjAyYjJiOWFjMzk5NWFmYTgzNDczYjljM2E1ZWMwODUwZGJiNzc3Yjk5NmRjNjMxYjM1OSJ9fX0="),
     DIVER_HELMET("NmQ5NDJjYjFmNmM5MWZkMmY5Mzc1ZGI1N2VjMjhmZjJhZWJmMzgxNWVlOTZhMzc3MWZjOTlmMGI1ZTJlYzllNCJ9fX0="),
     ANUBIS("MmM4YzIyODRmZWIyZDk1ZjAxMDA3ZmRmMDM4MGExZjAzYWE0OWQ2ZmY0NGZiNTkzOWZkZjNjN2YyODMwNWJkOCJ9fX0="),
-    GLOWING_ZOMBIE("YTY4MTdiZTliZmY5ZmRmMTYxZjBkZDk1NjhkODIwMWI5MzkzYTk4MjkwMTY2ZDhmM2QxY2YzYjVjN2FmOTE1OCJ9fX0=")
+    GLOWING_ZOMBIE("YTY4MTdiZTliZmY5ZmRmMTYxZjBkZDk1NjhkODIwMWI5MzkzYTk4MjkwMTY2ZDhmM2QxY2YzYjVjN2FmOTE1OCJ9fX0="),
+    // https://minecraft-heads.com/custom-heads/head/126172-hourglass
+    HOURGLASS("MWI5YWRkNDNlMGU3NzBiN2M0Y2NkY2Y2NzA4ZjhiOWU4NzVmZjEzYjJhNzVhYjYzZmY2OWYyZjBlNTdhZjllNSJ9fX0="),
+    // https://minecraft-heads.com/custom-heads/head/114649-amethyst-knight
+    AMETHYST_KNIGHT("ZDc2MmJmYTAzNjc1MjJlZTA1YzRmMjUzOTg4YzhlYThiMTliY2IzZGIwZWJkODA4ZmUzNGZjNzBiNzUzNmUyMiJ9fX0="),
+    // https://minecraft-heads.com/custom-heads/head/115106-crystal-knight
+    CRYSTAL_KNIGHT("ZmUxMWM1YTg5Y2Y3YzhlNmIyMjFiMmU3NTZkODEyYzJhM2RkMGM1M2YwMjgwMTI4ZTYxNzBjNWQwNWM1MTViNyJ9fX0="),
+    // https://minecraft-heads.com/custom-heads/head/101063-ghost-knight
+    GHOST_KNIGHT("ZGE5YmE2ZjJlNTE4NThiZGRkMWIxMmNjMzVmYWIxOWRmYTViOWUyYTNlY2MwNzJhZTIxN2NjMDEwZmViZTUzMyJ9fX0="),
+    // https://minecraft-heads.com/custom-heads/head/100702-ghost-with-clock-mask
+    GHOST_CLOCK_MASK("ZmI5MzJjYmYxMzZjNmY4NjExN2YzYjk1ZWRjY2JlZWIwZDliMWRiOTM5MWEyMDc4MDM4ZDM4YmVmOTJlODQ2ZiJ9fX0="),
+    // https://minecraft-heads.com/custom-heads/head/44444-steam-golem-golden
+    STEAM_GOLEM_GOLDEN("ZGIyMThlOTk4MWUzNGEwOWVkNjg5M2JlNDVjN2RiOTVlN2YwM2I3YWYzYmM0YzAwYmM0MzA4NmEyMWNiNmFlYiJ9fX0=")
 
     ;
 

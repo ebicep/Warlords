@@ -1,5 +1,6 @@
 package com.ebicep.warlords.events.player.ingame;
 
+import com.ebicep.warlords.abilities.internal.AbstractAbility;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
 import org.bukkit.event.Cancellable;
 import org.bukkit.event.HandlerList;
@@ -13,10 +14,18 @@ public class WarlordsPlayerClassRightClickEvent extends AbstractWarlordsEntityEv
     public static HandlerList getHandlerList() {
         return handlers;
     }
-    protected boolean cancelled = false;
 
-    public WarlordsPlayerClassRightClickEvent(@Nonnull WarlordsEntity player) {
+    protected boolean cancelled = false;
+    private final AbstractAbility ability;
+
+    public WarlordsPlayerClassRightClickEvent(@Nonnull WarlordsEntity player, @Nonnull AbstractAbility ability) {
         super(player);
+        this.ability = ability;
+    }
+
+    @Nonnull
+    public AbstractAbility getAbility() {
+        return ability;
     }
 
     @Override

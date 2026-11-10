@@ -117,7 +117,7 @@ public class OrbitalStrikeAbility {
 
                     // draw telegraph ring + subtle sparkle
                     drawRingDust(lockedImpact, beamRadius, 24, telegraphDust);
-                    lockedImpact.getWorld().spawnParticle(Particle.SPORE_BLOSSOM_AIR, lockedImpact, 8, .35, .1, .35, 0.0);
+                    EffectUtils.displayParticle(Particle.SPORE_BLOSSOM_AIR, lockedImpact, 8, .35, .1, .35, 0.0);
 
                     if (t % 6 == 0) {
                         lockedImpact.getWorld().playSound(lockedImpact, telegraphSfx, 2, 0.5f);
@@ -209,8 +209,8 @@ public class OrbitalStrikeAbility {
     private void doBlast(Location at) {
         Utils.playGlobalSound(at, blastSfx, 3, 0.5f);
         Utils.playGlobalSound(at, Sound.ITEM_MACE_SMASH_GROUND, 5, 0.5f);
-        at.getWorld().spawnParticle(impactPop, at, 40, .7, .35, .7, 0.05);
-        at.getWorld().spawnParticle(Particle.HEART, at, 16, .4, .2, .4, 0.0);
+        EffectUtils.displayParticle(impactPop, at, 40, .7, .35, .7, 0.05);
+        EffectUtils.displayParticle(Particle.HEART, at, 16, .4, .2, .4, 0.0);
         Utils.spawnFallingBlocks(at, 3, 13, -0.7, 0.3, Material.CHERRY_LEAVES);
         EffectUtils.playFirework(at, FireworkEffect.builder()
                 .withColor(Color.WHITE)
@@ -240,13 +240,13 @@ public class OrbitalStrikeAbility {
         Location p = impact.clone();
         for (int i = 0; i <= steps; i++) {
             // core + shell
-            p.getWorld().spawnParticle(beamCore, p, 3, .05, .02, .02, 0.0);
-            p.getWorld().spawnParticle(beamShell, p, 3, .25, .25, .25, 0.0);
+            EffectUtils.displayParticle(beamCore, p, 3, .05, .02, .02, 0.0);
+            EffectUtils.displayParticle(beamShell, p, 3, .25, .25, .25, 0.0);
             p.add(step);
         }
 
         // impact flash each tick for emphasis
-        impact.getWorld().spawnParticle(Particle.CRIT, impact, 6, .25, .1, .25, 0.0);
+        EffectUtils.displayParticle(Particle.CRIT, impact, 6, .25, .1, .25, 0.0);
     }
 
     private Location sampleTarget() {
@@ -293,7 +293,7 @@ public class OrbitalStrikeAbility {
             double x = center.getX() + Math.cos(angle) * radius;
             double z = center.getZ() + Math.sin(angle) * radius;
             Location p = new Location(center.getWorld(), x, center.getY(), z);
-            center.getWorld().spawnParticle(Particle.DUST, p, 1, dust);
+            EffectUtils.displayParticle(Particle.DUST, p, 1, dust);
         }
     }
 }

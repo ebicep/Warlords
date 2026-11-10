@@ -1,5 +1,6 @@
 import xyz.jpenilla.resourcefactory.bukkit.BukkitPluginYaml
 import xyz.jpenilla.resourcefactory.paper.PaperPluginYaml
+import java.time.Instant
 
 plugins {
     id("com.gradleup.shadow") version "9.3.1" // Creates a fat jar
@@ -17,6 +18,31 @@ description = "Warlords"
 
 val archiveVersionSuffix: String
     get() = version.toString().replace(" ", "-")
+
+fun gitOutput(vararg args: String): String = runCatching {
+    providers.exec {
+        commandLine(listOf("git") + args)
+        isIgnoreExitValue = true
+    }.standardOutput.asText.get().trim().ifEmpty { "unknown" }
+}.getOrElse { "unknown" }
+
+val gitCommit: String = gitOutput("rev-parse", "HEAD")
+val gitCommitShort: String = gitOutput("rev-parse", "--short", "HEAD")
+val gitBranch: String = gitOutput("rev-parse", "--abbrev-ref", "HEAD")
+val gitCommitTime: String = gitOutput("log", "-1", "--format=%cI")
+val gitDirty: String = runCatching {
+    providers.exec {
+        commandLine("git", "status", "--porcelain")
+        isIgnoreExitValue = true
+    }.standardOutput.asText.get().isNotBlank().toString()
+}.getOrElse { "false" }
+// Prefer git commit time so processResources stays UP-TO-DATE across rebuilds.
+// Set -PreleaseBuild=true to stamp wall-clock build time for release artifacts.
+val buildTime: String = if (providers.gradleProperty("releaseBuild").map { it.toBoolean() }.orElse(false).get()) {
+    Instant.now().toString()
+} else {
+    gitCommitTime
+}
 
 java {
     // Configure the java toolchain. This allows gradle to auto-provision JDK 21 on systems that only have JDK 8 installed for example.
@@ -44,15 +70,27 @@ repositories {
     maven("https://repo.onarandombox.com/content/groups/public/")
 }
 
+configurations.configureEach {
+    exclude(group = "net.bytebuddy", module = "byte-buddy")
+}
+
 dependencies {
     pluginRemapper("net.fabricmc:tiny-remapper:0.12.1:fat")
     paperweight.paperDevBundle("1.21.11-R0.1-SNAPSHOT")
 
     implementation("co.aikar:taskchain-bukkit:3.7.2")
 
-    implementation("net.dv8tion:JDA:5.0.0-beta.24")
+    implementation("net.dv8tion:JDA:5.0.0-beta.24") {
+        exclude(group = "club.minnced", module = "opus-java")
+        exclude(group = "club.minnced", module = "opus-java-api")
+        exclude(group = "club.minnced", module = "opus-java-natives")
+    }
 
-    implementation("org.springframework.boot:spring-boot-starter-data-mongodb:3.0.4")
+    // Lean Spring Data Mongo (no Boot starter / logback)
+    implementation("org.springframework.data:spring-data-mongodb:4.0.3")
+    implementation("org.mongodb:mongodb-driver-sync:4.8.2")
+    implementation("org.springframework:spring-context:6.0.6")
+    compileOnly("jakarta.annotation:jakarta.annotation-api:2.1.1")
 
     implementation("co.aikar:acf-paper:0.5.1-SNAPSHOT")
 
@@ -61,9 +99,10 @@ dependencies {
     compileOnly("io.papermc.paper:paper-api:1.21.11-R0.1-SNAPSHOT")
 
     compileOnly("com.sk89q.worldedit:worldedit-bukkit:7.3.18")
-    implementation("com.google.guava:guava:32.1.3-jre")
-    implementation("com.google.code.gson:gson:2.10.1")
-    implementation("it.unimi.dsi:fastutil:8.5.12")
+    // Provided by Paper at runtime — do not shade
+    compileOnly("com.google.guava:guava:32.1.3-jre")
+    compileOnly("com.google.code.gson:gson:2.10.1")
+    compileOnly("it.unimi.dsi:fastutil:8.5.12")
 
     compileOnly("net.citizensnpcs:citizens-main:2.0.41-SNAPSHOT") {
         exclude(group = "*", module = "*")
@@ -78,6 +117,17 @@ dependencies {
     }
 
     implementation("fr.skytasul:guardianbeam:2.4.6")
+
+    testImplementation("io.papermc.paper:paper-api:1.21.11-R0.1-SNAPSHOT")
+    testImplementation("org.junit.jupiter:junit-jupiter:5.11.4")
+    testImplementation("org.junit.platform:junit-platform-launcher")
+    testImplementation("org.mockbukkit.mockbukkit:mockbukkit-v1.21:4.110.0")
+    testImplementation("org.objenesis:objenesis:3.4")
+    testRuntimeOnly("org.junit.platform:junit-platform-launcher")
+}
+
+paperweight {
+    addServerDependencyTo = configurations.named("compileOnly").map { setOf(it) }
 }
 
 publishing {
@@ -98,6 +148,17 @@ tasks {
 
     processResources {
         filteringCharset = Charsets.UTF_8.name() // We want UTF-8 for everything
+        expand(
+            mapOf(
+                "projectVersion" to project.version.toString(),
+                "gitCommit" to gitCommit,
+                "gitCommitShort" to gitCommitShort,
+                "gitBranch" to gitBranch,
+                "gitCommitTime" to gitCommitTime,
+                "gitDirty" to gitDirty,
+                "buildTime" to buildTime,
+            )
+        )
     }
 
     jar {
@@ -108,10 +169,6 @@ tasks {
         archiveVersion.set(archiveVersionSuffix)
         relocate("co.aikar.commands", "com.ebicep.warlords.acf.acf")
         relocate("co.aikar.locales", "com.ebicep.warlords.acf.locales")
-
-        dependencies {
-            exclude(dependency("club.minnced:opus-java"))
-        }
     }
 
     reobfJar {
@@ -125,6 +182,10 @@ tasks {
 
     runServer {
         version.set("1.21.4")
+    }
+
+    test {
+        useJUnitPlatform()
     }
 }
 

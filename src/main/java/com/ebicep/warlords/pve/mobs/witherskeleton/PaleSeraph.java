@@ -1,5 +1,6 @@
 package com.ebicep.warlords.pve.mobs.witherskeleton;
 
+import com.ebicep.warlords.effects.EffectUtils;
 import com.ebicep.warlords.events.player.ingame.WarlordsDamageHealingEvent;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
 import com.ebicep.warlords.pve.mobs.AbstractMob;
@@ -50,7 +51,7 @@ public class PaleSeraph extends AbstractMob implements AdvancedMob {
     @Override
     public void onAttack(WarlordsEntity attacker, WarlordsEntity receiver, WarlordsDamageHealingEvent event) {
         Location location = receiver.getLocation().clone().add(0, 1, 0);
-        location.getWorld().spawnParticle(Particle.SWEEP_ATTACK, location, 1, 0, 0, 0, 0);
-        location.getWorld().spawnParticle(Particle.END_ROD, location, 5, 0.3, 0.4, 0.3, 0.02);
+        EffectUtils.displayParticle(Particle.SWEEP_ATTACK, location, 1, 0, 0, 0, 0);
+        EffectUtils.displayParticle(Particle.END_ROD, location, 5, 0.3, 0.4, 0.3, 0.02);
     }
 }

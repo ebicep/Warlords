@@ -466,14 +466,17 @@ public class MercifulHex extends AbstractPiercingProjectile<MercifulHex, Mercifu
 
             @Override
             public PlayerNameData addPrefixFromOther() {
-                boolean flag = new CooldownFilter<>(to, RegularCooldown.class).filterCooldownClass(PoisonousHex.class).stream().count() == fromHex.maxStacks;
-                return new PlayerNameData(Component.text("MHEX", NamedTextColor.DARK_GREEN).decoration(TextDecoration.BOLD, flag),
+                return PlayerNameData.dynamic(
+                        () -> {
+                            boolean flag = new CooldownFilter<>(to, RegularCooldown.class).filterCooldownClass(PoisonousHex.class).stream().count() == fromHex.maxStacks;
+                            return Component.text("MHEX", NamedTextColor.DARK_GREEN).decoration(TextDecoration.BOLD, flag);
+                        },
                         we -> we.isTeammate(from) && we.getSpecClass() == Specializations.LUMINARY
                 );
             }
 
             @Override
-            public TextColor customActionBarColor() {
+            public TextColor customActionBarColor(WarlordsEntity warlordsEntity) {
                 return NamedTextColor.DARK_GREEN;
             }
         });

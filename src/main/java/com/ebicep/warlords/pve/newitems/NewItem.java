@@ -3,6 +3,7 @@ package com.ebicep.warlords.pve.newitems;
 import com.ebicep.warlords.pve.Spendable;
 import com.ebicep.warlords.pve.StarPieces;
 import com.ebicep.warlords.pve.newitems.attributes.NewItemAttribute;
+import com.ebicep.warlords.pve.newitems.gems.Gem;
 import com.ebicep.warlords.pve.newitems.setbonus.NewItemsSetBonus;
 import com.ebicep.warlords.pve.newitems.tiers.NewItemTier;
 import com.ebicep.warlords.util.bukkit.ItemBuilder;
@@ -23,6 +24,8 @@ import java.util.concurrent.ThreadLocalRandom;
 @TypeAlias("new_item")
 public class NewItem {
 
+    private static final double SCORE_ROLL_EXPONENT = 1.1;
+
     private Instant creationTime = Instant.now();
     private UUID uuid = UUID.randomUUID();
     private Map<NewItemAttribute, Byte> bonusAttributeDistribution;
@@ -31,6 +34,8 @@ public class NewItem {
     private boolean isFavorite = false;
     private List<Map<Spendable, Long>> rerollCostsHistory = new ArrayList<>();
     private List<StarPieceBonus> starPieceBonuses = new ArrayList<>();
+    private int unlockedGemSlots = 0;
+    private List<Gem> socketedGems = new ArrayList<>();
 
     public NewItem() {
         // for deserialization
@@ -50,7 +55,7 @@ public class NewItem {
         NewItemAttribute[] bonusAttributes = JavaUtils.pickRandom(NewItemAttribute.BONUS_ATTRIBUTES, tier.bonusAttributes());
         this.bonusAttributeDistribution = new EnumMap<>(NewItemAttribute.class);
         for (NewItemAttribute bonusAttribute : bonusAttributes) {
-            this.bonusAttributeDistribution.put(bonusAttribute, (byte) ThreadLocalRandom.current().nextInt(0, 101));
+            this.bonusAttributeDistribution.put(bonusAttribute, rollAttributeDistribution(ThreadLocalRandom.current()));
         }
     }
 
@@ -62,8 +67,12 @@ public class NewItem {
         Collections.shuffle(bonusAttributes, random);
         this.bonusAttributeDistribution = new EnumMap<>(NewItemAttribute.class);
         for (int i = 0; i < tier.bonusAttributes(); i++) {
-            this.bonusAttributeDistribution.put(bonusAttributes.get(i), (byte) random.nextInt(0, 101));
+            this.bonusAttributeDistribution.put(bonusAttributes.get(i), rollAttributeDistribution(random));
         }
+    }
+
+    private static byte rollAttributeDistribution(Random random) {
+        return (byte) Math.min(100, (int) (Math.pow(random.nextDouble(), SCORE_ROLL_EXPONENT) * 101));
     }
 
     public NewItem(@NotNull NewItem source) {
@@ -75,12 +84,14 @@ public class NewItem {
             this.rerollCostsHistory.add(new HashMap<>(rerollCost));
         }
         this.starPieceBonuses = new ArrayList<>(source.starPieceBonuses);
+        this.unlockedGemSlots = source.unlockedGemSlots;
+        this.socketedGems = new ArrayList<>(source.socketedGems);
     }
 
     public void reroll(EnumSet<NewItemAttribute> lockedAttributes) {
         for (NewItemAttribute newItemAttribute : this.bonusAttributeDistribution.keySet()) {
             if (!lockedAttributes.contains(newItemAttribute)) {
-                this.bonusAttributeDistribution.put(newItemAttribute, (byte) ThreadLocalRandom.current().nextInt(0, 101));
+                this.bonusAttributeDistribution.put(newItemAttribute, rollAttributeDistribution(ThreadLocalRandom.current()));
             }
         }
     }
@@ -102,6 +113,7 @@ public class NewItem {
                 .addStarComponent()
                 .addBasicAttributes()
                 .addBonusAttributes(getBonusAttributeValues(), getStarPieceBonus())
+                .addGems(this)
                 .addSetBonus(itemsManager, loadout)
                 .build();
         lore.add(Component.empty());
@@ -190,6 +202,9 @@ public class NewItem {
     public Set<NewItemAttribute> getAllAttributes() {
         Set<NewItemAttribute> attributes = new HashSet<>(setBonus.getAttributes().keySet());
         attributes.addAll(getBonusAttributeValues().keySet());
+        for (Gem gem : socketedGems) {
+            attributes.add(gem.getAttribute());
+        }
         return attributes;
     }
 
@@ -201,7 +216,61 @@ public class NewItem {
         getBonusAttributeValues().forEach((attribute, value) ->
                 attributeValues.put(attribute, attributeValues.getOrDefault(attribute, 0f) + value)
         );
+        for (Gem gem : socketedGems) {
+            attributeValues.merge(gem.getAttribute(), gem.getValue(), Float::sum);
+        }
         return attributeValues;
+    }
+
+    public int getMaxGemSlots() {
+        return getTier().getMaxGemSlots();
+    }
+
+    public int getUnlockedGemSlots() {
+        return unlockedGemSlots;
+    }
+
+    public boolean canUnlockGemSlot() {
+        return unlockedGemSlots < getMaxGemSlots();
+    }
+
+    public void unlockGemSlot() {
+        if (!canUnlockGemSlot()) {
+            throw new IllegalStateException(getStringName() + " has no gem slots left to unlock");
+        }
+        unlockedGemSlots++;
+    }
+
+    public List<Gem> getSocketedGems() {
+        return socketedGems;
+    }
+
+    @Nullable
+    public Gem getSocketedGem(int slot) {
+        return slot < 0 || slot >= socketedGems.size() ? null : socketedGems.get(slot);
+    }
+
+    /**
+     * @return the gem that previously occupied the socket, or null if it was empty
+     */
+    @Nullable
+    public Gem socketGem(int slot, @NotNull Gem gem) {
+        if (slot < 0 || slot >= unlockedGemSlots) {
+            throw new IllegalArgumentException("Gem slot " + slot + " is not unlocked on " + getStringName());
+        }
+        if (slot < socketedGems.size()) {
+            return socketedGems.set(slot, gem);
+        }
+        socketedGems.add(gem);
+        return null;
+    }
+
+    /**
+     * @return the gem that was removed, or null if the socket was empty
+     */
+    @Nullable
+    public Gem unsocketGem(int slot) {
+        return slot < 0 || slot >= socketedGems.size() ? null : socketedGems.remove(slot);
     }
 
     public UUID getUUID() {

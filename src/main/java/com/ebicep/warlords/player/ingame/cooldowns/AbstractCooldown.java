@@ -110,14 +110,14 @@ public abstract class AbstractCooldown<T> implements PlayerNameInstance, SpecDam
                 HandlerList.unregisterAll(activeListener);
                 onRemoveForce.accept(cooldownManager);
                 if (changesPlayerName()) {
-                    cooldownManager.queueUpdatePlayerNames();
+                    cooldownManager.markNameDisplayDirty();
                 }
             };
         } else {
             this.onRemoveForce = cooldownManager -> {
                 onRemoveForce.accept(cooldownManager);
                 if (changesPlayerName()) {
-                    cooldownManager.queueUpdatePlayerNames();
+                    cooldownManager.markNameDisplayDirty();
                 }
             };
         }
@@ -167,7 +167,7 @@ public abstract class AbstractCooldown<T> implements PlayerNameInstance, SpecDam
         this.onRemoveForce = onRemoveForce;
     }
 
-    public abstract Component getNameAbbreviation();
+    public abstract Component getNameAbbreviation(WarlordsEntity warlordsEntity);
 
     public void setNameAbbreviation(String nameAbbreviation) {
         this.nameAbbreviation = nameAbbreviation;
@@ -177,7 +177,7 @@ public abstract class AbstractCooldown<T> implements PlayerNameInstance, SpecDam
 
     public abstract boolean removeCheck();
 
-    public TextColor customActionBarColor() {
+    public TextColor customActionBarColor(WarlordsEntity warlordsEntity) {
         return null;
     }
 

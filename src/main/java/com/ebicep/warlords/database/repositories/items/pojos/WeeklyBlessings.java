@@ -61,7 +61,7 @@ public class WeeklyBlessings {
 
     @Id
     protected String id;
-    private Instant week = DateUtil.getResetDateLatestMonday();
+    private Instant week = DateUtil.getResetDateCurrentWeek();
     private Map<Integer, Integer> stock = new HashMap<>() {{
         RandomCollection<Integer> tierChances = new RandomCollection<Integer>()
                 .add(63, 1)

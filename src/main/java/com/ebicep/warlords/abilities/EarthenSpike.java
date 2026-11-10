@@ -114,8 +114,8 @@ public class EarthenSpike extends AbstractAbility implements WeaponAbilityIcon, 
                 .setGame(wp.getGame())
                 .setSpeed(speed)
                 .setDestination(() -> spikeTarget.isDead() ? null : spikeTarget.getLocation())
-                .setOnTick((ticksElapsed, currentLocation) -> {
-                    if (ticksElapsed % 5 == 1) {
+                .setOnMove((ticksElapsed, currentLocation, index) -> {
+                    if (index == 0 && ticksElapsed % 5 == 1) {
                         Utils.playGlobalSound(startLocation, REPEATING_SOUND[(ticksElapsed / 5) % 4], 2, 1);
                     }
                 })

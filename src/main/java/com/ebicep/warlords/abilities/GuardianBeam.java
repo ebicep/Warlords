@@ -8,7 +8,6 @@ import com.ebicep.warlords.player.ingame.cooldowns.CooldownFilter;
 import com.ebicep.warlords.player.ingame.cooldowns.CooldownTypes;
 import com.ebicep.warlords.player.ingame.cooldowns.cooldowns.RegularCooldown;
 import com.ebicep.warlords.player.ingame.instances.InstanceBuilder;
-import com.ebicep.warlords.player.ingame.instances.type.Modifier;
 import com.ebicep.warlords.pve.upgrades.AbilityTree;
 import com.ebicep.warlords.pve.upgrades.AbstractUpgradeBranch;
 import com.ebicep.warlords.pve.upgrades.arcanist.sentinel.GuardianBeamBranch;
@@ -200,12 +199,9 @@ public class GuardianBeam extends AbstractBeam<GuardianBeam, GuardianBeam.Guardi
         ) {
             @Override
             public PlayerNameData addPrefixFromOther() {
-                return new PlayerNameData(Component.text((int) (shield.getShieldHealth()), NamedTextColor.YELLOW), we -> we.isTeammate(from));
+                return PlayerNameData.shieldHealth(shield, we -> we.isTeammate(from), NamedTextColor.YELLOW);
             }
-        }.addModifier(Modifier.ON_OUTGOING_SHIELD_DAMAGE, (event, currentDamageValue, isCrit) -> {
-                    event.getWarlordsEntity().getCooldownManager().queueUpdatePlayerNames();
-                }
-        ));
+        });
     }
 
     @Override

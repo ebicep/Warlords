@@ -17,7 +17,9 @@ import com.ebicep.warlords.database.repositories.items.pojos.WeeklyBlessings;
 import com.ebicep.warlords.database.repositories.masterworksfair.MasterworksFairService;
 import com.ebicep.warlords.database.repositories.player.PlayerService;
 import com.ebicep.warlords.database.repositories.player.PlayersCollections;
+import com.ebicep.warlords.database.repositories.player.pojos.cache.StatPushUp;
 import com.ebicep.warlords.database.repositories.player.pojos.general.DatabasePlayer;
+import com.ebicep.warlords.database.repositories.player.pojos.general.DatabasePlayerPatches;
 import com.ebicep.warlords.database.repositories.player.pojos.pve.DatabasePlayerPvE;
 import com.ebicep.warlords.database.repositories.timings.TimingsService;
 import com.ebicep.warlords.database.repositories.timings.pojos.DatabaseTiming;
@@ -31,9 +33,9 @@ import com.ebicep.warlords.util.chat.ChatUtils;
 import com.mongodb.client.MongoClient;
 import com.mongodb.client.MongoClients;
 import com.mongodb.client.MongoDatabase;
-import org.bson.Document;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
+import org.bson.Document;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.bukkit.scheduler.BukkitRunnable;
@@ -229,18 +231,25 @@ public class DatabaseManager {
         applyPrestigeOrbLoginPatch(uuid, databasePlayer);
 
         // PATCHES
-        List<DatabasePlayer.Patches> patchesApplied = databasePlayer.getPatchesApplied();
-        for (DatabasePlayer.Patches patch : DatabasePlayer.Patches.VALUES) {
-            if (patchesApplied.contains(patch)) {
-                continue;
-            }
-            ChatUtils.MessageType.WARLORDS.sendMessage("Applying " + patch + " patch to " + uuid);
-            boolean applied = patch.run(uuid, databasePlayer);
-            if (applied) {
-                ChatUtils.MessageType.WARLORDS.sendMessage("Applied " + patch + " patch to " + uuid);
-                patchesApplied.add(patch);
-            } else {
-                ChatUtils.MessageType.WARLORDS.sendErrorMessage("Failed to apply " + patch + " patch to " + uuid);
+        if (DatabasePlayerPatches.APPLY_ON_LOGIN) {
+            List<String> patchesApplied = databasePlayer.getPatchesApplied();
+            for (DatabasePlayerPatches patch : DatabasePlayerPatches.VALUES) {
+                if (patchesApplied.contains(patch.name())) {
+                    continue;
+                }
+                ChatUtils.MessageType.WARLORDS.sendMessage("Applying " + patch + " patch to " + uuid);
+                try {
+                    boolean applied = patch.run(uuid, databasePlayer);
+                    if (applied) {
+                        ChatUtils.MessageType.WARLORDS.sendMessage("Applied " + patch + " patch to " + uuid);
+                        patchesApplied.add(patch.name());
+                    } else {
+                        ChatUtils.MessageType.WARLORDS.sendErrorMessage("Failed to apply " + patch + " patch to " + uuid);
+                    }
+                } catch (Exception e) {
+                    ChatUtils.MessageType.WARLORDS.sendErrorMessage("Failed to apply " + patch + " patch to " + uuid);
+                    ChatUtils.MessageType.WARLORDS.sendErrorMessage(e);
+                }
             }
         }
 
@@ -324,13 +333,16 @@ public class DatabaseManager {
         ConcurrentHashMap<UUID, DatabasePlayer> cache = CACHED_PLAYERS.get(collection);
         UUID uuid = candidate.getUuid();
         return cache.compute(uuid, (k, existing) -> {
+            DatabasePlayer selected;
             if (existing == null) {
-                return candidate;
+                selected = candidate;
+            } else if (existing.getId() == null && candidate.getId() != null) {
+                selected = candidate;
+            } else {
+                selected = existing;
             }
-            if (existing.getId() == null && candidate.getId() != null) {
-                return candidate;
-            }
-            return existing;
+            StatPushUp.warmAll(selected);
+            return selected;
         });
     }
 

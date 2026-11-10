@@ -8,16 +8,22 @@ import com.ebicep.warlords.database.repositories.games.pojos.interception.Databa
 import com.ebicep.warlords.database.repositories.player.PlayersCollections;
 import com.ebicep.warlords.database.repositories.player.pojos.StatsWarlordsSpecs;
 import com.ebicep.warlords.database.repositories.player.pojos.TracksAbilityStats;
+import com.ebicep.warlords.database.repositories.player.pojos.cache.PushedStatTotals;
+import com.ebicep.warlords.database.repositories.player.pojos.cache.PushedStatsWarlordsClasses;
 import com.ebicep.warlords.database.repositories.player.pojos.general.DatabasePlayer;
 import com.ebicep.warlords.database.repositories.player.pojos.interception.classes.*;
 import com.ebicep.warlords.game.GameMode;
 import com.ebicep.warlords.player.general.Classes;
+import org.springframework.data.annotation.Transient;
 import org.springframework.data.mongodb.core.mapping.Field;
 
 import java.util.HashMap;
 import java.util.Map;
 
-public class DatabasePlayerInterception implements InterceptionStatsWarlordsClasses, TracksAbilityStats {
+public class DatabasePlayerInterception implements PushedStatsWarlordsClasses.Interception, TracksAbilityStats {
+
+    @Transient
+    private final PushedStatTotals pushedStats = new PushedStatTotals();
 
     private DatabaseMageInterception mage = new DatabaseMageInterception();
     private DatabaseWarriorInterception warrior = new DatabaseWarriorInterception();
@@ -57,5 +63,11 @@ public class DatabasePlayerInterception implements InterceptionStatsWarlordsClas
     ) {
         updateSpecStats(databasePlayer, databaseGame, gameMode, gamePlayer, result, multiplier, playersCollection);
         updateAbilityStats(gamePlayer, multiplier);
+        pushedStats.applyGeneral(gamePlayer, result, multiplier);
+    }
+
+    @Override
+    public PushedStatTotals pushedStats() {
+        return pushedStats;
     }
 }

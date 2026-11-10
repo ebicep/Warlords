@@ -2,6 +2,7 @@ package com.ebicep.warlords.player.general.specboosts.boosts;
 
 import com.ebicep.warlords.abilities.AvengersStrike;
 import com.ebicep.warlords.abilities.HolyRadianceAvenger;
+import com.ebicep.warlords.abilities.internal.AbstractAbility;
 import com.ebicep.warlords.events.player.ingame.WarlordsAddCooldownEvent;
 import com.ebicep.warlords.player.general.specboosts.SpecBoostManager;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
@@ -20,6 +21,7 @@ public class MarkedForDeath implements SpecBoostManager.SpecBoost<MarkedForDeath
 
     private float avengerMarkDamage;
     private float avengerMarkSlowPercent;
+    private float avengerMarkIncreaseDamagePercent;
     private int avengerMarkDebuffTickDuration;
     private float holyRadianceEnergyCost;
     private int strikeMarkDurationIncreaseTicks;
@@ -29,6 +31,7 @@ public class MarkedForDeath implements SpecBoostManager.SpecBoost<MarkedForDeath
     public void init() {
         this.avengerMarkDamage = getValue("avengerMarkDamage", float.class);
         this.avengerMarkSlowPercent = getValue("avengerMarkSlowPercent", float.class);
+        this.avengerMarkIncreaseDamagePercent = getValue("avengerMarkIncreaseDamagePercent", float.class);
         this.avengerMarkDebuffTickDuration = getValue("avengerMarkDebuffTickDuration", int.class);
         this.holyRadianceEnergyCost = getValue("holyRadianceEnergyCost", float.class);
         this.strikeMarkDurationIncreaseTicks = getValue("strikeMarkDurationIncreaseTicks", int.class);
@@ -45,6 +48,7 @@ public class MarkedForDeath implements SpecBoostManager.SpecBoost<MarkedForDeath
         return List.of(
                 avengerMarkDamage,
                 avengerMarkSlowPercent,
+                avengerMarkIncreaseDamagePercent,
                 avengerMarkDebuffTickDuration,
                 strikeMarkDurationIncreaseTicks,
                 maxStrikeMarkDurationIncreaseTicks
@@ -93,6 +97,12 @@ public class MarkedForDeath implements SpecBoostManager.SpecBoost<MarkedForDeath
                     .value(avengerMarkDamage)
             );
             target.addSpeedModifier(warlordsEntity, getStringName(), -avengerMarkSlowPercent, regularCooldown);
+            regularCooldown.addModifier(Modifier.INCOMING_DAMAGE_BEFORE_INTERVENE, (e, currentDamageValue) -> {
+                currentDamageValue.addModifier(FloatModifiable.ModifierType.MULTIPLICATIVE_MULTIPLIER,
+                        getStringName(),
+                        AbstractAbility.convertToMultiplicationDecimal(avengerMarkIncreaseDamagePercent)
+                );
+            });
             final int[] ticksIncreased = {0};
             regularCooldown.addModifier(Modifier.ON_INCOMING_DAMAGE, (e, currentDamageValue, isCrit) -> {
                 if (e.getSource().equals(warlordsEntity) && e.getAbility() instanceof AvengersStrike) {

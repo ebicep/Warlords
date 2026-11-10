@@ -295,7 +295,6 @@ public class LegendaryOvergrowth extends AbstractLegendaryWeapon implements Libr
 
             data.overgrowthShield = shield;
             Shield.updateAbsorption(ally);
-            ally.getCooldownManager().queueUpdatePlayerNames();
             return;
         }
 
@@ -324,12 +323,11 @@ public class LegendaryOvergrowth extends AbstractLegendaryWeapon implements Libr
 
             @Override
             public PlayerNameData addPrefixFromOther() {
-                return new PlayerNameData(Component.text((int) shield.getShieldHealth(), NamedTextColor.GREEN), we -> we.isTeammate(data.source));
+                return PlayerNameData.shieldHealth(shield, we -> we.isTeammate(data.source), NamedTextColor.GREEN);
             }
 
-        }.addModifier(Modifier.ON_INCOMING_SHIELD_DAMAGE, (event, currentDamageValue, isCrit) -> {
-            event.getWarlordsEntity().getCooldownManager().queueUpdatePlayerNames();
-        }));
+        });
+
     }
 
     @SuppressWarnings("unchecked")

@@ -43,6 +43,7 @@ public class WhackAMoleOption implements PveOption, Listener {
     private int ticksElapsed;
     private int score;
     private int speed = 20;
+    private SimpleScoreboardHandler scoreScoreboardHandler;
 
     public WhackAMoleOption(List<Hole> holes) {
         this.holes.addAll(holes);
@@ -52,7 +53,7 @@ public class WhackAMoleOption implements PveOption, Listener {
     public void register(@Nonnull Game game) {
         this.game = game;
         game.registerEvents(this);
-        game.registerGameMarker(ScoreboardHandler.class, new SimpleScoreboardHandler(10, "score") {
+        game.registerGameMarker(ScoreboardHandler.class, scoreScoreboardHandler = new SimpleScoreboardHandler(10, "score") {
                     @Nonnull
                     @Override
                     public List<Component> computeLines(@Nullable WarlordsPlayer player) {
@@ -110,6 +111,9 @@ public class WhackAMoleOption implements PveOption, Listener {
             }
         }.runTaskLater(20);
         score++;
+        if (scoreScoreboardHandler != null) {
+            scoreScoreboardHandler.markChanged();
+        }
     }
 
     @EventHandler

@@ -16,6 +16,8 @@ import com.ebicep.warlords.database.repositories.games.pojos.tdm.DatabaseGamePla
 import com.ebicep.warlords.database.repositories.games.pojos.tdm.DatabaseGameTDM;
 import com.ebicep.warlords.database.repositories.player.PlayersCollections;
 import com.ebicep.warlords.database.repositories.player.pojos.*;
+import com.ebicep.warlords.database.repositories.player.pojos.cache.CachedMultiStatsGeneral;
+import com.ebicep.warlords.database.repositories.player.pojos.cache.PushedStatTotals;
 import com.ebicep.warlords.database.repositories.player.pojos.ctf.DatabasePlayerCTF;
 import com.ebicep.warlords.database.repositories.player.pojos.duel.DatabasePlayerDuel;
 import com.ebicep.warlords.database.repositories.player.pojos.interception.DatabasePlayerInterception;
@@ -23,13 +25,18 @@ import com.ebicep.warlords.database.repositories.player.pojos.siege.DatabasePlay
 import com.ebicep.warlords.database.repositories.player.pojos.tdm.DatabasePlayerTDM;
 import com.ebicep.warlords.game.GameMode;
 import com.ebicep.warlords.util.chat.ChatUtils;
+import org.springframework.data.annotation.Transient;
 import org.springframework.data.mongodb.core.mapping.Field;
 
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
-public class DatabasePlayerPubStats implements MultiStatsGeneral, TracksMultiAbilityStats {
+public class DatabasePlayerPubStats implements CachedMultiStatsGeneral, TracksMultiAbilityStats {
+
+
+    @Transient
+    private final PushedStatTotals pushedStats = new PushedStatTotals();
 
 
     @Field("ctf_stats")
@@ -57,10 +64,12 @@ public class DatabasePlayerPubStats implements MultiStatsGeneral, TracksMultiAbi
             int multiplier,
             PlayersCollections playersCollection
     ) {
+        boolean updated = false;
         switch (gameMode) {
             case CAPTURE_THE_FLAG -> {
                 if (databaseGame instanceof DatabaseGameCTF ctfGame && gamePlayer instanceof DatabaseGamePlayerCTF ctfPlayer) {
                     this.ctfStats.updateStats(databasePlayer, ctfGame, ctfPlayer, multiplier, playersCollection);
+                    updated = true;
                 } else {
                     ChatUtils.MessageType.GAME.sendErrorMessage("CTF game or player is not an instance of the correct class!");
                 }
@@ -68,6 +77,7 @@ public class DatabasePlayerPubStats implements MultiStatsGeneral, TracksMultiAbi
             case TEAM_DEATHMATCH -> {
                 if (databaseGame instanceof DatabaseGameTDM tdmGame && gamePlayer instanceof DatabaseGamePlayerTDM tdmPlayer) {
                     this.tdmStats.updateStats(databasePlayer, tdmGame, tdmPlayer, multiplier, playersCollection);
+                    updated = true;
                 } else {
                     ChatUtils.MessageType.GAME.sendErrorMessage("TDM game or player is not an instance of the correct class!");
                 }
@@ -75,6 +85,7 @@ public class DatabasePlayerPubStats implements MultiStatsGeneral, TracksMultiAbi
             case INTERCEPTION -> {
                 if (databaseGame instanceof DatabaseGameInterception interceptionGame && gamePlayer instanceof DatabaseGamePlayerInterception interceptionPlayer) {
                     this.interceptionStats.updateStats(databasePlayer, interceptionGame, interceptionPlayer, multiplier, playersCollection);
+                    updated = true;
                 } else {
                     ChatUtils.MessageType.GAME.sendErrorMessage("Interception game or player is not an instance of the correct class!");
                 }
@@ -82,6 +93,7 @@ public class DatabasePlayerPubStats implements MultiStatsGeneral, TracksMultiAbi
             case DUEL -> {
                 if (databaseGame instanceof DatabaseGameDuel duelGame && gamePlayer instanceof DatabaseGamePlayerDuel duelPlayer) {
                     this.duelStats.updateStats(databasePlayer, duelGame, duelPlayer, multiplier, playersCollection);
+                    updated = true;
                 } else {
                     ChatUtils.MessageType.GAME.sendErrorMessage("Duel game or player is not an instance of the correct class!");
                 }
@@ -89,10 +101,15 @@ public class DatabasePlayerPubStats implements MultiStatsGeneral, TracksMultiAbi
             case SIEGE -> {
                 if (databaseGame instanceof DatabaseGameSiege siegeGame && gamePlayer instanceof DatabaseGamePlayerSiege siegePlayer) {
                     this.siegeStats.updateStats(databasePlayer, siegeGame, siegePlayer, multiplier, playersCollection);
+                    updated = true;
                 } else {
                     ChatUtils.MessageType.GAME.sendErrorMessage("Siege game or player is not an instance of the correct class!");
                 }
             }
+        }
+        if (updated) {
+            pushedStats.applyGeneral(gamePlayer, result, multiplier);
+            databasePlayer.pushedStats().applyGeneral(gamePlayer, result, multiplier);
         }
     }
 
@@ -135,5 +152,10 @@ public class DatabasePlayerPubStats implements MultiStatsGeneral, TracksMultiAbi
     @Override
     public Collection<TracksAbilityStats> getAllAbilityStats() {
         return List.of(ctfStats, tdmStats, interceptionStats, siegeStats);
+    }
+
+    @Override
+    public PushedStatTotals pushedStats() {
+        return pushedStats;
     }
 }

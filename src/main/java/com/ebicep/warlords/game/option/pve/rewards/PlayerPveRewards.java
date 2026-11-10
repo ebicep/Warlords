@@ -1,7 +1,7 @@
 package com.ebicep.warlords.game.option.pve.rewards;
 
 import com.ebicep.warlords.pve.Spendable;
-import com.ebicep.warlords.pve.items.types.AbstractItem;
+import com.ebicep.warlords.pve.newitems.NewItem;
 import com.ebicep.warlords.pve.mobs.MobDrop;
 import com.ebicep.warlords.pve.weapons.AbstractWeapon;
 
@@ -15,7 +15,7 @@ public class PlayerPveRewards {
     private final HashMap<Integer, Long> waveDamage = new HashMap<>();
     private long legendFragmentGain = 0;
     private long illusionShardGain = 0;
-    private List<AbstractItem> itemsFound = new ArrayList<>();
+    private List<NewItem> newItemsFound = new ArrayList<>();
     private int blessingsFound = 0;
     private Map<Spendable, Long> syntheticPouch = new HashMap<>();
     private Map<Spendable, Long> aspirantPouch = new HashMap<>();
@@ -59,8 +59,8 @@ public class PlayerPveRewards {
         return waveDamage;
     }
 
-    public List<AbstractItem> getItemsFound() {
-        return itemsFound;
+    public List<NewItem> getNewItemsFound() {
+        return newItemsFound;
     }
 
     public int getBlessingsFound() {

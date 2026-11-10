@@ -1,6 +1,7 @@
 package com.ebicep.warlords.player.general.specboosts.boosts;
 
 import com.ebicep.warlords.abilities.CripplingStrike;
+import com.ebicep.warlords.events.player.ingame.WarlordsHorseAbilityDismountEvent;
 import com.ebicep.warlords.events.player.ingame.WarlordsRespawnEvent;
 import com.ebicep.warlords.game.option.pvp.HorseOption;
 import com.ebicep.warlords.player.general.specboosts.SpecBoostManager;
@@ -64,6 +65,17 @@ public class UndyingSteed implements SpecBoostManager.SpecBoost<UndyingSteed> {
             for (HorseOption horseOption : warlordsEntity.getGame().getOption(HorseOption.class)) {
                 horseOption.getHorseForPlayer(warlordsEntity).getHealth().removeModifier("Spec Boost");
             }
+        }
+
+        @EventHandler(ignoreCancelled = true)
+        public void onHorseAbilityDismount(WarlordsHorseAbilityDismountEvent event) {
+            if (!event.getWarlordsEntity().equals(warlordsEntity)) {
+                return;
+            }
+            if (!(event.getAbility() instanceof CripplingStrike)) {
+                return;
+            }
+            event.setCancelled(true);
         }
 
         @EventHandler(ignoreCancelled = true)

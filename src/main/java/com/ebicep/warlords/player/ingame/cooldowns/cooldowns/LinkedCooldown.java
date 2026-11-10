@@ -8,12 +8,20 @@ import com.ebicep.warlords.util.java.TriConsumer;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Objects;
 import java.util.Set;
 import java.util.function.BiConsumer;
 import java.util.function.Consumer;
 
 /**
- * This type of cooldown is used for any cooldown that is linked between WarlordsEntities, if removed from caster then it is removed from all linked entities
+ * Cooldown shared between a caster ({@code from}) and other WarlordsEntities.
+ * <p>
+ * The caster must not be included in the linked entity set ({@link #getLinkedEntities()}). Force-remove / {@code expire} behavior:
+ * <ul>
+ *     <li>Caster removed: strip this cooldown from every linked entity via {@code removeCooldownNoForce}, then clear the set</li>
+ *     <li>Linked entity removed: drop that entity from the set; if the set is empty and the caster still has this cooldown, end the caster copy</li>
+ * </ul>
+ * Paths that use {@code removeCooldownNoForce} skip that cleanup and must call {@link #unlink(WarlordsEntity)} (or the overload) instead.
  * <p>ex. Intervene</p>
  */
 public class LinkedCooldown<T> extends RegularCooldown<T> {
@@ -51,8 +59,7 @@ public class LinkedCooldown<T> extends RegularCooldown<T> {
         Consumer<CooldownManager> oldRemoveForce = getOnRemoveForce();
         setOnRemoveForce(cooldownManager -> {
             oldRemoveForce.accept(cooldownManager);
-            this.linkedEntities.forEach(warlordsEntity -> warlordsEntity.getCooldownManager().removeCooldownNoForce(this));
-            this.linkedEntities.removeIf(WarlordsEntity::isDead);
+            cleanupLinkedEntities(cooldownManager);
         });
     }
 
@@ -101,9 +108,49 @@ public class LinkedCooldown<T> extends RegularCooldown<T> {
         setOnRemoveForce(cooldownManager -> {
             oldRemoveForce.accept(cooldownManager);
             onRemoveForce.accept(cooldownManager, this);
-            this.linkedEntities.forEach(warlordsEntity -> warlordsEntity.getCooldownManager().removeCooldownNoForce(this));
-            this.linkedEntities.removeIf(WarlordsEntity::isDead);
+            cleanupLinkedEntities(cooldownManager);
         });
+    }
+
+    private void cleanupLinkedEntities(CooldownManager cooldownManager) {
+        WarlordsEntity entity = cooldownManager.getWarlordsEntity();
+        if (Objects.equals(entity, from)) {
+            for (WarlordsEntity linked : new ArrayList<>(this.linkedEntities)) {
+                linked.getCooldownManager().removeCooldownNoForce(this);
+            }
+            this.linkedEntities.clear();
+            return;
+        }
+        this.linkedEntities.remove(entity);
+        expireCasterIfNoLinks();
+    }
+
+    /**
+     * NoForce unlink of a single linked entity. Matches the linked-entity branch of force cleanup.
+     * Use when removing a link without running {@code onRemoveForce} (e.g. range break).
+     */
+    public void unlink(WarlordsEntity entity) {
+        unlink(entity, true);
+    }
+
+    /**
+     * @param expireIfEmpty if true and no links remain, end the caster's copy of this cooldown
+     */
+    public void unlink(WarlordsEntity entity, boolean expireIfEmpty) {
+        entity.getCooldownManager().removeCooldownNoForce(this);
+        this.linkedEntities.remove(entity);
+        if (expireIfEmpty) {
+            expireCasterIfNoLinks();
+        }
+    }
+
+    private void expireCasterIfNoLinks() {
+        CooldownManager fromCm = from.getCooldownManager();
+        if (this.linkedEntities.isEmpty()
+                && fromCm.hasCooldown(this)
+                && !fromCm.markedForRemoval(this)) {
+            setTicksLeft(1);
+        }
     }
 
     @Override

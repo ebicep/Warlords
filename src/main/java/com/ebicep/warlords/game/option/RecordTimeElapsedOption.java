@@ -34,6 +34,7 @@ public class RecordTimeElapsedOption implements Option {
 
     private int ticksElapsed;
     private boolean hidden = false;
+    private SimpleScoreboardHandler scoreboardHandler;
 
     public RecordTimeElapsedOption() {
     }
@@ -47,7 +48,7 @@ public class RecordTimeElapsedOption implements Option {
         if (hidden) {
             return;
         }
-        game.registerGameMarker(ScoreboardHandler.class, new SimpleScoreboardHandler(SCOREBOARD_PRIORITY, "spec") {
+        game.registerGameMarker(ScoreboardHandler.class, scoreboardHandler = new SimpleScoreboardHandler(SCOREBOARD_PRIORITY, "spec") {
             @Nonnull
             @Override
             public List<Component> computeLines(@Nullable WarlordsPlayer player) {
@@ -68,6 +69,9 @@ public class RecordTimeElapsedOption implements Option {
                     this.cancel();
                 }
                 ticksElapsed++;
+                if (ticksElapsed % 20 == 0 && scoreboardHandler != null) {
+                    scoreboardHandler.markChanged();
+                }
             }
         }.runTaskTimer(0, 0);
     }

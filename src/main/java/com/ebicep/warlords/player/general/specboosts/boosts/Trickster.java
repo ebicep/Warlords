@@ -117,12 +117,15 @@ public class Trickster implements SpecBoostManager.SpecBoost<Trickster> {
             Component classNameShortWithBrackets = warlordsEntity.getSpec().getClassNameShortWithBrackets(warlordsEntity.getSpecClass().specType.getTextColor());
             Component levelStringBracket = ExperienceManager.getLevelStringBracket(ExperienceManager.getLevelForSpec(warlordsEntity.getUuid(), warlordsEntity.getSpecClass()));
             List<MobHologram.CustomHologramLine> customHologramLines = npc.getMobHologram().getCustomHologramLines();
-            customHologramLines.forEach(customHologramLine -> customHologramLine.setDelete(true));
+            customHologramLines.stream()
+                    .filter(line -> !line.isPersistent())
+                    .forEach(line -> line.setDelete(true));
             customHologramLines.add(new MobHologram.CustomHologramLine(Component.textOfChildren(
                     classNameShortWithBrackets,
                     warlordsEntity.getColoredName(),
                     levelStringBracket
             )));
+            npc.getMobHologram().update();
             new GameRunnable(warlordsEntity.getGame()) {
                 @Override
                 public void run() {

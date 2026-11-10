@@ -3,6 +3,7 @@ package com.ebicep.warlords.pve.newitems.attributes.bonus;
 import com.ebicep.warlords.player.ingame.WarlordsPlayer;
 import com.ebicep.warlords.pve.newitems.attributes.Attribute;
 import com.ebicep.warlords.pve.newitems.attributes.NewItemCooldown;
+import com.ebicep.warlords.pve.newitems.attributes.ThornsDamage;
 import com.ebicep.warlords.util.bukkit.ComponentBuilder;
 import com.ebicep.warlords.util.bukkit.ItemBuilder;
 import com.ebicep.warlords.util.java.NumberFormat;
@@ -48,7 +49,7 @@ public class Thorns implements Attribute {
 
     @Override
     public void apply(WarlordsPlayer warlordsPlayer, float value) {
-        NewItemCooldown.giveCooldown(warlordsPlayer, cd -> cd.addThorns(value, 500));
+        NewItemCooldown.giveCooldown(warlordsPlayer, cd -> cd.addThorns(value, ThornsDamage.BASE_CAP));
     }
 
 }

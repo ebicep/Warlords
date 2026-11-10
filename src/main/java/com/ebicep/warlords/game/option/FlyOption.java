@@ -2,8 +2,8 @@ package com.ebicep.warlords.game.option;
 
 import com.ebicep.warlords.Warlords;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
+import com.ebicep.warlords.util.warlords.GameRunnable;
 import org.bukkit.entity.Player;
-import org.bukkit.scheduler.BukkitRunnable;
 
 import javax.annotation.Nonnull;
 
@@ -25,16 +25,17 @@ public class FlyOption implements Option {
 
     @Override
     public void onPlayerReJoinGame(Player player) {
-        if (Warlords.getPlayer(player) == null) {
+        WarlordsEntity warlordsEntity = Warlords.getPlayer(player);
+        if (warlordsEntity == null) {
             return;
         }
-        new BukkitRunnable() {
+        new GameRunnable(warlordsEntity.getGame()) {
             @Override
             public void run() {
                 player.setAllowFlight(flyEnabled);
                 player.setFlying(flyEnabled);
             }
-        }.runTaskLater(Warlords.getInstance(), 2); // delay bc ?
+        }.runTaskLater(2); // delay bc ?
     }
 
 }

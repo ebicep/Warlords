@@ -2,7 +2,9 @@ package com.ebicep.warlords.game.option.pve.anomaly;
 
 import com.destroystokyo.paper.event.player.PlayerJumpEvent;
 import com.ebicep.warlords.Warlords;
+import com.ebicep.warlords.abilities.internal.AbstractAbility;
 import com.ebicep.warlords.effects.EffectUtils;
+import com.ebicep.warlords.events.game.WarlordsGameTriggerWinEvent;
 import com.ebicep.warlords.events.player.ingame.WarlordsAbilityActivateEvent;
 import com.ebicep.warlords.events.player.ingame.WarlordsDamageHealingEvent;
 import com.ebicep.warlords.events.player.ingame.WarlordsDeathEvent;
@@ -11,12 +13,14 @@ import com.ebicep.warlords.game.Team;
 import com.ebicep.warlords.game.option.marker.scoreboard.ScoreboardHandler;
 import com.ebicep.warlords.game.option.marker.scoreboard.SimpleScoreboardHandler;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
+import com.ebicep.warlords.player.ingame.WarlordsNPC;
 import com.ebicep.warlords.player.ingame.WarlordsPlayer;
 import com.ebicep.warlords.player.ingame.instances.InstanceBuilder;
 import com.ebicep.warlords.player.ingame.instances.InstanceFlags;
 import com.ebicep.warlords.pve.mobs.AbstractMob;
 import com.ebicep.warlords.util.bukkit.ItemBuilder;
 import com.ebicep.warlords.util.warlords.GameRunnable;
+import com.ebicep.warlords.util.warlords.modifiablevalues.FloatModifiable;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
 import org.bukkit.*;
@@ -36,6 +40,7 @@ import org.bukkit.util.Vector;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
+import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
 import java.util.Set;
@@ -46,16 +51,16 @@ import java.util.concurrent.ThreadLocalRandom;
 public class DunestarEscortOption extends AbstractAnomalyOption {
 
     private static final int SEGMENT_DURATION_TICKS = 120 * GameRunnable.SECOND;
-    private static final int CHECKPOINT_CHARGE_TICKS = 30 * GameRunnable.SECOND;
-    private static final int MOB_SPAWN_INTERVAL = 10; // ticks
+    private static final int CHECKPOINT_CHARGE_TICKS = 90 * GameRunnable.SECOND;
+    private static final int MOB_SPAWN_INTERVAL = 10;
     private static final int LASER_INTERVAL_TICKS = 15 * GameRunnable.SECOND;
     private static final int LASER_TELEGRAPH_TICKS = 2 * GameRunnable.SECOND;
+    private static final float ABILITY_COOLDOWN_MULTIPLIER = 3;
     private static final double CHECKPOINT_RADIUS_SQUARED = 25;
-    private static final double MOB_DESPAWN_DISTANCE_SQUARED = 30 * 30;
     private static final double FRONT_SPAWN_CHANCE = .8;
     private static final double FRONT_SPAWN_HALF_ANGLE = Math.PI / 2;
     private static final double LASER_RANGE = 40;
-    private static final double LASER_WIDTH = 2;
+    private static final double LASER_WIDTH = 2.5;
     private static final double LASER_VERTICAL_HALF = 3;
     private static final double LASER_MAX_OFFSET = 4;
     private static final Particle.DustOptions LASER_TELEGRAPH_DUST = new Particle.DustOptions(Color.fromRGB(255, 70, 70), 3f);
@@ -63,13 +68,15 @@ public class DunestarEscortOption extends AbstractAnomalyOption {
             .name(Component.text("Dunestar Relic", NamedTextColor.AQUA))
             .lore(
                     Component.text("Carry this relic to the sanctuary.", NamedTextColor.GRAY),
-                    Component.text("You cannot activate abilities or deal damage.", NamedTextColor.RED)
+                    Component.text("Primary skill disabled. Other abilities have triple cooldowns.", NamedTextColor.RED),
+                    Component.text("You cannot deal damage.", NamedTextColor.RED)
             )
             .glow()
             .get();
 
     private final boolean[] cacheEligibility = new boolean[3];
     private final Set<GameRunnable> laserTasks = ConcurrentHashMap.newKeySet();
+    private final List<FloatModifiable.FloatModifier> carrierCooldownModifiers = new ArrayList<>();
 
     private List<DunestarRouteMarker> routeMarkers = List.of();
     private WarlordsPlayer carrier;
@@ -81,8 +88,10 @@ public class DunestarEscortOption extends AbstractAnomalyOption {
     private int segmentTicksRemaining;
     private int laserTicksRemaining;
     private int checkpointChargeTicks;
+    private int checkpointChargeKills;
     private boolean relicSpawned;
     private boolean chargingCheckpoint;
+    private boolean failed;
 
     @Override
     public void register(@Nonnull Game game) {
@@ -98,22 +107,9 @@ public class DunestarEscortOption extends AbstractAnomalyOption {
         game.registerEvents(new Listener() {
             @EventHandler(priority = EventPriority.LOWEST, ignoreCancelled = true)
             public void onDamage(WarlordsDamageHealingEvent event) {
-                if (carrier != null
-                        && event.isDamageInstance()
-                        && event.getSource() == carrier
-                        && event.getWarlordsEntity() != carrier
-                ) {
-                    event.setCancelled(true);
-                }
-            }
+                if (carrier != null && event.getSource() == carrier) {
 
-            @EventHandler(priority = EventPriority.LOWEST, ignoreCancelled = true)
-            public void onAbility(WarlordsAbilityActivateEvent.Pre event) {
-                if (carrier == null || event.getWarlordsEntity() != carrier) {
-                    return;
                 }
-                event.setCancelled(true);
-                event.getPlayer().sendActionBar(Component.text("The relic prevents you from using abilities.", NamedTextColor.RED));
             }
 
             @EventHandler(ignoreCancelled = true)
@@ -137,6 +133,7 @@ public class DunestarEscortOption extends AbstractAnomalyOption {
                         || warlordsPlayer.getGame() != game
                         || warlordsPlayer.isDead()
                         || completed
+                        || failed
                         || carrier != null) {
                     return;
                 }
@@ -178,12 +175,18 @@ public class DunestarEscortOption extends AbstractAnomalyOption {
     }
 
     @Override
+    protected boolean[] getCacheEligibility() {
+        return cacheEligibility;
+    }
+
+    @Override
     protected boolean handleSpecialDeath(WarlordsDeathEvent event) {
-        if (carrier == null || event.getWarlordsEntity() != carrier) {
-            return false;
+        if (carrier != null && event.getWarlordsEntity() == carrier) {
+            failEscort("The relic carrier fell.");
+            return true;
         }
-        finishEscort("The relic carrier fell.");
-        return true;
+        applyKillChargeReduction(event);
+        return false;
     }
 
     @Override
@@ -198,7 +201,7 @@ public class DunestarEscortOption extends AbstractAnomalyOption {
         new GameRunnable(game) {
             @Override
             public void run() {
-                if (completed) {
+                if (completed || failed) {
                     cancel();
                     return;
                 }
@@ -216,7 +219,7 @@ public class DunestarEscortOption extends AbstractAnomalyOption {
                     return;
                 }
                 if (carrier.isDead() || !(carrier.getEntity() instanceof Player)) {
-                    finishEscort("The relic carrier was lost.");
+                    failEscort("The relic carrier was lost.");
                     return;
                 }
 
@@ -228,14 +231,14 @@ public class DunestarEscortOption extends AbstractAnomalyOption {
                 }
 
                 handleCheckpointCharge();
-                if (completed || carrier == null) {
+                if (completed || failed || carrier == null) {
                     return;
                 }
 
                 if (!chargingCheckpoint) {
                     segmentTicksRemaining--;
                     if (segmentTicksRemaining <= 0) {
-                        finishEscort("The relic did not reach " + getNextDestinationName() + " in time.");
+                        failEscort("The relic did not reach " + getNextDestinationName() + " in time.");
                         return;
                     }
                     if (segmentTicksRemaining % (30 * GameRunnable.SECOND) == 0) {
@@ -250,7 +253,6 @@ public class DunestarEscortOption extends AbstractAnomalyOption {
                 }
 
                 if (escortTicks % MOB_SPAWN_INTERVAL == 0) {
-                    despawnDistantMobs();
                     if (mobCount() < getMaximumMobCount()) {
                         spawnAroundCarrier();
                     }
@@ -260,7 +262,7 @@ public class DunestarEscortOption extends AbstractAnomalyOption {
     }
 
     private void spawnRelic() {
-        if (completed || carrier != null || relicDrop != null && relicDrop.isValid()) {
+        if (completed || failed || carrier != null || relicDrop != null && relicDrop.isValid()) {
             return;
         }
         relicSpawned = true;
@@ -278,7 +280,7 @@ public class DunestarEscortOption extends AbstractAnomalyOption {
     }
 
     private void assignCarrier(WarlordsPlayer warlordsPlayer, Player player) {
-        if (completed || carrier != null) {
+        if (completed || failed || carrier != null) {
             return;
         }
         removeRelicDrop();
@@ -287,13 +289,29 @@ public class DunestarEscortOption extends AbstractAnomalyOption {
         segmentTicksRemaining = SEGMENT_DURATION_TICKS;
         laserTicksRemaining = LASER_INTERVAL_TICKS;
         checkpointChargeTicks = 0;
+        checkpointChargeKills = 0;
         chargingCheckpoint = false;
         previousSlotEight = player.getInventory().getItem(8) == null ? null : player.getInventory().getItem(8).clone();
         player.getInventory().setItem(8, RELIC_ITEM.clone());
         player.addPotionEffect(new PotionEffect(PotionEffectType.GLOWING, Integer.MAX_VALUE, 0, false, false, true));
 
+        List<AbstractAbility> abilities = warlordsPlayer.getAbilities();
+        for (int i = 1; i < abilities.size(); i++) {
+            carrierCooldownModifiers.add(abilities.get(i).getCooldown().addModifier(
+                    FloatModifiable.ModifierType.MULTIPLICATIVE_MULTIPLIER,
+                    "Dunestar Relic",
+                    ABILITY_COOLDOWN_MULTIPLIER
+            ));
+
+            carrierCooldownModifiers.add(abilities.get(i).getEnergyCost().addModifier(
+                    FloatModifiable.ModifierType.MULTIPLICATIVE_MULTIPLIER,
+                    "Dunestar Relic",
+                    2
+            ));
+        }
+
         announce(Component.text(carrier.getName() + " picked up the Dunestar Relic!", NamedTextColor.GOLD));
-        announce(Component.text("Reach each destination within 2 minutes, then charge the relic energy for 30 seconds.", NamedTextColor.AQUA));
+        announce(Component.text("Reach each destination within 2 minutes, then charge the relic energy for 150 seconds. Each kill reduces the charge time by " + getChargeReductionText() + ".", NamedTextColor.AQUA));
         game.forEachOnlinePlayer((onlinePlayer, team) -> onlinePlayer.playSound(onlinePlayer.getLocation(), Sound.ENTITY_PLAYER_LEVELUP, 2, 1));
     }
 
@@ -312,7 +330,7 @@ public class DunestarEscortOption extends AbstractAnomalyOption {
             }
             chargingCheckpoint = true;
             checkpointChargeTicks = 0;
-            announce(Component.text(getNextDestinationName() + " reached. Hold the relic here for 30 seconds to restore maximum power!", NamedTextColor.GOLD));
+            announce(Component.text(getNextDestinationName() + " reached. Hold the relic here for " + getCheckpointChargeSecondsRemaining() + " seconds to restore maximum power!", NamedTextColor.GOLD));
             game.forEachOnlinePlayer((player, team) -> player.playSound(player.getLocation(), Sound.BLOCK_BEACON_ACTIVATE, 2, 1.15f));
         }
 
@@ -329,16 +347,32 @@ public class DunestarEscortOption extends AbstractAnomalyOption {
         if (escortTicks % 5 == 0) {
             showCheckpointChargeParticles();
         }
-        if (checkpointChargeTicks % (5 * GameRunnable.SECOND) == 0 && checkpointChargeTicks < CHECKPOINT_CHARGE_TICKS) {
+        if (checkpointChargeTicks % (5 * GameRunnable.SECOND) == 0 && checkpointChargeTicks < getRequiredChargeTicks()) {
             int secondsRemaining = getCheckpointChargeSecondsRemaining();
             game.forEachOnlinePlayer((player, team) -> player.sendActionBar(
                     Component.text("Relic charging: ", NamedTextColor.AQUA)
                             .append(Component.text(secondsRemaining + "s remaining", NamedTextColor.YELLOW))
             ));
         }
-        if (checkpointChargeTicks >= CHECKPOINT_CHARGE_TICKS) {
+        if (checkpointChargeTicks >= getRequiredChargeTicks()) {
             completeCheckpointCharge();
         }
+    }
+
+    private void applyKillChargeReduction(WarlordsDeathEvent event) {
+        if (completed || failed || carrier == null) {
+            return;
+        }
+        if (!(event.getWarlordsEntity() instanceof WarlordsNPC warlordsNPC)) {
+            return;
+        }
+        if (warlordsNPC.getGame() != game
+                || warlordsNPC.getMob() == null
+                || !getMobs().contains(warlordsNPC.getMob())) {
+            return;
+        }
+
+        checkpointChargeKills++;
     }
 
     private void completeCheckpointCharge() {
@@ -347,6 +381,7 @@ public class DunestarEscortOption extends AbstractAnomalyOption {
         cacheEligibility[cacheIndex] = true;
         chargingCheckpoint = false;
         checkpointChargeTicks = 0;
+        checkpointChargeKills = 0;
 
         if (completedRouteIndex < routeMarkers.size() - 1) {
             DunestarCurrencyOption.grantCheckpointReward(game);
@@ -362,17 +397,6 @@ public class DunestarEscortOption extends AbstractAnomalyOption {
         finishEscort("Escort completed.");
     }
 
-    private void despawnDistantMobs() {
-        Location carrierLocation = carrier.getLocation();
-        for (AbstractMob mob : List.copyOf(getMobs())) {
-            Location mobLocation = mob.getWarlordsNPC().getLocation();
-            if (!carrierLocation.getWorld().equals(mobLocation.getWorld())
-                    || carrierLocation.distanceSquared(mobLocation) > MOB_DESPAWN_DISTANCE_SQUARED) {
-                removeHostileMob(mob);
-            }
-        }
-    }
-
     private void spawnAroundCarrier() {
         Location center = carrier.getLocation();
         World world = center.getWorld();
@@ -385,7 +409,7 @@ public class DunestarEscortOption extends AbstractAnomalyOption {
         } else {
             angle = ThreadLocalRandom.current().nextDouble(Math.PI * 2);
         }
-        double distance = ThreadLocalRandom.current().nextDouble(10, 16);
+        double distance = ThreadLocalRandom.current().nextDouble(10, 15);
         double x = center.getX() + Math.cos(angle) * distance;
         double z = center.getZ() + Math.sin(angle) * distance;
         int y = world.getHighestBlockYAt((int) Math.floor(x), (int) Math.floor(z)) + 1;
@@ -394,12 +418,11 @@ public class DunestarEscortOption extends AbstractAnomalyOption {
     }
 
     private void startLaserHazard() {
-        if (carrier == null || completed) {
+        if (carrier == null || completed || failed) {
             return;
         }
         Location center = carrier.getLocation().clone().add(0, 1, 0);
         List<LaserLine> lines = List.of(createLaserLine(center), createLaserLine(center));
-        announce(Component.text("Dunestar lasers are locking around the relic carrier!", NamedTextColor.RED));
         game.forEachOnlinePlayer((player, team) -> player.playSound(player.getLocation(), Sound.BLOCK_BEACON_POWER_SELECT, 2, 1.2f));
 
         GameRunnable task = new GameRunnable(game) {
@@ -407,7 +430,7 @@ public class DunestarEscortOption extends AbstractAnomalyOption {
 
             @Override
             public void run() {
-                if (completed || carrier == null) {
+                if (completed || failed || carrier == null) {
                     laserTasks.remove(this);
                     cancel();
                     return;
@@ -453,9 +476,9 @@ public class DunestarEscortOption extends AbstractAnomalyOption {
         for (double distance = 0; distance <= length; distance += step) {
             Location point = line.start().clone().add(unit.clone().multiply(distance));
             if (firing) {
-                world.spawnParticle(Particle.ELECTRIC_SPARK, point, 2, .05, .05, .05, 0);
+                EffectUtils.displayParticle(Particle.ELECTRIC_SPARK, point, 2, .05, .05, .05, 0);
             } else {
-                world.spawnParticle(Particle.DUST, point, 0, LASER_TELEGRAPH_DUST);
+                EffectUtils.displayParticle(Particle.DUST, point, 0, LASER_TELEGRAPH_DUST);
             }
         }
         if (firing) {
@@ -507,8 +530,8 @@ public class DunestarEscortOption extends AbstractAnomalyOption {
 
     private void showRelicParticles() {
         Location location = relicDrop.getLocation().clone().add(0, .5, 0);
-        location.getWorld().spawnParticle(Particle.END_ROD, location, 8, .4, .6, .4, .02);
-        location.getWorld().spawnParticle(Particle.ENCHANT, location, 8, .5, .7, .5, .02);
+        EffectUtils.displayParticle(Particle.END_ROD, location, 8, .4, .6, .4, .02);
+        EffectUtils.displayParticle(Particle.ENCHANT, location, 8, .5, .7, .5, .02);
     }
 
     private void showRouteParticles() {
@@ -516,7 +539,7 @@ public class DunestarEscortOption extends AbstractAnomalyOption {
             return;
         }
         Location carrierLocation = carrier.getLocation().clone().add(0, 1, 0);
-        carrierLocation.getWorld().spawnParticle(Particle.ENCHANT, carrierLocation, 5, .4, .7, .4, .02);
+        EffectUtils.displayParticle(Particle.ENCHANT, carrierLocation, 5, .4, .7, .4, .02);
 
         Location target = routeMarkers.get(nextRouteIndex).getLocation().clone().add(0, 1, 0);
         EffectUtils.displayParticle(Particle.END_ROD, target, 6, .8, .8, .8, .02);
@@ -527,8 +550,8 @@ public class DunestarEscortOption extends AbstractAnomalyOption {
             return;
         }
         Location target = routeMarkers.get(nextRouteIndex).getLocation().clone().add(0, 1, 0);
-        World world = target.getWorld();
-        double progress = checkpointChargeTicks / (double) CHECKPOINT_CHARGE_TICKS;
+        int requiredChargeTicks = getRequiredChargeTicks();
+        double progress = requiredChargeTicks <= 0 ? 1 : checkpointChargeTicks / (double) requiredChargeTicks;
         double radius = 2.5 + progress * .8;
         for (int i = 0; i < 12; i++) {
             double angle = Math.PI * 2 * i / 12.0 + escortTicks * .04;
@@ -539,7 +562,7 @@ public class DunestarEscortOption extends AbstractAnomalyOption {
     }
 
     private int getMaximumMobCount() {
-        return 6 + playerCount() * 4 + nextRouteIndex * 2;
+        return 5 + playerCount() * 3 + nextRouteIndex * 2;
     }
 
     private String getNextDestinationName() {
@@ -552,11 +575,37 @@ public class DunestarEscortOption extends AbstractAnomalyOption {
         return Math.max(0, (segmentTicksRemaining + GameRunnable.SECOND - 1) / GameRunnable.SECOND);
     }
 
+    private int getChargeReductionTicksPerKill() {
+        return switch (playerCount()) {
+            case 1, 2 -> 2 * GameRunnable.SECOND;
+            case 3, 4 -> 3 * GameRunnable.SECOND / 2;
+            default -> GameRunnable.SECOND;
+        };
+    }
+
+    private String getChargeReductionText() {
+        int ticks = getChargeReductionTicksPerKill();
+        int wholeSeconds = ticks / GameRunnable.SECOND;
+        int tenth = (ticks % GameRunnable.SECOND) * 10 / GameRunnable.SECOND;
+        if (tenth == 0) {
+            return wholeSeconds + (wholeSeconds == 1 ? " second" : " seconds");
+        }
+        return wholeSeconds + "." + tenth + " seconds";
+    }
+
+    private int getRequiredChargeTicks() {
+        int chargeTicks = playerCount() > 2 ? CHECKPOINT_CHARGE_TICKS + ((10 * GameRunnable.SECOND) * playerCount()) : CHECKPOINT_CHARGE_TICKS;
+        return Math.max(0, chargeTicks - checkpointChargeKills * getChargeReductionTicksPerKill());
+    }
+
     private int getCheckpointChargeSecondsRemaining() {
-        return Math.max(0, (CHECKPOINT_CHARGE_TICKS - checkpointChargeTicks + GameRunnable.SECOND - 1) / GameRunnable.SECOND);
+        return Math.max(0, (getRequiredChargeTicks() - checkpointChargeTicks + GameRunnable.SECOND - 1) / GameRunnable.SECOND);
     }
 
     private List<Component> getEscortScoreboard() {
+        if (failed) {
+            return List.of(Component.text("Escort Failed", NamedTextColor.RED));
+        }
         if (completed) {
             return List.of(Component.text("Escort Complete", NamedTextColor.GREEN));
         }
@@ -588,12 +637,15 @@ public class DunestarEscortOption extends AbstractAnomalyOption {
         }
 
         if (chargingCheckpoint) {
-            int chargePercent = Math.min(100, (int) Math.floor(checkpointChargeTicks * 100.0 / CHECKPOINT_CHARGE_TICKS));
+            int requiredChargeTicks = getRequiredChargeTicks();
+            int chargePercent = requiredChargeTicks <= 0
+                    ? 100
+                    : Math.min(100, (int) Math.floor(checkpointChargeTicks * 100.0 / requiredChargeTicks));
             return List.of(
                     Component.text("Carrier: ", NamedTextColor.WHITE).append(Component.text(carrier.getName(), NamedTextColor.GOLD)),
                     Component.text("Charging: ", NamedTextColor.WHITE).append(Component.text(targetName, NamedTextColor.AQUA)),
                     Component.text("Charge: ", NamedTextColor.WHITE).append(Component.text(chargePercent + "%", NamedTextColor.GREEN)),
-                    Component.text("Hold for: ", NamedTextColor.WHITE).append(Component.text(getCheckpointChargeSecondsRemaining() + "s", NamedTextColor.YELLOW)),
+                    Component.text("Time: ", NamedTextColor.WHITE).append(Component.text(getCheckpointChargeSecondsRemaining() + "s", NamedTextColor.YELLOW)),
                     Component.text("Caches: ", NamedTextColor.WHITE).append(Component.text(caches + "/3", NamedTextColor.GREEN))
             );
         }
@@ -614,6 +666,20 @@ public class DunestarEscortOption extends AbstractAnomalyOption {
         finishAnomaly(cacheEligibility, summary);
     }
 
+    private void failEscort(String summary) {
+        if (completed || failed) {
+            return;
+        }
+        failed = true;
+        cancelLaserTasks();
+        removeRelicDrop();
+        clearCarrierState();
+        clearHostileMobs();
+        announce(Component.text(summary + " The anomaly has failed.", NamedTextColor.RED));
+        game.forEachOnlinePlayer((player, team) -> player.playSound(player.getLocation(), Sound.ENTITY_WITHER_DEATH, 2, .7f));
+        Bukkit.getPluginManager().callEvent(new WarlordsGameTriggerWinEvent(game, this, Team.RED));
+    }
+
     private void cancelLaserTasks() {
         for (GameRunnable task : List.copyOf(laserTasks)) {
             task.cancel();
@@ -630,6 +696,8 @@ public class DunestarEscortOption extends AbstractAnomalyOption {
     }
 
     private void clearCarrierState() {
+        carrierCooldownModifiers.forEach(FloatModifiable.FloatModifier::forceEnd);
+        carrierCooldownModifiers.clear();
         if (carrier == null || !(carrier.getEntity() instanceof Player player)) {
             carrier = null;
             return;
@@ -657,8 +725,8 @@ public class DunestarEscortOption extends AbstractAnomalyOption {
 
     @Override
     public void onPlayerQuit(Player player) {
-        if (isCarrier(player) && !completed) {
-            finishEscort("The relic carrier left the anomaly.");
+        if (isCarrier(player) && !completed && !failed) {
+            failEscort("The relic carrier left the anomaly.");
         }
     }
 

@@ -1,5 +1,6 @@
 package com.ebicep.warlords.pve.newitems.setbonus.sets;
 
+import com.ebicep.warlords.honorifics.HonorificManager;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
 import com.ebicep.warlords.player.ingame.WarlordsPlayer;
 import com.ebicep.warlords.player.ingame.cooldowns.CooldownTypes;
@@ -92,6 +93,7 @@ public class Sacrifice extends BaseSet {
                         "You sacrificed " + ally.getName() + " to the unholy gods!",
                         NamedTextColor.RED
                 ));
+                HonorificManager.recordSacrificeKill(warlordsPlayer.getUuid());
             }));
         }
 

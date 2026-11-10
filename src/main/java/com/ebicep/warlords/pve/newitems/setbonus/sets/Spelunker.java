@@ -17,6 +17,7 @@ import com.ebicep.warlords.pve.rewards.RewardInventory;
 import com.ebicep.warlords.pve.rewards.types.CompensationReward;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
+import org.bukkit.World;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 
@@ -61,6 +62,10 @@ public class Spelunker extends BaseSet {
                     if (event.getKiller() != null && !event.getKiller().equals(warlordsPlayer)) {
                         return;
                     }
+                    World world = event.getWarlordsEntity().getWorld();
+                    if (world.getName().contains("WLDebug") || world.getName().contains("VoidCrossfire")) { // scuffed fix until i find better
+                        return;
+                    }
                     if (ThreadLocalRandom.current().nextDouble(100) < spelunkerChestDropChancePercent) {
                         giveSpelunkerChest(warlordsPlayer);
                     }
@@ -98,9 +103,12 @@ public class Spelunker extends BaseSet {
 
         private void giveSpelunkerChest(WarlordsPlayer warlordsPlayer) {
             double roll = ThreadLocalRandom.current().nextDouble(100);
-            Currencies currency;
+            Spendable currency;
             long amount;
-            if (roll < 50) {
+            if (roll < 25) {
+                currency = Currencies.COIN;
+                amount = 100;
+            } else if (roll < 50) {
                 currency = Currencies.SYNTHETIC_SHARD;
                 amount = 12;
             } else if (roll < 75) {
@@ -113,7 +121,7 @@ public class Spelunker extends BaseSet {
                 currency = Currencies.ETHEREUM_CRYSTAL;
                 amount = 1;
             } else {
-                currency = Currencies.ASCENDANT_SHARD;
+                currency = MobDrop.ZENITH_STAR;
                 amount = 1;
             }
 

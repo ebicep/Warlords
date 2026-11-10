@@ -16,9 +16,9 @@ public enum Anomalies {
                     Component.text("Defend each relic for 2 minutes.")
             ),
             List.of(
-                    new AnomalyRewardPool("Opex Cache I", 600, 100, 1, 0.10),
-                    new AnomalyRewardPool("Opex Cache II", 600, 150, 1, 0.20),
-                    new AnomalyRewardPool("Opex Cache III", 600, 200, 2, 0.30)
+                    new AnomalyRewardPool("Opex Cache I", 600, 0, 1, 0.10),
+                    new AnomalyRewardPool("Opex Cache II", 600, 1, 1, 0.20),
+                    new AnomalyRewardPool("Opex Cache III", 600, 2, 2, 0.30)
             ),
             new AnomalyMobSet()
                     //basic
@@ -51,13 +51,14 @@ public enum Anomalies {
             "Bridge of Dunestar",
             List.of(
                     Component.text("Pick up the relic to choose its carrier."),
-                    Component.text("The carrier cannot attack or use abilities."),
-                    Component.text("Reach each destination within 2 minutes.")
+                    Component.text("Reach each destination within 2 minutes."),
+                    Component.text("Charge each checkpoint for 150 seconds."),
+                    Component.text("Each kill reduces checkpoint charge time.")
             ),
             List.of(
-                    new AnomalyRewardPool("Dunestar Cache I", 1_000, 50, 1, 0.10),
-                    new AnomalyRewardPool("Dunestar Cache II", 2_000, 75, 1, 0.15),
-                    new AnomalyRewardPool("Dunestar Cache III", 3_000, 100, 2, 0.20)
+                    new AnomalyRewardPool("Dunestar Cache I", 1_000, 0, 1, 0.10),
+                    new AnomalyRewardPool("Dunestar Cache II", 1_500, 1, 1, 0.20),
+                    new AnomalyRewardPool("Dunestar Cache III", 2_000, 2, 2, 0.30)
             ),
             new AnomalyMobSet()
                     //basic
@@ -99,9 +100,10 @@ public enum Anomalies {
                     .add(0.06, Mob.WITCH_DEACON)
                     .add(0.02, Mob.ADVANCED_WARRIOR_BERSERKER)
                     //envoy
-                    .add(0.05, Mob.ZOMBIE_VANGUARD)
-                    .add(0.05, Mob.SKELETAL_ENTROPY)
-                    .add(0.01, Mob.PIG_ALLEVIATOR)
+                    .add(0.1, Mob.ZOMBIE_KNIGHT)
+                    .add(0.1, Mob.SCRUPULOUS_ZOMBIE)
+                    .add(0.1, Mob.SKELETAL_SORCERER)
+                    .add(0.05, Mob.RIFT_WALKER)
                     //elite
                     .add(0.04, Mob.VOID_ZOMBIE)
                     .add(0.04, Mob.SKELETAL_MESMER)
@@ -112,31 +114,26 @@ public enum Anomalies {
                     .add(0.01, Mob.BARNACLE_BRUTE)
                     .add(0.01, Mob.ABYSS_WATCHER),
             new AnomalyMobSet()
-                    //basic
-                    .add(0.4, Mob.ZOMBIE_LANCER)
-                    .add(0.2, Mob.SLIMY_ANOMALY)
-                    .add(0.2, Mob.ARACHNO_VENARI)
-                    //elite
-                    .add(0.5, Mob.ZOMBIE_SWORDSMAN)
-                    .add(0.1, Mob.SKELETAL_WARLOCK)
-                    .add(0.2, Mob.PIG_SHAMAN)
-                    .add(0.02, Mob.ILLUMINATION)
-                    .add(0.15, Mob.GOLEM_APPRENTICE)
-                    .add(0.06, Mob.WITCH_DEACON)
-                    .add(0.02, Mob.ADVANCED_WARRIOR_BERSERKER)
+                    .add(0.1, Mob.ILLUMINATION)
+                    .add(0.2, Mob.GOLEM_APPRENTICE)
+                    .add(0.05, Mob.WITCH_DEACON)
                     //envoy
-                    .add(0.05, Mob.ZOMBIE_VANGUARD)
-                    .add(0.05, Mob.SKELETAL_ENTROPY)
-                    .add(0.01, Mob.PIG_ALLEVIATOR)
-                    //elite
-                    .add(0.04, Mob.VOID_ZOMBIE)
-                    .add(0.04, Mob.SKELETAL_MESMER)
-                    .add(0.04, Mob.FIRE_SPLITTER)
-                    .add(0.02, Mob.RIFT_WALKER)
+                    .add(0.5, Mob.SLIME_GUARD)
+                    //void
+                    .add(0.1, Mob.VOID_ZOMBIE)
+                    .add(0.3, Mob.SKELETAL_MESMER)
+                    .add(0.06, Mob.PIG_PARTICLE)
+                    .add(0.02, Mob.SLIMY_CHESS)
+                    // exiled
+                    .add(0.1, Mob.ZOMBIE_KNIGHT)
+                    .add(0.2, Mob.SCRUPULOUS_ZOMBIE)
+                    .add(0.3, Mob.SKELETAL_SORCERER)
+                    // forgotten
+                    .add(0.01, Mob.NIGHTMARE_ZOMBIE)
+                    .add(0.5, Mob.OVERGROWN_ZOMBIE)
+                    .add(0.01, Mob.CELESTIAL_OPUS)
                     // champion
-                    .add(0.01, Mob.LANTERN_DREDGER)
-                    .add(0.01, Mob.BARNACLE_BRUTE)
-                    .add(0.01, Mob.ABYSS_WATCHER)
+                    .add(0.001, Mob.VOID_JAILER)
     ),
     WHAT_ONCE_WAS(
             "What Once Was",
@@ -146,28 +143,52 @@ public enum Anomalies {
                     Component.text("Wrong inputs summon additional defenders.")
             ),
             List.of(
-                    new AnomalyRewardPool("Remnant Cache I", 500, 50, 1, 0.1),
-                    new AnomalyRewardPool("Remnant Cache II", 750, 75, 1, 0.1),
-                    new AnomalyRewardPool("Remnant Cache III", 1000, 100, 2, 0.15)
+                    new AnomalyRewardPool("Remnant Cache I", 500, 0, 1, 0.10),
+                    new AnomalyRewardPool("Remnant Cache II", 750, 1, 1, 0.20),
+                    new AnomalyRewardPool("Remnant Cache III", 1000, 2, 2, 0.30)
             ),
             new AnomalyMobSet()
                     //basic
-                    .add(0.3, Mob.ZOMBIE_LAMENT)
-                    .add(0.2, Mob.SLIMY_ANOMALY)
-                    .add(0.2, Mob.ARACHNO_VENARI)
+                    .add(0.5, Mob.ZOMBIE_LAMENT)
+                    .add(0.1, Mob.SLIMY_ANOMALY)
+                    .add(0.1, Mob.ARACHNO_VENARI)
                     //elite
-                    .add(0.5, Mob.ZOMBIE_SWORDSMAN)
+                    .add(0.3, Mob.ZOMBIE_SWORDSMAN)
                     .add(0.1, Mob.SKELETAL_WARLOCK)
-                    .add(0.2, Mob.PIG_SHAMAN)
-                    .add(0.15, Mob.GOLEM_APPRENTICE)
-                    .add(0.06, Mob.WITCH_DEACON)
-                    .add(0.02, Mob.ADVANCED_WARRIOR_BERSERKER)
+                    .add(0.1, Mob.PIG_SHAMAN)
+                    .add(0.1, Mob.GOLEM_APPRENTICE)
+                    .add(0.03, Mob.WITCH_DEACON)
                     //envoy
-                    .add(0.05, Mob.ZOMBIE_VANGUARD)
-                    .add(0.05, Mob.SKELETAL_ENTROPY)
+                    .add(0.01, Mob.ZOMBIE_VANGUARD)
+                    .add(0.01, Mob.SKELETAL_ENTROPY)
                     .add(0.01, Mob.PIG_ALLEVIATOR)
-                    .add(0.05, Mob.VOID_ZOMBIE)
-                    .add(0.001, Mob.VOID_JAILER)
+                    .add(0.01, Mob.VOID_ZOMBIE)
+    ),
+    ENDLESS_PARADOX(
+            "Endless Paradox",
+            List.of(
+                    Component.text("Repair the broken timeline of the ancient Illusion Dynasty."),
+                    Component.text("Return every fragment within 3 minutes to summon "),
+                    Component.text("Chronarch and restore the timeline.")
+            ),
+            List.of(
+                    new AnomalyRewardPool("Paradox Cache I", 600, 0, 1, 0.10),
+                    new AnomalyRewardPool("Paradox Cache II", 800, 1, 1, 0.15),
+                    new AnomalyRewardPool("Paradox Cache III", 1_200, 2, 2, 0.20)
+            ),
+            new AnomalyMobSet()
+                    .add(0.4, Mob.ZOMBIE_LAMENT)
+                    .add(0.15, Mob.SLIMY_ANOMALY)
+                    .add(0.15, Mob.ARACHNO_VENARI)
+                    .add(0.3, Mob.ZOMBIE_SWORDSMAN)
+                    .add(0.1, Mob.SKELETAL_WARLOCK)
+                    .add(0.1, Mob.PIG_SHAMAN)
+                    .add(0.1, Mob.GOLEM_APPRENTICE)
+                    .add(0.05, Mob.ANCIENT_DYNASTY)
+                    .add(0.03, Mob.WITCH_DEACON)
+                    .add(0.02, Mob.ZOMBIE_VANGUARD)
+                    .add(0.02, Mob.SKELETAL_ENTROPY)
+                    .add(0.01, Mob.VOID_ZOMBIE)
     );
 
     public static final Anomalies[] VALUES = values();
@@ -190,6 +211,7 @@ public enum Anomalies {
             case OPEX_ANOMALY -> GameMap.OPEX_ANOMALY;
             case BRIDGE_OF_DUNESTAR -> GameMap.PLAINS_OF_DUNESTAR;
             case WHAT_ONCE_WAS -> GameMap.WHAT_ONCE_WAS;
+            case ENDLESS_PARADOX -> GameMap.ENDLESS_PARADOX;
         };
     }
 
@@ -200,6 +222,11 @@ public enum Anomalies {
                     ? "Reach Checkpoint " + (cacheIndex + 1)
                     : "Deliver the relic to the sanctuary";
             case WHAT_ONCE_WAS -> "Unlock Vault " + ((cacheIndex + 1) * 2);
+            case ENDLESS_PARADOX -> switch (cacheIndex) {
+                case 0 -> "Charge half of the timeline fragments";
+                case 1 -> "Charge all timeline fragments at the altar";
+                default -> "Defeat Chronarch";
+            };
         };
     }
 

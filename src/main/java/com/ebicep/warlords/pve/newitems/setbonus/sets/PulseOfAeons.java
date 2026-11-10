@@ -80,7 +80,10 @@ public class PulseOfAeons extends BaseSet {
                                         .cause(getName())
                                         .source(warlordsPlayer)
                                         .value(pulseHealAmount)
-                                        .flags(InstanceFlags.TRUE_HEALING)
+                                        .flags(
+                                                InstanceFlags.TRUE_HEALING,
+                                                InstanceFlags.RECURSIVE
+                                        )
                                 );
                             }
                     );

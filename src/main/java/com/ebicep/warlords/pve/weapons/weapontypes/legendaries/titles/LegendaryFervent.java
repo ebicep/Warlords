@@ -13,7 +13,6 @@ import com.ebicep.warlords.util.java.NumberFormat;
 import com.ebicep.warlords.util.java.Pair;
 import com.ebicep.warlords.util.warlords.GameRunnable;
 import com.ebicep.warlords.util.warlords.modifiablevalues.FloatModifiable;
-import com.google.common.util.concurrent.AtomicDouble;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.TextComponent;
 import net.kyori.adventure.text.format.NamedTextColor;
@@ -25,10 +24,14 @@ import org.springframework.data.annotation.Transient;
 import java.util.Arrays;
 import java.util.List;
 import java.util.UUID;
-import java.util.concurrent.atomic.AtomicInteger;
-import java.util.concurrent.atomic.AtomicReference;
 
 public class LegendaryFervent extends AbstractLegendaryWeapon implements PassiveCounter {
+
+    private static final class FerventSession {
+        double damageTaken;
+        int damageBoost;
+        RegularCooldown<LegendaryFervent> stackCooldown;
+    }
 
     public static final int DAMAGE_BOOST = 5;
     public static final int DAMAGE_TO_TAKE = 5000;
@@ -104,9 +107,8 @@ public class LegendaryFervent extends AbstractLegendaryWeapon implements Passive
     public void applyToWarlordsPlayer(WarlordsPlayer player, PveOption pveOption) {
         super.applyToWarlordsPlayer(player, pveOption);
         this.passiveCooldown = 0;
-        final AtomicDouble damageTaken = new AtomicDouble(0);
-        final AtomicInteger damageBoost = new AtomicInteger(0);
-        final AtomicReference<RegularCooldown<LegendaryFervent>> cooldown = new AtomicReference<>(null);
+
+        final FerventSession session = new FerventSession();
 
         player.getGame().registerEvents(new Listener() {
 
@@ -122,11 +124,11 @@ public class LegendaryFervent extends AbstractLegendaryWeapon implements Passive
                     return;
                 }
 
-                if (damageTaken.addAndGet(event.getValueBeforeAllReduction()) >= DAMAGE_TO_TAKE) {
-                    damageTaken.set(0);
-                    damageBoost.set(Math.min(MAX_STACKS, damageBoost.get() + 1));
+                if ((session.damageTaken += event.getValueBeforeAllReduction()) >= DAMAGE_TO_TAKE) {
+                    session.damageTaken = 0;
+                    session.damageBoost = Math.min(MAX_STACKS, session.damageBoost + 1);
 
-                    if (cooldown.get() == null || !player.getCooldownManager().hasCooldown(cooldown.get())) {
+                    if (session.stackCooldown == null || !player.getCooldownManager().hasCooldown(session.stackCooldown)) {
                         RegularCooldown<LegendaryFervent> regularCooldown = new RegularCooldown<>(
                                 "Fervent 1",
                                 "FER 1",
@@ -137,23 +139,23 @@ public class LegendaryFervent extends AbstractLegendaryWeapon implements Passive
                                 cooldownManager -> {
                                 },
                                 cooldownManager -> {
-                                    cooldown.set(null);
-                                    damageBoost.set(0);
+                                    session.stackCooldown = null;
+                                    session.damageBoost = 0;
                                 },
                                 DURATION * 20
                         );
                         regularCooldown.addModifier(
                                 Modifier.MODIFY_OUTGOING_DAMAGE_BEFORE_INTERVENE,
                                 (e, currentDamageValue) -> {
-                                    currentDamageValue.addModifier(FloatModifiable.ModifierType.MULTIPLICATIVE_MULTIPLIER, getTitleName(), 1 + damageBoost.get() * DAMAGE_BOOST / 100f);
+                                    currentDamageValue.addModifier(FloatModifiable.ModifierType.MULTIPLICATIVE_MULTIPLIER, getTitleName(), 1 + session.damageBoost * DAMAGE_BOOST / 100f);
                                 }
                         );
-                        cooldown.set(regularCooldown);
+                        session.stackCooldown = regularCooldown;
                         player.getCooldownManager().addCooldown(regularCooldown);
                     } else {
-                        cooldown.get().setTicksLeft(DURATION * 20);
-                        cooldown.get().setName("Fervent " + damageBoost.get());
-                        cooldown.get().setNameAbbreviation("FER " + damageBoost.get());
+                        session.stackCooldown.setTicksLeft(DURATION * 20);
+                        session.stackCooldown.setName("Fervent " + session.damageBoost);
+                        session.stackCooldown.setNameAbbreviation("FER " + session.damageBoost);
                     }
                 }
             }
@@ -173,7 +175,7 @@ public class LegendaryFervent extends AbstractLegendaryWeapon implements Passive
                     }
                     return;
                 }
-                if (cooldown.get() == null || !player.getCooldownManager().hasCooldown(cooldown.get()) || !cooldown.get().getName().equals("Fervent 3")) {
+                if (session.stackCooldown == null || !player.getCooldownManager().hasCooldown(session.stackCooldown) || !session.stackCooldown.getName().equals("Fervent 3")) {
                     return;
                 }
                 if (player.isSneaking()) {
@@ -181,7 +183,7 @@ public class LegendaryFervent extends AbstractLegendaryWeapon implements Passive
                     shiftTickTime++;
                     if (shiftTickTime == 20) {
                         player.playSound(player.getLocation(), Sound.BLOCK_NOTE_BLOCK_PLING, 1, 2);
-                        player.getCooldownManager().removeCooldown(cooldown.get());
+                        player.getCooldownManager().removeCooldown(session.stackCooldown);
                         player.getCooldownManager().addCooldown(new RegularCooldown<>(
                                 "Fervent Ability",
                                 "FERVENT",

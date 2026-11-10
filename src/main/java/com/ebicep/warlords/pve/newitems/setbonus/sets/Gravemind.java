@@ -63,10 +63,7 @@ public class Gravemind extends BaseSet {
 
                 @EventHandler
                 public void onDeath(WarlordsDeathEvent event) {
-                    if (!Objects.equals(event.getKiller(), warlordsPlayer) ||
-                            event.getWarlordsEntity().getTeam().equals(warlordsPlayer.getTeam()) ||
-                            ThreadLocalRandom.current().nextDouble() > summonChance / 100.0
-                    ) {
+                    if (event.getWarlordsEntity().getTeam().equals(warlordsPlayer.getTeam()) || ThreadLocalRandom.current().nextDouble() > summonChance / 100.0) {
                         return;
                     }
                     spawnMob(warlordsPlayer, event.getWarlordsEntity().getLocation());
@@ -88,7 +85,7 @@ public class Gravemind extends BaseSet {
                 "Your Gravemind summoned a mob for " + (int) duration + " seconds!",
                 NamedTextColor.GREEN
         ));
-        AbstractMob mob = Mob.ZOMBIE_SWORDSMAN.createMob(location);
+        AbstractMob mob = Mob.REQUIEM_GUARDIAN.createMob(location);
         mob.setEquipment(new Utils.SimpleEntityEquipment(
                 HeadUtils.getHead(warlordsPlayer.getUuid()),
                 CHESTPLATE,
@@ -98,6 +95,7 @@ public class Gravemind extends BaseSet {
                 mob.getEquipment().getItemInOffHand()
         ));
         mob.updateEquipment();
+        Summoner.applyToSummon(mob, warlordsPlayer);
         pveOption.spawnNewMob(mob, warlordsPlayer.getTeam());
         Summoner.applyToSummon(mob, warlordsPlayer);
         new GameRunnable(warlordsPlayer.getGame()) {

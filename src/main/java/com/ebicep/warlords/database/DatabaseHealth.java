@@ -33,7 +33,7 @@ public final class DatabaseHealth {
         boolean wasUnhealthy = !dbHealthy;
         dbHealthy = true;
         OUTAGE_LOGGED.set(false);
-        GameManager.gameStartingDisabled = false;
+        GameManager.databaseGameStartingDisabled = false;
         if (wasUnhealthy && DatabaseManager.enabled) {
             ChatUtils.MessageType.WARLORDS.sendMessage("Database connection restored.");
             flushPendingWrites();
@@ -46,7 +46,7 @@ public final class DatabaseHealth {
             return;
         }
         dbHealthy = false;
-        GameManager.gameStartingDisabled = true;
+        GameManager.databaseGameStartingDisabled = true;
         if (OUTAGE_LOGGED.compareAndSet(false, true)) {
             ChatUtils.MessageType.WARLORDS.sendErrorMessage("Database unavailable: " + cause.getMessage());
             ChatUtils.MessageType.WARLORDS.sendErrorMessage(cause);

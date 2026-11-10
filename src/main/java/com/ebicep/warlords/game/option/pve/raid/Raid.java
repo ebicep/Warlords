@@ -3,6 +3,9 @@ package com.ebicep.warlords.game.option.pve.raid;
 import com.ebicep.warlords.guilds.GuildSpendable;
 import com.ebicep.warlords.pve.Currencies;
 import com.ebicep.warlords.pve.Spendable;
+import com.ebicep.warlords.pve.newitems.gems.Gem;
+import com.ebicep.warlords.pve.newitems.gems.GemTier;
+import com.ebicep.warlords.pve.newitems.gems.GemType;
 
 import java.util.LinkedHashMap;
 
@@ -11,10 +14,11 @@ public enum Raid {
     REGNUM_OF_TWO_CROWNS(
             "Regnum of Two Crowns",
             "Conquer the Heir of Two Crowns.",
-            70
+            2000,
+            GemTier.ONE
     ) {
         @Override
-        public LinkedHashMap<Spendable, Long> getNormalRewards() {
+        protected LinkedHashMap<Spendable, Long> createNormalRewards() {
             return new LinkedHashMap<>() {{
                 put(Currencies.COIN, 200_000L);
                 put(GuildSpendable.GUILD_COIN, 10_000L);
@@ -26,15 +30,10 @@ public enum Raid {
         }
 
         @Override
-        public LinkedHashMap<Spendable, Long> getOblivionRewards() {
+        protected LinkedHashMap<Spendable, Long> createOblivionRewards() {
             return new LinkedHashMap<>() {{
                 put(Currencies.COIN, 400_000L);
                 put(GuildSpendable.GUILD_COIN, 15_000L);
-                put(Currencies.ASCENDANT_SHARD, 20L);
-                put(Currencies.LEGEND_FRAGMENTS, 10000L);
-                put(Currencies.ETHEREUM_CRYSTAL, 10L);
-                put(Currencies.ASCENDANT_STAR_PIECE, 3L);
-                put(Currencies.LIMIT_BREAKER, 3L);
                 put(Currencies.ITEM_LOCK_SCROLL, 1L);
             }};
         }
@@ -42,10 +41,11 @@ public enum Raid {
     OATH_OF_THE_FIRST_HEIR(
             "Oath of the First Heir",
             "PLACEHOLDER",
-            75
+            2400,
+            GemTier.ONE
     ) {
         @Override
-        public LinkedHashMap<Spendable, Long> getNormalRewards() {
+        protected LinkedHashMap<Spendable, Long> createNormalRewards() {
             return new LinkedHashMap<>() {{
                 put(Currencies.COIN, 300_000L);
                 put(GuildSpendable.GUILD_COIN, 10_000L);
@@ -57,7 +57,7 @@ public enum Raid {
         }
 
         @Override
-        public LinkedHashMap<Spendable, Long> getOblivionRewards() {
+        protected LinkedHashMap<Spendable, Long> createOblivionRewards() {
             return new LinkedHashMap<>() {{
                 put(Currencies.COIN, 300_000L);
                 put(GuildSpendable.GUILD_COIN, 10_000L);
@@ -68,13 +68,14 @@ public enum Raid {
             }};
         }
     },
-    THE_EVERGREEN_MANSION(
-            "The Evergreen Mansion",
+    CRUCIBLE_OF_SALVATION(
+            "Crucible of Salvation",
             "PLACEHOLDER",
-            80
+            2900,
+            GemTier.TWO
     ) {
         @Override
-        public LinkedHashMap<Spendable, Long> getNormalRewards() {
+        protected LinkedHashMap<Spendable, Long> createNormalRewards() {
             return new LinkedHashMap<>() {{
                 put(Currencies.COIN, 300_000L);
                 put(GuildSpendable.GUILD_COIN, 10_000L);
@@ -86,7 +87,7 @@ public enum Raid {
         }
 
         @Override
-        public LinkedHashMap<Spendable, Long> getOblivionRewards() {
+        protected LinkedHashMap<Spendable, Long> createOblivionRewards() {
             return new LinkedHashMap<>() {{
                 put(Currencies.COIN, 300_000L);
                 put(GuildSpendable.GUILD_COIN, 10_000L);
@@ -100,10 +101,11 @@ public enum Raid {
     SHADOWS_OF_THE_UNDERGROUND(
             "Shadows of the Underground",
             "PLACEHOLDER",
-            85
+            3150,
+            GemTier.TWO
     ) {
         @Override
-        public LinkedHashMap<Spendable, Long> getNormalRewards() {
+        protected LinkedHashMap<Spendable, Long> createNormalRewards() {
             return new LinkedHashMap<>() {{
                 put(Currencies.COIN, 300_000L);
                 put(GuildSpendable.GUILD_COIN, 10_000L);
@@ -115,7 +117,7 @@ public enum Raid {
         }
 
         @Override
-        public LinkedHashMap<Spendable, Long> getOblivionRewards() {
+        protected LinkedHashMap<Spendable, Long> createOblivionRewards() {
             return new LinkedHashMap<>() {{
                 put(Currencies.COIN, 300_000L);
                 put(GuildSpendable.GUILD_COIN, 10_000L);
@@ -129,10 +131,11 @@ public enum Raid {
     THE_STAIRWAY_OF_ILLUSION(
             "The Stairway of Illusion",
             "PLACEHOLDER",
-            90
+            90,
+            GemTier.THREE
     ) {
         @Override
-        public LinkedHashMap<Spendable, Long> getNormalRewards() {
+        protected LinkedHashMap<Spendable, Long> createNormalRewards() {
             return new LinkedHashMap<>() {{
                 put(Currencies.COIN, 300_000L);
                 put(GuildSpendable.GUILD_COIN, 10_000L);
@@ -144,7 +147,7 @@ public enum Raid {
         }
 
         @Override
-        public LinkedHashMap<Spendable, Long> getOblivionRewards() {
+        protected LinkedHashMap<Spendable, Long> createOblivionRewards() {
             return new LinkedHashMap<>() {{
                 put(Currencies.COIN, 300_000L);
                 put(GuildSpendable.GUILD_COIN, 10_000L);
@@ -158,10 +161,11 @@ public enum Raid {
     THE_HALLS_OF_ASCENSION(
             "The Halls of Ascension",
             "PLACEHOLDER",
-            95
+            95,
+            GemTier.THREE
     ) {
         @Override
-        public LinkedHashMap<Spendable, Long> getNormalRewards() {
+        protected LinkedHashMap<Spendable, Long> createNormalRewards() {
             return new LinkedHashMap<>() {{
                 put(Currencies.COIN, 300_000L);
                 put(GuildSpendable.GUILD_COIN, 10_000L);
@@ -173,7 +177,7 @@ public enum Raid {
         }
 
         @Override
-        public LinkedHashMap<Spendable, Long> getOblivionRewards() {
+        protected LinkedHashMap<Spendable, Long> createOblivionRewards() {
             return new LinkedHashMap<>() {{
                 put(Currencies.COIN, 300_000L);
                 put(GuildSpendable.GUILD_COIN, 10_000L);
@@ -187,10 +191,11 @@ public enum Raid {
     THE_FINAL_VEIL(
             "The Final Veil",
             "PLACEHOLDER",
-            100
+            100,
+            GemTier.FOUR
     ) {
         @Override
-        public LinkedHashMap<Spendable, Long> getNormalRewards() {
+        protected LinkedHashMap<Spendable, Long> createNormalRewards() {
             return new LinkedHashMap<>() {{
                 put(Currencies.COIN, 300_000L);
                 put(GuildSpendable.GUILD_COIN, 10_000L);
@@ -202,7 +207,7 @@ public enum Raid {
         }
 
         @Override
-        public LinkedHashMap<Spendable, Long> getOblivionRewards() {
+        protected LinkedHashMap<Spendable, Long> createOblivionRewards() {
             return new LinkedHashMap<>() {{
                 put(Currencies.COIN, 300_000L);
                 put(GuildSpendable.GUILD_COIN, 10_000L);
@@ -217,19 +222,47 @@ public enum Raid {
     ;
 
     public static final Raid[] VALUES = values();
-    private final String name;
-    private final String description;
-    private final int minimumClassLevel;
 
-    Raid(String name, String description, int minimumClassLevel) {
-        this.name = name;
-        this.description = description;
-        this.minimumClassLevel = minimumClassLevel;
+    private static void putGems(LinkedHashMap<Spendable, Long> rewards, GemTier tier, long amount) {
+        for (GemType type : GemType.VALUES) {
+            rewards.merge(Gem.of(type, tier), amount, Long::sum);
+        }
     }
 
-    public abstract LinkedHashMap<Spendable, Long> getNormalRewards();
+    private final String name;
+    private final String description;
+    private final int minimumGearScore;
+    private final GemTier gemTier;
 
-    public abstract LinkedHashMap<Spendable, Long> getOblivionRewards();
+    Raid(String name, String description, int minimumGearScore, GemTier gemTier) {
+        this.name = name;
+        this.description = description;
+        this.minimumGearScore = minimumGearScore;
+        this.gemTier = gemTier;
+    }
+
+    public final LinkedHashMap<Spendable, Long> getNormalRewards() {
+        LinkedHashMap<Spendable, Long> rewards = createNormalRewards();
+        putGems(rewards, gemTier, 1);
+        return rewards;
+    }
+
+    /**
+     * Oblivion pays out more of the raid's own gem tier, plus a taste of the next tier up when there is one.
+     */
+    public final LinkedHashMap<Spendable, Long> getOblivionRewards() {
+        LinkedHashMap<Spendable, Long> rewards = createOblivionRewards();
+        putGems(rewards, gemTier, 2);
+        GemTier nextTier = gemTier.next();
+        if (nextTier != null) {
+            putGems(rewards, nextTier, 1);
+        }
+        return rewards;
+    }
+
+    protected abstract LinkedHashMap<Spendable, Long> createNormalRewards();
+
+    protected abstract LinkedHashMap<Spendable, Long> createOblivionRewards();
 
     public String getName() {
         return name;
@@ -239,7 +272,11 @@ public enum Raid {
         return description;
     }
 
-    public int getMinimumClassLevel() {
-        return minimumClassLevel;
+    public int getMinimumGearscore() {
+        return minimumGearScore;
+    }
+
+    public GemTier getGemTier() {
+        return gemTier;
     }
 }

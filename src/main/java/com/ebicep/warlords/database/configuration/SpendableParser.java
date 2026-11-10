@@ -9,6 +9,7 @@ import com.ebicep.warlords.pve.consumables.vials.Vial;
 import com.ebicep.warlords.pve.items.types.SpendableRandomItem;
 import com.ebicep.warlords.pve.mobs.MobDrop;
 import com.ebicep.warlords.pve.newitems.SpendableRandomNewItem;
+import com.ebicep.warlords.pve.newitems.gems.Gem;
 import com.ebicep.warlords.util.chat.ChatChannels;
 
 import javax.annotation.Nonnull;
@@ -22,6 +23,11 @@ public class SpendableParser {
             }
         }
         for (MobDrop value : MobDrop.VALUES) {
+            if (value.name().equalsIgnoreCase(s)) {
+                return value;
+            }
+        }
+        for (Gem value : Gem.VALUES) {
             if (value.name().equalsIgnoreCase(s)) {
                 return value;
             }

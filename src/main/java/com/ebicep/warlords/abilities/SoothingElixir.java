@@ -121,9 +121,8 @@ public class SoothingElixir extends AbstractAbility implements RedAbilityIcon, D
                                               CooldownTypes.BUFF,
                                               cooldownManager -> {
                                               },
-                                              4 * 20
+                                              5 * 20
                                       ) {
-
                                           @Override
                                           protected Listener getListener() {
                                               return CooldownUtils.getFullDebuffImmunityListener(nearEntity);
@@ -133,11 +132,12 @@ public class SoothingElixir extends AbstractAbility implements RedAbilityIcon, D
                     }
                     new GameRunnable(wp.getGame()) {
 
-                        int timeLeft = puddleTickDuration / 20;
+                        int timeLeft = puddleTickDuration;
 
                         @Override
                         public void run() {
-                            PlayerFilter.entitiesAround(newLoc, radius, radius, radius)
+                            if (timeLeft % (pveMasterUpgrade ? 5 : 20) == 0) {
+                                PlayerFilter.entitiesAround(newLoc, radius, radius, radius)
                                         .aliveTeammatesOf(wp)
                                         .forEach(ally -> ally.addInstance(InstanceBuilder
                                                 .healing()
@@ -146,13 +146,14 @@ public class SoothingElixir extends AbstractAbility implements RedAbilityIcon, D
                                                 .value(healingValues.elixirDOTHealing)
                                                 .flags(InstanceFlags.DOT)
                                         ));
+                            }
                             timeLeft--;
                             if (timeLeft <= 0) {
                                 this.cancel();
                                 particleTask.cancel();
                             }
                         }
-                    }.runTaskTimer(20, pveMasterUpgrade ? 5 : 20);
+                    }.runTaskTimer(20, 0);
                     List<WarlordsEntity> enemiesHit = PlayerFilter.entitiesAround(newLoc, radius, radius, radius).aliveEnemiesOf(wp).toList();
                     for (WarlordsEntity nearEntity : enemiesHit) {
                         Utils.playGlobalSound(nearEntity.getLocation(), Sound.BLOCK_GLASS_BREAK, 1, 0.5f);
@@ -164,8 +165,8 @@ public class SoothingElixir extends AbstractAbility implements RedAbilityIcon, D
                         nearEntity.addInstance(InstanceBuilder.damage().ability(this).source(wp).value(damageValues.elixirDamage));
                     }
                     if (pveMasterUpgrade2) {
-                        float healthBoost = (float) (wp.getMaxHealth() * Math.max(.25, (teammatesHit.size() + enemiesHit.size()) * .015f));
-                        wp.getHealth().addModifier(FloatModifiable.ModifierType.ADDITIVE, "Soothing Elixir", healthBoost, 4 * 20);
+                        float healthBoost = (float) (wp.getMaxHealth() * Math.min(.25, (teammatesHit.size() + enemiesHit.size()) * .015f));
+                        wp.getHealth().addModifier(FloatModifiable.ModifierType.ADDITIVE, "Soothing Elixir", healthBoost, 5 * 20);
                         wp.setCurrentHealth(wp.getCurrentHealth() + healthBoost);
                     }
                 }

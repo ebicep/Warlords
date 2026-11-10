@@ -5,6 +5,7 @@ import org.springframework.data.annotation.TypeAlias;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.UUID;
 
 @TypeAlias("new_items_manager")
 public class NewItemsManager {
@@ -22,6 +23,12 @@ public class NewItemsManager {
     public void removeItem(NewItem item) {
         this.loadouts.forEach(loadout -> loadout.getItems().removeIf(uuid -> uuid.equals(item.getUUID())));
         this.itemInventory.remove(item);
+    }
+
+    public boolean isEquipped(NewItem item) {
+        UUID uuid = item.getUUID();
+        return loadouts.stream()
+                       .anyMatch(loadout -> loadout.getItems().contains(uuid));
     }
 
     public NewItemSearchMenu.PlayerItemMenuSettings.PlayerItemMenuFilterSettings getMenuFilterSettings() {

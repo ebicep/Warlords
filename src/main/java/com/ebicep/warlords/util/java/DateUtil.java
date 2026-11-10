@@ -5,8 +5,16 @@ import java.time.format.DateTimeFormatter;
 import java.time.temporal.ChronoUnit;
 import java.time.temporal.TemporalAdjusters;
 
+/**
+ * Period boundaries for timed game features. All periods roll at <b>10:00 UTC</b> (server restart time).
+ * Until that moment the server is still in the previous period.
+ * <ul>
+ *     <li>Daily — each day at 10 UTC</li>
+ *     <li>Weekly — each Monday at 10 UTC</li>
+ *     <li>Monthly — the 1st of each month at 10 UTC</li>
+ * </ul>
+ */
 public class DateUtil {
-
 
     /**
      * @return Todays date at 10 AM UTC - Server restart time is 10 AM UTC
@@ -26,42 +34,116 @@ public class DateUtil {
         }
     }
 
+    /**
+     * @return The next future 10 AM UTC (today if still ahead, otherwise tomorrow)
+     */
     public static Instant getNextResetDate() {
-        return OffsetDateTime
+        OffsetDateTime next = OffsetDateTime
                 .now(ZoneOffset.UTC)
+                .withHour(10)
+                .withMinute(0)
+                .withSecond(0)
+                .withNano(0);
+        if (!next.toInstant().isAfter(Instant.now())) {
+            next = next.plusDays(1);
+        }
+        return next.toInstant();
+    }
+
+    /**
+     * @return The most recent Monday at 10 AM UTC (start of the current weekly period)
+     */
+    public static Instant getResetDateCurrentWeek() {
+        Instant instant = OffsetDateTime
+                .now(ZoneOffset.UTC)
+                .with(TemporalAdjusters.previousOrSame(DayOfWeek.MONDAY))
                 .withHour(10)
                 .withMinute(0)
                 .withSecond(0)
                 .withNano(0)
                 .toInstant();
+        if (instant.isBefore(Instant.now())) {
+            return instant;
+        } else {
+            return instant.minus(7, ChronoUnit.DAYS);
+        }
     }
 
+    /**
+     * @return The next future Monday at 10 AM UTC
+     */
+    public static Instant getNextWeeklyResetDate() {
+        OffsetDateTime next = OffsetDateTime
+                .now(ZoneOffset.UTC)
+                .with(TemporalAdjusters.previousOrSame(DayOfWeek.MONDAY))
+                .withHour(10)
+                .withMinute(0)
+                .withSecond(0)
+                .withNano(0);
+        if (!next.toInstant().isAfter(Instant.now())) {
+            next = next.plusWeeks(1);
+        }
+        return next.toInstant();
+    }
+
+    /**
+     * @return The most recent Monday at 10 AM UTC (start of the current weekly period)
+     */
     public static Instant getResetDateLatestMonday() {
-        return OffsetDateTime
+        return getResetDateCurrentWeek();
+    }
+
+    /**
+     * @return UTC epoch day of the current weekly period start ({@link #getResetDateCurrentWeek()})
+     */
+    public static long getCurrentWeekStartEpochDay() {
+        return getEpochDay(getResetDateCurrentWeek());
+    }
+
+    public static long getEpochDay(Instant instant) {
+        return instant.atZone(ZoneOffset.UTC).toLocalDate().toEpochDay();
+    }
+
+    /**
+     * @return The next future 1st of the month at 10 AM UTC
+     */
+    public static Instant getNextMonthlyResetDate() {
+        OffsetDateTime next = OffsetDateTime
                 .now(ZoneOffset.UTC)
-                .with(TemporalAdjusters.nextOrSame(DayOfWeek.MONDAY))
+                .with(TemporalAdjusters.firstDayOfMonth())
                 .withHour(10)
                 .withMinute(0)
                 .withSecond(0)
-                .withNano(0)
-                .toInstant();
+                .withNano(0);
+        if (!next.toInstant().isAfter(Instant.now())) {
+            next = next.plusMonths(1);
+        }
+        return next.toInstant();
     }
 
+    /**
+     * @return The next future 1st of the month at 10 AM UTC
+     * @see #getNextMonthlyResetDate()
+     */
     public static Instant getNextMonthFirstDay() {
-        return OffsetDateTime
+        return getNextMonthlyResetDate();
+    }
+
+    /**
+     * @return The 1st of the current month at 10 AM UTC (start of the current monthly period)
+     */
+    public static Instant getResetDateCurrentMonth() {
+        OffsetDateTime reset = OffsetDateTime
                 .now(ZoneOffset.UTC)
-                .with(TemporalAdjusters.firstDayOfNextMonth())
+                .with(TemporalAdjusters.firstDayOfMonth())
                 .withHour(10)
                 .withMinute(0)
                 .withSecond(0)
-                .withNano(0)
-                .toInstant();
-    }
-
-    public static Instant getResetDateCurrentMonth() {
-        return OffsetDateTime
-                .now(ZoneOffset.UTC)
-                .toInstant();
+                .withNano(0);
+        if (reset.toInstant().isBefore(Instant.now())) {
+            return reset.toInstant();
+        }
+        return reset.minusMonths(1).toInstant();
     }
 
     public static String formatCurrentDateEST(String format) {

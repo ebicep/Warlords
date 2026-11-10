@@ -43,7 +43,7 @@ public class PermanentCooldown<T> extends AbstractCooldown<T> {
     }
 
     @Override
-    public Component getNameAbbreviation() {
+    public Component getNameAbbreviation(WarlordsEntity warlordsEntity) {
         if (nameAbbreviation == null || nameAbbreviation.isEmpty()) {
             return null;
         }

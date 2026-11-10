@@ -1,6 +1,5 @@
 package com.ebicep.warlords.menu;
 
-import net.kyori.adventure.text.serializer.plain.PlainTextComponentSerializer;
 import org.bukkit.entity.HumanEntity;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
@@ -9,7 +8,6 @@ import org.bukkit.event.inventory.InventoryCloseEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
 import org.bukkit.metadata.MetadataValue;
 import org.bukkit.plugin.Plugin;
-import org.bukkit.scheduler.BukkitRunnable;
 
 import java.util.Optional;
 
@@ -35,16 +33,14 @@ public class MenuEventListener implements Listener {
     @EventHandler
     public void inventoryClose(InventoryCloseEvent evt) {
         HumanEntity player = evt.getPlayer();
-        new BukkitRunnable() {
-
-            @Override
-            public void run() {
-                if (PlainTextComponentSerializer.plainText().serialize(player.getOpenInventory().title()).equals("container.crafting")) {
-                    player.removeMetadata(METADATA_CUSTOM_INVENTORY, plugin);
-                }
-            }
-        }.runTaskLater(plugin, 1);
-
+        player.getMetadata(METADATA_CUSTOM_INVENTORY).stream()
+              .filter(metadataValue -> metadataValue.getOwningPlugin().equals(plugin))
+              .map(MetadataValue::value)
+              .filter(AbstractMenuBase.class::isInstance)
+              .map(AbstractMenuBase.class::cast)
+              .filter(menu -> evt.getInventory().equals(menu.menuInventory()))
+              .findAny()
+              .ifPresent(menu -> player.removeMetadata(METADATA_CUSTOM_INVENTORY, plugin));
     }
 
     @EventHandler

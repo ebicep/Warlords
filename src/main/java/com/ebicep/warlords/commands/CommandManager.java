@@ -417,6 +417,7 @@ public class CommandManager {
                                                                                            .map(Enum::name)
                                                                                            .toList()
         );
+        commandCompletions.registerStaticCompletion("newitempieces", NewItemsCommand.completePieces());
     }
 
     public static void registerConditions() {
@@ -648,8 +649,11 @@ public class CommandManager {
 
         manager.registerCommand(new AdminCommand());
         manager.registerCommand(new BuilderCommand());
+        manager.registerCommand(new BuildInfoCommand());
         manager.registerCommand(new BotConfigCommand());
         manager.registerCommand(new DatabaseCommand());
+        manager.registerCommand(new PushCacheBenchCommand());
+        manager.registerCommand(new FeatureFlagsCommand());
         manager.registerCommand(new DebugValueCommand());
         manager.registerCommand(new EditStatsCommand());
         manager.registerCommand(new ExperienceCommand());
@@ -713,6 +717,7 @@ public class CommandManager {
 
         manager.registerCommand(new MyPositionCommand());
         manager.registerCommand(new CompensateCommand());
+        manager.registerCommand(new PouchCommand());
 
         manager.registerCommand(new QuestCommand());
         manager.registerCommand(new WeaponCommand());

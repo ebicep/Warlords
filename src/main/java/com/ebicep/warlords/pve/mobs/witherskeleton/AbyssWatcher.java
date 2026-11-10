@@ -1,5 +1,6 @@
 package com.ebicep.warlords.pve.mobs.witherskeleton;
 
+import com.ebicep.warlords.effects.EffectUtils;
 import com.ebicep.warlords.events.player.ingame.WarlordsAbilityActivateEvent;
 import com.ebicep.warlords.game.option.pve.PveOption;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
@@ -12,6 +13,8 @@ import com.ebicep.warlords.util.warlords.PlayerFilter;
 import com.ebicep.warlords.util.warlords.Utils;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
+import net.kyori.adventure.title.Title;
+import net.kyori.adventure.util.Ticks;
 import org.bukkit.Location;
 import org.bukkit.Particle;
 import org.bukkit.Sound;
@@ -27,10 +30,10 @@ public class AbyssWatcher extends AbstractMob implements ChampionMob, Listener {
     private static final int WATCH_COOLDOWN_TICKS = 15 * 20; // 15sec
     private static final int WATCH_DURATION_TICKS = 5 * 20;  // 5sec
     private static final int INITIAL_WATCH_DELAY_TICKS = 3 * 20;
-    private static final int CASTS_BEFORE_PUNISH = 3;
+    private static final int CASTS_BEFORE_PUNISH = 4;
     private static final int PUNISH_DAMAGE = 5000;
     private static final int ENERGY_DRAIN = 100;
-    private static final int WATCH_RANGE = 25;
+    private static final int WATCH_RANGE = 20;
 
     private WarlordsEntity watchedTarget;
     private int watchedTicksLeft = 0;
@@ -116,6 +119,11 @@ public class AbyssWatcher extends AbstractMob implements ChampionMob, Listener {
         watchedCasts++;
 
         watchedTarget.sendMessage(Component.text("The Abyss Watcher tightens its gaze. [" + watchedCasts + "/" + CASTS_BEFORE_PUNISH + "]", NamedTextColor.DARK_PURPLE));
+        watchedTarget.getEntity().showTitle(Title.title(
+                Component.empty(),
+                Component.text("YOU'RE BEING WATCHED...", NamedTextColor.DARK_PURPLE),
+                Title.Times.times(Ticks.duration(0), Ticks.duration(30), Ticks.duration(0))
+        ));
         watchedTarget.playSound(watchedTarget.getLocation(), Sound.BLOCK_RESPAWN_ANCHOR_CHARGE, 1, 0.6f);
 
         if (watchedCasts >= CASTS_BEFORE_PUNISH) {
@@ -167,33 +175,34 @@ public class AbyssWatcher extends AbstractMob implements ChampionMob, Listener {
 
     private void playWatchedEffects() {
         Location targetLocation = watchedTarget.getLocation().clone().add(0, 1.3, 0);
-        watchedTarget.getWorld().spawnParticle(Particle.PORTAL, targetLocation, 18, .3, .45, .3, .025);
+        EffectUtils.displayParticle(Particle.PORTAL, targetLocation, 18, .3, .45, .3, .025);
 
         if (warlordsNPC != null && warlordsNPC.isAlive()) {
             Location watcherLocation = warlordsNPC.getLocation().clone().add(0, 1.4, 0);
-            warlordsNPC.getWorld().spawnParticle(Particle.SQUID_INK, watcherLocation, 6, .2, .2, .2, .01);
+            EffectUtils.displayParticle(Particle.SQUID_INK, watcherLocation, 6, .2, .2, .2, .01);
         }
     }
 
     private void punishWatchedTarget() {
-        if (!isValidWatchedTarget(watchedTarget)) {
+        WarlordsEntity target = watchedTarget;
+        if (!isValidWatchedTarget(target)) {
             clearWatched();
             return;
         }
 
-        watchedTarget.addInstance(InstanceBuilder
+        clearWatched();
+
+        target.addInstance(InstanceBuilder
                 .damage()
                 .cause("Abyss Watch")
                 .source(warlordsNPC)
                 .value(PUNISH_DAMAGE)
         );
 
-        watchedTarget.subtractEnergy("Abyss Watch", ENERGY_DRAIN, true);
-        watchedTarget.sendMessage(Component.text("The Abyss Watcher punishes your reckless casting.", NamedTextColor.RED));
-        watchedTarget.playSound(watchedTarget.getLocation(), Sound.ENTITY_ENDERMAN_HURT, 1, 0.6f);
-        Utils.playGlobalSound(watchedTarget.getLocation(), Sound.BLOCK_RESPAWN_ANCHOR_DEPLETE, 2, 0.7f);
-
-        clearWatched();
+        target.subtractEnergy("Abyss Watch", ENERGY_DRAIN, true);
+        target.sendMessage(Component.text("The Abyss Watcher punishes your reckless casting.", NamedTextColor.RED));
+        target.playSound(target.getLocation(), Sound.ENTITY_ENDERMAN_HURT, 1, 0.6f);
+        Utils.playGlobalSound(target.getLocation(), Sound.BLOCK_RESPAWN_ANCHOR_DEPLETE, 2, 0.7f);
     }
 
     private boolean isValidWatchedTarget(WarlordsEntity target) {

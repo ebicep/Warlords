@@ -43,6 +43,7 @@ public class DeathsDebt extends AbstractTotem implements Duration, AbilityStats<
 
     public static final ItemStack BLUE_TOTEM = new ItemStack(Material.COPPER_BLOCK);
     public static final ItemStack PURPLE_TOTEM = new ItemStack(Material.CHISELED_COPPER);
+    private static final String RITE_ATTACK_SPEED_MODIFIER = "Rite of the Unpaid";
     private final DeathsDebtStats stats = new DeathsDebtStats();
     private int tickDuration = 120;
     private int respiteRadius = 10;
@@ -89,7 +90,7 @@ public class DeathsDebt extends AbstractTotem implements Duration, AbilityStats<
         if (pveMasterUpgrade) {
             data.spawnRiteTotemVisual();
         }
-        wp.getCooldownManager().limitCooldowns(RegularCooldown.class, DeathsDebtData.class, 2);
+
         RegularCooldown<DeathsDebtData> spiritsRespiteCooldown = new RegularCooldown<>(
                 "Spirits' Respite",
                 "RESP",
@@ -381,7 +382,7 @@ public class DeathsDebt extends AbstractTotem implements Duration, AbilityStats<
 
         for (WarlordsEntity ally : PlayerFilter
                 .entitiesAround(totemLocation, respiteRadius, respiteRadius, respiteRadius)
-                .aliveTeammatesOf(wp)
+                .aliveTeammatesOfExcludingSelf(wp)
         ) {
             reduceAllyCooldowns(ally);
             applyRiteAttackSpeed(wp, ally);
@@ -391,7 +392,7 @@ public class DeathsDebt extends AbstractTotem implements Duration, AbilityStats<
     private void reduceAllyCooldowns(WarlordsEntity ally) {
         ally.getAbilities().forEach(ability -> {
             if (ability.getCurrentCooldown() > 0) {
-                ability.subtractCurrentCooldownForce(1);
+                ability.subtractCurrentCooldownForce(0.3f);
                 AbstractAbility.playCooldownReductionEffect(ally);
             }
         });
@@ -410,6 +411,7 @@ public class DeathsDebt extends AbstractTotem implements Duration, AbilityStats<
             return;
         }
 
+        ally.getPveHitCooldown().addModifier(FloatModifiable.ModifierType.OVERRIDING, RITE_ATTACK_SPEED_MODIFIER, 6);
         ally.getCooldownManager().addCooldown(new RegularCooldown<>(
                 "Rite of the Unpaid",
                 "RITE",
@@ -417,16 +419,9 @@ public class DeathsDebt extends AbstractTotem implements Duration, AbilityStats<
                 new RiteAttackSpeedData(),
                 wp,
                 CooldownTypes.BUFF,
-                cooldownManager -> {
-                    ally.setPveHitCooldown(13);
-                    ally.setHitCooldown(13);
-                },
-                5 * 20,
-                List.of((cooldown, ticksLeft, ticksElapsed) -> {
-                    if (ally.getPveHitCooldown() > 0) {
-                        ally.setPveHitCooldown(6);
-                    }
-                })
+                cooldownManager -> ally.getPveHitCooldown().removeModifier(RITE_ATTACK_SPEED_MODIFIER),
+                cooldownManager -> ally.getPveHitCooldown().removeModifier(RITE_ATTACK_SPEED_MODIFIER),
+                5 * 20
         ));
     }
 
@@ -561,7 +556,7 @@ public class DeathsDebt extends AbstractTotem implements Duration, AbilityStats<
                 riteFocus.setItemStack(new ItemStack(Material.ECHO_SHARD));
             }
 
-            armorStand.getWorld().spawnParticle(
+            EffectUtils.displayParticle(
                     Particle.WITCH,
                     armorStand.getLocation().clone().add(0, 1.3, 0),
                     48,
@@ -597,7 +592,7 @@ public class DeathsDebt extends AbstractTotem implements Duration, AbilityStats<
         public void pulseRiteTotemVisual() {
             Location center = armorStand.getLocation().clone();
 
-            center.getWorld().spawnParticle(
+            EffectUtils.displayParticle(
                     Particle.SOUL_FIRE_FLAME,
                     center.clone().add(0, 1.3, 0),
                     56,
@@ -607,7 +602,7 @@ public class DeathsDebt extends AbstractTotem implements Duration, AbilityStats<
                     .05
             );
 
-            center.getWorld().spawnParticle(
+            EffectUtils.displayParticle(
                     Particle.WITCH,
                     center.clone().add(0, 1.7, 0),
                     32,

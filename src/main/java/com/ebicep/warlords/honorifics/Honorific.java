@@ -13,9 +13,9 @@ public enum Honorific {
     PROSPEROUS("Prosperous", "Purchased from The Artificer.", Material.GOLDEN_BOOTS, HonorificCost.of(Currencies.COIN, 250_000_000)),
     SYNTHESIZER("Synthesizer", "Synthesize 100 Star Pieces.", Material.NETHER_STAR, null),
     EXTREMA("Extrema", "Complete Extreme Wave Defense in under 8 minutes.", Material.NETHERITE_SWORD, null),
-    ONE_FOR_ALL("One for All", "Defeat the One of Nine boss.", Material.WITHER_SKELETON_SKULL, null),
+    ONE_FOR_ALL("One for All", "Defeat the One of Nine boss. A teammate's kill counts.", Material.WITHER_SKELETON_SKULL, null),
     LEGEND("Legend", "Purchased from The Artificer.", Material.BLAZE_POWDER, HonorificCost.of(Currencies.LEGEND_FRAGMENTS, 400_000)),
-    THE_HEART_THIEF("The Heart Thief", "Defeat the Lilium boss.", Material.HEART_OF_THE_SEA, null),
+    THE_HEART_THIEF("The Heart Thief", "Defeat the Lilium boss. A teammate's kill counts.", Material.HEART_OF_THE_SEA, null),
     BOUNDLESS("Boundless", "Complete 200 consecutive Endless waves.", Material.END_CRYSTAL, null),
     GOLEM("Golem", "Defeat 50,000 Iron Golems.", Material.IRON_BLOCK, null),
     GOD_OF_WAR("God of War", "Defeat 2,000,000 mobs.", Material.NETHERITE_SWORD, null),
@@ -34,7 +34,13 @@ public enum Honorific {
     COLLATERAL("Collateral", "Deal 1 billion damage in a single game.", Material.TNT, null),
     TWO_FATES("Two Fates", "Complete the Regnum of Two Crowns raid.", Material.GOLDEN_SWORD, null),
     CROWNED_HEIR("Crowned Heir", "Complete Regnum of Two Crowns raid on Oblivion difficulty with only 4 players.", Material.GOLDEN_HELMET, null),
-    ASCENDED("Ascended", "Purchased from The Artificer.", Material.ECHO_SHARD, HonorificCost.of(Currencies.ASCENDANT_SHARD, 2_000));
+    ASCENDED("Ascended", "Purchased from The Artificer.", Material.ECHO_SHARD, HonorificCost.of(Currencies.ASCENDANT_SHARD, 2_000)),
+    LOSER("Loser", "Die 1,000 times.", Material.BONE, null),
+    GOOBER("Goober", "Die to your own damage.", Material.SLIME_BALL, null),
+    MONEYBAGS("Moneybags", "Earn 200,000 coins from a single game.", Material.GOLD_BLOCK, null),
+    PICKLE("Pickle", "?????", Material.SEA_PICKLE, null),
+    REAPER("Reaper", "Kill someone with the Sacrifice item.", Material.IRON_HOE, null),
+    NO_LIFE("No Life", "Play 10,000 games.", Material.RECOVERY_COMPASS, null);
 
     public static final Honorific[] VALUES = values();
 

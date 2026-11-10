@@ -38,6 +38,8 @@ public class AbilityChangeOption implements Option {
 
     private static final int MIN_SWAP_TIME = 50;
     private static final int MAX_SWAP_TIME = 80;
+    private static final int MAX_SECONDS_WITHOUT_SWAP = 4 * 60;
+    private static final int MAX_LOADOUT_ATTEMPTS = 25;
     private static final float BASE_HEALTH = 5500f;
     private static final float BASE_SPEED_MODIFIER = 13f;
     private static final float BASE_KNOCKBACK_MODIFIER = 0f;
@@ -51,6 +53,7 @@ public class AbilityChangeOption implements Option {
     private final Mode mode;
     private Game game;
     private int secondsUntilNextSwap = 0;
+    private final Map<UUID, Integer> secondsSinceLastSwap = new HashMap<>();
 
     public AbilityChangeOption(Mode mode) {
         this.mode = mode;
@@ -68,7 +71,7 @@ public class AbilityChangeOption implements Option {
         for (Specializations spec : Specializations.VALUES) {
             for (AbstractAbility abstractAbility : spec.create(ConfigManager.DEFAULT_NAMESPACES).getAbilities()) {
                 Ability<?> ability = Ability.getAbility(abstractAbility.getClass());
-                if (ability != null && seen.add(ability)) {
+                if (ability != null && seen.add(ability) && !AbilityCombinationBans.isBanned(ability)) {
                     Class<? extends AbilityIcon> iconType = getIconType(ability.clazz);
                     if (iconType != null) {
                         pools.get(iconType).add(ability);
@@ -201,9 +204,45 @@ public class AbilityChangeOption implements Option {
 
     @Override
     public void start(@Nonnull Game game) {
-        if (mode != Mode.RANDOM) {
-            return;
+        this.game = game;
+        startPerPlayerSwapTimer(game);
+        if (mode == Mode.RANDOM) {
+            startRandomSwapTimer(game);
         }
+    }
+
+    private void startPerPlayerSwapTimer(@Nonnull Game game) {
+        new GameRunnable(game) {
+
+            @Override
+            public void run() {
+                if (game.getState() instanceof EndState) {
+                    return;
+                }
+                List<WarlordsPlayer> swapped = new ArrayList<>();
+                game.warlordsPlayers().forEach(player -> {
+                    UUID uuid = player.getUuid();
+                    if (!secondsSinceLastSwap.containsKey(uuid)) {
+                        return;
+                    }
+                    int seconds = secondsSinceLastSwap.get(uuid) + 1;
+                    if (seconds >= MAX_SECONDS_WITHOUT_SWAP) {
+                        if (swapAbilities(player, false)) {
+                            swapped.add(player);
+                        } else {
+                            secondsSinceLastSwap.put(uuid, seconds);
+                        }
+                    } else {
+                        secondsSinceLastSwap.put(uuid, seconds);
+                    }
+                });
+                notifyTeammatesBatch(swapped);
+            }
+
+        }.runTaskTimer(GameRunnable.SECOND, GameRunnable.SECOND);
+    }
+
+    private void startRandomSwapTimer(@Nonnull Game game) {
         generateNextSwapTime();
 
         new GameRunnable(game) {
@@ -236,27 +275,90 @@ public class AbilityChangeOption implements Option {
         ChatUtils.MessageType.WARLORDS.sendMessage("Abilities changing in " + secondsUntilNextSwap + " seconds");
     }
 
+    private void markSwapped(WarlordsPlayer player) {
+        secondsSinceLastSwap.put(player.getUuid(), 0);
+    }
+
     private boolean swapAbilities(WarlordsEntity player, boolean healBaseStats) {
         if (!(player instanceof WarlordsPlayer warlordsPlayer)) {
             return false;
         }
         List<AbstractAbility> abilities = player.getAbilities();
+        List<Ability<?>> plannedSwaps = planAbilitySwaps(abilities);
+        if (plannedSwaps == null) {
+            return false;
+        }
+        List<Component> changeLines = applyAbilitySwaps(player, warlordsPlayer, abilities, plannedSwaps);
+        warlordsPlayer.resetAbilityTree();
+        if (!changeLines.isEmpty()) {
+            warlordsPlayer.sendMessage(MESSAGE_DIVIDER);
+            warlordsPlayer.sendMessage(Component.text("Your abilities have changed:", NamedTextColor.YELLOW));
+            changeLines.forEach(line ->
+                    warlordsPlayer.sendMessage(Component.text("  ").append(line))
+            );
+            warlordsPlayer.sendMessage(MESSAGE_DIVIDER);
+            markSwapped(warlordsPlayer);
+        }
+        applyBaseStats(warlordsPlayer, healBaseStats);
+        return !changeLines.isEmpty();
+    }
+
+    @Nullable
+    private static List<Ability<?>> planAbilitySwaps(List<AbstractAbility> abilities) {
+        List<Ability<?>> withBans = planAbilitySwaps(abilities, true);
+        if (withBans != null) {
+            return withBans;
+        }
+        return planAbilitySwaps(abilities, false);
+    }
+
+    @Nullable
+    private static List<Ability<?>> planAbilitySwaps(List<AbstractAbility> abilities, boolean enforceBans) {
+        for (int attempt = 0; attempt < MAX_LOADOUT_ATTEMPTS; attempt++) {
+            List<Ability<?>> planned = new ArrayList<>(abilities.size());
+            Set<Ability<?>> selectedSoFar = new HashSet<>();
+            boolean valid = true;
+            for (AbstractAbility oldAbility : abilities) {
+                Class<? extends AbilityIcon> iconType = getIconType(oldAbility);
+                if (iconType == null) {
+                    planned.add(null);
+                    continue;
+                }
+                List<Ability<?>> pool = ABILITY_POOLS.get(iconType);
+                if (pool == null || pool.isEmpty()) {
+                    planned.add(null);
+                    continue;
+                }
+                Ability<?> currentRegistry = Ability.getAbility(oldAbility.getClass());
+                Collection<Ability<?>> loadoutSoFar = enforceBans ? selectedSoFar : null;
+                Ability<?> pick = pickRandomAbility(pool, currentRegistry, loadoutSoFar);
+                if (pick == null) {
+                    valid = false;
+                    break;
+                }
+                planned.add(pick);
+                selectedSoFar.add(pick);
+            }
+            if (valid && planned.stream().anyMatch(Objects::nonNull)) {
+                return planned;
+            }
+        }
+        return null;
+    }
+
+    private List<Component> applyAbilitySwaps(
+            WarlordsEntity player,
+            WarlordsPlayer warlordsPlayer,
+            List<AbstractAbility> abilities,
+            List<Ability<?>> plannedSwaps
+    ) {
         List<Component> changeLines = new ArrayList<>();
         for (int i = 0; i < abilities.size(); i++) {
-            AbstractAbility oldAbility = abilities.get(i);
-            Class<? extends AbilityIcon> iconType = getIconType(oldAbility);
-            if (iconType == null) {
-                continue;
-            }
-            List<Ability<?>> pool = ABILITY_POOLS.get(iconType);
-            if (pool == null || pool.isEmpty()) {
-                continue;
-            }
-            Ability<?> currentRegistry = Ability.getAbility(oldAbility.getClass());
-            Ability<?> newRegistry = pickRandomAbility(pool, currentRegistry);
+            Ability<?> newRegistry = plannedSwaps.get(i);
             if (newRegistry == null) {
                 continue;
             }
+            AbstractAbility oldAbility = abilities.get(i);
             Component oldComponent = formatAbility(oldAbility, false);
             float oldCooldown = oldAbility.getCurrentCooldown();
             boolean wasOnCooldown = !oldAbility.anyCharges();
@@ -279,17 +381,7 @@ public class AbilityChangeOption implements Option {
                     formatAbility(newAbility, true)
             ));
         }
-        warlordsPlayer.resetAbilityTree();
-        if (!changeLines.isEmpty()) {
-            warlordsPlayer.sendMessage(MESSAGE_DIVIDER);
-            warlordsPlayer.sendMessage(Component.text("Your abilities have changed:", NamedTextColor.YELLOW));
-            changeLines.forEach(line ->
-                    warlordsPlayer.sendMessage(Component.text("  ").append(line))
-            );
-            warlordsPlayer.sendMessage(MESSAGE_DIVIDER);
-        }
-        applyBaseStats(warlordsPlayer, healBaseStats);
-        return !changeLines.isEmpty();
+        return changeLines;
     }
 
     private Component buildTeammateAbilityLine(WarlordsPlayer player) {
@@ -377,10 +469,17 @@ public class AbilityChangeOption implements Option {
     }
 
     @Nullable
-    private static Ability<?> pickRandomAbility(List<Ability<?>> pool, @Nullable Ability<?> exclude) {
+    private static Ability<?> pickRandomAbility(
+            List<Ability<?>> pool,
+            @Nullable Ability<?> exclude,
+            @Nullable Collection<Ability<?>> loadoutSoFar
+    ) {
         List<Ability<?>> candidates = pool;
         if (exclude != null && pool.size() > 1) {
             candidates = pool.stream().filter(ability -> ability != exclude).toList();
+        }
+        if (loadoutSoFar != null) {
+            candidates = AbilityCombinationBans.filterCandidates(candidates, loadoutSoFar);
         }
         if (candidates.isEmpty()) {
             return null;

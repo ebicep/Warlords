@@ -1,6 +1,5 @@
 package com.ebicep.warlords.game.option.towerdefense.towers;
 
-import com.ebicep.warlords.Warlords;
 import com.ebicep.warlords.abilities.internal.*;
 import com.ebicep.warlords.effects.EffectUtils;
 import com.ebicep.warlords.game.Game;
@@ -18,6 +17,7 @@ import com.ebicep.warlords.player.ingame.instances.type.Modifier;
 import com.ebicep.warlords.util.bukkit.LocationBuilder;
 import com.ebicep.warlords.util.bukkit.Matrix4d;
 import com.ebicep.warlords.util.warlords.PlayerFilter;
+import com.ebicep.warlords.util.warlords.GameRunnable;
 import com.ebicep.warlords.util.warlords.modifiablevalues.FloatModifiable;
 import org.bukkit.Location;
 import org.bukkit.Material;
@@ -26,7 +26,6 @@ import org.bukkit.entity.ItemDisplay;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.PotionMeta;
 import org.bukkit.potion.PotionType;
-import org.bukkit.scheduler.BukkitRunnable;
 import org.bukkit.util.Transformation;
 import org.joml.AxisAngle4f;
 import org.joml.Vector3f;
@@ -119,7 +118,7 @@ public class PyromancerTower extends AbstractTower implements Upgradeable.Path2 
             playSpiralFacingEffect(startLocation.clone().forward(1.1f), targetLocation, Particle.DRAGON_BREATH);
 
             ItemDisplay arrow = fireArrowTowards(startLocation, targetLocation);
-            new BukkitRunnable() {
+            new GameRunnable(warlordsTower.getGame()) {
                 @Override
                 public void run() {
                     target.addInstance(InstanceBuilder
@@ -173,7 +172,7 @@ public class PyromancerTower extends AbstractTower implements Upgradeable.Path2 
                     EffectUtils.displayParticle(Particle.LAVA, target.getLocation().clone().add(0, 1, 0), 15, 0.5F, 0, 0.5F, 500);
                     arrow.remove();
                 }
-            }.runTaskLater(Warlords.getInstance(), TELEPORT_DURATION);
+            }.runTaskLater(TELEPORT_DURATION);
         }
 
         private static void playSpiralFacingEffect(Location startLocation, Location targetLocation, Particle particle) {

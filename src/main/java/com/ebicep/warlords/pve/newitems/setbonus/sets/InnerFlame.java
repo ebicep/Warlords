@@ -55,6 +55,9 @@ public class InnerFlame extends BaseSet {
             ).addModifier(
                     Modifier.ON_OUTGOING_HEALING,
                     (event, currentHealValue, isCrit) -> {
+                        if (event.getFlags().contains(InstanceFlags.RECURSIVE)) {
+                            return;
+                        }
                         PlayerFilter.entitiesAround(event.getWarlordsEntity(), 4, 4, 4)
                                 .aliveEnemiesOf(warlordsPlayer)
                                 .forEach(entity -> {
@@ -66,7 +69,8 @@ public class InnerFlame extends BaseSet {
                                             .flags(
                                                     InstanceFlags.IGNORE_SOURCE_DAMAGE_BOOST,
                                                     InstanceFlags.NO_HEALING_ORBS,
-                                                    InstanceFlags.NO_HEALING_LEECH
+                                                    InstanceFlags.NO_HEALING_LEECH,
+                                                    InstanceFlags.RECURSIVE
                                             )
                                     );
                                 }

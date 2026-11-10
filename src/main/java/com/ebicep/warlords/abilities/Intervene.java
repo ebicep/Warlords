@@ -10,6 +10,7 @@ import com.ebicep.warlords.player.ingame.cooldowns.CooldownTypes;
 import com.ebicep.warlords.player.ingame.cooldowns.cooldowns.LinkedCooldown;
 import com.ebicep.warlords.player.ingame.cooldowns.cooldowns.RegularCooldown;
 import com.ebicep.warlords.player.ingame.instances.type.Modifier;
+import com.ebicep.warlords.player.ingame.instances.type.PlayerNameInstance;
 import com.ebicep.warlords.pve.upgrades.AbilityTree;
 import com.ebicep.warlords.pve.upgrades.AbstractUpgradeBranch;
 import com.ebicep.warlords.pve.upgrades.warrior.defender.InterveneBranch;
@@ -131,7 +132,10 @@ public class Intervene extends AbstractAbility implements BlueAbilityIcon, Durat
             ) {
                 @Override
                 public PlayerNameData addPrefixFromOther() {
-                    return new PlayerNameData(Component.text((int) (data.getMaxDamagePrevented() - data.getDamagePrevented()), NamedTextColor.GOLD), we -> we.isTeammate(wp));
+                    return PlayerNameData.dynamic(
+                            () -> Component.text((int) (data.getMaxDamagePrevented() - data.getDamagePrevented()), NamedTextColor.GOLD),
+                            we -> we.isTeammate(wp)
+                    );
                 }
 
                 @Nonnull
@@ -145,10 +149,6 @@ public class Intervene extends AbstractAbility implements BlueAbilityIcon, Durat
                     );
                 }
             };
-            interveneCooldown.addModifier(Modifier.DAMAGE_ON_INTERVENE_ATTACKER, (event, currentDamageValue) -> {
-                        event.getWarlordsEntity().getCooldownManager().queueUpdatePlayerNames();
-                    }
-            );
             if (pveMasterUpgrade2) {
                 wp.addKnockbackModifier(wp, name, -100, interveneCooldown);
                 veneTarget.addKnockbackModifier(wp, name, -100, interveneCooldown);
@@ -303,7 +303,11 @@ public class Intervene extends AbstractAbility implements BlueAbilityIcon, Durat
         }
 
         public void addDamagePrevented(float amount) {
+            int before = (int) (maxDamagePrevented - damagePrevented);
             this.damagePrevented += amount;
+            int after = (int) (maxDamagePrevented - damagePrevented);
+            target.getCooldownManager().markNameDisplayDirtyIfChanged(before, after);
+            caster.getCooldownManager().markNameDisplayDirtyIfChanged(before, after);
         }
 
     }

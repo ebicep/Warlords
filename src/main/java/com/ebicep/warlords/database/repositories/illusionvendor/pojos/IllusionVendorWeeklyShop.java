@@ -80,7 +80,7 @@ public class IllusionVendorWeeklyShop {
 
     @Id
     protected String id;
-    private Instant week = DateUtil.getResetDateLatestMonday();
+    private Instant week = DateUtil.getResetDateCurrentWeek();
     private Map<String, NewItem> newItems;
 
     public IllusionVendorWeeklyShop() {

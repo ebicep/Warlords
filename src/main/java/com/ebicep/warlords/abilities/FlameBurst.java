@@ -203,7 +203,7 @@ public class FlameBurst extends AbstractPiercingProjectile<FlameBurst, FlameBurs
 
     @Override
     protected void onNonCancellingHit(@Nonnull InternalProjectile projectile, @Nonnull WarlordsEntity hit, @Nonnull Location impactLocation) {
-        if (!pveMasterUpgrade2) {
+        if (!pveMasterUpgrade2 || projectile.getHit().contains(hit)) {
             return;
         }
         hitEntity(projectile, hit);

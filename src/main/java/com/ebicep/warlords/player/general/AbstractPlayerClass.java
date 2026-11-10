@@ -141,7 +141,7 @@ public abstract class AbstractPlayerClass {
 
             onRightClickAbility(ability, wp, player, slot);
 
-            Bukkit.getPluginManager().callEvent(new WarlordsPlayerClassRightClickEvent(wp));
+            Bukkit.getPluginManager().callEvent(new WarlordsPlayerClassRightClickEvent(wp, ability));
         }
         if (hotkeyMode) {
             player.getInventory().setHeldItemSlot(0);

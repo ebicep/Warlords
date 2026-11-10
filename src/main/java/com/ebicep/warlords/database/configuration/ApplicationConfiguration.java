@@ -7,7 +7,6 @@ import com.mongodb.MongoClientSettings;
 import com.mongodb.client.MongoClient;
 import com.mongodb.client.MongoClients;
 import org.bson.UuidRepresentation;
-import org.springframework.boot.autoconfigure.domain.EntityScan;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
@@ -24,7 +23,6 @@ import java.util.concurrent.TimeUnit;
 @Configuration
 @ComponentScan(basePackages = "com.ebicep.warlords.database")
 @EnableMongoRepositories({"com.ebicep.warlords.database.repositories"})
-@EntityScan(basePackages = {"com.ebicep.warlords.pve.newitems"})
 public class ApplicationConfiguration extends AbstractMongoClientConfiguration {
 
     public static String key;

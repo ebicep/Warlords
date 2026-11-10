@@ -18,6 +18,7 @@ import com.ebicep.warlords.game.option.marker.SpawnLocationMarker;
 import com.ebicep.warlords.game.option.marker.TimerSkipAbleMarker;
 import com.ebicep.warlords.game.option.marker.scoreboard.ScoreboardHandler;
 import com.ebicep.warlords.game.option.marker.scoreboard.SimpleScoreboardHandler;
+import com.ebicep.warlords.game.option.pve.PveMobKillTracker;
 import com.ebicep.warlords.game.option.pve.PveOption;
 import com.ebicep.warlords.game.option.pve.rewards.CoinGainOption;
 import com.ebicep.warlords.game.option.pve.rewards.PveRewards;
@@ -95,6 +96,9 @@ public class WaveDefenseOption implements PveOption {
     private boolean pauseMobSpawn = false;
     private int currentDelay = 0;
     private HashMap<UUID, HashMap<Spendable, Long>> playerAscendantPouch = new HashMap<>();
+    private SimpleScoreboardHandler waveScoreboardHandler;
+    private SimpleScoreboardHandler monstersLeftScoreboardHandler;
+    private SimpleScoreboardHandler healthScoreboardHandler;
 
     public WaveDefenseOption(Team team, WaveList waves, DifficultyIndex difficulty) {
         this(team, waves, difficulty, difficulty.getMaxWaves());
@@ -153,13 +157,13 @@ public class WaveDefenseOption implements PveOption {
                                 mobs.remove(mobToRemove);
                                 game.getPlayers().remove(we.getUuid());
                                 Warlords.removePlayer(we.getUuid());
+                                markScoreboardsChanged();
                                 //game.removePlayer(we.getUuid());
                             }
                         }.runTaskLater(1);
 
                         if (killer instanceof WarlordsPlayer) {
-                            killer.getMinuteStats().addMobKill(mobToRemove.getName());
-                            we.getHitBy().forEach((assisted, value) -> assisted.getMinuteStats().addMobAssist(mobToRemove.getName()));
+                            PveMobKillTracker.recordKill(killer, we, mobToRemove);
 
                             if (coinGainOption == null) {
                                 return;
@@ -221,7 +225,7 @@ public class WaveDefenseOption implements PveOption {
             }
 
         });
-        game.registerGameMarker(ScoreboardHandler.class, new SimpleScoreboardHandler(SCOREBOARD_PRIORITY - 1, "wave") {
+        game.registerGameMarker(ScoreboardHandler.class, waveScoreboardHandler = new SimpleScoreboardHandler(SCOREBOARD_PRIORITY - 1, "wave") {
                     @Nonnull
                     @Override
                     public List<Component> computeLines(@Nullable WarlordsPlayer player) {
@@ -229,7 +233,7 @@ public class WaveDefenseOption implements PveOption {
                     }
                 }
         );
-        game.registerGameMarker(ScoreboardHandler.class, new SimpleScoreboardHandler(SCOREBOARD_PRIORITY, "wave") {
+        game.registerGameMarker(ScoreboardHandler.class, monstersLeftScoreboardHandler = new SimpleScoreboardHandler(SCOREBOARD_PRIORITY, "wave") {
                     @Nonnull
                     @Override
                     public List<Component> computeLines(@Nullable WarlordsPlayer player) {
@@ -240,7 +244,7 @@ public class WaveDefenseOption implements PveOption {
                     }
                 }
         );
-        game.registerGameMarker(ScoreboardHandler.class, new SimpleScoreboardHandler(6, "kills") {
+        game.registerGameMarker(ScoreboardHandler.class, healthScoreboardHandler = new SimpleScoreboardHandler(6, "kills") {
                     @Nonnull
                     @Override
                     public List<Component> computeLines(@Nullable WarlordsPlayer player) {
@@ -262,6 +266,18 @@ public class WaveDefenseOption implements PveOption {
             }
 
         }.register(game);
+    }
+
+    private void markScoreboardsChanged() {
+        if (waveScoreboardHandler != null) {
+            waveScoreboardHandler.markChanged();
+        }
+        if (monstersLeftScoreboardHandler != null) {
+            monstersLeftScoreboardHandler.markChanged();
+        }
+        if (healthScoreboardHandler != null) {
+            healthScoreboardHandler.markChanged();
+        }
     }
 
     public List<Component> getWaveScoreboard(WarlordsPlayer player) {
@@ -300,6 +316,7 @@ public class WaveDefenseOption implements PveOption {
         }
         currentWave = waves.getWave(waveCounter, new Random());
         spawnCount = currentWave.getMonsterCount();
+        markScoreboardsChanged();
         int spawns = spawnCount;
         spawns *= getSpawnCountMultiplier(playerCount());
 
@@ -415,6 +432,7 @@ public class WaveDefenseOption implements PveOption {
                 if (lastSpawn != null) {
                     lastSpawn.getLocation(lastLocation);
                     spawnCount--;
+                    markScoreboardsChanged();
                 }
             }
 
@@ -659,13 +677,13 @@ public class WaveDefenseOption implements PveOption {
                                 wp.getAbilityTree().setMaxMasterUpgrades(wp.getAbilityTree().getMaxMasterUpgrades() + 1);
                                 wp.sendMessage(Component.text("+1 Master Upgrade", NamedTextColor.RED, TextDecoration.BOLD));
                             });
-                            case 101, 111, 121 -> game.warlordsPlayers().forEach(wp -> {
+                            case 101, 111 -> game.warlordsPlayers().forEach(wp -> {
                                 wp.playSound(wp.getLocation(), Sound.ENTITY_ENDER_DRAGON_GROWL, 2, 0.1f);
                                 addRewardToPlayerPouch(
                                         wp.getUuid(),
                                         WaveDefenseRewards.ASCENDANT_POUCH_LOOT_POOL,
                                         playerAscendantPouch,
-                                        Component.text("Ascendant Pouch", NamedTextColor.RED)
+                                        Component.text("Ascendant Pouch Wave " + (waveCounter - 1), NamedTextColor.RED)
                                 );
                             });
                         }
@@ -688,6 +706,9 @@ public class WaveDefenseOption implements PveOption {
                 }
 
                 ticksElapsed.getAndIncrement();
+                if (ticksElapsed.get() % 10 == 0) {
+                    markScoreboardsChanged();
+                }
             }
         }.runTaskTimer(20, 0);
     }

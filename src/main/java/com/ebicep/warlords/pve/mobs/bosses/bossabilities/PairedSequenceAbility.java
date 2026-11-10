@@ -1,5 +1,6 @@
 package com.ebicep.warlords.pve.mobs.bosses.bossabilities;
 
+import com.ebicep.warlords.effects.EffectUtils;
 import com.ebicep.warlords.game.Game;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
 import com.ebicep.warlords.player.ingame.instances.InstanceBuilder;
@@ -217,7 +218,7 @@ public class PairedSequenceAbility {
 
         // Highlight current step zone each tick
         drawRing(zone, zoneRadius + 0.15, target.dust);
-        zone.getWorld().spawnParticle(Particle.END_ROD, zone.clone().add(0, 0.5, 0), 2, 0, 0, 0, 0);
+        EffectUtils.displayParticle(Particle.END_ROD, zone.clone().add(0, 0.5, 0), 2, 0, 0, 0, 0);
 
         // Check both players standing inside the zone
         boolean aIn = inZone(pA, zone, zoneRadius);
@@ -307,14 +308,14 @@ public class PairedSequenceAbility {
             drawRing(at, zoneRadius + 0.2, col.dust);
         }
         Utils.playGlobalSound(at, Sound.ENTITY_ENDER_EYE_DEATH, 2, 0.5f);
-        w.spawnParticle(Particle.TOTEM_OF_UNDYING, at, 8, zoneRadius * 0.4, 0.3, zoneRadius * 0.4, 0.02);
+        EffectUtils.displayParticle(Particle.TOTEM_OF_UNDYING, at, 8, zoneRadius * 0.4, 0.3, zoneRadius * 0.4, 0.02);
     }
 
     private void applyFail(WarlordsEntity a, WarlordsEntity b, Location where) {
         Utils.playGlobalSound(where, Sound.ENTITY_WITHER_DEATH, 500, 0.2f);
         World w = where.getWorld();
         if (w != null) {
-            w.spawnParticle(Particle.EXPLOSION, where, 1, 0, 0, 0, 0);
+            EffectUtils.displayParticle(Particle.EXPLOSION, where, 1, 0, 0, 0, 0);
         }
         if (a != null) {
             a.addInstance(InstanceBuilder.damage().cause("Veilkeeper Trials").value((float) failDamage).source(source));
@@ -343,7 +344,7 @@ public class PairedSequenceAbility {
         Location head = e.getLocation().clone().add(0, 1.8, 0);
         World w = head.getWorld();
         if (w != null) {
-            w.spawnParticle(Particle.DUST, head, 2, 0.02, 0.02, 0.02, 0.0, pairMarker);
+            EffectUtils.displayParticle(Particle.DUST, head, 2, 0.02, 0.02, 0.02, 0.0, pairMarker);
         }
     }
 
@@ -380,7 +381,7 @@ public class PairedSequenceAbility {
         for (double a = 0; a < twoPi; a += angStep) {
             double x = center.getX() + Math.cos(a) * radius;
             double z = center.getZ() + Math.sin(a) * radius;
-            w.spawnParticle(Particle.DUST, x, y, z, 1, 0, 0, 0, 0.0, dust);
+            EffectUtils.displayParticle(Particle.DUST, new Location(w, x, y, z), 1, 0, 0, 0, 0.0, dust);
         }
     }
 

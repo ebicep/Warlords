@@ -181,6 +181,14 @@ public class WoundingStrikeDefender extends AbstractStrike<WoundingStrikeDefende
         return wounding;
     }
 
+    public int getWoundingTickDuration() {
+        return woundingTickDuration;
+    }
+
+    public void setWoundingTickDuration(int woundingTickDuration) {
+        this.woundingTickDuration = woundingTickDuration;
+    }
+
     public static class DamageValues implements Value.ValueHolder {
 
         private Value.RangedValueCritable strikeDamage = new Value.RangedValueCritable(416, 557, 20, 200);

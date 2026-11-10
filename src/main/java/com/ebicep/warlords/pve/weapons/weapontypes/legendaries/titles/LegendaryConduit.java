@@ -24,9 +24,12 @@ import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
-import java.util.concurrent.atomic.AtomicBoolean;
 
 public class LegendaryConduit extends AbstractLegendaryWeapon implements PassiveCounter {
+
+    private static final class PairProcState {
+        boolean granted;
+    }
 
     public static final int HEAL_THRESHOLD_PERCENT = 10;
 
@@ -146,7 +149,7 @@ public class LegendaryConduit extends AbstractLegendaryWeapon implements Passive
                         Instant until = pairIcdUntil.getOrDefault(healer.getUuid(), Instant.EPOCH);
                         if (!now.isBefore(until)) {
                             pairIcdUntil.put(healer.getUuid(), now.plus(PAIR_ICD_SECONDS, ChronoUnit.SECONDS));
-                            AtomicBoolean granted = new AtomicBoolean(false);
+                            PairProcState pairProcState = new PairProcState();
                             healer.getCooldownManager().addCooldown(new RegularCooldown<>(
                                     "Conduit Link",
                                     "CONDUIT",
@@ -157,7 +160,8 @@ public class LegendaryConduit extends AbstractLegendaryWeapon implements Passive
                                     cm -> {},
                                     LINK_DURATION_SECONDS * 20
                             ).addModifier(Modifier.MODIFY_OUTGOING_DAMAGE_BEFORE_INTERVENE, (e, currentDamageValue) -> {
-                                        if (granted.compareAndSet(false, true)) {
+                                        if (!pairProcState.granted) {
+                                            pairProcState.granted = true;
                                             int energy = getEnergyOnPairProc();
                                             float cdr = (float) getCdrOnPairProcSeconds();
                                             healer.addEnergy(player, "Conduit Title", energy);

@@ -15,17 +15,14 @@ import com.ebicep.warlords.pve.mobs.flags.BossLike;
 import com.ebicep.warlords.pve.mobs.tiers.BossMob;
 import com.ebicep.warlords.util.java.NumberFormat;
 import com.ebicep.warlords.util.warlords.GameRunnable;
-import com.ebicep.warlords.util.warlords.Utils;
 import net.citizensnpcs.api.npc.NPC;
 import net.citizensnpcs.api.trait.trait.Equipment;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.TextComponent;
 import net.kyori.adventure.text.format.NamedTextColor;
 import net.kyori.adventure.text.format.TextColor;
-import org.bukkit.entity.ArmorStand;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.LivingEntity;
-import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.metadata.FixedMetadataValue;
 import org.bukkit.potion.PotionEffect;
@@ -39,8 +36,6 @@ import java.util.function.Consumer;
 
 public class WarlordsNPC extends WarlordsEntity {
 
-    private static final int HOLOGRAM_UPDATE_INTERVAL = 4;
-
     protected float meleeCritChance;
     protected float meleeCritMultiplier;
     protected NPC npc;
@@ -53,7 +48,6 @@ public class WarlordsNPC extends WarlordsEntity {
     private final RaidBossUtils.RaidBossHealthBar bossHealthBar;
     private float minMeleeDamage;
     private float maxMeleeDamage;
-    private ArmorStand playerHealthDisplay; // used for player entity type npcs
     private int stunTicks;
     private int lastDisplayedHealth = Integer.MIN_VALUE;
 
@@ -77,7 +71,7 @@ public class WarlordsNPC extends WarlordsEntity {
         this.npc.data().set(WARLORDS_ENTITY_METADATA, this);
         this.mob = warlordsMob;
         this.mobHologram = mobHologram;
-        this.hologramUpdateOffset = Math.floorMod(npc.getUniqueId().hashCode(), HOLOGRAM_UPDATE_INTERVAL);
+        this.hologramUpdateOffset = Math.floorMod(npc.getUniqueId().hashCode(), MobHologram.POSITION_UPDATE_INTERVAL);
         if (warlordsMob != null && warlordsMob.getInternalLevel() > 1) {
             mobNamePrefix = Component.textOfChildren(
                     Component.text("[", NamedTextColor.GRAY),
@@ -102,6 +96,12 @@ public class WarlordsNPC extends WarlordsEntity {
         setSpawnGrave(false);
         setMaxHealthAndHeal(maxHealth);
 
+        if (!(warlordsMob instanceof BossMob)) {
+            MobHologram.CustomHologramLine healthLine = new MobHologram.CustomHologramLine(this::getHealthComponent);
+            healthLine.setTier(MobHologram.LineTier.HEALTH);
+            healthLine.setPersistent(true);
+            mobHologram.getCustomHologramLines().add(healthLine);
+        }
         mobHologram.getCustomHologramLines().add(new MobHologram.CustomHologramLine(this::getNameComponent));
         mobHologram.update();
 
@@ -144,6 +144,14 @@ public class WarlordsNPC extends WarlordsEntity {
         }
 
         return builder.build();
+    }
+
+    @Nonnull
+    protected Component getHealthComponent() {
+        return Component.text(
+                NumberFormat.addCommaAndRound(Math.round(getCurrentHealth())) + "❤",
+                NamedTextColor.RED
+        );
     }
 
     @Override
@@ -256,42 +264,16 @@ public class WarlordsNPC extends WarlordsEntity {
         if (isDead() || entity == null || !entity.isValid()) {
             return;
         }
-
-        boolean hologramUpdateTick = Math.floorMod(getGame().getLoopTickCounter() + hologramUpdateOffset, HOLOGRAM_UPDATE_INTERVAL) == 0;
-        if (hologramUpdateTick) {
-            mobHologram.updatePosition();
-        }
-
-        int rounded = Math.round(getCurrentHealth());
-        boolean shouldUpdateName = rounded != lastDisplayedHealth && getGame().getLoopTickCounter() % 2 == 0;
-
-        if (entity instanceof Player player) {
-            double healthDisplayY = player.getEyeHeight() + 0.15;
-            if (playerHealthDisplay == null) {
-                playerHealthDisplay = Utils.spawnArmorStand(getLocation().add(0, healthDisplayY, 0), armorStand -> {
-                    armorStand.setMarker(true);
-                    armorStand.setCustomNameVisible(true);
-                });
-                shouldUpdateName = true;
-            } else {
-                playerHealthDisplay.teleport(entity.getLocation().add(0, healthDisplayY, 0));
-            }
-        }
-
-        if (!shouldUpdateName) {
+        if (Math.floorMod(getGame().getLoopTickCounter() + hologramUpdateOffset, MobHologram.POSITION_UPDATE_INTERVAL) != 0) {
             return;
         }
 
-        String healthText = NumberFormat.addCommaAndRound(rounded) + "❤";
-        if (entity instanceof Player) {
-            playerHealthDisplay.customName(Component.text(healthText, NamedTextColor.RED));
-        } else {
-            String citizensName = "§c" + healthText;
-            if (!citizensName.equals(npc.getName())) {
-                npc.setName(citizensName);
-            }
+        int rounded = Math.round(getCurrentHealth());
+        if (rounded != lastDisplayedHealth) {
+            mobHologram.markTextDirty();
+            lastDisplayedHealth = rounded;
         }
-        lastDisplayedHealth = rounded;
+        mobHologram.updatePosition();
     }
 
     @Override
@@ -300,7 +282,7 @@ public class WarlordsNPC extends WarlordsEntity {
             return;
         }
         updateHealth();
-        entity.setCustomNameVisible(true);
+        entity.setCustomNameVisible(false);
         entity.setMetadata(WarlordsEntity.WARLORDS_ENTITY_METADATA, new FixedMetadataValue(Warlords.getInstance(), this));
     }
 
@@ -366,10 +348,11 @@ public class WarlordsNPC extends WarlordsEntity {
         }
         npc.data().remove(WARLORDS_ENTITY_METADATA);
         npc.destroy();
-        if (playerHealthDisplay != null) {
-            playerHealthDisplay.remove();
-        }
         mobHologram.clearLines();
+    }
+
+    public void setHealthLineVisible(boolean visible) {
+        mobHologram.setLineVisible(MobHologram.LineTier.HEALTH, visible);
     }
 
     public int getStunTicks() {

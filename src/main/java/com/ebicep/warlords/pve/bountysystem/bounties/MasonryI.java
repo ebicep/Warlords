@@ -7,6 +7,9 @@ import com.ebicep.warlords.pve.bountysystem.rewards.LifetimeRewardSpendable1;
 import com.ebicep.warlords.pve.bountysystem.trackers.TracksOutsideGame;
 import com.ebicep.warlords.pve.items.ItemTier;
 import com.ebicep.warlords.pve.items.events.ItemCraftEvent;
+import com.ebicep.warlords.pve.newitems.NewItem;
+import com.ebicep.warlords.pve.newitems.events.NewItemCraftEvent;
+import com.ebicep.warlords.pve.newitems.tiers.NewItemTier;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 
@@ -16,11 +19,11 @@ public class MasonryI extends AbstractBounty implements TracksOutsideGame, Lifet
 
 
     @EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
-    public void onItemCraft(ItemCraftEvent event) {
+    public void onItemCraft(NewItemCraftEvent event) {
         if (!Objects.equals(event.getUUID(), uuid)) {
             return;
         }
-        if (event.getItem().getTier() == ItemTier.OMEGA) {
+        if (event.getItem().getTier() == NewItemTier.LEGENDARY) {
             value++;
         }
     }
@@ -32,12 +35,12 @@ public class MasonryI extends AbstractBounty implements TracksOutsideGame, Lifet
 
     @Override
     public String getDescription() {
-        return "Craft " + getTarget() + " Omega item.";
+        return "Craft " + getTarget() + " Legendary items.";
     }
 
     @Override
     public int getTarget() {
-        return 1;
+        return 2;
     }
 
     @Override

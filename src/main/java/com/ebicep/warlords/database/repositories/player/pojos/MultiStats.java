@@ -97,5 +97,8 @@ public interface MultiStats<
         return getStat(Stats::getExperience, Long::sum, 0L);
     }
 
+    default long getClassExperience(Classes classes) {
+        return getStat(classes, Stats::getExperience, Long::sum, 0L);
+    }
 
 }

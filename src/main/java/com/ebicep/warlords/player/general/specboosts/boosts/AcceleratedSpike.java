@@ -125,9 +125,9 @@ public class AcceleratedSpike implements SpecBoostManager.SpecBoost<AcceleratedS
                     .setGame(caster.getGame())
                     .setSpeed(spike.getSpeed())
                     .setDestination(() -> spikeTarget.isDead() ? null : spikeTarget.getLocation())
-                    .setOnTick((ticksElapsed, currentLocation) -> {
+                    .setOnMove((ticksElapsed, currentLocation, index) -> {
                         Location loc = currentLocation.clone().add(0, 1, 0);
-                        if (ticksElapsed % 5 == 1) {
+                        if (index == 0 && ticksElapsed % 5 == 1) {
                             Utils.playGlobalSound(startLocation, REPEATING_SOUND[(ticksElapsed / 5) % 4], 2, 1);
                         }
                         Vector travelDir = spikeTarget.getLocation().toVector().subtract(loc.toVector());

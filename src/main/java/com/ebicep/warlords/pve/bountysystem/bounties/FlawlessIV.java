@@ -2,6 +2,7 @@ package com.ebicep.warlords.pve.bountysystem.bounties;
 
 import com.ebicep.warlords.events.game.WarlordsGameTriggerWinEvent;
 import com.ebicep.warlords.game.Game;
+import com.ebicep.warlords.game.Team;
 import com.ebicep.warlords.player.ingame.WarlordsPlayer;
 import com.ebicep.warlords.pve.DifficultyIndex;
 import com.ebicep.warlords.pve.bountysystem.AbstractBounty;
@@ -45,7 +46,7 @@ public class FlawlessIV extends AbstractBounty implements TracksPostGame, DailyC
                                           .stream()
                                           .mapToInt(warlordsEntity -> warlordsEntity.getMinuteStats().total().getDeaths())
                                           .sum();
-        if (totalTeamDeaths < 10) {
+        if (totalTeamDeaths < 10 && gameWinEvent.getDeclaredWinner() == Team.BLUE) {
             value++;
         }
     }

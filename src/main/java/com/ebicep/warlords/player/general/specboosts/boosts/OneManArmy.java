@@ -1,9 +1,7 @@
 package com.ebicep.warlords.player.general.specboosts.boosts;
 
-import com.ebicep.warlords.abilities.OrbsOfLife;
 import com.ebicep.warlords.abilities.UndyingArmy;
 import com.ebicep.warlords.events.player.ingame.WarlordsAddCooldownEvent;
-import com.ebicep.warlords.game.option.marker.FlagHolder;
 import com.ebicep.warlords.player.general.specboosts.SpecBoostManager;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
 import com.ebicep.warlords.player.ingame.WarlordsPlayer;
@@ -17,10 +15,12 @@ import java.util.function.BiConsumer;
 public class OneManArmy implements SpecBoostManager.SpecBoost<OneManArmy> {
 
     private int undyingArmyTickDurationCaster;
+    private int undyingArmyCasterMaxHealthDamagePercent;
 
     @Override
     public void init() {
         this.undyingArmyTickDurationCaster = getValue("undyingArmyTickDurationCaster", int.class);
+        this.undyingArmyCasterMaxHealthDamagePercent = getValue("undyingArmyCasterMaxHealthDamagePercent", int.class);
     }
 
     @Override
@@ -30,7 +30,7 @@ public class OneManArmy implements SpecBoostManager.SpecBoost<OneManArmy> {
 
     @Override
     public List<Object> getVariables() {
-        return List.of(undyingArmyTickDurationCaster);
+        return List.of(undyingArmyTickDurationCaster, undyingArmyCasterMaxHealthDamagePercent);
     }
 
     @Override
@@ -67,15 +67,10 @@ public class OneManArmy implements SpecBoostManager.SpecBoost<OneManArmy> {
             regularCooldown.setTicksLeft(regularCooldown.getTicksLeft() + undyingArmyTickDurationCaster);
             BiConsumer<RegularCooldown<UndyingArmy.UndyingArmyData>, WarlordsEntity> oldOnPop = data.getOnPop();
             data.setOnPop((cd, we) -> {
-                if (!we.equals(warlordsEntity)) {
-                    oldOnPop.accept(cd, we);
-                } else {
-                    FlagHolder.dropFlagForPlayer(warlordsEntity, false);
-                    cd.setTicksLeft(1);
-                    for (OrbsOfLife orbsOfLife : warlordsEntity.getAbilitiesMatching(OrbsOfLife.class)) {
-                        orbsOfLife.setCurrentCooldown(0);
-                    }
+                if (we.equals(warlordsEntity)) {
+                    data.setPopMaxHealthDamagePercent(undyingArmyCasterMaxHealthDamagePercent);
                 }
+                oldOnPop.accept(cd, we);
             });
             regularCooldown.getConsumers().clear();
 

@@ -22,6 +22,11 @@ import java.util.function.Function;
 public class HypixelBalancerMenu {
 
     private static final Map<UUID, PlayerMenuData> PLAYER_MENU_DATA = new HashMap<>();
+
+    public static void removePlayerMenuData(UUID uuid) {
+        PLAYER_MENU_DATA.remove(uuid);
+    }
+
     private static final Color MINECRAFT_COLOR = new Color() {
 
         @Override

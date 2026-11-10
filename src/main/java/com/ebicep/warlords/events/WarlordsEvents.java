@@ -66,13 +66,11 @@ import org.bukkit.event.entity.EntityDamageEvent;
 import org.bukkit.event.player.*;
 import org.bukkit.inventory.EquipmentSlot;
 import org.bukkit.inventory.ItemStack;
-import org.bukkit.permissions.PermissionAttachmentInfo;
 import org.bukkit.potion.PotionEffectType;
 import org.bukkit.scheduler.BukkitRunnable;
 
 import java.time.Instant;
 import java.util.*;
-import java.util.stream.Collectors;
 
 public class WarlordsEvents implements Listener {
 
@@ -255,20 +253,11 @@ public class WarlordsEvents implements Listener {
                             }
                         }).execute();
 
-                List<String> permissions = player.getEffectivePermissions()
-                                                 .stream()
-                                                 .map(PermissionAttachmentInfo::getPermission)
-                                                 .collect(Collectors.toList());
-                permissions.remove("group.default");
-                for (PlayersCollections activeCollection : PlayersCollections.ACTIVE_COLLECTIONS) {
-                    DatabasePlayer dbPlayer = DatabaseManager.getPlayer(uuid, activeCollection);
-                    dbPlayer.setPermissions(permissions);
-                    DatabaseManager.queueUpdatePlayerAsync(dbPlayer, activeCollection);
-                }
+                Permissions.syncPermissionsToDatabase(player);
                 DatabaseManager.queueUpdatePlayerAsync(databasePlayer);
                 Bukkit.getPluginManager().callEvent(new DatabasePlayerFirstLoadEvent(player, databasePlayer));
             }
-            CustomScoreboard.updateLobbyPlayerNames();
+            CustomScoreboard.applyLobbyPlayerNameToOthers(player);
             ExperienceManager.giveExperienceBar(player);
             if (StatsLeaderboardManager.loaded) {
                 new BukkitRunnable() {
@@ -306,7 +295,7 @@ public class WarlordsEvents implements Listener {
                             Component.text("Warlords 2.0", NamedTextColor.YELLOW, TextDecoration.BOLD)
                     ),
                     Component.textOfChildren(
-                            Component.text("COMPWL.APEXMC.CO", NamedTextColor.RED, TextDecoration.BOLD),
+                            Component.text("warlordstwo.cloudplay.fun", NamedTextColor.RED, TextDecoration.BOLD),
                             Component.newline(),
                             Component.text("Players Online: ", NamedTextColor.GREEN),
                             Component.text(Bukkit.getOnlinePlayers().size() - (left ? 1 : 0), NamedTextColor.GRAY)
@@ -366,7 +355,7 @@ public class WarlordsEvents implements Listener {
             return;
         }
 
-        wpAttacker.setHitCooldown(wpAttacker.isInPve() ? wpAttacker.getPveHitCooldown() : wpAttacker.getBaseHitCooldownValue());
+        wpAttacker.setHitCooldown(wpAttacker.isInPve() ? wpAttacker.getPveHitCooldownValue() : wpAttacker.getBaseHitCooldownValue());
         Optional<WarlordsDamageHealingFinalEvent> finalEvent = Optional.empty();
 
         if (wpAttacker instanceof WarlordsNPC warlordsNPC) {

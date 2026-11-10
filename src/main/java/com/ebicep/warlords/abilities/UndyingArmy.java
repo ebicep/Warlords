@@ -282,7 +282,10 @@ public class UndyingArmy extends AbstractAbility implements OrangeAbilityIcon, D
                 EffectUtils.strikeLightning(warlordsEntity.getLocation(), false);
                 player.getInventory().setItem(5, BONE);
             }
-            int armyDamage = Math.round(warlordsEntity.getMaxHealth() * (getMaxHealthDamage() / 100f));
+            int damagePercent = data.getPopMaxHealthDamagePercent() != null
+                    ? data.getPopMaxHealthDamagePercent()
+                    : getMaxHealthDamage();
+            int armyDamage = Math.round(warlordsEntity.getMaxHealth() * (damagePercent / 100f));
             if (wp == warlordsEntity) {
                 warlordsEntity.sendMessage(WarlordsEntity.GIVE_ARROW_GREEN
                         .append(Component.text(" Your Undying Army revived you with temporary health. Fight until your death! Your health will decay by ",
@@ -309,7 +312,7 @@ public class UndyingArmy extends AbstractAbility implements OrangeAbilityIcon, D
                 if (ticksElapsed % 20 == 0) {
                     warlordsEntity.addInstance(InstanceBuilder.melee()
                                                               .source(warlordsEntity)
-                                                              .value(warlordsEntity.getMaxHealth() * (getMaxHealthDamage() / 100f)));
+                                                              .value(warlordsEntity.getMaxHealth() * (damagePercent / 100f)));
                     if (isPveMasterUpgrade() && ticksElapsed % 40 == 0) {
                         PlayerFilter.entitiesAround(warlordsEntity, 6, 6, 6).aliveEnemiesOf(warlordsEntity).forEach(enemy -> {
                             float healthDamage = enemy.getMaxHealth() * .02f;
@@ -442,6 +445,7 @@ public class UndyingArmy extends AbstractAbility implements OrangeAbilityIcon, D
 
         private final HashMap<WarlordsEntity, Boolean> playersPopped = new HashMap<>();
         private BiConsumer<RegularCooldown<UndyingArmyData>, WarlordsEntity> onPop;
+        private Integer popMaxHealthDamagePercent;
 
         public HashMap<WarlordsEntity, Boolean> getPlayersPopped() {
             return playersPopped;
@@ -461,6 +465,14 @@ public class UndyingArmy extends AbstractAbility implements OrangeAbilityIcon, D
 
         public void setOnPop(BiConsumer<RegularCooldown<UndyingArmyData>, WarlordsEntity> onPop) {
             this.onPop = onPop;
+        }
+
+        public Integer getPopMaxHealthDamagePercent() {
+            return popMaxHealthDamagePercent;
+        }
+
+        public void setPopMaxHealthDamagePercent(Integer popMaxHealthDamagePercent) {
+            this.popMaxHealthDamagePercent = popMaxHealthDamagePercent;
         }
 
     }

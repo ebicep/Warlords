@@ -1,6 +1,5 @@
 package com.ebicep.warlords.game.option.towerdefense.towers;
 
-import com.ebicep.warlords.Warlords;
 import com.ebicep.warlords.abilities.internal.*;
 import com.ebicep.warlords.effects.EffectUtils;
 import com.ebicep.warlords.game.Game;
@@ -13,13 +12,13 @@ import com.ebicep.warlords.player.ingame.instances.InstanceBuilder;
 import com.ebicep.warlords.util.bukkit.LocationBuilder;
 import com.ebicep.warlords.util.java.MathUtils;
 import com.ebicep.warlords.util.warlords.Utils;
+import com.ebicep.warlords.util.warlords.GameRunnable;
 import com.ebicep.warlords.util.warlords.modifiablevalues.FloatModifiable;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.Particle;
 import org.bukkit.entity.BlockDisplay;
 import org.bukkit.entity.Entity;
-import org.bukkit.scheduler.BukkitRunnable;
 import org.bukkit.util.Transformation;
 import org.joml.AxisAngle4f;
 import org.joml.Vector3f;
@@ -169,12 +168,12 @@ public class AquamancerTower extends AbstractTower implements Upgradeable.Path2 
 
                 display.teleport(targetLocation);
 
-                new BukkitRunnable() {
+                new GameRunnable(wp.getGame()) {
                     @Override
                     public void run() {
                         display.remove();
                     }
-                }.runTaskLater(Warlords.getInstance(), teleportDuration);
+                }.runTaskLater(teleportDuration);
             }
         }
 

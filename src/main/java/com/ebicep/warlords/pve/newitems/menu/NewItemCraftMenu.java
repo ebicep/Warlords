@@ -7,10 +7,12 @@ import com.ebicep.warlords.menu.Menu;
 import com.ebicep.warlords.permissions.Permissions;
 import com.ebicep.warlords.pve.PvEUtils;
 import com.ebicep.warlords.pve.Spendable;
+import com.ebicep.warlords.pve.items.events.ItemCraftEvent;
 import com.ebicep.warlords.pve.newitems.NewItem;
 import com.ebicep.warlords.pve.newitems.NewItemsManager;
 import com.ebicep.warlords.pve.newitems.NewItemsSlot;
 import com.ebicep.warlords.pve.newitems.NewItemsUtils;
+import com.ebicep.warlords.pve.newitems.events.NewItemCraftEvent;
 import com.ebicep.warlords.pve.newitems.setbonus.NewItemsSetBonus;
 import com.ebicep.warlords.pve.newitems.tiers.NewItemTier;
 import com.ebicep.warlords.util.bukkit.ItemBuilder;
@@ -102,6 +104,9 @@ public class NewItemCraftMenu {
             }
             NewItemsSetBonus setBonus = setBonuses.get(setIndex);
             List<Component> lore = new ArrayList<>();
+            lore.add(Component.empty());
+            lore.addAll(setBonus.getDescriptionLore());
+            lore.add(Component.empty());
             lore.add(Component.text("Available Pieces:", NamedTextColor.GRAY));
             for (NewItemsSlot slot : setBonus.getSlots()) {
                 lore.add(Component.text(" - " + slot.getName(), NamedTextColor.GRAY));
@@ -206,6 +211,7 @@ public class NewItemCraftMenu {
                     DatabaseManager.queueUpdatePlayerAsync(databasePlayer);
                     NewItemsUtils.sendItemMessage(player, Component.text("You crafted ", NamedTextColor.GRAY).append(item.getHoverComponent()));
                     Utils.playGlobalSound(player.getLocation(), "misc.itemcraft", 500, 0.5f);
+                    Bukkit.getServer().getPluginManager().callEvent(new NewItemCraftEvent(player.getUniqueId(), item));
                     for (Player onlinePlayer : Bukkit.getOnlinePlayers()) {
                         onlinePlayer.sendMessage(Permissions.getPrefixWithColor(player, false)
                                 .append(Component.text(player.getName()))

@@ -10,6 +10,7 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 
+import javax.annotation.Nullable;
 import java.util.function.Consumer;
 
 public class Shield implements Listener {
@@ -41,6 +42,8 @@ public class Shield implements Listener {
     private String name;
     private float maxShieldHealth;
     private float shieldHealth;
+    @Nullable
+    private Runnable onHealthChanged;
 
     public Shield() {
     }
@@ -60,13 +63,18 @@ public class Shield implements Listener {
         warlordsEntity.giveAbsorption((float) (totalShieldHealth / warlordsEntity.getMaxHealth() * 40));
     }
 
+    public void setOnHealthChanged(@Nullable Runnable onHealthChanged) {
+        this.onHealthChanged = onHealthChanged;
+    }
 
     public float getShieldHealth() {
         return shieldHealth;
     }
 
     public void setShieldHealth(float shieldHealth) {
+        int before = (int) this.shieldHealth;
         this.shieldHealth = shieldHealth;
+        notifyIfDisplayChanged(before);
     }
 
     public float getMaxShieldHealth() {
@@ -82,9 +90,17 @@ public class Shield implements Listener {
     }
 
     public void addShieldHealth(float damage) {
+        int before = (int) this.shieldHealth;
         shieldHealth += damage;
         if (shieldHealth > maxShieldHealth) {
             shieldHealth = maxShieldHealth;
+        }
+        notifyIfDisplayChanged(before);
+    }
+
+    private void notifyIfDisplayChanged(int beforeDisplayed) {
+        if (onHealthChanged != null && (int) shieldHealth != beforeDisplayed) {
+            onHealthChanged.run();
         }
     }
 

@@ -114,7 +114,7 @@ public class Guild {
     private List<AbstractGuildLog> auditLog = new ArrayList<>();
     private List<String> motd = new ArrayList<>();
     @Field("patches_applied")
-    private List<Patches> patchesApplied = new ArrayList<>();
+    private List<String> patchesApplied = new ArrayList<>();
 
     public Guild() {
     }
@@ -598,7 +598,7 @@ public class Guild {
         return eventStats.getOrDefault(event, new HashMap<>()).getOrDefault(eventStartEpochSecond, 0L);
     }
 
-    public List<Patches> getPatchesApplied() {
+    public List<String> getPatchesApplied() {
         return patchesApplied;
     }
 
@@ -627,6 +627,11 @@ public class Guild {
         },
 
         ;
+
+        /**
+         * Set to {@code true} to run guild patches again on init.
+         */
+        public static final boolean APPLY_ON_INIT = false;
 
         public static final Patches[] VALUES = values();
 

@@ -21,10 +21,11 @@ public class StatsLeaderboardCommand extends BaseCommand {
     @Subcommand("toggle")
     public void toggle(CommandIssuer issuer) {
         StatsLeaderboardManager.enabled = !StatsLeaderboardManager.enabled;
-        StatsLeaderboardManager.addHologramLeaderboards(false);
         if (StatsLeaderboardManager.enabled) {
+            StatsLeaderboardManager.addHologramLeaderboards(false);
             ChatChannels.sendDebugMessage(issuer, Component.text("Leaderboards enabled", NamedTextColor.GREEN));
         } else {
+            StatsLeaderboardManager.hardDisableLeaderboards();
             ChatChannels.sendDebugMessage(issuer, Component.text("Leaderboards disabled", NamedTextColor.GREEN));
         }
     }
