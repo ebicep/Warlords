@@ -23,15 +23,15 @@ public enum MountType {
     // Scales are the brown horse seat (1.44375) divided by each mob's passenger attachment,
     // so a rider's feet sit at the same height on every mount.
     BROWN("Brown Horse", Material.HORSE_SPAWN_EGG, Horse.Color.BROWN, false),
-    WHITE("White Horse", Material.WHITE_WOOL, Horse.Color.WHITE, true),
+    WHITE("White Horse", Material.WHITE_WOOL, Horse.Color.WHITE, false),
     SKELETON("Skeleton Horse", Material.SKELETON_HORSE_SPAWN_EGG, null, true, 1.44375 / 1.31875),
     ZOMBIE("Zombie Horse", Material.ZOMBIE_HORSE_SPAWN_EGG, null, true, 1.44375 / 1.31875),
     RAVAGER("Ravager", Material.RAVAGER_SPAWN_EGG, null, true, 1.44375 / 2.2625),
     PIG("Pig", Material.PIG_SPAWN_EGG, null, true, 1.44375 / 0.86875),
     LLAMA("Llama", Material.LLAMA_SPAWN_EGG, null, true, 1.44375 / 1.37),
-    HOGLIN("Hoglin", Material.HOGLIN_SPAWN_EGG, null, false, 1.44375 / 1.49375),
-    SNIFFER("Sniffer", Material.SNIFFER_SPAWN_EGG, null, false, 1.44375 / 2.09375),
-    GOAT("Goat", Material.GOAT_SPAWN_EGG, null, false, 1.44375 / 1.1125),
+    HOGLIN("Hoglin", Material.HOGLIN_SPAWN_EGG, null, true, 1.44375 / 1.49375),
+    SNIFFER("Sniffer", Material.SNIFFER_SPAWN_EGG, null, true, 1.44375 / 2.09375),
+    GOAT("Goat", Material.GOAT_SPAWN_EGG, null, true, 1.44375 / 1.1125),
 
     ;
 
