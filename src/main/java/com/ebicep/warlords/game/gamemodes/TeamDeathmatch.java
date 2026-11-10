@@ -12,7 +12,7 @@ import com.ebicep.warlords.game.option.PlayerCooldownDisplayOption;
 import com.ebicep.warlords.game.option.TextOption;
 import com.ebicep.warlords.game.option.WeaponOption;
 import com.ebicep.warlords.game.option.pvp.ApplySpecBoostsOption;
-import com.ebicep.warlords.game.option.pvp.HorseOption;
+import com.ebicep.warlords.game.option.pvp.MountOption;
 import com.ebicep.warlords.game.option.respawn.NoRespawnIfOfflineOption;
 import com.ebicep.warlords.util.bukkit.LocationFactory;
 import com.ebicep.warlords.util.java.TriFunction;
@@ -50,7 +50,7 @@ public class TeamDeathmatch implements Mode {
         options.add(new NoRespawnIfOfflineOption());
         options.add(new WeaponOption());
         options.add(new ApplySpecBoostsOption(addons.contains(GameAddon.RANDOM_SPEC_BOOST)));
-        options.add(new HorseOption());
+        options.add(new MountOption());
         options.add(new PlayerCooldownDisplayOption());
 
 

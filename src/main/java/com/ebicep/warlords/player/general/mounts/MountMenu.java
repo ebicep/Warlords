@@ -24,7 +24,7 @@ public final class MountMenu {
     public static final ItemStack MENU_ICON = new ItemBuilder(Material.SADDLE)
             .name(Component.text("Mounts", NamedTextColor.GOLD))
             .lore(
-                    Component.text("Choose a horse and horse armor", NamedTextColor.GRAY),
+                    Component.text("Choose a mount and horse armor", NamedTextColor.GRAY),
                     Component.text("for your PvP mount.", NamedTextColor.GRAY),
                     Component.empty(),
                     Component.text("Click to customize!", NamedTextColor.YELLOW)
@@ -44,7 +44,7 @@ public final class MountMenu {
         MountArmor armor = profile.getSelectedArmor();
 
         menu.setItem(3, 1, new ItemBuilder(type.getIcon())
-                .name(Component.text("Horse", NamedTextColor.GOLD))
+                .name(Component.text("Mount", NamedTextColor.GOLD))
                 .lore(
                         Component.text("Selected: ", NamedTextColor.GRAY)
                                 .append(Component.text(type.getDisplayName(), NamedTextColor.YELLOW)),
@@ -57,6 +57,7 @@ public final class MountMenu {
                 .lore(
                         Component.text("Selected: ", NamedTextColor.GRAY)
                                 .append(Component.text(armor == null ? "None" : armor.getDisplayName(), NamedTextColor.YELLOW)),
+                        Component.text("Only applies to horse mounts", NamedTextColor.DARK_GRAY),
                         Component.empty(),
                         Component.text("Click to choose", NamedTextColor.YELLOW)
                 )
@@ -72,7 +73,7 @@ public final class MountMenu {
         boolean hasSupporter = Permissions.isSupporter(player);
         normalize(databasePlayer, hasSupporter);
         MountProfile profile = databasePlayer.getMounts();
-        Menu menu = new Menu("Horse Types", 9 * 4);
+        Menu menu = new Menu("Mount Types", 9 * 4);
         for (int i = 0; i < MountType.VALUES.length; i++) {
             MountType type = MountType.VALUES[i];
             boolean available = type.isSupporterExclusive() ? hasSupporter && profile.isUnlocked(type) : profile.isUnlocked(type);
@@ -83,7 +84,7 @@ public final class MountMenu {
             if (selected) {
                 builder.glow();
             }
-            menu.setItem(1 + i * 2, 1, builder.get(), (m, event) -> {
+            menu.setItem(1 + (i % 4) * 2, 1 + i / 4, builder.get(), (m, event) -> {
                 if (type.isSupporterExclusive() && !hasSupporter) {
                     sendSupporterRequired(player);
                 } else if (selected) {
@@ -95,7 +96,7 @@ public final class MountMenu {
                         save(databasePlayer);
                     }
                 } else {
-                    openPurchase(player, databasePlayer, "Purchase Horse",
+                    openPurchase(player, databasePlayer, "Purchase Mount",
                             Component.text(type.getDisplayName(), NamedTextColor.GOLD), type.getCost(),
                             () -> profile.isUnlocked(type), () -> {
                                 profile.unlock(type);
@@ -121,9 +122,9 @@ public final class MountMenu {
         boolean noArmor = profile.getSelectedArmor() == null;
         ItemBuilder none = new ItemBuilder(Material.BARRIER)
                 .name(Component.text("No Armor", NamedTextColor.GOLD))
-                .lore(noArmor
+                .lore(armorLore(noArmor
                         ? List.of(Component.text("SELECTED", NamedTextColor.GREEN, TextDecoration.BOLD))
-                        : List.of(Component.text("Click to unequip", NamedTextColor.YELLOW)));
+                        : List.of(Component.text("Click to unequip", NamedTextColor.YELLOW))));
         if (noArmor) {
             none.glow();
         }
@@ -140,7 +141,7 @@ public final class MountMenu {
             boolean selected = profile.getSelectedArmor() == armor;
             ItemBuilder builder = new ItemBuilder(armor.getIcon())
                     .name(Component.text(armor.getDisplayName(), available ? NamedTextColor.GOLD : NamedTextColor.GRAY))
-                    .lore(optionLore(available, selected, true, armor.isSupporterExclusive(), hasSupporter, armor.getCost()));
+                    .lore(armorLore(optionLore(available, selected, true, armor.isSupporterExclusive(), hasSupporter, armor.getCost())));
             if (selected && available) {
                 builder.glow();
             }
@@ -171,6 +172,13 @@ public final class MountMenu {
         menu.setItem(4, 3, Menu.MENU_CLOSE, Menu.ACTION_CLOSE_MENU);
         menu.addBorder(Menu.GRAY_EMPTY_PANE, true);
         menu.openForPlayer(player);
+    }
+
+    private static List<Component> armorLore(List<Component> lore) {
+        List<Component> withNote = new ArrayList<>();
+        withNote.add(Component.text("Only applies to horse mounts", NamedTextColor.DARK_GRAY));
+        withNote.addAll(lore);
+        return withNote;
     }
 
     private static List<Component> optionLore(boolean available, boolean selected, boolean clearable, boolean supporterExclusive,

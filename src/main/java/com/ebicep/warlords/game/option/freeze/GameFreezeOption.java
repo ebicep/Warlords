@@ -5,7 +5,7 @@ import com.ebicep.warlords.events.game.WarlordsGameUpdatedEvent;
 import com.ebicep.warlords.game.Game;
 import com.ebicep.warlords.game.option.Option;
 import com.ebicep.warlords.game.option.pve.PveOption;
-import com.ebicep.warlords.game.option.pvp.HorseOption;
+import com.ebicep.warlords.game.option.pvp.MountOption;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
@@ -13,7 +13,6 @@ import net.kyori.adventure.title.Title;
 import net.kyori.adventure.util.Ticks;
 import org.bukkit.Bukkit;
 import org.bukkit.Sound;
-import org.bukkit.entity.Horse;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
@@ -147,7 +146,7 @@ public class GameFreezeOption implements Option, Listener {
     }
 
     private void freezePlayer(Player p, Component message) {
-        if (p.getVehicle() instanceof Horse) {
+        if (MountOption.isMount(p.getVehicle())) {
             p.getVehicle().remove();
             playersWithHorsePreFreeze.add(p.getUniqueId());
         }
@@ -162,7 +161,7 @@ public class GameFreezeOption implements Option, Listener {
     private void unfreezePlayer(Player p) {
         WarlordsEntity wp = Warlords.getPlayer(p);
         if (wp != null && playersWithHorsePreFreeze.contains(p.getUniqueId())) {
-            HorseOption.activateHorseForPlayer(wp, false);
+            MountOption.activateMountForPlayer(wp, false);
         }
         p.clearTitle();
         p.removePotionEffect(PotionEffectType.BLINDNESS);

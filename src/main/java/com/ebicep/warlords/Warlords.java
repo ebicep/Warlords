@@ -370,7 +370,7 @@ public class Warlords extends JavaPlugin {
         getServer().getPluginManager().registerEvents(new PatreonReward(), this);
         getServer().getPluginManager().registerEvents(new MemoryManager(), this);
         getServer().getPluginManager().registerEvents(new Shield(), this);
-//        getServer().getPluginManager().registerEvents(new HorseOption(), this);
+//        getServer().getPluginManager().registerEvents(new MountOption(), this);
         getServer().getPluginManager().registerEvents(TracksOutsideGame.getListener(), this);
         getServer().getPluginManager().registerEvents(new DatabaseGameEvent(), this);
         this.getLifecycleManager().registerEventHandler(LifecycleEvents.COMMANDS, commands -> {

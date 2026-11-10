@@ -1,6 +1,7 @@
 package com.ebicep.warlords.util.bukkit;
 
 import com.ebicep.warlords.game.Game;
+import com.ebicep.warlords.game.option.pvp.MountOption;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.*;
 
@@ -31,7 +32,7 @@ public class EntitiesUtils {
         Bukkit.getWorlds()
               .forEach(world -> new ArrayList<>(world.getEntities())
                       .stream()
-                      .filter(entity -> (entity instanceof Horse && entity.getPassengers().isEmpty()))
+                      .filter(entity -> MountOption.isMount(entity) && entity.getPassengers().isEmpty())
                       .forEach(Entity::remove)
               );
     }

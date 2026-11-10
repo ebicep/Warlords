@@ -5,7 +5,7 @@ import com.ebicep.warlords.events.player.ingame.WarlordsDamageHealingEvent;
 import com.ebicep.warlords.events.player.ingame.WarlordsRespawnEvent;
 import com.ebicep.warlords.game.Game;
 import com.ebicep.warlords.game.option.Option;
-import com.ebicep.warlords.game.option.pvp.HorseOption;
+import com.ebicep.warlords.game.option.pvp.MountOption;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
 import com.ebicep.warlords.util.java.Pair;
 import com.ebicep.warlords.util.warlords.GameRunnable;
@@ -115,8 +115,8 @@ public class RespawnProtectionOption implements Option, Listener {
             return;
         }
         if (removeHorse && event.getSource().getTeam() != event.getWarlordsEntity().getTeam()) {
-            for (HorseOption horseOption : game.getOption(HorseOption.class)) {
-                horseOption.getHorseForPlayer(event.getWarlordsEntity()).kill();
+            for (MountOption mountOption : game.getOption(MountOption.class)) {
+                mountOption.getMountForPlayer(event.getWarlordsEntity()).kill();
             }
         }
         event.setCancelled(true);
