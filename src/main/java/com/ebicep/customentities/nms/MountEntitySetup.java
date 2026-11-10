@@ -1,7 +1,9 @@
 package com.ebicep.customentities.nms;
 
+import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.Mob;
 import net.minecraft.world.entity.ai.attributes.Attributes;
+import net.minecraft.world.entity.player.Input;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.phys.Vec3;
 import org.bukkit.Location;
@@ -50,10 +52,20 @@ public final class MountEntitySetup {
 
     /**
      * Same strafe and forward shaping as a horse, with no jump component.
+     * The dedicated server never copies key state into {@code xxa}/{@code zza}; that lives on the last client input.
      */
     public static Vec3 riddenInput(Player player) {
-        float strafe = player.xxa * 0.5F;
-        float forward = player.zza;
+        float strafe;
+        float forward;
+        if (player instanceof ServerPlayer serverPlayer) {
+            Input input = serverPlayer.getLastClientInput();
+            strafe = input.left() == input.right() ? 0.0F : (input.left() ? 1.0F : -1.0F);
+            forward = input.forward() == input.backward() ? 0.0F : (input.forward() ? 1.0F : -1.0F);
+        } else {
+            strafe = player.xxa;
+            forward = player.zza;
+        }
+        strafe *= 0.5F;
         if (forward <= 0.0F) {
             forward *= 0.25F;
         }

@@ -42,6 +42,7 @@ import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.bukkit.event.block.Action;
 import org.bukkit.event.entity.CreatureSpawnEvent;
+import org.bukkit.event.entity.EntityDismountEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.inventory.EquipmentSlot;
 import org.bukkit.inventory.ItemStack;
@@ -151,6 +152,14 @@ public class MountOption implements Option, Listener {
 
     public WarlordsMount getMountForPlayer(WarlordsEntity warlordsEntity) {
         return playerMounts.computeIfAbsent(warlordsEntity, k -> new WarlordsMount());
+    }
+
+    @EventHandler(ignoreCancelled = true)
+    public void onDismount(EntityDismountEvent event) {
+        // VehicleExitEvent only fires for Bukkit vehicles. Ravagers and hoglins are not vehicles, so they would stay behind.
+        if (isMount(event.getDismounted())) {
+            event.getDismounted().remove();
+        }
     }
 
     @EventHandler
@@ -327,15 +336,17 @@ public class MountOption implements Option, Listener {
                 setBase(mount, Attribute.STEP_HEIGHT, 1.0);
                 if (mount instanceof AbstractHorse horse) {
                     horse.setTamed(true);
-                    horse.getInventory().setSaddle(new ItemStack(Material.SADDLE));
-                    if (armor != null && type.isHorse()) {
-                        horse.getEquipment().setItem(EquipmentSlot.BODY, armor.createItem());
-                    }
                     horse.setOwner(player);
                     horse.setJumpStrength(0);
-                    if (horse instanceof Horse colored && type.getColor() != null) {
-                        colored.setColor(type.getColor());
-                        colored.setStyle(Horse.Style.NONE);
+                    if (type.isHorse()) {
+                        horse.getInventory().setSaddle(new ItemStack(Material.SADDLE));
+                        if (armor != null) {
+                            horse.getEquipment().setItem(EquipmentSlot.BODY, armor.createItem());
+                        }
+                        if (horse instanceof Horse colored && type.getColor() != null) {
+                            colored.setColor(type.getColor());
+                            colored.setStyle(Horse.Style.NONE);
+                        }
                     }
                 } else if (mount instanceof Pig) {
                     mount.getEquipment().setItem(EquipmentSlot.SADDLE, new ItemStack(Material.SADDLE));

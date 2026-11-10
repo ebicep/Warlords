@@ -103,10 +103,24 @@ public class CustomLlama extends Llama {
     public void performRangedAttack(@Nonnull LivingEntity target, float velocity) {
     }
 
+    /**
+     * The client only steers a saddled llama. This one is ridden without a saddle, so the server moves it.
+     */
+    @Override
+    public boolean isClientAuthoritative() {
+        return false;
+    }
+
     @Nullable
     @Override
     public LivingEntity getControllingPassenger() {
         return MountEntitySetup.controllingPassenger(this);
+    }
+
+    @Nonnull
+    @Override
+    protected Vec3 getRiddenInput(@Nonnull Player player, @Nonnull Vec3 movementInput) {
+        return MountEntitySetup.riddenInput(player);
     }
 
 }

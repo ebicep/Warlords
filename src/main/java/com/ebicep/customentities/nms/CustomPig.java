@@ -66,6 +66,14 @@ public class CustomPig extends Pig {
     public void thunderHit(@Nonnull ServerLevel level, @Nonnull LightningBolt lightning) {
     }
 
+    /**
+     * A pig only steers on the client with a carrot on a stick, so the server moves it instead.
+     */
+    @Override
+    public boolean isClientAuthoritative() {
+        return false;
+    }
+
     @Nullable
     @Override
     public LivingEntity getControllingPassenger() {

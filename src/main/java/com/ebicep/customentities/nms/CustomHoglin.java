@@ -81,6 +81,14 @@ public class CustomHoglin extends Hoglin {
     protected void blockedByItem(@Nonnull LivingEntity entity) {
     }
 
+    /**
+     * Hoglins are not rideable on the client, so the server moves this mob itself.
+     */
+    @Override
+    public boolean isClientAuthoritative() {
+        return false;
+    }
+
     @Nullable
     @Override
     public LivingEntity getControllingPassenger() {

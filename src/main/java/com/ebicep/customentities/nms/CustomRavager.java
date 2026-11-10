@@ -64,6 +64,14 @@ public class CustomRavager extends Ravager {
     protected void blockedByItem(@Nonnull LivingEntity entity) {
     }
 
+    /**
+     * Vanilla ravagers are not rideable on the client, so the server has to move this mob itself.
+     */
+    @Override
+    public boolean isClientAuthoritative() {
+        return false;
+    }
+
     @Nullable
     @Override
     public LivingEntity getControllingPassenger() {
