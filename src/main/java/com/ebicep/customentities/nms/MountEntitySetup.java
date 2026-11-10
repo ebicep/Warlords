@@ -76,4 +76,12 @@ public final class MountEntitySetup {
         return (float) mount.getAttributeValue(Attributes.MOVEMENT_SPEED);
     }
 
+    /**
+     * One tick of full forward input, using the same speed and input shaping as a ridden mount.
+     */
+    public static void simulateForwardTick(Mob mount) {
+        mount.setSpeed(riddenSpeed(mount));
+        mount.travel(new Vec3(0.0, 0.0, 1.0));
+    }
+
 }
