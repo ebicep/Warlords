@@ -1,5 +1,6 @@
 package com.ebicep.warlords.player.general.mounts;
 
+import com.ebicep.customentities.nms.CustomGoat;
 import com.ebicep.customentities.nms.CustomHoglin;
 import com.ebicep.customentities.nms.CustomHorse;
 import com.ebicep.customentities.nms.CustomLlama;
@@ -28,6 +29,7 @@ public enum MountType {
     LLAMA("Llama", Material.LLAMA_SPAWN_EGG, null, true),
     HOGLIN("Hoglin", Material.HOGLIN_SPAWN_EGG, null, false),
     SNIFFER("Sniffer", Material.SNIFFER_SPAWN_EGG, null, false),
+    GOAT("Goat", Material.GOAT_SPAWN_EGG, null, false),
 
     ;
 
@@ -77,7 +79,7 @@ public enum MountType {
     public boolean isHorse() {
         return switch (this) {
             case BROWN, WHITE, SKELETON, ZOMBIE -> true;
-            case RAVAGER, PIG, LLAMA, HOGLIN, SNIFFER -> false;
+            case RAVAGER, PIG, LLAMA, HOGLIN, SNIFFER, GOAT -> false;
         };
     }
 
@@ -95,6 +97,7 @@ public enum MountType {
             case LLAMA -> new CustomLlama(location);
             case HOGLIN -> new CustomHoglin(location);
             case SNIFFER -> new CustomSniffer(location);
+            case GOAT -> new CustomGoat(location);
             case BROWN, WHITE -> new CustomHorse(location);
         };
     }

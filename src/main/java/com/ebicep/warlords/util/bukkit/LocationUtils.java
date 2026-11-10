@@ -10,6 +10,7 @@ import org.bukkit.block.data.type.Stairs;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
+import org.bukkit.util.BoundingBox;
 import org.bukkit.util.Vector;
 
 import javax.annotation.Nonnull;
@@ -284,6 +285,42 @@ public class LocationUtils {
             return world.getBlockAt(blockX, 4, blockZ).getType() == Material.SOUL_SAND && !insideTunnel(location);
         }
         return true;
+    }
+
+    /**
+     * No-mount columns are marked with netherrack at Y=2. Test the mount's feet and the edges of its
+     * hitbox at that same Y, so a tall or wide mob is judged on the ground column it is standing in.
+     */
+    public static boolean isMountableZone(Entity entity) {
+        Location feet = entity.getLocation();
+        if (!isMountableZone(feet)) {
+            return false;
+        }
+        BoundingBox box = entity.getBoundingBox();
+        double y = feet.getY();
+        World world = feet.getWorld();
+        double inset = 0.05;
+        double[] xs = {box.getMinX() + inset, box.getMaxX() - inset};
+        double[] zs = {box.getMinZ() + inset, box.getMaxZ() - inset};
+        for (double x : xs) {
+            for (double z : zs) {
+                if (blockX(x) == feet.getBlockX() && blockZ(z) == feet.getBlockZ()) {
+                    continue;
+                }
+                if (!isMountableZone(new Location(world, x, y, z))) {
+                    return false;
+                }
+            }
+        }
+        return true;
+    }
+
+    private static int blockX(double x) {
+        return Location.locToBlock(x);
+    }
+
+    private static int blockZ(double z) {
+        return Location.locToBlock(z);
     }
 
     public static boolean insideTunnel(Location location) {

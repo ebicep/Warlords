@@ -286,6 +286,10 @@ public class MountOption implements Option, Listener {
         public void tick() {
             cooldown.tick();
             health.tick();
+            Entity ridden = mount != null ? mount : npc != null ? npc.getEntity() : null;
+            if (ridden != null && ridden.isValid() && !ridden.getPassengers().isEmpty() && !LocationUtils.isMountableZone(ridden)) {
+                kill();
+            }
         }
 
         public void spawn(Player player) {
