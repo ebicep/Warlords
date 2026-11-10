@@ -6,6 +6,7 @@ import com.ebicep.customentities.nms.CustomLlama;
 import com.ebicep.customentities.nms.CustomPig;
 import com.ebicep.customentities.nms.CustomRavager;
 import com.ebicep.customentities.nms.CustomSkeletonHorse;
+import com.ebicep.customentities.nms.CustomSniffer;
 import com.ebicep.customentities.nms.CustomZombieHorse;
 import com.ebicep.warlords.honorifics.HonorificCost;
 import com.ebicep.warlords.pve.Currencies;
@@ -26,6 +27,7 @@ public enum MountType {
     PIG("Pig", Material.PIG_SPAWN_EGG, null, true),
     LLAMA("Llama", Material.LLAMA_SPAWN_EGG, null, true),
     HOGLIN("Hoglin", Material.HOGLIN_SPAWN_EGG, null, false),
+    SNIFFER("Sniffer", Material.SNIFFER_SPAWN_EGG, null, false),
 
     ;
 
@@ -75,7 +77,7 @@ public enum MountType {
     public boolean isHorse() {
         return switch (this) {
             case BROWN, WHITE, SKELETON, ZOMBIE -> true;
-            case RAVAGER, PIG, LLAMA, HOGLIN -> false;
+            case RAVAGER, PIG, LLAMA, HOGLIN, SNIFFER -> false;
         };
     }
 
@@ -92,6 +94,7 @@ public enum MountType {
             case PIG -> new CustomPig(location);
             case LLAMA -> new CustomLlama(location);
             case HOGLIN -> new CustomHoglin(location);
+            case SNIFFER -> new CustomSniffer(location);
             case BROWN, WHITE -> new CustomHorse(location);
         };
     }

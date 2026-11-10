@@ -73,7 +73,7 @@ public final class MountMenu {
         boolean hasSupporter = Permissions.isSupporter(player);
         normalize(databasePlayer, hasSupporter);
         MountProfile profile = databasePlayer.getMounts();
-        Menu menu = new Menu("Mount Types", 9 * 4);
+        Menu menu = new Menu("Mount Types", 9 * 5);
         for (int i = 0; i < MountType.VALUES.length; i++) {
             MountType type = MountType.VALUES[i];
             boolean available = type.isSupporterExclusive() ? hasSupporter && profile.isUnlocked(type) : profile.isUnlocked(type);
@@ -107,8 +107,8 @@ public final class MountMenu {
                 openTypes(player);
             });
         }
-        menu.setItem(3, 3, Menu.MENU_BACK, (m, event) -> open(player));
-        menu.setItem(4, 3, Menu.MENU_CLOSE, Menu.ACTION_CLOSE_MENU);
+        menu.setItem(3, 4, Menu.MENU_BACK, (m, event) -> open(player));
+        menu.setItem(4, 4, Menu.MENU_CLOSE, Menu.ACTION_CLOSE_MENU);
         menu.addBorder(Menu.GRAY_EMPTY_PANE, true);
         menu.openForPlayer(player);
     }
