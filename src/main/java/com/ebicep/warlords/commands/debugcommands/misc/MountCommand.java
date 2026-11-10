@@ -10,12 +10,14 @@ import com.ebicep.warlords.player.general.mounts.MountType;
 import com.ebicep.warlords.util.chat.ChatChannels;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
+import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.Mob;
 import net.minecraft.world.phys.Vec3;
 import org.bukkit.Location;
 import org.bukkit.attribute.Attribute;
 import org.bukkit.attribute.AttributeInstance;
 import org.bukkit.craftbukkit.CraftWorld;
+import org.bukkit.craftbukkit.entity.CraftPlayer;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
@@ -35,6 +37,7 @@ public class MountCommand extends BaseCommand {
 
     public static final Map<UUID, EntityType> PLAYER_MOUNT_TYPE = new HashMap<>();
     public static final Map<EntityType, Float> SPEEDS = new HashMap<>();
+    private static final double HEIGHT_TOLERANCE = 0.01;
 
     static {
         SPEEDS.put(EntityType.HORSE, 1.6f);
@@ -79,14 +82,88 @@ public class MountCommand extends BaseCommand {
         report(player, ticks, results);
     }
 
-    private static SpeedResult measure(MountType type, Location start, int ticks) {
-        Mob mount = type.create(start);
-        LivingEntity entity = (LivingEntity) mount.getBukkitEntity();
-        setBase(entity, Attribute.MOVEMENT_SPEED, MountEntitySetup.MOVEMENT_SPEED);
-        setBase(entity, Attribute.SCALE, type.getScale());
-        setBase(entity, Attribute.STEP_HEIGHT, 1.0);
+    @Subcommand("height")
+    @Description("Compares mount hitbox height and the riding player's seat height")
+    public void height(Player player) {
+        Location start = beside(player.getLocation());
+        ServerPlayer rider = ((CraftPlayer) player).getHandle();
+        List<HeightResult> results = new ArrayList<>();
+        for (MountType type : MountType.VALUES) {
+            results.add(measureHeight(type, start, rider));
+        }
+        reportHeight(player, rider.getBbHeight(), results);
+    }
+
+    private static HeightResult measureHeight(MountType type, Location start, ServerPlayer rider) {
+        Mob mount = spawnMount(type, start);
         try {
-            ((CraftWorld) start.getWorld()).getHandle().addFreshEntity(mount, CreatureSpawnEvent.SpawnReason.CUSTOM);
+            Vec3 riding = mount.getPassengerRidingPosition(rider);
+            Vec3 attachment = rider.getVehicleAttachmentPoint(mount);
+            double seat = riding.y - attachment.y - mount.getY();
+            return new HeightResult(type, mount.getBbHeight(), seat);
+        } finally {
+            mount.discard();
+        }
+    }
+
+    private static void reportHeight(Player player, float playerHeight, List<HeightResult> results) {
+        ChatChannels.sendDebugMessage(player, Component.text(String.format(Locale.US,
+                "Mount height check. Your hitbox is %.3f. Seat is your feet above the mount.",
+                playerHeight
+        ), NamedTextColor.GRAY));
+        if (results.isEmpty()) {
+            return;
+        }
+        HeightResult baseline = results.getFirst();
+        double mountSpread = spread(results.stream().mapToDouble(HeightResult::mountHeight).toArray());
+        double seatSpread = spread(results.stream().mapToDouble(HeightResult::seat).toArray());
+        for (HeightResult result : results) {
+            boolean matches = close(result.mountHeight, baseline.mountHeight) && close(result.seat, baseline.seat);
+            ChatChannels.sendDebugMessage(player, Component.text(String.format(Locale.US,
+                    "%s: mount %.3f, seat %.3f%s",
+                    result.type.getDisplayName(),
+                    result.mountHeight,
+                    result.seat,
+                    scaleNote(result.type)
+            ), matches ? NamedTextColor.GREEN : NamedTextColor.RED));
+        }
+        ChatChannels.sendDebugMessage(player, Component.text(
+                sameHeight("Mount heights", mountSpread) + " " + sameHeight("Seat heights", seatSpread),
+                mountSpread <= HEIGHT_TOLERANCE && seatSpread <= HEIGHT_TOLERANCE ? NamedTextColor.GREEN : NamedTextColor.RED
+        ));
+    }
+
+    private static String sameHeight(String label, double spread) {
+        if (spread <= HEIGHT_TOLERANCE) {
+            return label + " match.";
+        }
+        return String.format(Locale.US, "%s differ by %.3f.", label, spread);
+    }
+
+    private static String scaleNote(MountType type) {
+        if (Math.abs(type.getScale() - 1.0) <= 0.001) {
+            return "";
+        }
+        return String.format(Locale.US, ", scale %.2f", type.getScale());
+    }
+
+    private static double spread(double[] values) {
+        double min = Double.POSITIVE_INFINITY;
+        double max = Double.NEGATIVE_INFINITY;
+        for (double value : values) {
+            min = Math.min(min, value);
+            max = Math.max(max, value);
+        }
+        return max - min;
+    }
+
+    private static boolean close(double value, double baseline) {
+        return Math.abs(value - baseline) <= HEIGHT_TOLERANCE;
+    }
+
+    private static SpeedResult measure(MountType type, Location start, int ticks) {
+        Mob mount = spawnMount(type, start);
+        try {
             for (int tick = 0; tick < 40 && !mount.onGround(); tick++) {
                 mount.setSpeed(0.0F);
                 mount.travel(Vec3.ZERO);
@@ -141,6 +218,17 @@ public class MountCommand extends BaseCommand {
         }
     }
 
+    private static Mob spawnMount(MountType type, Location start) {
+        Mob mount = type.create(start);
+        LivingEntity entity = (LivingEntity) mount.getBukkitEntity();
+        setBase(entity, Attribute.MOVEMENT_SPEED, MountEntitySetup.MOVEMENT_SPEED);
+        setBase(entity, Attribute.SCALE, type.getScale());
+        setBase(entity, Attribute.STEP_HEIGHT, 1.0);
+        ((CraftWorld) start.getWorld()).getHandle().addFreshEntity(mount, CreatureSpawnEvent.SpawnReason.CUSTOM);
+        mount.refreshDimensions();
+        return mount;
+    }
+
     private static Location beside(Location location) {
         Location start = location.clone();
         double yaw = Math.toRadians(start.getYaw());
@@ -157,6 +245,9 @@ public class MountCommand extends BaseCommand {
     }
 
     private record SpeedResult(MountType type, double distance, float riddenSpeed, boolean stayedOnGround) {
+    }
+
+    private record HeightResult(MountType type, float mountHeight, double seat) {
     }
 
     @HelpCommand
