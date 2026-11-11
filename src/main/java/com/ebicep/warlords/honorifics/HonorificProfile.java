@@ -35,6 +35,9 @@ public class HonorificProfile {
     private long highestSingleHitDamage;
     private boolean maxedPveWeapon;
     private long frozenOrSlowedKills;
+    private long jumps;
+    private long reflectiveKills;
+    private long cleanAnomalyCacheStreak;
     private Set<String> teamBossDefeats = new HashSet<>();
 
     public HonorificProfile() {
@@ -294,6 +297,40 @@ public class HonorificProfile {
         if (amount > 0) {
             frozenOrSlowedKills += amount;
         }
+    }
+
+    public long getJumps() {
+        return jumps;
+    }
+
+    public void addJump() {
+        jumps++;
+    }
+
+    public long getReflectiveKills() {
+        return reflectiveKills;
+    }
+
+    public void addReflectiveKills(long amount) {
+        if (amount > 0) {
+            reflectiveKills += amount;
+        }
+    }
+
+    public long getCleanAnomalyCacheStreak() {
+        return cleanAnomalyCacheStreak;
+    }
+
+    public boolean recordAnomalyCacheUnlock(boolean legendaryOrSovereign) {
+        if (legendaryOrSovereign) {
+            if (cleanAnomalyCacheStreak == 0) {
+                return false;
+            }
+            cleanAnomalyCacheStreak = 0;
+            return true;
+        }
+        cleanAnomalyCacheStreak++;
+        return true;
     }
 
     public boolean hasTeamBossDefeat(String mobEnumName) {

@@ -8,6 +8,7 @@ import com.ebicep.warlords.database.repositories.player.pojos.general.DatabasePl
 import com.ebicep.warlords.database.repositories.player.pojos.pve.DatabasePlayerPvE;
 import com.ebicep.warlords.game.Game;
 import com.ebicep.warlords.game.GameAddon;
+import com.ebicep.warlords.game.GameMode;
 import com.ebicep.warlords.database.repositories.player.pojos.ctf.DatabasePlayerCTF;
 import com.ebicep.warlords.database.repositories.player.pojos.general.DatabasePlayerCompStats;
 import com.ebicep.warlords.database.repositories.player.pojos.general.DatabasePlayerPubStats;
@@ -19,7 +20,12 @@ import com.ebicep.warlords.player.ingame.WarlordsNPC;
 import com.ebicep.warlords.player.ingame.WarlordsPlayer;
 import com.ebicep.warlords.player.ingame.cooldowns.AbstractCooldown;
 import com.ebicep.warlords.player.ingame.motionsystem.MotionModifier;
+import com.ebicep.warlords.pve.bountysystem.AbstractBounty;
+import com.ebicep.warlords.pve.bountysystem.Bounty;
+import com.ebicep.warlords.pve.bountysystem.costs.LifetimeCost;
 import com.ebicep.warlords.pve.mobs.Mob;
+import com.ebicep.warlords.pve.newitems.NewItem;
+import com.ebicep.warlords.pve.newitems.tiers.NewItemTier;
 import com.ebicep.warlords.pve.weapons.AbstractWeapon;
 import com.ebicep.warlords.pve.weapons.weaponaddons.Upgradeable;
 import com.ebicep.warlords.util.java.NumberFormat;
@@ -61,6 +67,12 @@ public final class HonorificManager {
     private static final long HEAVYWEIGHT_CTF_WINS = 100;
     private static final long YOU_NEED_ME_FLAG_RETURNS = 100;
     private static final long PINGUIN_FROZEN_KILLS = 3_000;
+    private static final long SHRIMP_JUMPS = 3_000;
+    private static final long PRISM_REFLECTIVE_KILLS = 500;
+    private static final long UNSTABLE_CLEAN_CACHES = 120;
+    private static final Bounty[] LIFETIME_BOUNTIES = Arrays.stream(Bounty.VALUES)
+            .filter(bounty -> LifetimeCost.class.isAssignableFrom(bounty.clazz))
+            .toArray(Bounty[]::new);
     private static final ConcurrentHashMap<UUID, Long> LAST_CHALLENGE_REFRESH = new ConcurrentHashMap<>();
     private static final AtomicBoolean INITIALIZED = new AtomicBoolean();
 
@@ -207,6 +219,10 @@ public final class HonorificManager {
             case PERFECTED -> profile.hasMaxedPveWeapon() ? "Completed" : "Not completed";
             case PLANT -> "Not available yet";
             case PINGUIN -> progress(profile.getFrozenOrSlowedKills(), PINGUIN_FROZEN_KILLS);
+            case SHRIMP -> progress(profile.getJumps(), SHRIMP_JUMPS);
+            case PRISM -> progress(profile.getReflectiveKills(), PRISM_REFLECTIVE_KILLS);
+            case UNSTABLE -> progress(profile.getCleanAnomalyCacheStreak(), UNSTABLE_CLEAN_CACHES);
+            case WELLSPRING -> progress(getCompletedLifetimeBounties(databasePlayer), LIFETIME_BOUNTIES.length);
             default -> honorific.isPurchasable() ? "Purchasable" : "Challenge";
         };
     }
@@ -318,6 +334,71 @@ public final class HonorificManager {
         });
     }
 
+    public static void recordJump(Player player) {
+        if (!honorificsEnabled() || player == null) {
+            return;
+        }
+        WarlordsEntity entity = Warlords.getPlayer(player);
+        if (!(entity instanceof WarlordsPlayer)) {
+            return;
+        }
+        Game game = entity.getGame();
+        if (game == null || game.getGameMode() == GameMode.LOBBY || game.getAddons().contains(GameAddon.CUSTOM_GAME)) {
+            return;
+        }
+        UUID uuid = entity.getUuid();
+        if (!DatabaseManager.inCache(uuid, PlayersCollections.LIFETIME)) {
+            return;
+        }
+        HonorificProfile profile = DatabaseManager.getPlayer(uuid).getHonorifics();
+        profile.addJump();
+        if (profile.getJumps() >= SHRIMP_JUMPS && !profile.isUnlocked(Honorific.SHRIMP)) {
+            refreshAndSave(uuid);
+        } else {
+            queueSave(uuid);
+        }
+    }
+
+    public static void recordReflectiveKill(WarlordsEntity source, WarlordsEntity target) {
+        if (!honorificsEnabled() || !isEligibleCombatCredit(source, target)) {
+            return;
+        }
+        UUID uuid = source.getUuid();
+        if (!DatabaseManager.inCache(uuid, PlayersCollections.LIFETIME)) {
+            return;
+        }
+        DatabaseManager.getPlayer(uuid).getHonorifics().addReflectiveKills(1);
+        refreshAndSave(uuid);
+    }
+
+    public static void recordAnomalyCacheUnlock(DatabasePlayer databasePlayer, boolean legendaryOrSovereign) {
+        if (!honorificsEnabled() || databasePlayer == null) {
+            return;
+        }
+        UUID uuid = databasePlayer.getUuid();
+        if (!DatabaseManager.inCache(uuid, PlayersCollections.LIFETIME)) {
+            return;
+        }
+        if (DatabaseManager.getPlayer(uuid).getHonorifics().recordAnomalyCacheUnlock(legendaryOrSovereign)) {
+            refreshAndSave(uuid);
+        }
+    }
+
+    public static boolean isLegendaryOrSovereignItem(@Nullable NewItem item) {
+        if (item == null || item.getSetBonus() == null) {
+            return false;
+        }
+        NewItemTier tier = item.getTier();
+        return tier == NewItemTier.LEGENDARY || tier == NewItemTier.SOVEREIGN;
+    }
+
+    public static void refreshAfterBountyClaim(DatabasePlayer databasePlayer) {
+        if (!honorificsEnabled() || databasePlayer == null) {
+            return;
+        }
+        forceChallengeRefresh(databasePlayer, Bukkit.getPlayer(databasePlayer.getUuid()));
+    }
+
     public static void recordWeaponUpgrade(UUID uuid, @Nullable AbstractWeapon weapon) {
         if (!honorificsEnabled() || uuid == null || !(weapon instanceof Upgradeable upgradeable)) {
             return;
@@ -424,6 +505,10 @@ public final class HonorificManager {
             case PERFECTED -> profile.hasMaxedPveWeapon();
             case PLANT -> false;
             case PINGUIN -> profile.getFrozenOrSlowedKills() >= PINGUIN_FROZEN_KILLS;
+            case SHRIMP -> profile.getJumps() >= SHRIMP_JUMPS;
+            case PRISM -> profile.getReflectiveKills() >= PRISM_REFLECTIVE_KILLS;
+            case UNSTABLE -> profile.getCleanAnomalyCacheStreak() >= UNSTABLE_CLEAN_CACHES;
+            case WELLSPRING -> LIFETIME_BOUNTIES.length > 0 && getCompletedLifetimeBounties(databasePlayer) >= LIFETIME_BOUNTIES.length;
             default -> false;
         };
     }
@@ -504,6 +589,38 @@ public final class HonorificManager {
             }
         }
         return false;
+    }
+
+    private static int getCompletedLifetimeBounties(DatabasePlayer databasePlayer) {
+        DatabasePlayerPvE pveStats = databasePlayer.getPveStats();
+        if (pveStats == null) {
+            return 0;
+        }
+        Set<Bounty> completed = new HashSet<>();
+        Map<Bounty, Long> claimed = pveStats.getCompletedBounties();
+        if (claimed != null) {
+            for (Bounty bounty : LIFETIME_BOUNTIES) {
+                Long count = claimed.get(bounty);
+                if (count != null && count > 0) {
+                    completed.add(bounty);
+                }
+            }
+        }
+        List<AbstractBounty> activeBounties = pveStats.getActiveBounties();
+        if (activeBounties != null) {
+            for (AbstractBounty bounty : activeBounties) {
+                if (bounty == null || bounty.getBounty() == null) {
+                    continue;
+                }
+                if (!LifetimeCost.class.isAssignableFrom(bounty.getBounty().clazz)) {
+                    continue;
+                }
+                if (bounty.getValue() >= bounty.getTarget()) {
+                    completed.add(bounty.getBounty());
+                }
+            }
+        }
+        return completed.size();
     }
 
     private static long getCaptureTheFlagWins(DatabasePlayer databasePlayer) {
