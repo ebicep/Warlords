@@ -76,11 +76,11 @@ public final class MountMenu {
         Menu menu = new Menu("Mount Types", 9 * 5);
         for (int i = 0; i < MountType.VALUES.length; i++) {
             MountType type = MountType.VALUES[i];
-            boolean available = type.isSupporterExclusive() ? hasSupporter && profile.isUnlocked(type) : profile.isUnlocked(type);
+            boolean available = !type.isSupporterExclusive() || hasSupporter;
             boolean selected = profile.getSelectedType() == type;
             ItemBuilder builder = new ItemBuilder(type.getIcon())
                     .name(Component.text(type.getDisplayName(), available ? NamedTextColor.GOLD : NamedTextColor.GRAY))
-                    .lore(optionLore(available, selected, type != MountType.BROWN, type.isSupporterExclusive(), hasSupporter, type.getCost()));
+                    .lore(optionLore(available, selected, type != MountType.BROWN, type.isSupporterExclusive(), hasSupporter, null));
             if (selected) {
                 builder.glow();
             }
@@ -91,18 +91,8 @@ public final class MountMenu {
                     if (type != MountType.BROWN && profile.selectType(MountType.BROWN, hasSupporter)) {
                         save(databasePlayer);
                     }
-                } else if (available) {
-                    if (profile.selectType(type, hasSupporter)) {
-                        save(databasePlayer);
-                    }
-                } else {
-                    openPurchase(player, databasePlayer, "Purchase Mount",
-                            Component.text(type.getDisplayName(), NamedTextColor.GOLD), type.getCost(),
-                            () -> profile.isUnlocked(type), () -> {
-                                profile.unlock(type);
-                                profile.selectType(type, Permissions.isSupporter(player));
-                            }, () -> openTypes(player));
-                    return;
+                } else if (profile.selectType(type, hasSupporter)) {
+                    save(databasePlayer);
                 }
                 openTypes(player);
             });
