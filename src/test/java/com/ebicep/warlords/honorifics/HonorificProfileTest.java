@@ -109,11 +109,11 @@ class HonorificProfileTest {
         assertEquals("Perfected", Honorific.PERFECTED.getDisplayName());
         assertEquals("Plant", Honorific.PLANT.getDisplayName());
         assertEquals("Max out the foraging life skill.", Honorific.PLANT.getRequirement());
-        assertEquals("Pinguin", Honorific.PINGUIN.getDisplayName());
-        assertEquals("Kill 3000 frozen or slowed enemies.", Honorific.PINGUIN.getRequirement());
+        assertEquals("Penguin", Honorific.PENGUIN.getDisplayName());
+        assertEquals("Kill 3,000 frozen or slowed enemies.", Honorific.PENGUIN.getRequirement());
         assertFalse(Honorific.PLANT.isPurchasable());
         assertFalse(Honorific.COOKED.isPurchasable());
-        assertFalse(Honorific.PINGUIN.isPurchasable());
+        assertFalse(Honorific.PENGUIN.isPurchasable());
         assertEquals("Shrimp", Honorific.SHRIMP.getDisplayName());
         assertEquals("Jump 3,000 times in game.", Honorific.SHRIMP.getRequirement());
         assertEquals("Prism", Honorific.PRISM.getDisplayName());

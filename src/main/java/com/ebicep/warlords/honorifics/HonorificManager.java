@@ -61,15 +61,6 @@ public final class HonorificManager {
             .filter(mob -> mob.entityType == EntityType.IRON_GOLEM)
             .toArray(Mob[]::new));
     private static final long REFRESH_INTERVAL_MILLIS = 15_000;
-    private static final long COOKED_BURN_KILLS = 500;
-    private static final long FROG_TRANSFORMATIONS = 30;
-    private static final long FRACTAL_SINGLE_HIT_DAMAGE = 300_000;
-    private static final long HEAVYWEIGHT_CTF_WINS = 100;
-    private static final long YOU_NEED_ME_FLAG_RETURNS = 100;
-    private static final long PINGUIN_FROZEN_KILLS = 3_000;
-    private static final long SHRIMP_JUMPS = 3_000;
-    private static final long PRISM_REFLECTIVE_KILLS = 500;
-    private static final long UNSTABLE_CLEAN_CACHES = 120;
     private static final Bounty[] LIFETIME_BOUNTIES = Arrays.stream(Bounty.VALUES)
             .filter(bounty -> LifetimeCost.class.isAssignableFrom(bounty.clazz))
             .toArray(Bounty[]::new);
@@ -211,17 +202,17 @@ public final class HonorificManager {
             case PICKLE -> profile.hasWonWithPlikie() ? "Completed" : "Not completed";
             case REAPER -> profile.hasSacrificedWithSacrifice() ? "Completed" : "Not completed";
             case NO_LIFE -> progress(databasePlayer.getPlays(), 10_000);
-            case COOKED -> progress(profile.getBurnKills(), COOKED_BURN_KILLS);
-            case FROG -> progress(profile.getFrogTransformations(), FROG_TRANSFORMATIONS);
-            case FRACTAL -> progress(profile.getHighestSingleHitDamage(), FRACTAL_SINGLE_HIT_DAMAGE);
-            case HEAVYWEIGHT -> progress(getCaptureTheFlagWins(databasePlayer), HEAVYWEIGHT_CTF_WINS);
-            case YOU_NEED_ME -> progress(getCaptureTheFlagReturns(databasePlayer), YOU_NEED_ME_FLAG_RETURNS);
+            case COOKED -> progress(profile.getBurnKills(), 500);
+            case FROG -> progress(profile.getFrogTransformations(), 30);
+            case FRACTAL -> progress(profile.getHighestSingleHitDamage(), 300_000);
+            case HEAVYWEIGHT -> progress(getCaptureTheFlagWins(databasePlayer), 100);
+            case YOU_NEED_ME -> progress(getCaptureTheFlagReturns(databasePlayer), 100);
             case PERFECTED -> profile.hasMaxedPveWeapon() ? "Completed" : "Not completed";
             case PLANT -> "Not available yet";
-            case PINGUIN -> progress(profile.getFrozenOrSlowedKills(), PINGUIN_FROZEN_KILLS);
-            case SHRIMP -> progress(profile.getJumps(), SHRIMP_JUMPS);
-            case PRISM -> progress(profile.getReflectiveKills(), PRISM_REFLECTIVE_KILLS);
-            case UNSTABLE -> progress(profile.getCleanAnomalyCacheStreak(), UNSTABLE_CLEAN_CACHES);
+            case PENGUIN -> progress(profile.getFrozenOrSlowedKills(), 3_000);
+            case SHRIMP -> progress(profile.getJumps(), 3_000);
+            case PRISM -> progress(profile.getReflectiveKills(), 500);
+            case UNSTABLE -> progress(profile.getCleanAnomalyCacheStreak(), 120);
             case WELLSPRING -> progress(getCompletedLifetimeBounties(databasePlayer), LIFETIME_BOUNTIES.length);
             default -> honorific.isPurchasable() ? "Purchasable" : "Challenge";
         };
@@ -352,7 +343,7 @@ public final class HonorificManager {
         }
         HonorificProfile profile = DatabaseManager.getPlayer(uuid).getHonorifics();
         profile.addJump();
-        if (profile.getJumps() >= SHRIMP_JUMPS && !profile.isUnlocked(Honorific.SHRIMP)) {
+        if (profile.getJumps() >= 3_000 && !profile.isUnlocked(Honorific.SHRIMP)) {
             refreshAndSave(uuid);
         } else {
             queueSave(uuid);
@@ -403,7 +394,7 @@ public final class HonorificManager {
         if (!honorificsEnabled() || uuid == null || !(weapon instanceof Upgradeable upgradeable)) {
             return;
         }
-        if (upgradeable.getUpgradeLevel() < upgradeable.getMaxUpgradeLevel()) {
+        if (upgradeable.getUpgradeLevel() <= upgradeable.getMaxUpgradeLevel()) {
             return;
         }
         recordMaxedPveWeapon(uuid);
@@ -497,17 +488,17 @@ public final class HonorificManager {
             case PICKLE -> profile.hasWonWithPlikie();
             case REAPER -> profile.hasSacrificedWithSacrifice();
             case NO_LIFE -> databasePlayer.getPlays() >= 10_000;
-            case COOKED -> profile.getBurnKills() >= COOKED_BURN_KILLS;
-            case FROG -> profile.getFrogTransformations() >= FROG_TRANSFORMATIONS;
-            case FRACTAL -> profile.getHighestSingleHitDamage() >= FRACTAL_SINGLE_HIT_DAMAGE;
-            case HEAVYWEIGHT -> getCaptureTheFlagWins(databasePlayer) >= HEAVYWEIGHT_CTF_WINS;
-            case YOU_NEED_ME -> getCaptureTheFlagReturns(databasePlayer) >= YOU_NEED_ME_FLAG_RETURNS;
+            case COOKED -> profile.getBurnKills() >= 500;
+            case FROG -> profile.getFrogTransformations() >= 30;
+            case FRACTAL -> profile.getHighestSingleHitDamage() >= 300_000;
+            case HEAVYWEIGHT -> getCaptureTheFlagWins(databasePlayer) >= 100;
+            case YOU_NEED_ME -> getCaptureTheFlagReturns(databasePlayer) >= 100;
             case PERFECTED -> profile.hasMaxedPveWeapon();
             case PLANT -> false;
-            case PINGUIN -> profile.getFrozenOrSlowedKills() >= PINGUIN_FROZEN_KILLS;
-            case SHRIMP -> profile.getJumps() >= SHRIMP_JUMPS;
-            case PRISM -> profile.getReflectiveKills() >= PRISM_REFLECTIVE_KILLS;
-            case UNSTABLE -> profile.getCleanAnomalyCacheStreak() >= UNSTABLE_CLEAN_CACHES;
+            case PENGUIN -> profile.getFrozenOrSlowedKills() >= 3_000;
+            case SHRIMP -> profile.getJumps() >= 3_000;
+            case PRISM -> profile.getReflectiveKills() >= 500;
+            case UNSTABLE -> profile.getCleanAnomalyCacheStreak() >= 120;
             case WELLSPRING -> LIFETIME_BOUNTIES.length > 0 && getCompletedLifetimeBounties(databasePlayer) >= LIFETIME_BOUNTIES.length;
             default -> false;
         };
