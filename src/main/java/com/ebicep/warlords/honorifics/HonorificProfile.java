@@ -30,6 +30,11 @@ public class HonorificProfile {
     private long highestSingleGameCoins;
     private boolean wonWithPlikie;
     private boolean sacrificedWithSacrifice;
+    private long burnKills;
+    private long frogTransformations;
+    private long highestSingleHitDamage;
+    private boolean maxedPveWeapon;
+    private long frozenOrSlowedKills;
     private Set<String> teamBossDefeats = new HashSet<>();
 
     public HonorificProfile() {
@@ -241,6 +246,54 @@ public class HonorificProfile {
 
     public void recordSacrificeKill() {
         sacrificedWithSacrifice = true;
+    }
+
+    public long getBurnKills() {
+        return burnKills;
+    }
+
+    public void addBurnKills(long amount) {
+        if (amount > 0) {
+            burnKills += amount;
+        }
+    }
+
+    public long getFrogTransformations() {
+        return frogTransformations;
+    }
+
+    public void addFrogTransformation() {
+        frogTransformations++;
+    }
+
+    public long getHighestSingleHitDamage() {
+        return highestSingleHitDamage;
+    }
+
+    public boolean recordSingleHitDamage(long damage) {
+        if (damage <= highestSingleHitDamage) {
+            return false;
+        }
+        highestSingleHitDamage = damage;
+        return true;
+    }
+
+    public boolean hasMaxedPveWeapon() {
+        return maxedPveWeapon;
+    }
+
+    public void recordMaxedPveWeapon() {
+        maxedPveWeapon = true;
+    }
+
+    public long getFrozenOrSlowedKills() {
+        return frozenOrSlowedKills;
+    }
+
+    public void addFrozenOrSlowedKills(long amount) {
+        if (amount > 0) {
+            frozenOrSlowedKills += amount;
+        }
     }
 
     public boolean hasTeamBossDefeat(String mobEnumName) {

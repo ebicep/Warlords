@@ -40,7 +40,15 @@ public enum Honorific {
     MONEYBAGS("Moneybags", "Earn 200,000 coins from a single game.", Material.GOLD_BLOCK, null),
     PICKLE("Pickle", "?????", Material.SEA_PICKLE, null),
     REAPER("Reaper", "Kill someone with the Sacrifice item.", Material.IRON_HOE, null),
-    NO_LIFE("No Life", "Play 10,000 games.", Material.RECOVERY_COMPASS, null);
+    NO_LIFE("No Life", "Play 10,000 games.", Material.RECOVERY_COMPASS, null),
+    COOKED("Cooked", "Kill 500 enemies with the burn effect.", Material.CAMPFIRE, null),
+    FROG("Frog", "Turn into a frog 30 times using the Gambler item.", Material.FROG_SPAWN_EGG, null),
+    FRACTAL("Fractal", "Deal 300K damage in a single hit.", Material.AMETHYST_CLUSTER, null),
+    HEAVYWEIGHT("Heavyweight", "Win 100 capture the flag games.", Material.NETHERITE_CHESTPLATE, null),
+    YOU_NEED_ME("You Need Me", "Return 100 Flags in Capture the flag.", Material.WHITE_BANNER, null),
+    PERFECTED("Perfected", "Max out a weapon in PvE.", Material.SMITHING_TABLE, null),
+    PLANT("Plant", "Max out the foraging life skill.", Material.SWEET_BERRIES, null),
+    PINGUIN("Pinguin", "Kill 3000 frozen or slowed enemies.", Material.BLUE_ICE, null);
 
     public static final Honorific[] VALUES = values();
 

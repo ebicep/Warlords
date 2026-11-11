@@ -8,6 +8,7 @@ import com.ebicep.warlords.events.game.WarlordsGameTriggerWinEvent;
 import com.ebicep.warlords.events.player.AddCurrencyEvent;
 import com.ebicep.warlords.events.player.DatabasePlayerFirstLoadEvent;
 import com.ebicep.warlords.events.player.SupplyDropCallEvent;
+import com.ebicep.warlords.events.player.ingame.WarlordsDamageHealingFinalEvent;
 import com.ebicep.warlords.events.player.ingame.WarlordsDeathEvent;
 import com.ebicep.warlords.game.GameAddon;
 import com.ebicep.warlords.game.Team;
@@ -19,6 +20,7 @@ import com.ebicep.warlords.player.ingame.WarlordsEntity;
 import com.ebicep.warlords.player.ingame.WarlordsPlayer;
 import com.ebicep.warlords.pve.Currencies;
 import com.ebicep.warlords.pve.weapons.events.StarPieceSynthesizedEvent;
+import com.ebicep.warlords.pve.weapons.events.WeaponUpgradeEvent;
 import com.ebicep.warlords.util.java.Pair;
 import net.kyori.adventure.text.serializer.plain.PlainTextComponentSerializer;
 import net.kyori.adventure.title.Title;
@@ -92,6 +94,24 @@ public class HonorificListener implements Listener {
                 HonorificManager.recordWinWithPlikie(warlordsPlayer.getUuid());
             }
         });
+    }
+
+    @EventHandler(priority = EventPriority.MONITOR)
+    public void onFinalDamage(WarlordsDamageHealingFinalEvent event) {
+        if (!HonorificManager.honorificsEnabled() || !event.isDamageInstance()) {
+            return;
+        }
+        HonorificManager.recordSingleHit(event.getSource(), event.getWarlordsEntity(), (long) event.getValue());
+    }
+
+    @EventHandler(priority = EventPriority.MONITOR)
+    public void onQualifiedDeath(WarlordsDeathEvent event) {
+        HonorificManager.onEnemyDeath(event.getKiller(), event.getWarlordsEntity());
+    }
+
+    @EventHandler
+    public void onWeaponUpgrade(WeaponUpgradeEvent event) {
+        HonorificManager.recordWeaponUpgrade(event.getUUID(), event.getWeapon());
     }
 
     @EventHandler(priority = EventPriority.MONITOR)

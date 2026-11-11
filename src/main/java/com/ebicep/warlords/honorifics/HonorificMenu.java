@@ -20,10 +20,16 @@ import java.util.function.BooleanSupplier;
 
 public final class HonorificMenu {
 
+    private static final int HONORIFICS_PER_PAGE = 36;
+
     private HonorificMenu() {
     }
 
     public static void open(Player player) {
+        open(player, 0);
+    }
+
+    public static void open(Player player, int page) {
         if (!HonorificManager.honorificsEnabled(player)) {
             FeatureFlags.sendDisabledMessage(player);
             return;
@@ -32,16 +38,21 @@ public final class HonorificMenu {
         HonorificManager.forceChallengeRefresh(databasePlayer, player);
         HonorificProfile profile = HonorificManager.getProfile(player);
         validatePatreonAccess(player, profile);
+        int pageCount = Math.max(1, (Honorific.VALUES.length + HONORIFICS_PER_PAGE - 1) / HONORIFICS_PER_PAGE);
+        int currentPage = Math.min(Math.max(page, 0), pageCount - 1);
         Menu menu = new Menu("Honorifics", 9 * 6);
 
         menu.setItem(4, 0, new ItemBuilder(Material.NAME_TAG)
                 .name(Component.text("Honorific Preview", NamedTextColor.GOLD))
                 .lore(getPreviewLore(profile)).get(), Menu.ACTION_DO_NOTHING);
 
-        for (int i = 0; i < Honorific.VALUES.length; i++) {
+        int start = currentPage * HONORIFICS_PER_PAGE;
+        int end = Math.min(start + HONORIFICS_PER_PAGE, Honorific.VALUES.length);
+        for (int i = start; i < end; i++) {
             Honorific honorific = Honorific.VALUES[i];
-            int x = i % 9;
-            int y = 1 + i / 9;
+            int slot = i - start;
+            int x = slot % 9;
+            int y = 1 + slot / 9;
             boolean unlocked = profile.isUnlocked(honorific);
             boolean equipped = profile.getEquippedHonorific() == honorific;
             ItemBuilder builder = new ItemBuilder(honorific.getIcon())
@@ -54,11 +65,24 @@ public final class HonorificMenu {
                 if (unlocked) {
                     profile.equip(equipped ? null : honorific);
                     saveAndRefresh(player);
-                    open(player);
+                    open(player, currentPage);
                 } else if (honorific.isPurchasable()) {
-                    openHonorificPurchase(player, databasePlayer, honorific);
+                    openHonorificPurchase(player, databasePlayer, honorific, currentPage);
                 }
             });
+        }
+
+        if (currentPage > 0) {
+            menu.setItem(0, 5, new ItemBuilder(Material.ARROW)
+                    .name(Component.text("Previous Page", NamedTextColor.GREEN))
+                    .lore(Component.text("Page " + currentPage, NamedTextColor.YELLOW))
+                    .get(), (m, event) -> open(player, currentPage - 1));
+        }
+        if (currentPage + 1 < pageCount) {
+            menu.setItem(8, 5, new ItemBuilder(Material.ARROW)
+                    .name(Component.text("Next Page", NamedTextColor.GREEN))
+                    .lore(Component.text("Page " + (currentPage + 2), NamedTextColor.YELLOW))
+                    .get(), (m, event) -> open(player, currentPage + 1));
         }
 
         menu.setItem(2, 5, new ItemBuilder(Material.PAINTING)
@@ -66,13 +90,13 @@ public final class HonorificMenu {
                 .lore(Component.text("Selected: ", NamedTextColor.GRAY)
                                 .append(Component.text(profile.getSelectedColor().getDisplayName(), profile.getSelectedColor().getTextColor())),
                         Component.empty(), Component.text("Click to customize", NamedTextColor.YELLOW))
-                .get(), (m, event) -> openColors(player));
+                .get(), (m, event) -> openColors(player, currentPage));
         menu.setItem(4, 5, new ItemBuilder(Material.WRITABLE_BOOK)
                 .name(Component.text("Honorific Fonts", NamedTextColor.GREEN))
                 .lore(Component.text("Selected: ", NamedTextColor.GRAY)
                                 .append(Component.text(profile.getSelectedFont().getDisplayName(), NamedTextColor.AQUA)),
                         Component.empty(), Component.text("Click to customize", NamedTextColor.YELLOW))
-                .get(), (m, event) -> openFonts(player));
+                .get(), (m, event) -> openFonts(player, currentPage));
         menu.setItem(6, 5, new ItemBuilder(Material.BARRIER)
                 .name(Component.text("Unequip Honorific", NamedTextColor.RED))
                 .lore(Component.text(profile.getEquippedHonorific() == null ? "No honorific is equipped." : "Remove your current honorific.", NamedTextColor.GRAY))
@@ -80,13 +104,17 @@ public final class HonorificMenu {
             if (profile.equip(null)) {
                 saveAndRefresh(player);
             }
-            open(player);
+            open(player, currentPage);
         });
         menu.addBorder(Menu.GRAY_EMPTY_PANE, true);
         menu.openForPlayer(player);
     }
 
     public static void openColors(Player player) {
+        openColors(player, 0);
+    }
+
+    public static void openColors(Player player, int returnPage) {
         DatabasePlayer databasePlayer = DatabaseManager.getPlayer(player);
         HonorificProfile profile = HonorificManager.getProfile(player);
         boolean hasPatreon = Permissions.isPatreon(player);
@@ -110,23 +138,27 @@ public final class HonorificMenu {
                     } else {
                         sendPatreonRequired(player);
                     }
-                    openColors(player);
+                    openColors(player, returnPage);
                 } else if (available) {
                     profile.selectColor(color);
                     saveAndRefresh(player);
-                    openColors(player);
+                    openColors(player, returnPage);
                 } else {
-                    openColorPurchase(player, databasePlayer, color);
+                    openColorPurchase(player, databasePlayer, color, returnPage);
                 }
             });
         }
-        menu.setItem(3, 3, Menu.MENU_BACK, (m, event) -> open(player));
+        menu.setItem(3, 3, Menu.MENU_BACK, (m, event) -> open(player, returnPage));
         menu.setItem(4, 3, Menu.MENU_CLOSE, Menu.ACTION_CLOSE_MENU);
         menu.addBorder(Menu.GRAY_EMPTY_PANE, true);
         menu.openForPlayer(player);
     }
 
     public static void openFonts(Player player) {
+        openFonts(player, 0);
+    }
+
+    public static void openFonts(Player player, int returnPage) {
         DatabasePlayer databasePlayer = DatabaseManager.getPlayer(player);
         HonorificProfile profile = HonorificManager.getProfile(player);
         boolean hasPatreon = Permissions.isPatreon(player);
@@ -150,17 +182,17 @@ public final class HonorificMenu {
                     } else {
                         sendPatreonRequired(player);
                     }
-                    openFonts(player);
+                    openFonts(player, returnPage);
                 } else if (available) {
                     profile.selectFont(font);
                     saveAndRefresh(player);
-                    openFonts(player);
+                    openFonts(player, returnPage);
                 } else {
-                    openFontPurchase(player, databasePlayer, font);
+                    openFontPurchase(player, databasePlayer, font, returnPage);
                 }
             });
         }
-        menu.setItem(3, 3, Menu.MENU_BACK, (m, event) -> open(player));
+        menu.setItem(3, 3, Menu.MENU_BACK, (m, event) -> open(player, returnPage));
         menu.setItem(4, 3, Menu.MENU_CLOSE, Menu.ACTION_CLOSE_MENU);
         menu.addBorder(Menu.GRAY_EMPTY_PANE, true);
         menu.openForPlayer(player);
@@ -239,7 +271,7 @@ public final class HonorificMenu {
         return lore;
     }
 
-    private static void openHonorificPurchase(Player player, DatabasePlayer databasePlayer, Honorific honorific) {
+    private static void openHonorificPurchase(Player player, DatabasePlayer databasePlayer, Honorific honorific, int page) {
         HonorificCost cost = honorific.getCost();
         if (cost == null) {
             return;
@@ -248,10 +280,10 @@ public final class HonorificMenu {
                 Component.text("[" + honorific.getDisplayName() + "]", NamedTextColor.AQUA), cost,
                 () -> HonorificManager.getProfile(player).isUnlocked(honorific),
                 () -> HonorificManager.getProfile(player).unlock(honorific),
-                () -> open(player));
+                () -> open(player, page));
     }
 
-    private static void openColorPurchase(Player player, DatabasePlayer databasePlayer, HonorificColor color) {
+    private static void openColorPurchase(Player player, DatabasePlayer databasePlayer, HonorificColor color, int returnPage) {
         if (color.isPatreonExclusive()) {
             return;
         }
@@ -264,10 +296,10 @@ public final class HonorificMenu {
                     HonorificProfile profile = HonorificManager.getProfile(player);
                     profile.unlock(color);
                     profile.selectColor(color);
-                }, () -> openColors(player));
+                }, () -> openColors(player, returnPage));
     }
 
-    private static void openFontPurchase(Player player, DatabasePlayer databasePlayer, HonorificFont font) {
+    private static void openFontPurchase(Player player, DatabasePlayer databasePlayer, HonorificFont font, int returnPage) {
         if (font.isPatreonExclusive()) {
             return;
         }
@@ -280,7 +312,7 @@ public final class HonorificMenu {
                     HonorificProfile profile = HonorificManager.getProfile(player);
                     profile.unlock(font);
                     profile.selectFont(font);
-                }, () -> openFonts(player));
+                }, () -> openFonts(player, returnPage));
     }
 
     private static void openPurchase(Player player, DatabasePlayer databasePlayer, String title, Component name,

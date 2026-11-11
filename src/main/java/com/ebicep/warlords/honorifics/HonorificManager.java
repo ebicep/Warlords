@@ -8,10 +8,20 @@ import com.ebicep.warlords.database.repositories.player.pojos.general.DatabasePl
 import com.ebicep.warlords.database.repositories.player.pojos.pve.DatabasePlayerPvE;
 import com.ebicep.warlords.game.Game;
 import com.ebicep.warlords.game.GameAddon;
+import com.ebicep.warlords.database.repositories.player.pojos.ctf.DatabasePlayerCTF;
+import com.ebicep.warlords.database.repositories.player.pojos.general.DatabasePlayerCompStats;
+import com.ebicep.warlords.database.repositories.player.pojos.general.DatabasePlayerPubStats;
+import com.ebicep.warlords.database.repositories.player.pojos.general.TournamentStats;
 import com.ebicep.warlords.player.general.CustomScoreboard;
 import com.ebicep.warlords.player.general.Specializations;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
+import com.ebicep.warlords.player.ingame.WarlordsNPC;
+import com.ebicep.warlords.player.ingame.WarlordsPlayer;
+import com.ebicep.warlords.player.ingame.cooldowns.AbstractCooldown;
+import com.ebicep.warlords.player.ingame.motionsystem.MotionModifier;
 import com.ebicep.warlords.pve.mobs.Mob;
+import com.ebicep.warlords.pve.weapons.AbstractWeapon;
+import com.ebicep.warlords.pve.weapons.weaponaddons.Upgradeable;
 import com.ebicep.warlords.util.java.NumberFormat;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
@@ -25,6 +35,8 @@ import org.bukkit.scheduler.BukkitRunnable;
 import javax.annotation.Nullable;
 import java.util.Arrays;
 import java.util.HashSet;
+import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 import java.util.Set;
 import java.util.UUID;
@@ -43,6 +55,12 @@ public final class HonorificManager {
             .filter(mob -> mob.entityType == EntityType.IRON_GOLEM)
             .toArray(Mob[]::new));
     private static final long REFRESH_INTERVAL_MILLIS = 15_000;
+    private static final long COOKED_BURN_KILLS = 500;
+    private static final long FROG_TRANSFORMATIONS = 30;
+    private static final long FRACTAL_SINGLE_HIT_DAMAGE = 300_000;
+    private static final long HEAVYWEIGHT_CTF_WINS = 100;
+    private static final long YOU_NEED_ME_FLAG_RETURNS = 100;
+    private static final long PINGUIN_FROZEN_KILLS = 3_000;
     private static final ConcurrentHashMap<UUID, Long> LAST_CHALLENGE_REFRESH = new ConcurrentHashMap<>();
     private static final AtomicBoolean INITIALIZED = new AtomicBoolean();
 
@@ -130,6 +148,10 @@ public final class HonorificManager {
         profile.setMinimumSupplyDropsRolled(pveStats.getSupplyDropEntries().size());
 
         boolean changed = false;
+        if (!profile.hasMaxedPveWeapon() && hasMaxedPveWeapon(pveStats)) {
+            profile.recordMaxedPveWeapon();
+            changed = true;
+        }
         for (Honorific honorific : Honorific.VALUES) {
             if (honorific.isPurchasable() || profile.isUnlocked(honorific) || !meetsRequirement(honorific, databasePlayer, profile)) {
                 continue;
@@ -177,6 +199,14 @@ public final class HonorificManager {
             case PICKLE -> profile.hasWonWithPlikie() ? "Completed" : "Not completed";
             case REAPER -> profile.hasSacrificedWithSacrifice() ? "Completed" : "Not completed";
             case NO_LIFE -> progress(databasePlayer.getPlays(), 10_000);
+            case COOKED -> progress(profile.getBurnKills(), COOKED_BURN_KILLS);
+            case FROG -> progress(profile.getFrogTransformations(), FROG_TRANSFORMATIONS);
+            case FRACTAL -> progress(profile.getHighestSingleHitDamage(), FRACTAL_SINGLE_HIT_DAMAGE);
+            case HEAVYWEIGHT -> progress(getCaptureTheFlagWins(databasePlayer), HEAVYWEIGHT_CTF_WINS);
+            case YOU_NEED_ME -> progress(getCaptureTheFlagReturns(databasePlayer), YOU_NEED_ME_FLAG_RETURNS);
+            case PERFECTED -> profile.hasMaxedPveWeapon() ? "Completed" : "Not completed";
+            case PLANT -> "Not available yet";
+            case PINGUIN -> progress(profile.getFrozenOrSlowedKills(), PINGUIN_FROZEN_KILLS);
             default -> honorific.isPurchasable() ? "Purchasable" : "Challenge";
         };
     }
@@ -245,6 +275,57 @@ public final class HonorificManager {
         }
         getProfile(uuid).recordSacrificeKill();
         refreshAndSave(uuid);
+    }
+
+    public static void recordFrogTransformation(UUID uuid) {
+        if (!honorificsEnabled() || uuid == null) {
+            return;
+        }
+        if (!DatabaseManager.inCache(uuid, PlayersCollections.LIFETIME)) {
+            return;
+        }
+        DatabaseManager.getPlayer(uuid).getHonorifics().addFrogTransformation();
+        refreshAndSave(uuid);
+    }
+
+    public static void recordSingleHit(WarlordsEntity source, WarlordsEntity target, long damage) {
+        if (!honorificsEnabled() || damage <= 0 || !isEligibleCombatCredit(source, target)) {
+            return;
+        }
+        UUID uuid = source.getUuid();
+        if (!DatabaseManager.inCache(uuid, PlayersCollections.LIFETIME)) {
+            return;
+        }
+        if (DatabaseManager.getPlayer(uuid).getHonorifics().recordSingleHitDamage(damage)) {
+            refreshAndSave(uuid);
+        }
+    }
+
+    public static void onEnemyDeath(@Nullable WarlordsEntity killer, @Nullable WarlordsEntity victim) {
+        if (!honorificsEnabled() || !isEligibleCombatCredit(killer, victim)) {
+            return;
+        }
+        boolean burning = hasBurnEffect(victim);
+        boolean frozenOrSlowed = isFrozenOrSlowed(victim);
+        if (!burning && !frozenOrSlowed) {
+            return;
+        }
+        UUID killerId = killer.getUuid();
+        Bukkit.getScheduler().runTask(Warlords.getInstance(), () -> {
+            if (victim.isDead()) {
+                creditQualifiedKill(killerId, burning, frozenOrSlowed);
+            }
+        });
+    }
+
+    public static void recordWeaponUpgrade(UUID uuid, @Nullable AbstractWeapon weapon) {
+        if (!honorificsEnabled() || uuid == null || !(weapon instanceof Upgradeable upgradeable)) {
+            return;
+        }
+        if (upgradeable.getUpgradeLevel() < upgradeable.getMaxUpgradeLevel()) {
+            return;
+        }
+        recordMaxedPveWeapon(uuid);
     }
 
     public static void recordTeamBossDefeat(WarlordsEntity killer, Mob mob) {
@@ -335,8 +416,130 @@ public final class HonorificManager {
             case PICKLE -> profile.hasWonWithPlikie();
             case REAPER -> profile.hasSacrificedWithSacrifice();
             case NO_LIFE -> databasePlayer.getPlays() >= 10_000;
+            case COOKED -> profile.getBurnKills() >= COOKED_BURN_KILLS;
+            case FROG -> profile.getFrogTransformations() >= FROG_TRANSFORMATIONS;
+            case FRACTAL -> profile.getHighestSingleHitDamage() >= FRACTAL_SINGLE_HIT_DAMAGE;
+            case HEAVYWEIGHT -> getCaptureTheFlagWins(databasePlayer) >= HEAVYWEIGHT_CTF_WINS;
+            case YOU_NEED_ME -> getCaptureTheFlagReturns(databasePlayer) >= YOU_NEED_ME_FLAG_RETURNS;
+            case PERFECTED -> profile.hasMaxedPveWeapon();
+            case PLANT -> false;
+            case PINGUIN -> profile.getFrozenOrSlowedKills() >= PINGUIN_FROZEN_KILLS;
             default -> false;
         };
+    }
+
+    private static void recordMaxedPveWeapon(UUID uuid) {
+        if (!DatabaseManager.inCache(uuid, PlayersCollections.LIFETIME)) {
+            return;
+        }
+        HonorificProfile profile = DatabaseManager.getPlayer(uuid).getHonorifics();
+        if (profile.hasMaxedPveWeapon()) {
+            if (refreshChallengeUnlocks(DatabaseManager.getPlayer(uuid), Bukkit.getPlayer(uuid))) {
+                queueSave(uuid);
+            }
+            return;
+        }
+        profile.recordMaxedPveWeapon();
+        refreshAndSave(uuid);
+    }
+
+    private static void creditQualifiedKill(UUID uuid, boolean burning, boolean frozenOrSlowed) {
+        if (!DatabaseManager.inCache(uuid, PlayersCollections.LIFETIME)) {
+            return;
+        }
+        HonorificProfile profile = DatabaseManager.getPlayer(uuid).getHonorifics();
+        if (burning) {
+            profile.addBurnKills(1);
+        }
+        if (frozenOrSlowed) {
+            profile.addFrozenOrSlowedKills(1);
+        }
+        refreshAndSave(uuid);
+    }
+
+    private static boolean isEligibleCombatCredit(@Nullable WarlordsEntity source, @Nullable WarlordsEntity target) {
+        if (!(source instanceof WarlordsPlayer) || target == null || source == target || !target.isEnemy(source)) {
+            return false;
+        }
+        Game game = source.getGame();
+        return game != null && !game.getAddons().contains(GameAddon.CUSTOM_GAME);
+    }
+
+    private static boolean hasBurnEffect(WarlordsEntity entity) {
+        for (AbstractCooldown<?> cooldown : entity.getCooldownManager().getCooldowns()) {
+            String name = cooldown.getName();
+            if (name != null && name.toLowerCase(Locale.ROOT).contains("burn")) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    private static boolean isFrozenOrSlowed(WarlordsEntity entity) {
+        if (entity instanceof WarlordsNPC npc && npc.getStunTicks() > 0) {
+            return true;
+        }
+        if (entity instanceof WarlordsPlayer && WarlordsPlayer.STUNNED_PLAYERS.contains(entity.getUuid())) {
+            return true;
+        }
+        if (entity.getSpeed() == null) {
+            return false;
+        }
+        for (MotionModifier modifier : entity.getSpeed().getModifiers()) {
+            if (modifier.getModifier() < 0) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    private static boolean hasMaxedPveWeapon(DatabasePlayerPvE pveStats) {
+        List<AbstractWeapon> weapons = pveStats.getWeaponInventory();
+        if (weapons == null) {
+            return false;
+        }
+        for (AbstractWeapon weapon : weapons) {
+            if (weapon instanceof Upgradeable upgradeable && upgradeable.getUpgradeLevel() >= upgradeable.getMaxUpgradeLevel()) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    private static long getCaptureTheFlagWins(DatabasePlayer databasePlayer) {
+        return sumCaptureTheFlagStat(databasePlayer, true);
+    }
+
+    private static long getCaptureTheFlagReturns(DatabasePlayer databasePlayer) {
+        return sumCaptureTheFlagStat(databasePlayer, false);
+    }
+
+    private static long sumCaptureTheFlagStat(DatabasePlayer databasePlayer, boolean wins) {
+        long total = 0;
+        DatabasePlayerPubStats pubStats = databasePlayer.getPubStats();
+        if (pubStats != null) {
+            total += captureTheFlagStat(pubStats.getCtfStats(), wins);
+        }
+        DatabasePlayerCompStats compStats = databasePlayer.getCompStats();
+        if (compStats != null) {
+            total += captureTheFlagStat(compStats.getCtfStats(), wins);
+        }
+        TournamentStats tournamentStats = databasePlayer.getTournamentStats();
+        if (tournamentStats != null) {
+            for (TournamentStats.DatabasePlayerTournamentStats snapshot : tournamentStats.getAllTournamentStats()) {
+                if (snapshot != null) {
+                    total += captureTheFlagStat(snapshot.getCtfStats(), wins);
+                }
+            }
+        }
+        return total;
+    }
+
+    private static long captureTheFlagStat(@Nullable DatabasePlayerCTF ctfStats, boolean wins) {
+        if (ctfStats == null) {
+            return 0;
+        }
+        return wins ? ctfStats.getWins() : ctfStats.getFlagsReturned();
     }
 
     private static void creditTeamBossDefeat(UUID uuid, Mob mob) {
