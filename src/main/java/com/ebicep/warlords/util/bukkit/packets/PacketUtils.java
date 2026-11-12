@@ -10,6 +10,7 @@ import com.comphenix.protocol.events.PacketEvent;
 import com.comphenix.protocol.reflect.StructureModifier;
 import com.ebicep.warlords.Warlords;
 import com.ebicep.warlords.commands.debugcommands.misc.MountCommand;
+import com.ebicep.warlords.game.option.pvp.MountOption;
 import com.ebicep.warlords.database.repositories.config.ConfigManager;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
 import com.ebicep.warlords.util.bukkit.packets.wrappers.WrapperPlayClientSteerVehicle;
@@ -19,7 +20,6 @@ import net.minecraft.network.protocol.game.ClientboundRemoveEntitiesPacket;
 import net.minecraft.network.protocol.game.ClientboundSoundPacket;
 import net.minecraft.world.entity.Entity;
 import org.bukkit.Sound;
-import org.bukkit.entity.AbstractHorse;
 import org.bukkit.entity.Player;
 import org.bukkit.scheduler.BukkitRunnable;
 
@@ -59,7 +59,7 @@ public class PacketUtils {
                             return;
                         }
                         Player player = event.getPlayer();
-                        if (!(player.getVehicle() instanceof AbstractHorse)) {
+                        if (!MountOption.isMount(player.getVehicle())) {
                             return;
                         }
                         boolean isDebugMount = MountCommand.PLAYER_MOUNT_TYPE.containsKey(player.getUniqueId());

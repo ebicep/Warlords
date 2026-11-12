@@ -1,6 +1,7 @@
 package com.ebicep.warlords.events;
 
 import com.ebicep.warlords.database.DatabaseManager;
+import com.ebicep.warlords.game.option.pvp.MountOption;
 import com.ebicep.warlords.database.repositories.player.pojos.general.DatabasePlayer;
 import com.ebicep.warlords.events.player.SpecPrestigeEvent;
 import com.ebicep.warlords.permissions.Permissions;
@@ -93,7 +94,7 @@ public class GeneralEvents implements Listener {
     @EventHandler
     public void onOpenInventory(InventoryOpenEvent e) {
         if (e.getPlayer().getVehicle() != null) {
-            if (e.getInventory().getHolder() != null && e.getInventory().getHolder() instanceof Horse) {
+            if (e.getInventory().getHolder() instanceof Entity holder && MountOption.isMount(holder)) {
                 e.setCancelled(true);
             }
         }
@@ -171,7 +172,7 @@ public class GeneralEvents implements Listener {
     @EventHandler
     public void onPlayerInteractEntity(PlayerInteractEntityEvent e) {
         // prevent wolf eating item
-        if (e.getRightClicked() instanceof Wolf || e.getRightClicked() instanceof Horse) {
+        if (e.getRightClicked() instanceof Wolf || MountOption.isMount(e.getRightClicked())) {
             e.setCancelled(true);
         }
     }

@@ -14,6 +14,7 @@ import com.ebicep.warlords.game.Team;
 import com.ebicep.warlords.game.option.marker.CompassTargetMarker;
 import com.ebicep.warlords.game.option.marker.FlagHolder;
 import com.ebicep.warlords.game.state.PlayingState;
+import com.ebicep.warlords.permissions.Permissions;
 import com.ebicep.warlords.player.general.ArmorManager;
 import com.ebicep.warlords.player.general.Specializations;
 import com.ebicep.warlords.player.ingame.motionsystem.MotionModifierBuilder;
@@ -112,7 +113,10 @@ public class WarlordsPlayer extends WarlordsEntity implements Listener {
         this.cosmeticSettings = new CosmeticSettings(
                 databasePlayer.getSpec(specialization).getWeapon(),
                 databasePlayer.getHelmet(specialization),
-                databasePlayer.getArmorSet(specialization)
+                databasePlayer.getArmorSet(specialization),
+                databasePlayer.getArmorCustomization(),
+                ArmorManager.usesTeamTrim(getGame()),
+                Permissions.isSupporter(databasePlayer)
         );
         resetAbilityTree();
         if (isInPve()) {
@@ -157,7 +161,10 @@ public class WarlordsPlayer extends WarlordsEntity implements Listener {
         this.cosmeticSettings = new CosmeticSettings(
                 databasePlayer.getLastSpecWeapon(),
                 databasePlayer.getHelmet(),
-                databasePlayer.getArmorSet()
+                databasePlayer.getArmorSet(),
+                databasePlayer.getArmorCustomization(),
+                ArmorManager.usesTeamTrim(game),
+                Permissions.isSupporter(databasePlayer)
         );
 
         resetAbilityTree();

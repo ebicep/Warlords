@@ -20,6 +20,7 @@ import com.ebicep.warlords.database.repositories.player.pojos.general.FutureMess
 import com.ebicep.warlords.events.player.DatabasePlayerFirstLoadEvent;
 import com.ebicep.warlords.events.player.ingame.WarlordsDamageHealingFinalEvent;
 import com.ebicep.warlords.game.Game;
+import com.ebicep.warlords.game.option.pvp.MountOption;
 import com.ebicep.warlords.game.GameAddon;
 import com.ebicep.warlords.game.GameManager;
 import com.ebicep.warlords.game.option.marker.FlagHolder;
@@ -590,11 +591,9 @@ public class WarlordsEvents implements Listener {
 
     @EventHandler
     public void onPlayerMove(PlayerMoveEvent e) {
-        if (e.getPlayer().getVehicle() instanceof Horse) {
-            Location location = e.getPlayer().getLocation();
-            if (!LocationUtils.isMountableZone(location)) {
-                e.getPlayer().getVehicle().remove();
-            }
+        Entity vehicle = e.getPlayer().getVehicle();
+        if (MountOption.isMount(vehicle) && !LocationUtils.isMountableZone(vehicle)) {
+            vehicle.remove();
         }
 
         WarlordsEntity warlordsEntity = Warlords.getPlayer(e.getPlayer());

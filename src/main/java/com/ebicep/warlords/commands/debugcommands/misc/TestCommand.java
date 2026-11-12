@@ -14,6 +14,7 @@ import com.ebicep.warlords.util.chat.ChatChannels;
 import com.ebicep.warlords.util.chat.ChatUtils;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
+import org.bukkit.Location;
 import org.bukkit.entity.Player;
 
 import java.util.Comparator;
@@ -70,6 +71,11 @@ public class TestCommand extends BaseCommand {
         }
 
          */
+
+        if (issuer instanceof Player player) {
+            Location loc = player.getLocation();
+            ChatChannels.sendDebugMessage(issuer, Component.text("Location: " + loc, NamedTextColor.GREEN));
+        }
 
         ChatChannels.sendDebugMessage(issuer, Component.text("Guild Test executed", NamedTextColor.GREEN));
     }
@@ -390,7 +396,7 @@ public class TestCommand extends BaseCommand {
 
     @CommandAlias("testplayer")
     public void testPlayer(Player player) {
-        ChallengeAchievements.LAWNMOWER.sendAchievementUnlockMessage(player);
+            ChatChannels.sendDebugMessage(player, Component.text("Location: " + player.getLocation(), NamedTextColor.GREEN));
 //        CustomScoreboard playerScoreboard = CustomScoreboard.getPlayerScoreboard(player);
 //        Scoreboard scoreboard = playerScoreboard.getScoreboard();
 //        System.out.println(scoreboard.getTeams());

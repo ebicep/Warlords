@@ -77,8 +77,7 @@ public class Warlords extends JavaPlugin {
     public static final HashMap<UUID, Location> SPAWN_POINTS = new HashMap<>();
     private static final ConcurrentHashMap<UUID, WarlordsEntity> PLAYERS = new ConcurrentHashMap<>();
     public static String VERSION = "";
-    //public static TextColor VERSION_COLOR = TextColor.color(105, 0, 0);
-    public static TextColor VERSION_COLOR = TextColor.color(51, 171, 249);
+    public static TextColor VERSION_COLOR = TextColor.color(125, 20, 20);
     public static String serverIP;
     public static boolean hologramsEnabled = true;
     public static boolean citizensEnabled;
@@ -371,7 +370,7 @@ public class Warlords extends JavaPlugin {
         getServer().getPluginManager().registerEvents(new PatreonReward(), this);
         getServer().getPluginManager().registerEvents(new MemoryManager(), this);
         getServer().getPluginManager().registerEvents(new Shield(), this);
-//        getServer().getPluginManager().registerEvents(new HorseOption(), this);
+//        getServer().getPluginManager().registerEvents(new MountOption(), this);
         getServer().getPluginManager().registerEvents(TracksOutsideGame.getListener(), this);
         getServer().getPluginManager().registerEvents(new DatabaseGameEvent(), this);
         this.getLifecycleManager().registerEventHandler(LifecycleEvents.COMMANDS, commands -> {

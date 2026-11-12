@@ -25,8 +25,8 @@ public class DuelsTeleportOption extends TeleportOnEventOption {
             for (AbstractAbility ability : wp.getSpec().getAbilities()) {
                 ability.setCurrentCooldown(0);
             }
-            for (HorseOption horseOption : wp.getGame().getOption(HorseOption.class)) {
-                horseOption.getHorseForPlayer(wp).setCurrentCooldown(0);
+            for (MountOption mountOption : wp.getGame().getOption(MountOption.class)) {
+                mountOption.getMountForPlayer(wp).setCurrentCooldown(0);
             }
             wp.updateInventory(true);
         }

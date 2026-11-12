@@ -14,6 +14,8 @@ import com.ebicep.warlords.menu.Menu;
 import com.ebicep.warlords.menu.PlayerHotBarItemListener;
 import com.ebicep.warlords.permissions.Permissions;
 import com.ebicep.warlords.player.general.*;
+import com.ebicep.warlords.player.general.armorcustomization.ArmorCustomizationMenu;
+import com.ebicep.warlords.player.general.mounts.MountMenu;
 import com.ebicep.warlords.player.general.settings.ChatSettings;
 import com.ebicep.warlords.player.general.settings.CooldownDisplaySettings;
 import com.ebicep.warlords.player.general.settings.ParticleQuality;
@@ -556,6 +558,7 @@ public class WarlordsNewHotbarMenu {
             menu.setItem(3, 1, MENU_ARMOR_SETS, (m, e) -> openArmorMenu(player, 1));
 //            menu.setItem(4, 1, MENU_BOOSTS, (m, e) -> openSkillBoostMenu(player, PlayerSettings.getPlayerSettings(player.getUniqueId()).getSelectedSpec()));
             menu.setItem(4, 1, MENU_SPEC_BOOSTS, (m, e) -> SpecBoostMenu.open(player));
+            menu.setItem(5, 1, MountMenu.MENU_ICON, (m, e) -> MountMenu.open(player));
 
             menu.setItem(4, 3, MENU_CLOSE, ACTION_CLOSE_MENU);
 
@@ -754,6 +757,7 @@ public class WarlordsNewHotbarMenu {
                 );
             }
 
+            menu.setItem(6, 5, ArmorCustomizationMenu.MENU_ICON, (m, e) -> ArmorCustomizationMenu.open(player, () -> openArmorMenu(player, pageNumber)));
             menu.setItem(4, 5, MENU_BACK_PVP, (m, e) -> openPvPMenu(player));
             menu.openForPlayer(player);
         }
@@ -938,6 +942,7 @@ public class WarlordsNewHotbarMenu {
             menu.setItem(6, 1, ABILITY_TREE_MENU, (m, e) -> AbilityTreeCommand.open(player));
             menu.setItem(7, 1, VIAL_INVENTORY_MENU, (m, e) -> ConsumableMenu.openVialInventory(player));
             menu.setItem(1, 2, DISCOVERY_JOURNAL_MENU, (m, e) -> DiscoveryJournalMenu.open(player));
+            menu.setItem(2, 2, ArmorCustomizationMenu.MENU_ICON, (m, e) -> ArmorCustomizationMenu.open(player, () -> openPvEMenu(player)));
 
             menu.setItem(3, 4, MENU_BACK, (m, e) -> WarlordsNewHotbarMenu.SelectionMenu.openWarlordsMenu(player));
             menu.setItem(4, 4, MENU_CLOSE, ACTION_CLOSE_MENU);

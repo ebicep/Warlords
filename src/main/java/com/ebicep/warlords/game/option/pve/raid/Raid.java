@@ -131,7 +131,7 @@ public enum Raid {
     THE_STAIRWAY_OF_ILLUSION(
             "The Stairway of Illusion",
             "PLACEHOLDER",
-            90,
+            3500,
             GemTier.THREE
     ) {
         @Override
@@ -158,10 +158,10 @@ public enum Raid {
             }};
         }
     },
-    THE_HALLS_OF_ASCENSION(
-            "The Halls of Ascension",
+    SERENADE_OF_A_BLEEDING_HEART(
+            "Serenade of a Bleeding Heart",
             "PLACEHOLDER",
-            95,
+            4200,
             GemTier.THREE
     ) {
         @Override
@@ -188,10 +188,10 @@ public enum Raid {
             }};
         }
     },
-    THE_FINAL_VEIL(
-            "The Final Veil",
+    DEVOURER_OF_NINE_SOULS(
+            "Devourer of Nine Souls",
             "PLACEHOLDER",
-            100,
+            5000,
             GemTier.FOUR
     ) {
         @Override

@@ -4,7 +4,7 @@ import com.ebicep.warlords.game.GameAddon;
 import com.ebicep.warlords.game.GameMap;
 import com.ebicep.warlords.game.option.*;
 import com.ebicep.warlords.game.option.pvp.ApplySpecBoostsOption;
-import com.ebicep.warlords.game.option.pvp.HorseOption;
+import com.ebicep.warlords.game.option.pvp.MountOption;
 import com.ebicep.warlords.game.option.pvp.ctf.FlagOption;
 import com.ebicep.warlords.util.bukkit.LocationFactory;
 import net.kyori.adventure.text.Component;
@@ -28,7 +28,7 @@ public class Debug implements Mode {
         options.add(CompassOption.flagOption());
         options.add(new FlagOption());
         options.add(new WeaponOption());
-        options.add(new HorseOption());
+        options.add(new MountOption());
         options.add(new PlayerCooldownDisplayOption());
         options.add(new ApplySpecBoostsOption(addons.contains(GameAddon.RANDOM_SPEC_BOOST)));
 
