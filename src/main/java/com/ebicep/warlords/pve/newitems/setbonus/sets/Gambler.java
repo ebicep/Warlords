@@ -1,6 +1,8 @@
 package com.ebicep.warlords.pve.newitems.setbonus.sets;
 
 import com.ebicep.warlords.Warlords;
+import com.ebicep.warlords.game.GameAddon;
+import com.ebicep.warlords.honorifics.HonorificManager;
 import com.ebicep.warlords.events.player.ingame.WarlordsAbilityActivateEvent;
 import com.ebicep.warlords.events.player.ingame.WarlordsDamageHealingEvent;
 import com.ebicep.warlords.game.state.EndState;
@@ -328,6 +330,9 @@ public class Gambler extends BaseSet {
 
             warlordsPlayer.getCooldownManager()
                     .addCooldown(cooldown);
+            if (warlordsPlayer.getGame() != null && !warlordsPlayer.getGame().getAddons().contains(GameAddon.CUSTOM_GAME)) {
+                HonorificManager.recordFrogTransformation(warlordsPlayer.getUuid());
+            }
         }
 
         private RegularCooldown<GamblerEffect> createEffectCooldown(

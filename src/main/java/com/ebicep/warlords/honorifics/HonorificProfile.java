@@ -30,6 +30,14 @@ public class HonorificProfile {
     private long highestSingleGameCoins;
     private boolean wonWithPlikie;
     private boolean sacrificedWithSacrifice;
+    private long burnKills;
+    private long frogTransformations;
+    private long highestSingleHitDamage;
+    private boolean maxedPveWeapon;
+    private long frozenOrSlowedKills;
+    private long jumps;
+    private long reflectiveKills;
+    private long cleanAnomalyCacheStreak;
     private Set<String> teamBossDefeats = new HashSet<>();
 
     public HonorificProfile() {
@@ -241,6 +249,88 @@ public class HonorificProfile {
 
     public void recordSacrificeKill() {
         sacrificedWithSacrifice = true;
+    }
+
+    public long getBurnKills() {
+        return burnKills;
+    }
+
+    public void addBurnKills(long amount) {
+        if (amount > 0) {
+            burnKills += amount;
+        }
+    }
+
+    public long getFrogTransformations() {
+        return frogTransformations;
+    }
+
+    public void addFrogTransformation() {
+        frogTransformations++;
+    }
+
+    public long getHighestSingleHitDamage() {
+        return highestSingleHitDamage;
+    }
+
+    public boolean recordSingleHitDamage(long damage) {
+        if (damage <= highestSingleHitDamage) {
+            return false;
+        }
+        highestSingleHitDamage = damage;
+        return true;
+    }
+
+    public boolean hasMaxedPveWeapon() {
+        return maxedPveWeapon;
+    }
+
+    public void recordMaxedPveWeapon() {
+        maxedPveWeapon = true;
+    }
+
+    public long getFrozenOrSlowedKills() {
+        return frozenOrSlowedKills;
+    }
+
+    public void addFrozenOrSlowedKills(long amount) {
+        if (amount > 0) {
+            frozenOrSlowedKills += amount;
+        }
+    }
+
+    public long getJumps() {
+        return jumps;
+    }
+
+    public void addJump() {
+        jumps++;
+    }
+
+    public long getReflectiveKills() {
+        return reflectiveKills;
+    }
+
+    public void addReflectiveKills(long amount) {
+        if (amount > 0) {
+            reflectiveKills += amount;
+        }
+    }
+
+    public long getCleanAnomalyCacheStreak() {
+        return cleanAnomalyCacheStreak;
+    }
+
+    public boolean recordAnomalyCacheUnlock(boolean legendaryOrSovereign) {
+        if (legendaryOrSovereign) {
+            if (cleanAnomalyCacheStreak == 0) {
+                return false;
+            }
+            cleanAnomalyCacheStreak = 0;
+            return true;
+        }
+        cleanAnomalyCacheStreak++;
+        return true;
     }
 
     public boolean hasTeamBossDefeat(String mobEnumName) {

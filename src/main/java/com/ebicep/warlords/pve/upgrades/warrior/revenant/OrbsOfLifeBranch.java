@@ -23,19 +23,6 @@ public class OrbsOfLifeBranch extends AbstractUpgradeBranch<OrbsOfLife> {
                 .addTo(treeB);
 
         masterUpgrade = new Upgrade(
-                "Orbs of Eruption",
-                "Orbs of Life - Master Upgrade",
-                """
-                       -50% Healing
-
-                       Picking up an orb of life will detonate it. Dealing 315-423 damage to nearby enemies.
-                       """,
-                50000,
-                () -> {
-                    ability.getHealValues().getOrbHealing().value().addModifier(FloatModifiable.ModifierType.ADDITIVE_MULTIPLIER, "Orbs of Eruption", -.5f);
-                }
-        );
-        masterUpgrade2 = new Upgrade(
                 "Orbs of Time",
                 "Orbs of Life - Master Upgrade",
                 """
@@ -48,6 +35,19 @@ public class OrbsOfLifeBranch extends AbstractUpgradeBranch<OrbsOfLife> {
                     ability.getHealValues().getOrbHealing().value().addModifier(FloatModifiable.ModifierType.ADDITIVE_MULTIPLIER, "Orbs of Time", .3f);
                     ability.setOrbTickDuration(ability.getOrbTickDuration() * 2);
                     ability.setHealingIncrease(ability.getHealingIncrease() * 2);
+                }
+        );
+        masterUpgrade2 = new Upgrade(
+                "Orbs of Eruption",
+                "Orbs of Life - Master Upgrade",
+                """
+                       -50% Healing
+
+                       Picking up an orb of life will detonate it. Dealing 295-403 damage to nearby enemies.
+                       """,
+                50000,
+                () -> {
+                    ability.getHealValues().getOrbHealing().value().addModifier(FloatModifiable.ModifierType.ADDITIVE_MULTIPLIER, "Orbs of Eruption", -.5f);
                 }
         );
     }

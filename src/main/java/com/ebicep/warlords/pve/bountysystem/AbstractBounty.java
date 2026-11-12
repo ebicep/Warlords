@@ -1,6 +1,7 @@
 package com.ebicep.warlords.pve.bountysystem;
 
 import com.ebicep.warlords.Warlords;
+import com.ebicep.warlords.honorifics.HonorificManager;
 import com.ebicep.warlords.database.DatabaseManager;
 import com.ebicep.warlords.database.repositories.events.pojos.DatabaseGameEvent;
 import com.ebicep.warlords.database.repositories.events.pojos.GameEvents;
@@ -214,6 +215,7 @@ public abstract class AbstractBounty implements Listener, RewardSpendable, Bount
             eventMode.getCompletedBounties().merge(getBounty(), 1L, Long::sum);
         }
         DatabaseManager.queueUpdatePlayerAsync(lifetimeDatabasePlayer);
+        HonorificManager.refreshAfterBountyClaim(lifetimeDatabasePlayer);
     }
 
     public abstract Bounty getBounty();
