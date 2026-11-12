@@ -120,7 +120,7 @@ public class OrbsOfLife extends AbstractAbility implements BlueAbilityIcon, Dura
                             // 6.5 seconds = 1 + (130/325) = 1.4
                             // 225 *= 1.4 = 315
                             int healingIncreaseTicksLived = ticksLived - healingIncreaseTickDelay;
-                            if ((pveMasterUpgrade2 || orb.getPlayerToMoveTowards() == null) && healingIncreaseTicksLived > 0) {
+                            if ((pveMasterUpgrade || orb.getPlayerToMoveTowards() == null) && healingIncreaseTicksLived > 0) {
                                 orbHeal *= 1 + healingIncreaseTicksLived / ((float) healingIncreaseTickTime / healingIncrease * 100);
                             }
                             healPlayer(teammateToHeal, wp, orbHeal);
@@ -134,7 +134,7 @@ public class OrbsOfLife extends AbstractAbility implements BlueAbilityIcon, Dura
                                 healPlayer(nearPlayer, wp, orbHeal);
                                 Utils.playGlobalSound(teammateToHeal.getLocation(), Sound.ENTITY_EXPERIENCE_ORB_PICKUP, 0.2f, 1);
                             }
-                            if (pveMasterUpgrade) {
+                            if (pveMasterUpgrade2) {
                                 for (WarlordsEntity nearPlayer : PlayerFilter
                                         .entitiesAround(teammateToHeal, healRadius, healRadius, healRadius)
                                         .aliveEnemiesOf(teammateToHeal)
@@ -146,10 +146,8 @@ public class OrbsOfLife extends AbstractAbility implements BlueAbilityIcon, Dura
                                             .damage()
                                             .cause("Orbs of Eruption")
                                             .source(wp)
-                                            .min(315)
-                                            .max(423)
-                                            .critChance(15)
-                                            .critMultiplier(150)
+                                            .min(295)
+                                            .max(403)
                                             .flags(InstanceFlags.NO_HEALING_ORBS)
                                     );
                                 }
@@ -162,14 +160,6 @@ public class OrbsOfLife extends AbstractAbility implements BlueAbilityIcon, Dura
                         }
                     }
                 })
-        );
-        orbsOfLifeCooldown.addModifier(Modifier.MODIFY_OUTGOING_DAMAGE_BEFORE_INTERVENE, (event, currentDamageValue) -> {
-                    if (pveMasterUpgrade) {
-                        currentDamageValue.addModifier(FloatModifiable.ModifierType.MULTIPLICATIVE_MULTIPLIER,
-                                name, convertToMultiplicationDecimal(Math.min(30f, 1f * data.spawnedOrbs.size()))
-                        );
-                    }
-                }
         );
         orbsOfLifeCooldown.addModifier(Modifier.DAMAGE_BEFORE_ANY_REDUCTION_ATTACKER, event -> {
                     String ability = event.getCause();
