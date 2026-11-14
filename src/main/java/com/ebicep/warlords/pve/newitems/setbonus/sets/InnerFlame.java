@@ -70,6 +70,7 @@ public class InnerFlame extends BaseSet {
                                                     InstanceFlags.IGNORE_SOURCE_DAMAGE_BOOST,
                                                     InstanceFlags.NO_HEALING_ORBS,
                                                     InstanceFlags.NO_HEALING_LEECH,
+                                                    InstanceFlags.NO_LUST_HEALING,
                                                     InstanceFlags.RECURSIVE
                                             )
                                     );
