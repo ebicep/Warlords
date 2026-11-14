@@ -1,6 +1,7 @@
 package com.ebicep.warlords.game.option.freeze;
 
 import com.ebicep.warlords.Warlords;
+import com.ebicep.warlords.featureflags.FeatureFlags;
 import com.ebicep.warlords.events.game.WarlordsGameUpdatedEvent;
 import com.ebicep.warlords.game.Game;
 import com.ebicep.warlords.game.option.Option;
@@ -150,7 +151,9 @@ public class GameFreezeOption implements Option, Listener {
             p.getVehicle().remove();
             playersWithHorsePreFreeze.add(p.getUniqueId());
         }
-        p.addPotionEffect(new PotionEffect(PotionEffectType.BLINDNESS, 9999999, 100000));
+        if (FeatureFlags.isFeatureEnabled(FeatureFlags.FREEZE_BLINDNESS, false, null)) {
+            p.addPotionEffect(new PotionEffect(PotionEffectType.BLINDNESS, 9999999, 100000));
+        }
         p.showTitle(Title.title(
                 Component.text("Game Paused", NamedTextColor.RED),
                 message,
@@ -164,7 +167,9 @@ public class GameFreezeOption implements Option, Listener {
             MountOption.activateMountForPlayer(wp, false);
         }
         p.clearTitle();
-        p.removePotionEffect(PotionEffectType.BLINDNESS);
+        if (FeatureFlags.isFeatureEnabled(FeatureFlags.FREEZE_BLINDNESS, false, null)) {
+            p.removePotionEffect(PotionEffectType.BLINDNESS);
+        }
     }
 
     @EventHandler

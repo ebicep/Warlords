@@ -6,7 +6,8 @@
   "data": {
     "features": {
       "honorifics": true,
-      "honorificsDisplay": true
+      "honorificsDisplay": true,
+      "freezeBlindness": false
     },
     "npcs": {
       "supply-drop": true
