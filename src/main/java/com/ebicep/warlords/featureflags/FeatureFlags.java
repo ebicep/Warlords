@@ -18,6 +18,7 @@ public final class FeatureFlags {
     public static final String HONORIFICS = "honorifics";
     public static final String HONORIFICS_DISPLAY = "honorificsDisplay";
     public static final String FREEZE_BLINDNESS = "freezeBlindness";
+    public static final String FREEZE_RESTORE_MOMENTUM = "freezeRestoreMomentum";
 
     private FeatureFlags() {
     }
