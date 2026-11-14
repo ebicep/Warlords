@@ -2,12 +2,14 @@ package com.ebicep.warlords.pve.newitems.setbonus.sets;
 
 import com.ebicep.warlords.effects.EffectUtils;
 import com.ebicep.warlords.game.state.EndState;
+import com.ebicep.warlords.player.ingame.WarlordsNPC;
 import com.ebicep.warlords.player.ingame.WarlordsPlayer;
 import com.ebicep.warlords.player.ingame.cooldowns.CooldownTypes;
 import com.ebicep.warlords.player.ingame.cooldowns.cooldowns.PermanentCooldown;
 import com.ebicep.warlords.player.ingame.instances.InstanceBuilder;
 import com.ebicep.warlords.player.ingame.instances.InstanceFlags;
 import com.ebicep.warlords.player.ingame.instances.type.Modifier;
+import com.ebicep.warlords.pve.mobs.flags.NoTargetAbilities;
 import com.ebicep.warlords.pve.newitems.setbonus.BaseSet;
 import com.ebicep.warlords.pve.newitems.setbonus.SetBonus;
 import com.ebicep.warlords.util.warlords.PlayerFilter;
@@ -66,12 +68,15 @@ public class PulseOfAeons extends BaseSet {
                 if (event.getFlags().contains(InstanceFlags.DOT)) {
                     return;
                 }
+                if (event.getWarlordsEntity() instanceof WarlordsNPC warlordsNPC && warlordsNPC.getMob() instanceof NoTargetAbilities) {
+                    return;
+                }
 
                 stacks++;
 
                 if (stacks == healsPerPulse) {
                     stacks = 0;
-                    Utils.playGlobalSound(warlordsPlayer.getLocation(), Sound.BLOCK_BEACON_POWER_SELECT, 2, 2f);
+                    Utils.playGlobalSound(warlordsPlayer.getLocation(), Sound.BLOCK_BEACON_POWER_SELECT, 1.2f, 2f);
                     PlayerFilter.playingGame(warlordsPlayer.getGame())
                             .aliveTeammatesOfExcludingSelf(warlordsPlayer)
                             .forEach(entity -> {
