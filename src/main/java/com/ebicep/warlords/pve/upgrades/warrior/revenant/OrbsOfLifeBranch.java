@@ -47,7 +47,7 @@ public class OrbsOfLifeBranch extends AbstractUpgradeBranch<OrbsOfLife> {
                        """,
                 50000,
                 () -> {
-                    ability.getHealValues().getOrbHealing().value().addModifier(FloatModifiable.ModifierType.ADDITIVE_MULTIPLIER, "Orbs of Eruption", -.5f);
+                    ability.getHealValues().getOrbHealing().value().addModifier(FloatModifiable.ModifierType.MULTIPLICATIVE_MULTIPLIER, "Orbs of Eruption", 0.5f);
                 }
         );
     }

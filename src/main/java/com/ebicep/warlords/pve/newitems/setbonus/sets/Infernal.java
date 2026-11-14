@@ -186,7 +186,7 @@ public class Infernal extends BaseSet {
                 }
 
                 Location center = blockHolder.getBlock().getLocation().add(0.5, 0.5, 0.5);
-                PlayerFilter.entitiesAround(center, 1.5, 3, 1.5)
+                PlayerFilter.entitiesAround(center, 1.75, 3, 1.75)
                         .aliveEnemiesOf(warlordsPlayer)
                         .forEach(enemy -> {
                             if (!(enemy instanceof WarlordsNPC)) {

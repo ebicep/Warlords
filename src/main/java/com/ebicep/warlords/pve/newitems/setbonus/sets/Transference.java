@@ -59,6 +59,7 @@ public class Transference extends BaseSet {
                         WarlordsEntity lowestHealthAlly = PlayerFilter
                                 .entitiesAround(warlordsPlayer, 100, 100, 100)
                                 .aliveTeammatesOfExcludingSelf(warlordsPlayer)
+                                .excludingAlliedMobs()
                                 .stream()
                                 .min(Comparator.comparingDouble(ally ->
                                         ally.getCurrentHealth() / ally.getMaxHealth()
