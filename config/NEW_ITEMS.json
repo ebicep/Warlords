@@ -1479,7 +1479,7 @@
           "attributes": {
             "HEALTH": 20
           },
-          "description": "Leave a trail of fire behind you for 3 seconds. Dealing damage equal to the mob’s current health every second for 3 seconds."
+          "description": "Leave a trail of fire behind you for 3 seconds. Dealing damage equal to 10% of the mob’s current health every second for 3 seconds."
         },
         "silentExecution": {
           "tier": "LEGENDARY",

@@ -1,5 +1,6 @@
 package com.ebicep.warlords.pve.newitems.setbonus.sets;
 
+import com.ebicep.warlords.abilities.internal.DamageCheck;
 import com.ebicep.warlords.player.ingame.WarlordsNPC;
 import com.ebicep.warlords.player.ingame.WarlordsPlayer;
 import com.ebicep.warlords.player.ingame.instances.InstanceBuilder;
@@ -185,7 +186,7 @@ public class Infernal extends BaseSet {
                 }
 
                 Location center = blockHolder.getBlock().getLocation().add(0.5, 0.5, 0.5);
-                PlayerFilter.entitiesAround(center, 0.75, 1.5, 0.75)
+                PlayerFilter.entitiesAround(center, 1.75, 3, 1.75)
                         .aliveEnemiesOf(warlordsPlayer)
                         .forEach(enemy -> {
                             if (!(enemy instanceof WarlordsNPC)) {
@@ -205,14 +206,12 @@ public class Infernal extends BaseSet {
                                     .damage()
                                     .cause(getName())
                                     .source(warlordsPlayer)
-                                    .value(damage)
+                                    .value(DamageCheck.clamp(damage))
                                     .flags(
                                             InstanceFlags.DOT,
-                                            InstanceFlags.IGNORE_SOURCE_DAMAGE_BOOST,
                                             InstanceFlags.NO_HEALING_ORBS,
                                             InstanceFlags.NO_HEALING_LEECH,
-                                            InstanceFlags.NO_LUST_HEALING,
-                                            InstanceFlags.NO_HIT_SOUND
+                                            InstanceFlags.NO_LUST_HEALING
                                     )
                             );
                             lastDamagedTicks.put(enemy.getUuid(), ticksElapsed);

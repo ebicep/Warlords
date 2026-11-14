@@ -272,7 +272,7 @@ public class OrbsOfLife extends AbstractAbility implements BlueAbilityIcon, Dura
 
     private void healPlayer(WarlordsEntity teammateToHeal, @Nonnull WarlordsEntity wp, float orbHeal) {
         teammateToHeal.addInstance(InstanceBuilder.healing().ability(this).source(wp).value(orbHeal).flag(InstanceFlags.CAN_OVERHEAL_OTHERS, pveMasterUpgrade2));
-        if (pveMasterUpgrade2) {
+        if (pveMasterUpgrade) {
             Overheal.giveOverHeal(wp, teammateToHeal);
         }
     }

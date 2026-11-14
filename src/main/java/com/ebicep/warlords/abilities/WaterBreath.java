@@ -156,7 +156,7 @@ public class WaterBreath extends AbstractAbility implements RedAbilityIcon, CanR
                                 .ability(this)
                                 .source(giver)
                                 .value(healing)
-                                .flags(InstanceFlags.CAN_OVERHEAL_OTHERS)
+                                .flags(InstanceFlags.CAN_OVERHEAL_OTHERS, InstanceFlags.DOT)
                         );
                     }
                 })

@@ -66,6 +66,9 @@ public class Gravemind extends BaseSet {
                     if (event.getWarlordsEntity().getTeam().equals(warlordsPlayer.getTeam()) || ThreadLocalRandom.current().nextDouble() > summonChance / 100.0) {
                         return;
                     }
+                    if (!Objects.equals(event.getKiller(), warlordsPlayer)) {
+                        return;
+                    }
                     spawnMob(warlordsPlayer, event.getWarlordsEntity().getLocation());
                 }
 
