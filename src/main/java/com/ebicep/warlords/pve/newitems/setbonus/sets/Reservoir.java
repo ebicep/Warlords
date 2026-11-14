@@ -12,6 +12,8 @@ import com.ebicep.warlords.pve.newitems.setbonus.SetBonus;
 import com.ebicep.warlords.util.warlords.PlayerFilter;
 import com.ebicep.warlords.util.warlords.Utils;
 import com.ebicep.warlords.util.warlords.modifiablevalues.MultiFloatModifiable;
+import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.format.NamedTextColor;
 import org.bukkit.Sound;
 
 import java.util.Comparator;
@@ -96,6 +98,7 @@ public class Reservoir extends BaseSet {
                                         InstanceFlags.NO_HEALING_LEECH
                                 )
                         );
+                        warlordsPlayer.sendMessage(Component.text("Your reservoir healed " + target.getName() + "!", NamedTextColor.GREEN));
                     }
             ).addModifier(
                     Modifier.MODIFY_OUTGOING_HEALING,

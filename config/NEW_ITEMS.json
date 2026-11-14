@@ -1598,8 +1598,8 @@
             "CDR": 1
           },
           "description": "Excess healing on allies is stored, up to {{heal}}. When an ally falls below {{heal;%}} health, consume the store to heal them ({{ticks}} cooldown).",
-          "storedHealingCap": 1000,
-          "allyHealthThresholdPercent": 35,
+          "storedHealingCap": 1200,
+          "allyHealthThresholdPercent": 25,
           "dumpCooldownSeconds": 5
         },
         "aspire": {
