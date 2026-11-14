@@ -12,6 +12,7 @@ import com.ebicep.warlords.game.option.marker.MapSymmetryMarker;
 import com.ebicep.warlords.menu.Menu;
 import com.ebicep.warlords.permissions.Permissions;
 import com.ebicep.warlords.player.general.*;
+import com.ebicep.warlords.player.general.mounts.MountMenu;
 import com.ebicep.warlords.player.general.settings.ParticleQuality;
 import com.ebicep.warlords.player.general.specboosts.SpecBoostMenu;
 import com.ebicep.warlords.player.ingame.WarlordsPlayer;
@@ -82,6 +83,7 @@ public class WarlordsShopMenu {
         menu.setItem(5, 3, WarlordsNewHotbarMenu.PvPMenu.MENU_SPEC_BOOSTS, (m, e) -> SpecBoostMenu.open(player));
 
         menu.setItem(7, 3, WarlordsNewHotbarMenu.SettingsMenu.MENU_SETTINGS, (m, e) -> openSettingsMenu(player));
+        menu.setItem(4, 4, new ItemStack(Material.SADDLE), (m, e) -> MountMenu.open(player));
         menu.setItem(4, 5, MENU_CLOSE, ACTION_CLOSE_MENU);
         menu.setItem(4, 2, WarlordsNewHotbarMenu.PvPMenu.MENU_ABILITY_DESCRIPTION, (m, e) -> openLobbyAbilityMenu(player));
         menu.openForPlayer(player);

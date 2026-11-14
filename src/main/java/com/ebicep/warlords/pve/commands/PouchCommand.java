@@ -63,6 +63,9 @@ public class PouchCommand extends BaseCommand {
             }
             LinkedHashMap<Spendable, Long> rewards = new LinkedHashMap<>();
             rewards.put(rolled.getA(), rolled.getB());
+            if (pouchType == PouchReward.PouchType.ASCENDANT) {
+                PouchReward.addRolledAscendantItem(rewards);
+            }
             PouchReward pouchReward = new PouchReward(rewards, pouchType);
             databasePlayer.getPveStats().getPouchRewards().add(pouchReward);
             given.add(pouchReward);
