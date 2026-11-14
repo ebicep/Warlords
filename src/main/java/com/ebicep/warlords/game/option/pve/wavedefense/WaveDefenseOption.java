@@ -20,6 +20,7 @@ import com.ebicep.warlords.game.option.marker.scoreboard.ScoreboardHandler;
 import com.ebicep.warlords.game.option.marker.scoreboard.SimpleScoreboardHandler;
 import com.ebicep.warlords.game.option.pve.PveMobKillTracker;
 import com.ebicep.warlords.game.option.pve.PveOption;
+import com.ebicep.warlords.game.option.pve.onslaught.PouchReward;
 import com.ebicep.warlords.game.option.pve.rewards.CoinGainOption;
 import com.ebicep.warlords.game.option.pve.rewards.PveRewards;
 import com.ebicep.warlords.game.option.pve.wavedefense.waves.Wave;
@@ -36,6 +37,7 @@ import com.ebicep.warlords.player.ingame.WarlordsPlayer;
 import com.ebicep.warlords.pve.DifficultyIndex;
 import com.ebicep.warlords.pve.Spendable;
 import com.ebicep.warlords.pve.commands.MobCommand;
+import com.ebicep.warlords.pve.newitems.SpendableRandomNewItem;
 import com.ebicep.warlords.pve.mobs.AbstractMob;
 import com.ebicep.warlords.pve.mobs.flags.BossLike;
 import com.ebicep.warlords.pve.mobs.tiers.PlayerMob;
@@ -723,9 +725,15 @@ public class WaveDefenseOption implements PveOption {
         if (reward != null) {
             Spendable spendable = reward.getA();
             Long amount = reward.getB();
-            playerPouch.computeIfAbsent(uuid, k -> new HashMap<>())
-                       .merge(spendable, amount, Long::sum);
+            HashMap<Spendable, Long> pouch = playerPouch.computeIfAbsent(uuid, k -> new HashMap<>());
+            pouch.merge(spendable, amount, Long::sum);
+            SpendableRandomNewItem item = PouchReward.addRolledAscendantItem(pouch);
             Component rewardString = Component.text(" +", spendable.getTextColor()).append(spendable.getCostColoredName(amount));
+            if (item != null) {
+                rewardString = rewardString.append(Component.text(",", NamedTextColor.GRAY))
+                                           .append(Component.text(" +", item.getTextColor()))
+                                           .append(item.getCostColoredName(1));
+            }
             RewardInventory.sendRewardMessage(uuid,
                     pouchName.append(Component.text(":")).append(rewardString)
             );
