@@ -38,8 +38,8 @@ public class TimeSurge extends AbstractAbility implements PurpleAbilityIcon, Abi
                 .create("Restore ")
                 .percent(healPercentage, NamedTextColor.GREEN)
                 .text(" of your health and gain ")
-                .percent(speedPercentage, NamedTextColor.YELLOW)
-                .text(" for ")
+                .percent(speedPercentage, NamedTextColor.WHITE)
+                .text(" speed for ")
                 .durationTicks(speedTickDuration)
                 .text(".")
                 .build();
