@@ -35,7 +35,7 @@ public class Infernal extends BaseSet {
 
     private static final int FIRE_DURATION_TICKS = 3 * GameRunnable.SECOND;
     private static final int DAMAGE_INTERVAL_TICKS = GameRunnable.SECOND;
-    private static final float CURRENT_HEALTH_DAMAGE_PERCENT = 5;
+    private static final float CURRENT_HEALTH_DAMAGE_PERCENT = 10;
 
     @Override
     public String getConfigFieldName() {
