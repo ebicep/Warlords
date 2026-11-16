@@ -190,7 +190,6 @@ public class LegendaryBastion extends AbstractLegendaryWeapon {
                     owner.addInstance(InstanceBuilder
                             .damage()
                             .cause("Bastion")
-                            .source(ally)
                             .min((float) toRedirect)
                             .max((float) toRedirect)
                             .flags(InstanceFlags.RECURSIVE, InstanceFlags.REFLECTIVE_DAMAGE, InstanceFlags.IGNORE_SOURCE_DAMAGE_BOOST)

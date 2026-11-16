@@ -1,6 +1,7 @@
 package com.ebicep.warlords.game.option.freeze;
 
 import com.ebicep.warlords.Warlords;
+import com.ebicep.warlords.featureflags.FeatureFlags;
 import com.ebicep.warlords.events.game.WarlordsGameUpdatedEvent;
 import com.ebicep.warlords.game.Game;
 import com.ebicep.warlords.game.option.Option;
@@ -21,6 +22,7 @@ import org.bukkit.event.player.PlayerMoveEvent;
 import org.bukkit.potion.PotionEffect;
 import org.bukkit.potion.PotionEffectType;
 import org.bukkit.scheduler.BukkitRunnable;
+import org.bukkit.util.Vector;
 
 import javax.annotation.Nonnull;
 import java.util.*;
@@ -33,6 +35,10 @@ public class GameFreezeOption implements Option, Listener {
 
     public static final int RESUME_TIME = 5;
     public static final String KEY_UPDATED_FROZEN = "frozen";
+    /**
+     * Minimum squared velocity (blocks/tick) to snapshot when the game freezes.
+     */
+    private static final double FROZEN_MOMENTUM_MIN_VELOCITY_SQ = 0.04;
 
     public static boolean isGameFrozen(Game game) {
         return game.getOption(GameFreezeOption.class).stream().anyMatch(GameFreezeOption::isFrozen);
@@ -87,6 +93,7 @@ public class GameFreezeOption implements Option, Listener {
 
     private Game game;
     private Set<UUID> playersWithHorsePreFreeze = new HashSet<>();
+    private final Map<UUID, Vector> frozenVelocityByPlayer = new HashMap<>();
 
     @Override
     public void register(@Nonnull Game game) {
@@ -137,12 +144,48 @@ public class GameFreezeOption implements Option, Listener {
         }
         Component message = getFrozenCauses().get(0);
         playersWithHorsePreFreeze.clear();
-        game.forEachOnlinePlayerWithoutSpectators((p, team) -> freezePlayer(p, message));
+        frozenVelocityByPlayer.clear();
+        game.forEachOnlinePlayerWithoutSpectators((p, team) -> {
+            captureFrozenMomentum(p);
+            freezePlayer(p, message);
+        });
     }
 
     private void unfreeze() {
         game.forEachOnlinePlayerWithoutSpectators((p, team) -> unfreezePlayer(p));
         playersWithHorsePreFreeze.clear();
+        frozenVelocityByPlayer.clear();
+    }
+
+    private void captureFrozenMomentum(Player p) {
+        if (!FeatureFlags.isFeatureEnabled(FeatureFlags.FREEZE_RESTORE_MOMENTUM, false, null)) {
+            return;
+        }
+        WarlordsEntity wp = Warlords.getPlayer(p);
+        if (wp == null || wp.isDead() || p.getVehicle() != null) {
+            return;
+        }
+        Vector velocity = p.getVelocity();
+        if (velocity.lengthSquared() > FROZEN_MOMENTUM_MIN_VELOCITY_SQ) {
+            frozenVelocityByPlayer.put(p.getUniqueId(), velocity.clone());
+        }
+    }
+
+    private void restoreFrozenMomentum(Player p, WarlordsEntity wp) {
+        if (!FeatureFlags.isFeatureEnabled(FeatureFlags.FREEZE_RESTORE_MOMENTUM, false, null)) {
+            return;
+        }
+        Vector saved = frozenVelocityByPlayer.remove(p.getUniqueId());
+        if (wp == null || wp.isDead() || saved == null || saved.isZero()) {
+            return;
+        }
+        Vector velocity = saved.clone();
+        Bukkit.getScheduler().runTask(Warlords.getInstance(), () -> {
+            if (!p.isOnline() || wp.isDead()) {
+                return;
+            }
+            wp.setVelocity("GameFreezeOption.restore", velocity, true);
+        });
     }
 
     private void freezePlayer(Player p, Component message) {
@@ -150,7 +193,9 @@ public class GameFreezeOption implements Option, Listener {
             p.getVehicle().remove();
             playersWithHorsePreFreeze.add(p.getUniqueId());
         }
-        p.addPotionEffect(new PotionEffect(PotionEffectType.BLINDNESS, 9999999, 100000));
+        if (FeatureFlags.isFeatureEnabled(FeatureFlags.FREEZE_BLINDNESS, false, null)) {
+            p.addPotionEffect(new PotionEffect(PotionEffectType.BLINDNESS, 9999999, 100000));
+        }
         p.showTitle(Title.title(
                 Component.text("Game Paused", NamedTextColor.RED),
                 message,
@@ -164,7 +209,10 @@ public class GameFreezeOption implements Option, Listener {
             MountOption.activateMountForPlayer(wp, false);
         }
         p.clearTitle();
-        p.removePotionEffect(PotionEffectType.BLINDNESS);
+        if (FeatureFlags.isFeatureEnabled(FeatureFlags.FREEZE_BLINDNESS, false, null)) {
+            p.removePotionEffect(PotionEffectType.BLINDNESS);
+        }
+        restoreFrozenMomentum(p, wp);
     }
 
     @EventHandler

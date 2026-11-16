@@ -109,10 +109,12 @@ public class ItemAdditiveCooldown extends PermanentCooldown<AbstractItem> {
                     if (Objects.equals(attacker, from) || event.getFlags().contains(InstanceFlags.RECURSIVE)) {
                         return;
                     }
+                    if (event.getFlags().contains(InstanceFlags.REFLECTIVE_DAMAGE)) {
+                        return;
+                    }
                     if (thorns <= 0) {
                         return;
                     }
-                    // Crown of Thorns is folded in here. The instance ignores other source damage boosts.
                     float thornsDamage = ThornsDamage.calculate(
                             currentDamageValue,
                             thorns,
