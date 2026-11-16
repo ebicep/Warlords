@@ -149,7 +149,6 @@ public class Narmer extends AbstractMob implements BossMob {
                 for (int i = 0; i < 8; i++) {
                     ZombieLancer zombieLancer = new ZombieLancer(warlordsNPC.getLocation());
                     option.spawnNewMob(zombieLancer);
-                    minionsCanHeal.add(zombieLancer.getWarlordsNPC().getUuid());
                 }
             }
         }.runTaskLater(10);
