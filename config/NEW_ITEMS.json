@@ -982,8 +982,8 @@
             "ECR": 2
           },
           "description": "Increase the effectiveness of your upgrades by {{blue;%}}. Additionally, gain {{blue}} free ability upgrades.",
-          "upgradeEffectivenessIncreasePercent": 20,
-          "freeAbilityUpgrades": 3
+          "upgradeEffectivenessIncreasePercent": 15,
+          "freeAbilityUpgrades": 2
         },
         "ambulance": {
           "tier": "LEGENDARY",
