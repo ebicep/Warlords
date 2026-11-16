@@ -3,15 +3,18 @@ package com.ebicep.warlords.game.option.pvp;
 import com.ebicep.warlords.database.DatabaseManager;
 import com.ebicep.warlords.database.repositories.player.pojos.general.DatabasePlayer;
 import com.ebicep.warlords.game.Game;
+import com.ebicep.warlords.game.Team;
 import com.ebicep.warlords.game.option.Option;
 import com.ebicep.warlords.game.option.marker.WeaponDisplayMarker;
 import com.ebicep.warlords.player.general.Specializations;
 import com.ebicep.warlords.player.general.specboosts.SpecBoostManager;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
 import com.ebicep.warlords.player.ingame.WarlordsPlayer;
-import com.ebicep.warlords.util.bukkit.ComponentBuilder;
+import com.ebicep.warlords.util.bukkit.ComponentUtils;
 import com.ebicep.warlords.util.chat.ChatUtils;
+import com.ebicep.warlords.util.warlords.PlayerFilter;
 import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.event.HoverEvent;
 import net.kyori.adventure.text.format.NamedTextColor;
 import org.bukkit.entity.Player;
 import org.bukkit.event.HandlerList;
@@ -22,6 +25,9 @@ import java.util.*;
 import java.util.concurrent.ThreadLocalRandom;
 
 public class ApplySpecBoostsOption implements Option {
+
+    private static final Component MESSAGE_DIVIDER =
+            Component.text("---------------------------------------", NamedTextColor.DARK_GRAY);
 
     public static String getPlayerSpecBoost(WarlordsPlayer warlordsPlayer) {
         for (ApplySpecBoostsOption applySpecBoostsOption : warlordsPlayer.getGame().getOption(ApplySpecBoostsOption.class)) {
@@ -38,8 +44,11 @@ public class ApplySpecBoostsOption implements Option {
         return game.getOption(AbilityChangeOption.class).isEmpty();
     }
 
+    private Game game;
+
     @Override
     public void start(@Nonnull Game game) {
+        this.game = game;
         if (random) {
             try {
                 Map<Specializations, List<SpecBoostManager.SpecBoost<?>>> boosts = new HashMap<>(SpecBoostManager.getSpecBoosts());
@@ -84,6 +93,7 @@ public class ApplySpecBoostsOption implements Option {
 
     @Override
     public void register(@Nonnull Game game) {
+        this.game = game;
         game.registerGameMarker(WeaponDisplayMarker.class, new WeaponDisplayMarker() {
                     @Override
                     public int weaponDisplayPriority() {
@@ -177,34 +187,12 @@ public class ApplySpecBoostsOption implements Option {
 
     @Override
     public void afterAllWarlordsEntitiesCreated(List<WarlordsEntity> players) {
-        if (random) {
-            Set<Specializations> playedSpecs = new HashSet<>();
-            players.forEach(warlordsEntity -> playedSpecs.add(warlordsEntity.getSpecClass()));
-            players.forEach(warlordsEntity -> {
-                warlordsEntity.sendMessage(Component.text("---------------------------------------", NamedTextColor.DARK_BLUE));
-                warlordsEntity.sendMessage(Component.text("Randomly assigned spec boosts:", NamedTextColor.GREEN));
-                warlordsEntity.sendMessage("");
-                preassignedSpecBoosts
-                        .entrySet()
-                        .stream()
-                        .filter(e -> playedSpecs.contains(e.getKey()))
-                        .sorted(Comparator.comparing((Map.Entry<Specializations, SpecBoostManager.SpecBoost<?>> e) -> e.getKey().specType)
-                                          .thenComparing(Map.Entry::getKey))
-                        .forEach(entry -> {
-                            Specializations specializations = entry.getKey();
-                            SpecBoostManager.SpecBoost<?> specBoost = entry.getValue();
-                            boolean isSpec = specializations == warlordsEntity.getSpecClass();
-                            warlordsEntity.sendMessage(ComponentBuilder
-                                    .create()
-                                    .text(specializations.name, isSpec ? NamedTextColor.AQUA : specializations.specType.getTextColor())
-                                    .text(" - ", NamedTextColor.GRAY)
-                                    .text(specBoost.getStringName(), specializations.specType.getTextColor())
-                                    .build()
-                            );
-                        });
-                warlordsEntity.sendMessage(Component.text("---------------------------------------", NamedTextColor.DARK_BLUE));
-            });
-        }
+        List<WarlordsPlayer> withBoosts = players.stream()
+                .filter(WarlordsPlayer.class::isInstance)
+                .map(WarlordsPlayer.class::cast)
+                .filter(playerSpecBoosts::containsKey)
+                .toList();
+        notifyTeammatesBatch(withBoosts);
     }
 
     public Map<WarlordsEntity, PlayerSpecAppliedBoost> getPlayerSpecBoosts() {
@@ -227,6 +215,55 @@ public class ApplySpecBoostsOption implements Option {
         if (warlordsPlayer.getEntity() instanceof Player player) {
             warlordsPlayer.getAbilities().forEach(abstractAbility -> abstractAbility.updateDescription(player));
         }
+    }
+
+    private @Nullable Component buildTeammateSpecBoostLine(WarlordsPlayer player) {
+        PlayerSpecAppliedBoost appliedBoost = playerSpecBoosts.get(player);
+        if (appliedBoost == null) {
+            return null;
+        }
+        return Component.textOfChildren(
+                player.getColoredName(),
+                Component.text(": ", NamedTextColor.GRAY),
+                formatSpecBoost(appliedBoost.specBoost)
+        );
+    }
+
+    private void notifyTeammatesBatch(List<WarlordsPlayer> players) {
+        if (players.isEmpty() || game == null) {
+            return;
+        }
+        Map<Team, List<WarlordsPlayer>> byTeam = new HashMap<>();
+        for (WarlordsPlayer player : players) {
+            byTeam.computeIfAbsent(player.getTeam(), team -> new ArrayList<>()).add(player);
+        }
+        for (List<WarlordsPlayer> teamPlayers : byTeam.values()) {
+            PlayerFilter.playingGame(game)
+                    .teammatesOf(teamPlayers.get(0))
+                    .forEach(recipient -> {
+                        List<Component> lines = teamPlayers.stream()
+                                .filter(member -> member != recipient)
+                                .map(this::buildTeammateSpecBoostLine)
+                                .filter(Objects::nonNull)
+                                .toList();
+                        if (lines.isEmpty()) {
+                            return;
+                        }
+                        recipient.sendMessage(MESSAGE_DIVIDER);
+                        lines.forEach(recipient::sendMessage);
+                        recipient.sendMessage(MESSAGE_DIVIDER);
+                    });
+        }
+    }
+
+    private static Component formatSpecBoost(SpecBoostManager.SpecBoost<?> boost) {
+        List<Component> hoverParts = new ArrayList<>();
+        hoverParts.add(boost.getName());
+        for (Component loreLine : boost.getDescriptionLore()) {
+            hoverParts.add(loreLine.color(NamedTextColor.GRAY));
+        }
+        return Component.text(boost.getStringName(), NamedTextColor.GREEN)
+                        .hoverEvent(HoverEvent.showText(ComponentUtils.flattenComponentWithNewLine(hoverParts)));
     }
 
     public record PlayerSpecAppliedBoost(SpecBoostManager.SpecBoost<?> specBoost, SpecBoostManager.Boost boost) {
