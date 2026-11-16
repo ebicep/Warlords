@@ -206,7 +206,7 @@ public class Leech {
 
         public void add(int stack) {
             int before = getStacksCount();
-            if (stacks.size() >= 4) {
+            if (stacks.size() >= 3) {
                 stacks.removeFirst();
             }
             stacks.add(stack);
