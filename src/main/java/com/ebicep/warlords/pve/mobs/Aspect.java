@@ -156,7 +156,7 @@ public enum Aspect {
                         if (Aspect.isNegated(warlordsEntity)) {
                             return;
                         }
-                        if (event.getFlags().contains(InstanceFlags.RECURSIVE)) {
+                        if (event.getFlags().contains(InstanceFlags.RECURSIVE) || event.getFlags().contains(InstanceFlags.REFLECTIVE_DAMAGE)) {
                             return;
                         }
                         WarlordsEntity receiver = event.getWarlordsEntity();

@@ -165,7 +165,6 @@ public class IllusionRift extends GameMap {
                         .add(0.03, Mob.FIRE_SPLITTER)
                         // champion
                         .add(0.05, 1, Mob.LANTERN_DREDGER)
-                        .add(0.05, 1, Mob.BARNACLE_BRUTE)
                 )
                 .add(20, new RandomSpawnWave(1, 10 * SECOND, Component.text("Boss"))
                         .add(Mob.MITHRA)
@@ -196,7 +195,6 @@ public class IllusionRift extends GameMap {
                         .add(0.02, Mob.RIFT_WALKER)
                         // champion
                         .add(0.05, 1, Mob.LANTERN_DREDGER)
-                        .add(0.05, 1, Mob.BARNACLE_BRUTE)
                         .add(0.05, 1, Mob.ABYSS_WATCHER)
                 )
                 .add(25, new RandomSpawnWave(1, 10 * SECOND, Component.text("Boss"))
