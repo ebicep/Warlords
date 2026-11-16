@@ -8,17 +8,13 @@ import com.ebicep.warlords.player.ingame.cooldowns.cooldowns.PermanentCooldown;
 import com.ebicep.warlords.player.ingame.instances.type.Modifier;
 import com.ebicep.warlords.pve.newitems.setbonus.BaseSet;
 import com.ebicep.warlords.pve.newitems.setbonus.SetBonus;
-import com.ebicep.warlords.util.warlords.GameRunnable;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
 import org.bukkit.event.EventHandler;
-import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 
 import java.util.List;
 import java.util.Objects;
-import java.util.concurrent.atomic.AtomicBoolean;
-import java.util.concurrent.atomic.AtomicInteger;
 
 public class BrittleCrown extends BaseSet {
 
@@ -51,37 +47,21 @@ public class BrittleCrown extends BaseSet {
 
         @Override
         public void apply(WarlordsPlayer warlordsPlayer) {
-            AtomicInteger killWindowId = new AtomicInteger();
-            AtomicBoolean killWindow = new AtomicBoolean(false);
             warlordsPlayer.getGame().registerEvents(new Listener() {
-
-                // must run before CurrencyOnEventOption awards kill insignia
-                @EventHandler(priority = EventPriority.LOWEST)
-                public void onDeath(WarlordsDeathEvent event) {
-                    if (!Objects.equals(event.getKiller(), warlordsPlayer) ||
-                            event.getWarlordsEntity().getTeam().equals(warlordsPlayer.getTeam())
-                    ) {
-                        return;
-                    }
-                    int id = killWindowId.incrementAndGet();
-                    killWindow.set(true);
-                    new GameRunnable(warlordsPlayer.getGame()) {
-
-                        @Override
-                        public void run() {
-                            if (killWindowId.get() == id) {
-                                killWindow.set(false);
-                            }
-                        }
-
-                    }.runTaskLater(5);
-                }
 
                 @EventHandler
                 public void onCurrency(WarlordsAddCurrencyEvent event) {
-                    if (event.getWarlordsEntity().equals(warlordsPlayer) && killWindow.get()) {
-                        event.setCurrencyToAdd(event.getCurrencyToAdd() * (1 + insigniaGainBonusPercent / 100f));
+                    if (!event.getWarlordsEntity().equals(warlordsPlayer)) {
+                        return;
                     }
+                    WarlordsDeathEvent killSource = event.getKillSource();
+                    if (killSource == null ||
+                            !Objects.equals(killSource.getKiller(), warlordsPlayer) ||
+                            killSource.getWarlordsEntity().getTeam().equals(warlordsPlayer.getTeam())
+                    ) {
+                        return;
+                    }
+                    event.setCurrencyToAdd(event.getCurrencyToAdd() * (1 + insigniaGainBonusPercent / 100f));
                 }
 
             });
