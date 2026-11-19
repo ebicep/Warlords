@@ -22,12 +22,14 @@ public class SovereignSolitude implements SpecBoostManager.SpecBoost<SovereignSo
 
     private int markedAllySpeedPercent;
     private int radianceCooldownReductionTicks;
+    private int radianceMarkDurationIncreaseSeconds;
     private int flagHealthIncrease;
 
     @Override
     public void init() {
         this.markedAllySpeedPercent = getValue("markedAllySpeedPercent", int.class);
         this.radianceCooldownReductionTicks = getValue("radianceCooldownReductionTicks", int.class);
+        this.radianceMarkDurationIncreaseSeconds = getValue("radianceMarkDurationIncreaseSeconds", int.class);
         this.flagHealthIncrease = getValue("flagHealthIncrease", int.class);
     }
 
@@ -38,7 +40,7 @@ public class SovereignSolitude implements SpecBoostManager.SpecBoost<SovereignSo
 
     @Override
     public List<Object> getVariables() {
-        return List.of(markedAllySpeedPercent, flagHealthIncrease, radianceCooldownReductionTicks);
+        return List.of(markedAllySpeedPercent, flagHealthIncrease, radianceCooldownReductionTicks, radianceMarkDurationIncreaseSeconds);
     }
 
     @Override
@@ -64,6 +66,7 @@ public class SovereignSolitude implements SpecBoostManager.SpecBoost<SovereignSo
             );
             warlordsPlayer.getAbilitiesMatching(HolyRadianceCrusader.class).forEach(holyRadiance -> {
                 holyRadiance.getCooldown().addModifier(FloatModifiable.ModifierType.ADDITIVE, "Spec Boost", -radianceCooldownReductionTicks / 20f);
+                holyRadiance.setMarkDuration(holyRadiance.getMarkDuration() + radianceMarkDurationIncreaseSeconds);
                 holyRadiance.setMarkSpeed(markedAllySpeedPercent);
             });
         }
