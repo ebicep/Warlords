@@ -93,7 +93,9 @@ public enum Permissions {
                 }
                 List<String> permissions = permissionsFromUser(user);
                 syncPermissionsToDatabase(uuid, permissions);
-                validateHonorificSupporterAccess(uuid, isSupporterPermissionList(permissions));
+                boolean hasSupporter = isSupporterPermissionList(permissions);
+                validateHonorificSupporterAccess(uuid, hasSupporter);
+                validateMountSupporterAccess(uuid, hasSupporter);
                 CustomScoreboard.updateLobbyPlayerNames();
             }
         }.runTaskLater(Warlords.getInstance(), delayTicks);
@@ -133,12 +135,14 @@ public enum Permissions {
 
     public static Component getPrefixWithColor(Player player, boolean includeName) {
         validateHonorificSupporterAccess(player.getUniqueId(), isSupporter(player));
+        validateMountSupporterAccess(player.getUniqueId(), isSupporter(player));
         return createPlayerPrefix(getPermission(player), player.getUniqueId(), includeName ? player.getName() : "", includeName);
     }
 
     public static Component getPrefixWithColor(UUID uuid, boolean includeName) {
         DatabasePlayer databasePlayer = DatabaseManager.getPlayer(uuid);
         validateHonorificSupporterAccess(uuid, isSupporter(databasePlayer));
+        validateMountSupporterAccess(uuid, isSupporter(databasePlayer));
         return createPlayerPrefix(getPermission(databasePlayer), uuid, includeName ? databasePlayer.getName() : "", includeName);
     }
 
@@ -236,6 +240,14 @@ public enum Permissions {
                 || permissions.contains(LEGACY_PATREON_PERMISSION)
                 || permissions.contains(CONTENT_CREATOR.permission)
                 || permissions.stream().anyMatch(permission -> permission.startsWith(TEBEX_SUPPORTER_PERMISSION_PREFIX));
+    }
+
+    private static void validateMountSupporterAccess(UUID uuid, boolean hasSupporter) {
+        DatabasePlayer databasePlayer = DatabaseManager.getPlayer(uuid);
+        if (!databasePlayer.getMounts().applySupporterDefaults(hasSupporter)) {
+            return;
+        }
+        DatabaseManager.queueUpdatePlayerAsync(databasePlayer);
     }
 
     private static void validateHonorificSupporterAccess(UUID uuid, boolean hasSupporter) {

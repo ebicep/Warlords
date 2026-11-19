@@ -982,8 +982,8 @@
             "ECR": 2
           },
           "description": "Increase the effectiveness of your upgrades by {{blue;%}}. Additionally, gain {{blue}} free ability upgrades.",
-          "upgradeEffectivenessIncreasePercent": 20,
-          "freeAbilityUpgrades": 3
+          "upgradeEffectivenessIncreasePercent": 15,
+          "freeAbilityUpgrades": 2
         },
         "ambulance": {
           "tier": "LEGENDARY",
@@ -1479,7 +1479,7 @@
           "attributes": {
             "HEALTH": 20
           },
-          "description": "Leave a trail of fire behind you for 3 seconds. Dealing damage equal to the mob’s current health every second for 3 seconds."
+          "description": "Leave a trail of fire behind you for 3 seconds. Dealing damage equal to 10% of the mob’s current health every second for 3 seconds."
         },
         "silentExecution": {
           "tier": "LEGENDARY",
@@ -1598,8 +1598,8 @@
             "CDR": 1
           },
           "description": "Excess healing on allies is stored, up to {{heal}}. When an ally falls below {{heal;%}} health, consume the store to heal them ({{ticks}} cooldown).",
-          "storedHealingCap": 1000,
-          "allyHealthThresholdPercent": 35,
+          "storedHealingCap": 1200,
+          "allyHealthThresholdPercent": 25,
           "dumpCooldownSeconds": 5
         },
         "aspire": {
@@ -1616,6 +1616,73 @@
           "description": "For every {{energy}} max energy, increase your energy per second by {{energy}}.",
           "maxEnergyRequirement": 100,
           "energyPerSecondPerStack": 1.5
+        },
+        "merciful": {
+          "tier": "LEGENDARY",
+          "name": "Merciful",
+          "slots": [
+            "BRACELET"
+          ],
+          "attributes": {
+            "HEALTH": 20,
+            "CDR": 2
+          },
+          "description": "Convert {{heal;%}} of your healing into shields for allies, max {{heal;%}} of their maximum health. Shield lasts {{ticks}}. {{ticks}} cooldown.",
+          "healingToShieldPercent": 8,
+          "maxShieldPercentOfMaxHealth": 4,
+          "shieldDurationSeconds": 6,
+          "cooldownSeconds": 6
+        },
+        "gravity": {
+          "tier": "LEGENDARY",
+          "name": "Gravity",
+          "slots": [
+            "GLOVES"
+          ],
+          "attributes": {
+            "HEALTH": 10,
+            "KB_RES": 3
+          },
+          "description": "Killing an ELITE or higher (excluding bosses) enemy pulls nearby mobs within {{blocks}} towards its death location. {{ticks}} cooldown.",
+          "radius": 8,
+          "cooldownSeconds": 6
+        },
+        "synergy": {
+          "tier": "LEGENDARY",
+          "name": "Synergy",
+          "slots": [
+            "BRACELET"
+          ],
+          "attributes": {
+            "HEALTH": 40
+          },
+          "description": "Increase the effectiveness of your healing/damage over time effects by {{blue;%}}.",
+          "dotEffectivenessIncreasePercent": 40
+        },
+        "compression": {
+          "tier": "SOVEREIGN",
+          "name": "Compression",
+          "slots": [
+            "TOME"
+          ],
+          "attributes": {},
+          "description": "Reduce splash or ability range of your primary attack by {{blocks;%}} but the hit is guaranteed to crit.",
+          "primaryRangeReductionPercent": 80
+        },
+        "tainted": {
+          "tier": "SOVEREIGN",
+          "name": "Tainted",
+          "slots": [
+            "TOME"
+          ],
+          "attributes": {
+            "HEALTH": 50,
+            "REGEN": 15
+          },
+          "description": "Healing an ally transfers {{heal;%}} of your max health to them (up to {{heal;%}} per individual ally). The transferred health lasts {{ticks}}. This effect cannot kill you.",
+          "transferPercent": 2,
+          "maxPerAllyPercent": 40,
+          "durationSeconds": 15
         }
       }
     }

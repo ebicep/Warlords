@@ -5,8 +5,7 @@ import com.ebicep.warlords.game.option.pve.wavedefense.WaveDefenseRewards;
 import com.ebicep.warlords.pve.Spendable;
 import com.ebicep.warlords.pve.newitems.NewItem;
 import com.ebicep.warlords.pve.newitems.NewItemsManager;
-import com.ebicep.warlords.pve.newitems.NewItemsUtils;
-import com.ebicep.warlords.pve.newitems.tiers.NewItemTier;
+import com.ebicep.warlords.pve.newitems.SpendableRandomNewItem;
 import com.ebicep.warlords.pve.rewards.AbstractReward;
 import com.ebicep.warlords.util.java.Pair;
 import com.ebicep.warlords.util.java.RandomCollection;
@@ -14,16 +13,18 @@ import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
 import net.kyori.adventure.text.format.TextColor;
 
+import javax.annotation.Nullable;
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Map;
 
 public class PouchReward extends AbstractReward {
 
-    private static final RandomCollection<NewItemTier> ASCENDANT_ITEM_TIER_POOL = new RandomCollection<NewItemTier>()
-            .add(80, NewItemTier.EPIC)
-            .add(10, NewItemTier.SOVEREIGN)
-            .add(10, NewItemTier.LEGENDARY);
+    private static final RandomCollection<SpendableRandomNewItem> ASCENDANT_ITEM_POOL = new RandomCollection<SpendableRandomNewItem>()
+            .add(80, SpendableRandomNewItem.EPIC)
+            .add(10, SpendableRandomNewItem.SOVEREIGN)
+            .add(10, SpendableRandomNewItem.LEGENDARY);
 
     private PouchType pouchType;
     private NewItem newItem;
@@ -34,9 +35,15 @@ public class PouchReward extends AbstractReward {
     public PouchReward(LinkedHashMap<Spendable, Long> rewards, PouchType pouchType) {
         super(rewards, pouchType.name);
         this.pouchType = pouchType;
-        if (pouchType == PouchType.ASCENDANT) {
-            this.newItem = NewItemsUtils.generateRandomItem(ASCENDANT_ITEM_TIER_POOL.next());
+    }
+
+    @Nullable
+    public static SpendableRandomNewItem addRolledAscendantItem(Map<Spendable, Long> rewards) {
+        SpendableRandomNewItem item = ASCENDANT_ITEM_POOL.next();
+        if (item != null) {
+            rewards.merge(item, 1L, Long::sum);
         }
+        return item;
     }
 
     @Override
