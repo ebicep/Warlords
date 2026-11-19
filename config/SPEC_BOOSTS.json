@@ -871,7 +871,7 @@
         "name": "Energy Oversurge",
         "description": "Reduce the cooldown of {{aqua:Energy Seer}} by {{ticks;%}}, increase the energy granted by {{energy}} and the energy loss by {{energy;%}}.",
         "energySeerCooldownReductionPercent": 35,
-        "energySeerAdditionalEnergyGrant": 70,
+        "energySeerAdditionalEnergyGrant": 75,
         "energyLostIncreasePercent": 100
       },
       "consecratedBeacon": {
