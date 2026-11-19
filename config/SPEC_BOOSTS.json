@@ -509,7 +509,7 @@
         "maxTravelBlocks": 20,
         "velocityIncreasePercentage": 100,
         "splashRadiusBlocks": 4,
-        "chainCooldownReductionIncrease": 0.5,
+        "chainCooldownReductionIncrease": 0.6,
         "totemPlaceRangeHorizontal": 10,
         "totemPlaceRangeVertical": 6,
         "verticalCheckPlaceLimit": 4
