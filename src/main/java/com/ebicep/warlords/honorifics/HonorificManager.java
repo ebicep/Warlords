@@ -362,8 +362,11 @@ public final class HonorificManager {
         refreshAndSave(uuid);
     }
 
+    /**
+     * Always tracked since the streak also backs the Anomaly menu leaderboard, honorific unlocks are only refreshed when enabled
+     */
     public static void recordAnomalyCacheUnlock(DatabasePlayer databasePlayer, boolean legendaryOrSovereign) {
-        if (!honorificsEnabled() || databasePlayer == null) {
+        if (databasePlayer == null) {
             return;
         }
         UUID uuid = databasePlayer.getUuid();
@@ -371,7 +374,11 @@ public final class HonorificManager {
             return;
         }
         if (DatabaseManager.getPlayer(uuid).getHonorifics().recordAnomalyCacheUnlock(legendaryOrSovereign)) {
-            refreshAndSave(uuid);
+            if (honorificsEnabled()) {
+                refreshAndSave(uuid);
+            } else {
+                queueSave(uuid);
+            }
         }
     }
 
