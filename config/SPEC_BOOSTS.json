@@ -745,9 +745,9 @@
         "name": "Stackulator MAX",
         "description": "Increase the damage of {{dark_red:PHEX}} by {{damage}}, but reduce its damaging ticks by {{blue:1}}. {{aqua:Soulfire Beam}} damage scale is now {{damage;%}} / {{damage;%}} / {{damage;%}}.",
         "poisonousHexTickDamageIncrease": 20,
-        "soulfireBeamDamageIncrease50Percent": 40,
-        "soulfireBeamDamageIncrease100Percent": 70,
-        "soulfireBeamDamageIncrease150Percent": 130
+        "soulfireBeamDamageIncrease50Percent": 45,
+        "soulfireBeamDamageIncrease100Percent": 75,
+        "soulfireBeamDamageIncrease150Percent": 135
       },
       "houseOfLife": {
         "difficulty": 1,
