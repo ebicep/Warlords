@@ -543,7 +543,7 @@
       "acceleratedSpike": {
         "difficulty": 2,
         "name": "Dirt Torpedo",
-        "description": "Gain {{energy}} max energy. Increase the speed of {{aqua:Earthen Spike}} by {{speed;%}} and cast range by {{blocks}} blocks. Send a torpedo through the ground at an enemy. Enemies the torpedo passes under, within {{blocks}} are hit for half the damage and knocked sideways. The targeted enemy takes full damage and stronger knockback along the torpedo's path.",
+        "description": "Gain {{energy}} max energy. Increase the speed of {{aqua:Earthen Spike}} by {{speed;%}} and cast range by {{blocks}}. Send a torpedo through the ground at an enemy. Enemies the torpedo passes under, within {{blocks}} are hit for half the damage and knocked sideways. The targeted enemy takes full damage and stronger knockback along the torpedo's path.",
         "maxEnergyIncrease": 50,
         "travelSpeedIncreasePercent": 50,
         "castRangeIncrease": 10,
