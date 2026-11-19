@@ -628,7 +628,7 @@
         "description": "Gain {{energy}} max energy. Remove the energy cost of {{aqua:Soul Switch}}. {{aqua:Order of Eviscerate}} grants an additional {{speed;%}} speed and {{energy}} energy per second for its duration.",
         "maxEnergyIncrease": 50,
         "orderOfEviscerateSpeedIncreasePercent": 10,
-        "orderOfEviscerateEnergyPerSecond": 8
+        "orderOfEviscerateEnergyPerSecond": 9
       },
       "haze": {
         "difficulty": 4,
