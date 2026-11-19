@@ -175,8 +175,9 @@
       "downpour": {
         "difficulty": 2,
         "name": "Downpour",
-        "description": "Increase the speed of {{aqua:Water Bolt}} by {{speed;%}} and remove the optimal range. Increase the knockback of {{aqua:Water Breath}}. Increase the number of charges of {{aqua:Healing Rain}} to {{blue}} and guarantee critical hits, but reduce the cooldown by {{ticks;%}}, the duration by {{ticks;%}}, and the radius by {{blocks}}.",
+        "description": "Increase the speed of {{aqua:Water Bolt}} by {{speed;%}} and remove the optimal range. Increase the hitbox of {{aqua:Water Bolt}} by {{blocks}}. Increase the knockback of {{aqua:Water Breath}}. Increase the number of charges of {{aqua:Healing Rain}} to {{blue}} and guarantee critical hits, but reduce the cooldown by {{ticks;%}}, the duration by {{ticks;%}}, and the radius by {{blocks}}.",
         "waterBoltSpeedIncreasePercent": 100,
+        "waterBoltHitboxIncreaseBlocks": 0.25,
         "waterBreathKnockbackIncrease": 0.15,
         "healingRainMaxCharges": 3,
         "healingRainCooldownReductionPercent": 60,
