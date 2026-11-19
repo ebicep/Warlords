@@ -151,7 +151,7 @@
         "name": "Syringe",
         "description": "Reduce the healing of {{aqua:Water Bolt}} by {{heal;%}}, but increase the direct hit multiplier by {{heal;%}}. {{aqua:Water Bolt}} direct hits grant hit allies and the user {{speed;%}} speed for {{ticks}}.",
         "waterBoltStatsDecreasePercent": 20,
-        "waterBoltDirectHitHealingIncreasePercent": 100,
+        "waterBoltDirectHitHealingIncreasePercent": 125,
         "waterBoltDirectHitSpeedIncreasePercent": 30,
         "waterBoltDirectHitDurationTicks": 30
       },
