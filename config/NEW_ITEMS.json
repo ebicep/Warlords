@@ -1645,7 +1645,7 @@
           },
           "description": "Killing an ELITE or higher (excluding bosses) enemy pulls nearby mobs within {{blocks}} towards its death location. {{ticks}} cooldown.",
           "radius": 8,
-          "cooldownSeconds": 6
+          "cooldownSeconds": 3
         },
         "synergy": {
           "tier": "LEGENDARY",

@@ -13,7 +13,7 @@ plugins {
 }
 
 group = "com.ebicep"
-version = "Drowned Realms"
+version = "Unveiled Secrets"
 description = "Warlords"
 
 val archiveVersionSuffix: String
