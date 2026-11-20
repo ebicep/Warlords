@@ -53,9 +53,10 @@
       "infernoExplosion": {
         "difficulty": 4,
         "name": "Immolation Inferno",
-        "description": "Shorten the duration of {{aqua:Inferno}} by {{ticks}} and gain {{speed;%}} speed. Upon {{aqua:Inferno}} ending, lose {{damage;%}} of your max health (cannot kill you), deal that health as damage within {{blue}} blocks, and gain {{damageReduction;%}} damage reduction for {{ticks}}.",
+        "description": "Shorten the duration of {{aqua:Inferno}} by {{ticks}} and gain {{speed;%}} speed and {{damageReduction;%}} knockback resistance. Upon {{aqua:Inferno}} ending, lose {{damage;%}} of your max health (cannot kill you), deal that health as damage within {{blue}} blocks, and gain {{damageReduction;%}} damage reduction for {{ticks}}.",
         "infernoDurationReductionTicks": 220,
         "infernoSpeedPercent": 35,
+        "infernoKnockbackResistancePercent": 35,
         "healthLossPercent": 25,
         "explosionRadius": 7,
         "damageReductionPercent": 99,
@@ -150,7 +151,7 @@
         "name": "Syringe",
         "description": "Reduce the healing of {{aqua:Water Bolt}} by {{heal;%}}, but increase the direct hit multiplier by {{heal;%}}. {{aqua:Water Bolt}} direct hits grant hit allies and the user {{speed;%}} speed for {{ticks}}.",
         "waterBoltStatsDecreasePercent": 20,
-        "waterBoltDirectHitHealingIncreasePercent": 100,
+        "waterBoltDirectHitHealingIncreasePercent": 125,
         "waterBoltDirectHitSpeedIncreasePercent": 30,
         "waterBoltDirectHitDurationTicks": 30
       },
@@ -174,8 +175,9 @@
       "downpour": {
         "difficulty": 2,
         "name": "Downpour",
-        "description": "Increase the speed of {{aqua:Water Bolt}} by {{speed;%}} and remove the optimal range. Increase the knockback of {{aqua:Water Breath}}. Increase the number of charges of {{aqua:Healing Rain}} to {{blue}} and guarantee critical hits, but reduce the cooldown by {{ticks;%}}, the duration by {{ticks;%}}, and the radius by {{blocks}}.",
+        "description": "Increase the speed of {{aqua:Water Bolt}} by {{speed;%}} and remove the optimal range. Increase the hitbox of {{aqua:Water Bolt}} by {{blocks}}. Increase the knockback of {{aqua:Water Breath}}. Increase the number of charges of {{aqua:Healing Rain}} to {{blue}} and guarantee critical hits, but reduce the cooldown by {{ticks;%}}, the duration by {{ticks;%}}, and the radius by {{blocks}}.",
         "waterBoltSpeedIncreasePercent": 100,
+        "waterBoltHitboxIncreaseBlocks": 0.25,
         "waterBreathKnockbackIncrease": 0.15,
         "healingRainMaxCharges": 3,
         "healingRainCooldownReductionPercent": 60,
@@ -400,9 +402,10 @@
       "sovereignSolitude": {
         "difficulty": 4,
         "name": "Solo Support",
-        "description": "A Marked ally gains {{speed;%}} movement speed during the Mark. The marked ally always receives {{aqua:Crusader's Strike}} energy at any range until a new ally is Marked; the energy link persists after the Mark expires. Gain {{heal}} max health while carrying the flag. Reduce the cooldown of {{aqua:Holy Radiance}} by {{ticks}}.",
+        "description": "A Marked ally gains {{speed;%}} movement speed during the Mark. The marked ally always receives {{aqua:Crusader's Strike}} energy at any range until a new ally is Marked; the energy link persists after the Mark expires. Gain {{heal}} max health while carrying the flag. Reduce the cooldown of {{aqua:Holy Radiance}} by {{ticks}}. Increase the duration of {{aqua:Holy Radiance}} marks by {{ticks}}.",
         "markedAllySpeedPercent": 40,
         "radianceCooldownReductionTicks": 80,
+        "radianceMarkDurationIncreaseSeconds": 2,
         "flagHealthIncrease": 1000
       },
       "rallyingPresence": {
@@ -506,7 +509,7 @@
         "maxTravelBlocks": 20,
         "velocityIncreasePercentage": 100,
         "splashRadiusBlocks": 4,
-        "chainCooldownReductionIncrease": 0.5,
+        "chainCooldownReductionIncrease": 0.6,
         "totemPlaceRangeHorizontal": 10,
         "totemPlaceRangeVertical": 6,
         "verticalCheckPlaceLimit": 4
@@ -543,7 +546,7 @@
       "acceleratedSpike": {
         "difficulty": 2,
         "name": "Dirt Torpedo",
-        "description": "Gain {{energy}} max energy. Increase the speed of {{aqua:Earthen Spike}} by {{speed;%}} and cast range by {{blocks}} blocks. Send a torpedo through the ground at an enemy. Enemies the torpedo passes under, within {{blocks}} are hit for half the damage and knocked sideways. The targeted enemy takes full damage and stronger knockback along the torpedo's path.",
+        "description": "Gain {{energy}} max energy. Increase the speed of {{aqua:Earthen Spike}} by {{speed;%}} and cast range by {{blocks}}. Send a torpedo through the ground at an enemy. Enemies the torpedo passes under, within {{blocks}} are hit for half the damage and knocked sideways. The targeted enemy takes full damage and stronger knockback along the torpedo's path.",
         "maxEnergyIncrease": 50,
         "travelSpeedIncreasePercent": 50,
         "castRangeIncrease": 10,
@@ -575,10 +578,11 @@
       "augmentedChains": {
         "difficulty": 4,
         "name": "Augmented Chains",
-        "description": "{{aqua:Earthen Spike}} reduces the cooldown of {{aqua:Chain Heal}} by {{ticks}} upon hitting a target. Increase the healing of {{aqua:Chain Heal}} by {{heal;%}} and reduce the energy cost by {{energy}}. Reduce the damage of {{aqua:Boulder}} by {{damage;%}}.",
+        "description": "{{aqua:Earthen Spike}} reduces the cooldown of {{aqua:Chain Heal}} by {{ticks}} upon hitting a target. Increase the healing of {{aqua:Chain Heal}} by {{heal;%}} and reduce the energy cost by {{energy}}. Increase the chain distance of {{aqua:Chain Heal}} by {{blocks}}. Reduce the damage of {{aqua:Boulder}} by {{damage;%}}.",
         "chainHealCooldownReductionSeconds": 2,
         "chainHealHealingIncreasePercent": 20,
         "chainHealEnergyCostDecrease": 25,
+        "chainHealBounceRangeIncrease": 5,
         "boulderDamageDecreasePercent": 10
       },
       "totemicBoon": {
@@ -628,7 +632,7 @@
         "description": "Gain {{energy}} max energy. Remove the energy cost of {{aqua:Soul Switch}}. {{aqua:Order of Eviscerate}} grants an additional {{speed;%}} speed and {{energy}} energy per second for its duration.",
         "maxEnergyIncrease": 50,
         "orderOfEviscerateSpeedIncreasePercent": 10,
-        "orderOfEviscerateEnergyPerSecond": 8
+        "orderOfEviscerateEnergyPerSecond": 9
       },
       "haze": {
         "difficulty": 4,
@@ -741,9 +745,9 @@
         "name": "Stackulator MAX",
         "description": "Increase the damage of {{dark_red:PHEX}} by {{damage}}, but reduce its damaging ticks by {{blue:1}}. {{aqua:Soulfire Beam}} damage scale is now {{damage;%}} / {{damage;%}} / {{damage;%}}.",
         "poisonousHexTickDamageIncrease": 20,
-        "soulfireBeamDamageIncrease50Percent": 40,
-        "soulfireBeamDamageIncrease100Percent": 70,
-        "soulfireBeamDamageIncrease150Percent": 130
+        "soulfireBeamDamageIncrease50Percent": 45,
+        "soulfireBeamDamageIncrease100Percent": 75,
+        "soulfireBeamDamageIncrease150Percent": 135
       },
       "houseOfLife": {
         "difficulty": 1,
@@ -759,7 +763,7 @@
         "name": "Contagion",
         "description": "Gain {{energy}} energy per melee hit. Increase the damage reduction of {{aqua:Contagious Facade}} by {{damageReduction;%}} and the {{dark_red:PHEX}} stacks granted by {{blue}}, and its activation effect is activated on use and does not override the non-activation effect.",
         "ephIncrease": 2,
-        "facadeResistanceIncreasePercent": 15,
+        "facadeResistanceIncreasePercent": 10,
         "facadePhexStacksIncrease": 1
       },
       "witheringPlague": {
@@ -777,7 +781,7 @@
         "ascendDurationTicks": 10,
         "airStrikeDurationTicks": 60,
         "flySpeed": 0.03,
-        "soulfireBeamDamageReductionPercent": 10,
+        "soulfireBeamDamageReductionPercent": 15,
         "soulfireBeamRangeDecrease": 10,
         "soulfireBeamHitboxIncrease": 0.4,
         "maxBeamCastsNormal": 2,
@@ -817,7 +821,7 @@
         "name": "Heavy Shields",
         "description": "{{aqua:Fortifying Hex}} deals knockback to enemies. {{aqua:Guardian Beam}} slows all enemies hit by {{speed;%}} for {{ticks}}.",
         "guardianBeamSlowness": 80,
-        "guardianBeamSlownessDurationTicks": 30,
+        "guardianBeamSlownessDurationTicks": 33,
         "fortifyingHexKnockback": 0.3,
         "fortifyingHexKnockbackY": 0.1
       },
@@ -826,7 +830,7 @@
         "name": "Divine Shields",
         "description": "Increase the shield health granted by {{aqua:Guardian Beam}} by {{damageReduction;%}} and its duration by {{ticks}}.",
         "guardianBeamShieldIncreasePercent": 35,
-        "guardianBeamShieldDurationIncreaseTicks": 30
+        "guardianBeamShieldDurationIncreaseTicks": 40
       },
       "pactOfProtection": {
         "difficulty": 4,
@@ -854,7 +858,7 @@
         "difficulty": 2,
         "name": "Unmerciful Hex",
         "description": "Increase the pierce against enemies of {{aqua:Merciful Hex}} to infinity and the damage by {{damage;%}}, but it no longer grants the second ally {{dark_green:MHEX}} stacks. {{aqua:Ray of Light}} no longer cleanses allies.",
-        "mercifulHexDamageIncrease": 10
+        "mercifulHexDamageIncrease": 7.5
       },
       "radiantLight": {
         "difficulty": 1,
@@ -867,14 +871,14 @@
         "name": "Energy Oversurge",
         "description": "Reduce the cooldown of {{aqua:Energy Seer}} by {{ticks;%}}, increase the energy granted by {{energy}} and the energy loss by {{energy;%}}.",
         "energySeerCooldownReductionPercent": 35,
-        "energySeerAdditionalEnergyGrant": 70,
+        "energySeerAdditionalEnergyGrant": 75,
         "energyLostIncreasePercent": 100
       },
       "consecratedBeacon": {
         "difficulty": 2,
         "name": "Consecrated Beacon",
         "description": "Reduce the energy cost of {{aqua:Sanctified Beacon}} by {{energy}}, the cooldown by {{ticks;%}}, and increase the {{dark_green:MHEX}} stacks granted by {{blue}}. {{aqua:Sanctified Beacon}} now has {{blue}} charges",
-        "sanctifiedBeaconEnergyCostDecrease": 10,
+        "sanctifiedBeaconEnergyCostDecrease": 15,
         "sanctifiedBeaconCooldownReductionPercent": 50,
         "sanctifiedBeaconAdditionalHexStacks": 1,
         "maxAbilityCharges": 2
