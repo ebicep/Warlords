@@ -66,7 +66,7 @@ public class EchoOfRuin extends BaseSet {
                     if (event.getWarlordsEntity().getTeam().equals(warlordsPlayer.getTeam())) {
                         return;
                     }
-                    if (stacks >= 300) {
+                    if (stacks >= 250) {
                         return;
                     }
                     stacks++;
@@ -90,7 +90,7 @@ public class EchoOfRuin extends BaseSet {
             ).addModifier(
                     Modifier.MODIFY_INCOMING_DAMAGE_AFTER_INTERVENE,
                     (event, currentDamageValue) -> {
-                        currentDamageValue.addModifier(FloatModifiable.ModifierType.MULTIPLICATIVE_MULTIPLIER, "Echo of Ruin", 1 + (damagePerKillPercent * stacks / 100f));
+                        currentDamageValue.addModifier(FloatModifiable.ModifierType.MULTIPLICATIVE_MULTIPLIER, "Echo of Ruin", 1 + (damagePerKillPercent * (1.5f * stacks) / 100f));
                     }
             ));
         }

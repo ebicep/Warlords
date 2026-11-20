@@ -36,8 +36,8 @@ public class LegendaryOvergrowth extends AbstractLegendaryWeapon implements Libr
     public static final int LINK_RANGE = 24;
     public static final int RELINK_COOLDOWN_SECONDS = 40;
 
-    public static final float DAMAGE_BONUS_PER_150_SHIELD = 5f;
-    public static final float DAMAGE_BONUS_PER_150_SHIELD_PER_UPGRADE = 1f;
+    public static final float DAMAGE_BONUS_PER_150_SHIELD = 4f;
+    public static final float DAMAGE_BONUS_PER_150_SHIELD_PER_UPGRADE = 0.3f;
 
     public static final float SHIELD_FROM_DAMAGE_PERCENT = 2.5f;
     public static final float SHIELD_FROM_DAMAGE_PERCENT_PER_UPGRADE = .5f;

@@ -53,57 +53,68 @@ public class JudgementStrike extends AbstractStrike<JudgementStrike, JudgementSt
 
     @Override
     protected boolean onHit(@Nonnull WarlordsEntity wp, @Nonnull WarlordsEntity nearPlayer) {
-        for (int i = 0; i < (pveMasterUpgrade2 ? 2 : 1); i++) {
-            if (nearPlayer.isDead()) {
-                continue;
-            }
+        attacksDone++;
+        float critChance = damageValues.strikeDamage.getCritChanceValue();
+        if (attacksDone == strikeCritInterval) {
+            attacksDone = 0;
+            critChance = 100;
+        }
 
-            attacksDone++;
-            float critChance = damageValues.strikeDamage.getCritChanceValue();
-            if (attacksDone == strikeCritInterval) {
-                attacksDone = 0;
-                critChance = 100;
+        float damageMultiplier = convertToMultiplicationDecimal(
+                (nearPlayer.getCurrentHealth() / nearPlayer.getMaxBaseHealth()) < damageIncreaseHealthThreshold / 100f
+                ? damageIncrease : 0
+        );
+
+        nearPlayer.addInstance(InstanceBuilder
+                .damage()
+                .ability(this)
+                .source(wp)
+                .min(damageValues.strikeDamage.getMinValue() * damageMultiplier)
+                .max(damageValues.strikeDamage.getMaxValue() * damageMultiplier)
+                .critChance(critChance)
+                .critMultiplier(damageValues.strikeDamage.getCritMultiplierValue())
+        ).ifPresent(finalEvent -> {
+            if (finalEvent.isCrit()) {
+                wp.addSpeedModifier(wp, "Judgement Speed", speedOnCrit, speedOnCritDuration * 20);
             }
-            float damageMultiplier = convertToMultiplicationDecimal(
-                    (nearPlayer.getCurrentHealth() / nearPlayer.getMaxBaseHealth()) < damageIncreaseHealthThreshold / 100f
-                    ? damageIncrease : 0
-            );
-            nearPlayer.addInstance(InstanceBuilder
-                    .damage()
-                    .ability(this)
-                    .source(wp)
-                    .min(damageValues.strikeDamage.getMinValue() * damageMultiplier)
-                    .max(damageValues.strikeDamage.getMaxValue() * damageMultiplier)
-                    .critChance(critChance)
-                    .critMultiplier(damageValues.strikeDamage.getCritMultiplierValue())
-            ).ifPresent(finalEvent -> {
-                if (finalEvent.isCrit()) {
-                    wp.addSpeedModifier(wp, "Judgement Speed", speedOnCrit, speedOnCritDuration * 20);
+            if (pveMasterUpgrade2) {
+                attacksDone++;
+                nearPlayer.addInstance(InstanceBuilder
+                        .damage()
+                        .ability(this)
+                        .source(wp)
+                        .min((damageValues.strikeDamage.getMinValue() * damageMultiplier) * 0.5f)
+                        .max((damageValues.strikeDamage.getMaxValue() * damageMultiplier) * 0.5f)
+                        .critChance(damageValues.strikeDamage.getCritChanceValue())
+                        .critMultiplier(damageValues.strikeDamage.getCritMultiplierValue())
+                );
+            }
+            if (healingValues.strikeHealing.getValue() != 0 && finalEvent.isDead()) {
+                wp.addInstance(InstanceBuilder
+                        .healing()
+                        .ability(this)
+                        .source(wp)
+                        .value(healingValues.strikeHealing)
+                );
+            }
+            for (AbstractAbility ability : wp.getAbilitiesImplementing(OrderOfEviscerateLike.class)) {
+                if (wp.isInPve()) {
+                    continue;
                 }
-                if (healingValues.strikeHealing.getValue() != 0 && finalEvent.isDead()) {
-                    wp.addInstance(InstanceBuilder
-                            .healing()
+                ability.subtractCurrentCooldown(orderCooldownReduction);
+            }
+            if (finalEvent.getWarlordsEntity().getCooldownManager().hasCooldown(MirrorBlossom.class)) {
+                additionalHit(2, wp, finalEvent.getWarlordsEntity(), enemy -> {
+                    enemy.addInstance(InstanceBuilder
+                            .damage()
                             .ability(this)
                             .source(wp)
-                            .value(healingValues.strikeHealing)
+                            .value(damageValues.strikeDamage)
                     );
-                }
-                for (AbstractAbility ability : wp.getAbilitiesImplementing(OrderOfEviscerateLike.class)) {
-                    ability.subtractCurrentCooldown(orderCooldownReduction);
-                }
+                });
+            }
+        });
 
-                if (finalEvent.getWarlordsEntity().getCooldownManager().hasCooldown(MirrorBlossom.class)) {
-                    additionalHit(2, wp, finalEvent.getWarlordsEntity(), enemy -> {
-                        enemy.addInstance(InstanceBuilder
-                                .damage()
-                                .ability(this)
-                                .source(wp)
-                                .value(damageValues.strikeDamage)
-                        );
-                    });
-                }
-            });
-        }
         return true;
     }
 
