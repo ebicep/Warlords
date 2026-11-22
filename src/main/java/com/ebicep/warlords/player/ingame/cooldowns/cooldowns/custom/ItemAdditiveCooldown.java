@@ -60,7 +60,7 @@ public class ItemAdditiveCooldown extends PermanentCooldown<AbstractItem> {
                 false
         );
         this.addModifier(Modifier.MODIFY_OUTGOING_HEALING, (event, currentHealValue) -> {
-            currentHealValue.addModifier(FloatModifiable.ModifierType.MULTIPLICATIVE_MULTIPLIER, name, healMultiplier);
+            currentHealValue.addModifier(FloatModifiable.ModifierType.ADDITIVE_MULTIPLIER, name, healMultiplier);
                 }
         );
         this.addModifier(Modifier.MODIFY_OUTGOING_CRIT_CHANCE, (event, currentCritChance) -> {
@@ -85,7 +85,7 @@ public class ItemAdditiveCooldown extends PermanentCooldown<AbstractItem> {
                         }
                         currentDamageValue.addModifier(FloatModifiable.ModifierType.MULTIPLICATIVE_MULTIPLIER, name, (damageMultiplier + aspectModifier.damageMultiplier - 1));
                     } else {
-                        currentDamageValue.addModifier(FloatModifiable.ModifierType.MULTIPLICATIVE_MULTIPLIER, name, damageMultiplier);
+                        currentDamageValue.addModifier(FloatModifiable.ModifierType.ADDITIVE_MULTIPLIER, name, damageMultiplier);
                     }
                 }
         );
