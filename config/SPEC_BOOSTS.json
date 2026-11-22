@@ -149,9 +149,10 @@
       "syringe": {
         "difficulty": 4,
         "name": "Syringe",
-        "description": "Reduce the healing of {{aqua:Water Bolt}} by {{heal;%}}, but increase the direct hit multiplier by {{heal;%}}. {{aqua:Water Bolt}} direct hits grant hit allies and the user {{speed;%}} speed for {{ticks}}.",
+        "description": "Reduce the healing of {{aqua:Water Bolt}} by {{heal;%}}, but increase direct hit healing by {{heal;%}} and direct hit damage by {{damage;%}}. {{aqua:Water Bolt}} direct hits grant hit allies and the user {{speed;%}} speed for {{ticks}}.",
         "waterBoltStatsDecreasePercent": 20,
         "waterBoltDirectHitHealingIncreasePercent": 125,
+        "waterBoltDirectHitDamageIncreasePercent": 100,
         "waterBoltDirectHitSpeedIncreasePercent": 30,
         "waterBoltDirectHitDurationTicks": 30
       },
