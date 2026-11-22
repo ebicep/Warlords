@@ -33,14 +33,6 @@ import java.util.List;
 
 public class ConsecrateAvenger extends AbstractConsecrate implements Damages<ConsecrateAvenger.DamageValues> {
 
-    private static final int SANCTIFY_PULSE_TICKS = 10;
-    private static final float SANCTIFY_RADIUS_PER_PULSE = 0.2f;
-    private static final float SANCTIFY_MAX_RADIUS = 20f;
-    private static final float SANCTIFY_CRIT_PER_PULSE = 2f;
-    private static final float SANCTIFY_SPEED_PER_ENEMY = 1.5f;
-    private static final float SANCTIFY_STRIKE_PER_ENEMY = 3f;
-    private static final float SANCTIFY_BUFF_CAP = 30f;
-
     private final DamageValues damageValues = new DamageValues();
     private int sanctifyCastId;
 
@@ -147,9 +139,10 @@ public class ConsecrateAvenger extends AbstractConsecrate implements Damages<Con
                     if (ticksElapsed % 5 == 0) {
                         circleEffect.playEffects();
                     }
-                    if (ticksElapsed % SANCTIFY_PULSE_TICKS != 0) {
+                    if (ticksElapsed % 10 != 0) {
                         return;
                     }
+                    int[] enemiesHit = {0};
                     PlayerFilter.entitiesAroundInGame(wp.getGame(), location, radius[0], 6, radius[0])
                                 .aliveEnemiesOf(wp)
                                 .forEach(enemy -> enemy.addInstance(InstanceBuilder
@@ -158,17 +151,20 @@ public class ConsecrateAvenger extends AbstractConsecrate implements Damages<Con
                                         .source(wp)
                                         .value(damage)
                                         .flags(InstanceFlags.DOT)
-                                ).ifPresent(event -> getAbilityStats().addPlayersHit()));
-                    radius[0] = Math.min(SANCTIFY_MAX_RADIUS, radius[0] + SANCTIFY_RADIUS_PER_PULSE);
+                                ).ifPresent(event -> {
+                                    getAbilityStats().addPlayersHit();
+                                    enemiesHit[0]++;
+                                }));
+                    radius[0] = Math.min(20, radius[0] + enemiesHit[0] * 0.2f);
                     circleEffect.setRadius(radius[0]);
-                    critChance.setModifier(critChance.getModifier() + SANCTIFY_CRIT_PER_PULSE);
-                    critMultiplier.setModifier(critMultiplier.getModifier() + SANCTIFY_CRIT_PER_PULSE);
+                    critChance.setModifier(critChance.getModifier() + 2);
+                    critMultiplier.setModifier(critMultiplier.getModifier() + 2);
                     int enemies = (int) PlayerFilter.entitiesAroundInGame(wp.getGame(), location, radius[0], 6, radius[0])
                                                     .aliveEnemiesOf(wp)
                                                     .stream()
                                                     .count();
-                    speed.setModifier(Math.min(SANCTIFY_BUFF_CAP, enemies * SANCTIFY_SPEED_PER_ENEMY));
-                    strikeBonus[0] = Math.min(SANCTIFY_BUFF_CAP, enemies * SANCTIFY_STRIKE_PER_ENEMY);
+                    speed.setModifier(Math.min(30, enemies * 1.5f));
+                    strikeBonus[0] = Math.min(30, enemies * 3);
                 })
         ).addModifier(Modifier.MODIFY_OUTGOING_DAMAGE_BEFORE_INTERVENE, (event, currentDamageValue) -> {
             if (!event.getCause().equals(getStrikeName())) {
