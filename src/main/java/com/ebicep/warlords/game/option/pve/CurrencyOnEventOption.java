@@ -207,7 +207,7 @@ public class CurrencyOnEventOption implements Option, Listener {
             if (scaleWithPlayerCount && playerCount > 2) {
                 currency = Math.max(100, currencyOnKill - (20 * playerCount));
             }
-            player.addCurrency(currency);
+            player.addCurrency(currency, false, event);
         }
         if (currencyScoreboardHandler != null) {
             currencyScoreboardHandler.markChanged();

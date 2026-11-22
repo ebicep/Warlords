@@ -42,6 +42,7 @@ public class Shield implements Listener {
     private String name;
     private float maxShieldHealth;
     private float shieldHealth;
+    private boolean clampHealthAtZero;
     @Nullable
     private Runnable onHealthChanged;
 
@@ -71,8 +72,18 @@ public class Shield implements Listener {
         return shieldHealth;
     }
 
+    public void setClampHealthAtZero(boolean clampHealthAtZero) {
+        this.clampHealthAtZero = clampHealthAtZero;
+        if (clampHealthAtZero && shieldHealth < 0) {
+            setShieldHealth(0);
+        }
+    }
+
     public void setShieldHealth(float shieldHealth) {
         int before = (int) this.shieldHealth;
+        if (clampHealthAtZero && shieldHealth < 0) {
+            shieldHealth = 0;
+        }
         this.shieldHealth = shieldHealth;
         notifyIfDisplayChanged(before);
     }
@@ -94,6 +105,9 @@ public class Shield implements Listener {
         shieldHealth += damage;
         if (shieldHealth > maxShieldHealth) {
             shieldHealth = maxShieldHealth;
+        }
+        if (clampHealthAtZero && shieldHealth < 0) {
+            shieldHealth = 0;
         }
         notifyIfDisplayChanged(before);
     }

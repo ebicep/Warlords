@@ -4,6 +4,8 @@ import com.ebicep.warlords.player.ingame.WarlordsPlayer;
 import com.ebicep.warlords.player.ingame.cooldowns.CooldownTypes;
 import com.ebicep.warlords.player.ingame.cooldowns.cooldowns.PermanentCooldown;
 import com.ebicep.warlords.player.ingame.instances.type.Modifier;
+import com.ebicep.warlords.player.ingame.motionsystem.KnockbackImmunity;
+import com.ebicep.warlords.player.ingame.motionsystem.MotionModifierBuilder;
 import com.ebicep.warlords.pve.newitems.setbonus.BaseSet;
 import com.ebicep.warlords.pve.newitems.setbonus.SetBonus;
 import com.ebicep.warlords.util.warlords.modifiablevalues.FloatModifiable;
@@ -42,7 +44,16 @@ public class Stonelash extends BaseSet {
         @Override
         public void apply(WarlordsPlayer warlordsPlayer) {
             float multiplier = 1 - energyGainPenaltyPercent / 100f;
-            warlordsPlayer.getKnockback().addBaseModifier(knockbackImmune ? 100 : 0);
+            if (knockbackImmune) {
+                warlordsPlayer.addKnockbackModifier(new MotionModifierBuilder()
+                        .setFrom(warlordsPlayer)
+                        .setName(getName())
+                        .setModifier(KnockbackImmunity.MODIFIER)
+                        .setDuration(-1)
+                        .addAddons(new KnockbackImmunity())
+                        .build()
+                );
+            }
             warlordsPlayer.getCooldownManager().addCooldown(new PermanentCooldown<>(
                     getName(),
                     null,

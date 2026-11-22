@@ -58,6 +58,9 @@ public class BloodlettingBlade extends BaseSet {
                         if (event.getCause().isEmpty() || event.getCause().equals("Time Warp")) {
                             return;
                         }
+                        if (event.isHealingInstance()) {
+                            return;
+                        }
                         currentCritMultiplier.addModifier(FloatModifiable.ModifierType.ADDITIVE, getName(), 100);
                     }
             ).addModifier(

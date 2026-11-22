@@ -71,6 +71,9 @@ public class PulseOfAeons extends BaseSet {
                 if (event.getWarlordsEntity() instanceof WarlordsNPC warlordsNPC && warlordsNPC.getMob() instanceof NoTargetAbilities) {
                     return;
                 }
+                if (event.getFlags().contains(InstanceFlags.RECURSIVE)) {
+                    return;
+                }
 
                 stacks++;
 

@@ -16,10 +16,11 @@ public abstract class AbstractMenuBase {
     public abstract void doOnClickAction(InventoryClickEvent event);
 
     public void openForPlayer(Player player) {
-        //player.closeInventory();
         player.removeMetadata(MenuEventListener.METADATA_CUSTOM_INVENTORY, Warlords.getInstance());
-        player.setMetadata(MenuEventListener.METADATA_CUSTOM_INVENTORY, new FixedMetadataValue(Warlords.getInstance(), this));
-        player.openInventory(getInventory());
+        // opening fires InventoryCloseEvent for the current view, which may be this same inventory and would clear the metadata
+        if (player.openInventory(getInventory()) != null) {
+            player.setMetadata(MenuEventListener.METADATA_CUSTOM_INVENTORY, new FixedMetadataValue(Warlords.getInstance(), this));
+        }
     }
 
 

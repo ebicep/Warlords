@@ -32,11 +32,11 @@ public class EchoOfGradient extends AbstractMob implements BossMob {
     private static final int WEDGE_DURATION_TICKS = 6 * GameRunnable.SECOND;
 
     private final Map<UUID, Integer> wedges = new HashMap<>();
-    private int wedgesToSettle = 4;
+    private int wedgesToSettle = 3;
     private boolean cracked = false;
 
     public EchoOfGradient(Location spawnLocation) {
-        this(spawnLocation, "Echo of Gradient", 30000, 0.34f, 20, 750, 1000);
+        this(spawnLocation, "Echo of Gradient", 45000, 0.4f, 20, 750, 1000);
     }
 
     public EchoOfGradient(
@@ -174,13 +174,13 @@ public class EchoOfGradient extends AbstractMob implements BossMob {
 
             EffectUtils.playParticleLinkAnimation(target.getLocation(), wp.getLocation(), 170, 165, 150, 2);
             Utils.playGlobalSound(wp.getLocation(), Sound.BLOCK_GRINDSTONE_USE, 2, 0.6f);
-            target.sendMessage(Component.text("Keystone loads its weight onto you.", NamedTextColor.GRAY));
+            target.sendMessage(Component.text("Echo of Gradient loads its weight onto you.", NamedTextColor.GRAY));
             target.addInstance(InstanceBuilder
                     .damage()
                     .ability(this)
                     .source(wp)
-                    .min(1000)
-                    .max(1300)
+                    .min(1500)
+                    .max(1800)
             );
             wp.addInstance(InstanceBuilder
                     .healing()

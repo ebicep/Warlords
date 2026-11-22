@@ -50,6 +50,9 @@ public class MotionSystem {
     }
 
     private float getNewValue() {
+        if (hasKnockbackImmunity()) {
+            return 0;
+        }
         MotionModifier minModifier = null;
         MotionModifier maxModifier = null;
         float minValue = 0;
@@ -95,9 +98,7 @@ public class MotionSystem {
     }
 
     public void addModifier(MotionModifier mod) {
-        mod.setOnChange(this::queueUpdate);
-        modifiers.removeIf(modifier -> modifier.getName().equalsIgnoreCase(mod.getName()));
-        modifiers.add(mod);
+        putModifier(mod);
         update = true;
     }
 
@@ -107,11 +108,20 @@ public class MotionSystem {
 
     public void addModifiers(List<MotionModifier> mods) {
         for (MotionModifier mod : mods) {
-            mod.setOnChange(this::queueUpdate);
-            modifiers.removeIf(modifier -> modifier.getName().equalsIgnoreCase(mod.getName()));
-            modifiers.add(mod);
+            putModifier(mod);
         }
         update = true;
+    }
+
+    private void putModifier(MotionModifier mod) {
+        mod.setOnChange(this::queueUpdate);
+        for (MotionModifier modifier : modifiers) {
+            if (modifier.getName().equalsIgnoreCase(mod.getName()) && isKnockbackImmunity(modifier) && !isKnockbackImmunity(mod)) {
+                return;
+            }
+        }
+        modifiers.removeIf(modifier -> modifier.getName().equalsIgnoreCase(mod.getName()));
+        modifiers.add(mod);
     }
 
     public float getLastValue() {
@@ -119,11 +129,29 @@ public class MotionSystem {
     }
 
     public void removeNegativeModifiers() {
-        update |= this.modifiers.removeIf(modifier -> modifier.getModifier() < 0);
+        update |= this.modifiers.removeIf(modifier -> modifier.getModifier() < 0 && !isKnockbackImmunity(modifier));
     }
 
     public void removeModifier(String name) {
-        update |= this.modifiers.removeIf(modifier -> modifier.getName().equals(name));
+        update |= this.modifiers.removeIf(modifier -> modifier.getName().equals(name) && !isKnockbackImmunity(modifier));
+    }
+
+    private boolean hasKnockbackImmunity() {
+        for (MotionModifier modifier : modifiers) {
+            if (isKnockbackImmunity(modifier)) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    private static boolean isKnockbackImmunity(MotionModifier modifier) {
+        for (MotionAddon addon : modifier.getAddons()) {
+            if (addon instanceof KnockbackImmunity) {
+                return true;
+            }
+        }
+        return false;
     }
 
     public void addBaseModifier(float add) {
