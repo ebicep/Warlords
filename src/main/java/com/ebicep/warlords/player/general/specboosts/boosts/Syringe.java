@@ -16,6 +16,7 @@ public class Syringe implements SpecBoostManager.SpecBoost<Syringe> {
 
     private float waterBoltStatsDecreasePercent;
     private float waterBoltDirectHitHealingIncreasePercent;
+    private float waterBoltDirectHitDamageIncreasePercent;
     private float waterBoltDirectHitSpeedIncreasePercent;
     private int waterBoltDirectHitDurationTicks;
 
@@ -23,6 +24,7 @@ public class Syringe implements SpecBoostManager.SpecBoost<Syringe> {
     public void init() {
         this.waterBoltStatsDecreasePercent = getValue("waterBoltStatsDecreasePercent", float.class);
         this.waterBoltDirectHitHealingIncreasePercent = getValue("waterBoltDirectHitHealingIncreasePercent", float.class);
+        this.waterBoltDirectHitDamageIncreasePercent = getValue("waterBoltDirectHitDamageIncreasePercent", float.class);
         this.waterBoltDirectHitSpeedIncreasePercent = getValue("waterBoltDirectHitSpeedIncreasePercent", float.class);
         this.waterBoltDirectHitDurationTicks = getValue("waterBoltDirectHitDurationTicks", int.class);
     }
@@ -34,7 +36,7 @@ public class Syringe implements SpecBoostManager.SpecBoost<Syringe> {
 
     @Override
     public List<Object> getVariables() {
-        return List.of(waterBoltStatsDecreasePercent, waterBoltDirectHitHealingIncreasePercent, waterBoltDirectHitSpeedIncreasePercent, waterBoltDirectHitDurationTicks);
+        return List.of(waterBoltStatsDecreasePercent, waterBoltDirectHitHealingIncreasePercent, waterBoltDirectHitDamageIncreasePercent, waterBoltDirectHitSpeedIncreasePercent, waterBoltDirectHitDurationTicks);
     }
 
     @Override
@@ -62,6 +64,7 @@ public class Syringe implements SpecBoostManager.SpecBoost<Syringe> {
                         floatModifiable.addModifier(FloatModifiable.ModifierType.ADDITIVE_MULTIPLIER, "Spec Boost", -waterBoltStatsDecreasePercent / 100)
                 );
                 waterBolt.getDirectHitMultiplier().addModifier(FloatModifiable.ModifierType.ADDITIVE, "Spec Boost", waterBoltDirectHitHealingIncreasePercent);
+                waterBolt.getDirectHitDamageMultiplier().addModifier(FloatModifiable.ModifierType.ADDITIVE, "Spec Boost", waterBoltDirectHitDamageIncreasePercent);
             });
         }
 

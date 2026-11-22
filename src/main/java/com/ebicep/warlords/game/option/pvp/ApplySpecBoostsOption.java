@@ -6,13 +6,13 @@ import com.ebicep.warlords.game.Game;
 import com.ebicep.warlords.game.Team;
 import com.ebicep.warlords.game.option.Option;
 import com.ebicep.warlords.game.option.marker.WeaponDisplayMarker;
+import com.ebicep.warlords.player.general.Classes;
 import com.ebicep.warlords.player.general.Specializations;
 import com.ebicep.warlords.player.general.specboosts.SpecBoostManager;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
 import com.ebicep.warlords.player.ingame.WarlordsPlayer;
 import com.ebicep.warlords.util.bukkit.ComponentUtils;
 import com.ebicep.warlords.util.chat.ChatUtils;
-import com.ebicep.warlords.util.warlords.PlayerFilter;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.event.HoverEvent;
 import net.kyori.adventure.text.format.NamedTextColor;
@@ -27,7 +27,16 @@ import java.util.concurrent.ThreadLocalRandom;
 public class ApplySpecBoostsOption implements Option {
 
     private static final Component MESSAGE_DIVIDER =
-            Component.text("---------------------------------------", NamedTextColor.DARK_GRAY);
+            Component.text("---------------------------------------", NamedTextColor.DARK_BLUE);
+
+    private static final Classes[] ROSTER_CLASS_ORDER = {
+            Classes.ARCANIST,
+            Classes.MAGE,
+            Classes.WARRIOR,
+            Classes.ROGUE,
+            Classes.SHAMAN,
+            Classes.PALADIN,
+    };
 
     public static String getPlayerSpecBoost(WarlordsPlayer warlordsPlayer) {
         for (ApplySpecBoostsOption applySpecBoostsOption : warlordsPlayer.getGame().getOption(ApplySpecBoostsOption.class)) {
@@ -187,12 +196,11 @@ public class ApplySpecBoostsOption implements Option {
 
     @Override
     public void afterAllWarlordsEntitiesCreated(List<WarlordsEntity> players) {
-        List<WarlordsPlayer> withBoosts = players.stream()
+        List<WarlordsPlayer> warlordsPlayers = players.stream()
                 .filter(WarlordsPlayer.class::isInstance)
                 .map(WarlordsPlayer.class::cast)
-                .filter(playerSpecBoosts::containsKey)
                 .toList();
-        notifyTeammatesBatch(withBoosts);
+        announceSpecBoostRoster(warlordsPlayers);
     }
 
     public Map<WarlordsEntity, PlayerSpecAppliedBoost> getPlayerSpecBoosts() {
@@ -217,53 +225,82 @@ public class ApplySpecBoostsOption implements Option {
         }
     }
 
-    private @Nullable Component buildTeammateSpecBoostLine(WarlordsPlayer player) {
-        PlayerSpecAppliedBoost appliedBoost = playerSpecBoosts.get(player);
-        if (appliedBoost == null) {
-            return null;
+    private void announceSpecBoostRoster(List<WarlordsPlayer> allPlayers) {
+        if (allPlayers.isEmpty() || game == null) {
+            return;
+        }
+        for (WarlordsPlayer recipient : allPlayers) {
+            Team team = recipient.getTeam();
+            if (team != Team.BLUE && team != Team.RED) {
+                continue;
+            }
+            List<WarlordsPlayer> teamRoster = allPlayers.stream()
+                    .filter(player -> player.getTeam() == team)
+                    .sorted(this::compareRosterPlayers)
+                    .toList();
+            recipient.sendMessage(MESSAGE_DIVIDER);
+            for (WarlordsPlayer member : teamRoster) {
+                recipient.sendMessage(buildTeamRosterLine(member, recipient));
+            }
+            recipient.sendMessage(MESSAGE_DIVIDER);
+        }
+    }
+
+    private Component buildTeamRosterLine(WarlordsPlayer subject, WarlordsPlayer viewer) {
+        NamedTextColor nameColor = NamedTextColor.RED;
+        if (subject.getName().equals(viewer.getName())) {
+            nameColor = NamedTextColor.AQUA;
+        } else if (subject.getTeam() == Team.BLUE) {
+            nameColor = NamedTextColor.BLUE;
         }
         return Component.textOfChildren(
-                player.getColoredName(),
-                Component.text(": ", NamedTextColor.GRAY),
-                formatSpecBoost(appliedBoost.specBoost)
+                Component.text(subject.getName(), nameColor),
+                Component.text(" - ", NamedTextColor.GRAY),
+                formatSpecForRoster(subject)
         );
     }
 
-    private void notifyTeammatesBatch(List<WarlordsPlayer> players) {
-        if (players.isEmpty() || game == null) {
-            return;
+    private Component formatSpecForRoster(WarlordsPlayer subject) {
+        Specializations spec = subject.getSpecClass();
+        Component specComponent = Component.text(spec.name, spec.specType.getTextColor());
+        PlayerSpecAppliedBoost appliedBoost = playerSpecBoosts.get(subject);
+        if (appliedBoost != null) {
+            specComponent = specComponent.hoverEvent(HoverEvent.showText(specBoostHover(appliedBoost.specBoost)));
         }
-        Map<Team, List<WarlordsPlayer>> byTeam = new HashMap<>();
-        for (WarlordsPlayer player : players) {
-            byTeam.computeIfAbsent(player.getTeam(), team -> new ArrayList<>()).add(player);
-        }
-        for (List<WarlordsPlayer> teamPlayers : byTeam.values()) {
-            PlayerFilter.playingGame(game)
-                    .teammatesOf(teamPlayers.get(0))
-                    .forEach(recipient -> {
-                        List<Component> lines = teamPlayers.stream()
-                                .filter(member -> member != recipient)
-                                .map(this::buildTeammateSpecBoostLine)
-                                .filter(Objects::nonNull)
-                                .toList();
-                        if (lines.isEmpty()) {
-                            return;
-                        }
-                        recipient.sendMessage(MESSAGE_DIVIDER);
-                        lines.forEach(recipient::sendMessage);
-                        recipient.sendMessage(MESSAGE_DIVIDER);
-                    });
-        }
+        return specComponent;
     }
 
-    private static Component formatSpecBoost(SpecBoostManager.SpecBoost<?> boost) {
+    private static Component specBoostHover(SpecBoostManager.SpecBoost<?> boost) {
         List<Component> hoverParts = new ArrayList<>();
         hoverParts.add(boost.getName());
         for (Component loreLine : boost.getDescriptionLore()) {
             hoverParts.add(loreLine.color(NamedTextColor.GRAY));
         }
-        return Component.text(boost.getStringName(), NamedTextColor.GREEN)
-                        .hoverEvent(HoverEvent.showText(ComponentUtils.flattenComponentWithNewLine(hoverParts)));
+        return ComponentUtils.flattenComponentWithNewLine(hoverParts);
+    }
+
+    private int compareRosterPlayers(WarlordsPlayer a, WarlordsPlayer b) {
+        int typeCompare = Integer.compare(a.getSpecClass().specType.ordinal(), b.getSpecClass().specType.ordinal());
+        if (typeCompare != 0) {
+            return typeCompare;
+        }
+        int classCompare = Integer.compare(
+                indexOfRosterClass(Specializations.getClass(a.getSpecClass())),
+                indexOfRosterClass(Specializations.getClass(b.getSpecClass()))
+        );
+        if (classCompare != 0) {
+            return classCompare;
+        }
+        return a.getName().compareToIgnoreCase(b.getName());
+    }
+
+    private static int indexOfRosterClass(Classes classes) {
+        for (int i = 0; i < ROSTER_CLASS_ORDER.length; i++) {
+            if (ROSTER_CLASS_ORDER[i] == classes) {
+                return i;
+            }
+        }
+        return ROSTER_CLASS_ORDER.length;
     }
 
     public record PlayerSpecAppliedBoost(SpecBoostManager.SpecBoost<?> specBoost, SpecBoostManager.Boost boost) {

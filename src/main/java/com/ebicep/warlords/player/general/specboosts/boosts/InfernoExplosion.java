@@ -23,6 +23,7 @@ public class InfernoExplosion implements SpecBoostManager.SpecBoost<InfernoExplo
 
     private int infernoDurationReductionTicks;
     private float infernoSpeedPercent;
+    private float infernoKnockbackResistancePercent;
     private float healthLossPercent;
     private int explosionRadius;
     private float damageReductionPercent;
@@ -34,6 +35,7 @@ public class InfernoExplosion implements SpecBoostManager.SpecBoost<InfernoExplo
     public void init() {
         this.infernoDurationReductionTicks = getValue("infernoDurationReductionTicks", int.class);
         this.infernoSpeedPercent = getValue("infernoSpeedPercent", float.class);
+        this.infernoKnockbackResistancePercent = getValue("infernoKnockbackResistancePercent", float.class);
         this.healthLossPercent = getValue("healthLossPercent", float.class);
         this.explosionRadius = getValue("explosionRadius", int.class);
         this.damageReductionPercent = getValue("damageReductionPercent", float.class);
@@ -49,7 +51,15 @@ public class InfernoExplosion implements SpecBoostManager.SpecBoost<InfernoExplo
 
     @Override
     public List<Object> getVariables() {
-        return List.of(infernoDurationReductionTicks, infernoSpeedPercent, healthLossPercent, explosionRadius, damageReductionPercent, damageReductionDurationTicks);
+        return List.of(
+                infernoDurationReductionTicks,
+                infernoSpeedPercent,
+                infernoKnockbackResistancePercent,
+                healthLossPercent,
+                explosionRadius,
+                damageReductionPercent,
+                damageReductionDurationTicks
+        );
     }
 
     @Override
@@ -90,6 +100,7 @@ public class InfernoExplosion implements SpecBoostManager.SpecBoost<InfernoExplo
                 return;
             }
             warlordsEntity.addSpeedModifier(warlordsEntity, cooldown.getName(), infernoSpeedPercent, regularCooldown.getTicksLeft());
+            warlordsEntity.addKnockbackModifier(warlordsEntity, getStringName(), -infernoKnockbackResistancePercent, regularCooldown);
             Consumer<CooldownManager> oldOnRemove = regularCooldown.getOnRemove();
             regularCooldown.setOnRemove((cooldownManager) -> {
                 oldOnRemove.accept(cooldownManager);

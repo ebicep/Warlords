@@ -41,7 +41,7 @@ public class DivineBlessingBranch extends AbstractUpgradeBranch<DivineBlessing> 
                 """
                         Upon cast, all allies within 10 blocks will have their current Merciful Hex duration reset. These reset stacks of Merciful Hex will be boosted by Divine Blessing.
                         
-                        Additionally, all affected allies will gain resistance/shield pierce on their attacks when they have max Merciful Hex stacks.
+                        Additionally, allies at max HEX stacks gain the ability to shred damage resistances at 0.25% per hit (excluding DoT).
                         """,
                 50000,
                 () -> {

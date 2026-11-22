@@ -6,18 +6,19 @@ import com.ebicep.warlords.player.ingame.cooldowns.cooldowns.PermanentCooldown;
 import com.ebicep.warlords.player.ingame.instances.type.Modifier;
 import com.ebicep.warlords.pve.newitems.setbonus.BaseSet;
 import com.ebicep.warlords.pve.newitems.setbonus.SetBonus;
-import com.ebicep.warlords.util.warlords.modifiablevalues.MultiFloatModifiable;
 
 import java.util.List;
 
 public class Overflow extends BaseSet {
 
+    private int excessHealingConversionPercent;
     private int excessHealingHealthThresholdPercent;
     private int excessHealingEnergyCap;
 
     @Override
     public void init() {
         super.init();
+        this.excessHealingConversionPercent = getValue("excessHealingConversionPercent", int.class);
         this.excessHealingHealthThresholdPercent = getValue("excessHealingHealthThresholdPercent", int.class);
         this.excessHealingEnergyCap = getValue("excessHealingEnergyCap", int.class);
     }
@@ -34,7 +35,7 @@ public class Overflow extends BaseSet {
 
     @Override
     public List<Object> getVariables() {
-        return List.of(excessHealingHealthThresholdPercent, excessHealingEnergyCap);
+        return List.of(excessHealingConversionPercent, excessHealingHealthThresholdPercent, excessHealingEnergyCap);
     }
 
     public class Bonus implements SetBonus.Bonus {
@@ -60,15 +61,14 @@ public class Overflow extends BaseSet {
                             return;
                         }
 
-                        float targetCurrentHealth = event.getWarlordsEntity().getCurrentHealth();
-                        float targetMaxHealth = event.getWarlordsEntity().getMaxHealth();
-                        float targetHealthPercent = (targetCurrentHealth / targetMaxHealth) * 100f;
-
-                        if (targetHealthPercent < excessHealingHealthThresholdPercent) {
-                            return;
-                        }
-
-                        float energyToGain = getEnergyToGain(currentHealingValue, targetCurrentHealth, targetMaxHealth);
+                        float energyToGain = energyFromExcessHealing(
+                                currentHealingValue.getCalculatedValue(),
+                                event.getWarlordsEntity().getCurrentHealth(),
+                                event.getWarlordsEntity().getMaxHealth(),
+                                excessHealingHealthThresholdPercent,
+                                excessHealingConversionPercent,
+                                excessHealingEnergyCap
+                        );
                         if (energyToGain > 0) {
                             warlordsPlayer.addEnergy(warlordsPlayer, getName(), energyToGain);
                         }
@@ -79,24 +79,26 @@ public class Overflow extends BaseSet {
 
     }
 
-    private float getEnergyToGain(MultiFloatModifiable currentHealingValue, float targetCurrentHealth, float targetMaxHealth) {
-        float healingAmount = currentHealingValue.getCalculatedValue();
-        float healthAfterHealing = targetCurrentHealth + healingAmount;
-
-        float excessHealing;
-        if (healthAfterHealing > targetMaxHealth) {
-            excessHealing = healthAfterHealing - targetMaxHealth;
-        } else {
-            float healthAboveThreshold = targetCurrentHealth - (targetMaxHealth * (excessHealingHealthThresholdPercent / 100f));
-            if (healthAboveThreshold > 0) {
-                float thresholdRatio = healthAboveThreshold / (targetMaxHealth * ((100f - excessHealingHealthThresholdPercent) / 100f));
-                excessHealing = healingAmount * thresholdRatio;
-            } else {
-                excessHealing = 0;
-            }
+    static float energyFromExcessHealing(
+            float healingAmount,
+            float targetCurrentHealth,
+            float targetMaxHealth,
+            int healthThresholdPercent,
+            int conversionPercent,
+            int energyCap
+    ) {
+        if (healingAmount <= 0 || targetMaxHealth <= 0 || conversionPercent <= 0 || energyCap <= 0) {
+            return 0;
         }
 
-        return Math.min(excessHealing, excessHealingEnergyCap);
+        float thresholdHealth = targetMaxHealth * (healthThresholdPercent / 100f);
+        float healthAfterHealing = targetCurrentHealth + healingAmount;
+        float excessHealing = Math.max(0f, healthAfterHealing - thresholdHealth) - Math.max(0f, targetCurrentHealth - thresholdHealth);
+        if (excessHealing <= 0) {
+            return 0;
+        }
+
+        return Math.min(excessHealing * (conversionPercent / 100f), energyCap);
     }
 
 }

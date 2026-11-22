@@ -24,7 +24,7 @@ public class MirrorBlossomBranch extends AbstractUpgradeBranch<MirrorBlossom> {
         masterUpgrade = new Upgrade(
                 "Marked for Blossom",
                 "Mirror Blossom - Master Upgrade",
-                "Duration is doubled and the damage ticks twice as fast. Additionally, each subsequent hit causes your Judgement Strike to deal 5% (max 100%) more damage per hit they took from Mirror Blossom.",
+                "Duration is doubled and the damage ticks twice as fast. Additionally, each subsequent hit causes your Judgement Strike to deal 5% (max 60%) more damage per hit they took from Mirror Blossom.",
                 50000,
                 () -> {
                     ability.setTickDuration(ability.getTickDuration() * 2);
@@ -37,7 +37,7 @@ public class MirrorBlossomBranch extends AbstractUpgradeBranch<MirrorBlossom> {
                 """
                         +20% Speed
                         
-                        Enemies standing in your Mirror Blossom will be marked. Causing your Judgement Strike to chain to 2 additional targets within 6 blocks. When Mirror Blossom ends it will explode. Dealing 2205 - 2989 true damage to all enemies within range.
+                        Enemies standing in your Mirror Blossom will be marked. Causing your Judgement Strike to chain to 2 additional targets within 6 blocks. When Mirror Blossom ends it will explode. Dealing 2205 - 2989 pierce damage to all enemies within range.
                         """,
                 50000,
                 () -> {

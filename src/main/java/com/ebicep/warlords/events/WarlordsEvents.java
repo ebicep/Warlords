@@ -592,7 +592,7 @@ public class WarlordsEvents implements Listener {
     @EventHandler
     public void onPlayerMove(PlayerMoveEvent e) {
         Entity vehicle = e.getPlayer().getVehicle();
-        if (MountOption.isMount(vehicle) && !LocationUtils.isMountableZone(vehicle)) {
+        if (MountOption.isMount(vehicle) && !LocationUtils.isMountableZone(e.getPlayer().getLocation())) {
             vehicle.remove();
         }
 

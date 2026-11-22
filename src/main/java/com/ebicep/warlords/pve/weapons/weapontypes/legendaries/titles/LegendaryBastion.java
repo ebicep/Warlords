@@ -187,9 +187,13 @@ public class LegendaryBastion extends AbstractLegendaryWeapon {
                 double redirectCapRemain = Math.max(0.0, owner.getMaxHealth() * (getRedirectCapPercent() / 100.0) - redirectUsedThisSecond);
                 double toRedirect = Math.min(redirectCapRemain, prevented * (REDIRECT_RATIO_PERCENT / 100.0));
                 if (toRedirect > 0) {
+                    if (event.getFlags().contains(InstanceFlags.RECURSIVE)) {
+                        return;
+                    }
                     owner.addInstance(InstanceBuilder
                             .damage()
                             .cause("Bastion")
+                            .source(owner)
                             .min((float) toRedirect)
                             .max((float) toRedirect)
                             .flags(InstanceFlags.RECURSIVE, InstanceFlags.REFLECTIVE_DAMAGE, InstanceFlags.IGNORE_SOURCE_DAMAGE_BOOST)

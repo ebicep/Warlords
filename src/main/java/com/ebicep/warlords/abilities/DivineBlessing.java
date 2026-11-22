@@ -141,10 +141,6 @@ public class DivineBlessing extends AbstractAbility implements OrangeAbilityIcon
                                                     convertToMultiplicationDecimal(hexHealingBonus),
                                                     contribution -> stats.healingIncreased += Math.abs(contribution)
                                             );
-                                        }).addModifier(Modifier.MODIFY_OUTGOING_DAMAGE_BEFORE_VARIABLE_SET, (event) -> {
-                                            if (pveMasterUpgrade2) {
-                                                event.getFlags().add(InstanceFlags.PIERCE);
-                                            }
                                         }));
                                     });
                     }

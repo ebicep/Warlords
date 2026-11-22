@@ -161,7 +161,7 @@ public class OrderOfEviscerate extends AbstractAbility implements OrangeAbilityI
                                     if (stacks.get() < 2) {
                                         stacks.getAndIncrement();
                                     }
-                                    int reduction = pveMasterUpgrade ? 12 : 8;
+                                    int reduction = pveMasterUpgrade ? 10 : 6;
                                     wp.sendMessage(WarlordsEntity.GIVE_ARROW_GREEN
                                             .append(Component.text(" You killed your mark,", NamedTextColor.GRAY))
                                             .append(Component.text(" your ultimate cooldown has been reduced by " + reduction + " seconds",
@@ -233,7 +233,7 @@ public class OrderOfEviscerate extends AbstractAbility implements OrangeAbilityI
                             @Override
                             public void run() {
                                 if (inPve) {
-                                    int reduction = pveMasterUpgrade ? 6 : 4;
+                                    int reduction = pveMasterUpgrade ? 5 : 3;
                                     wp.sendMessage(WarlordsEntity.GIVE_ARROW_GREEN
                                             .append(Component.text(" You assisted in killing your mark,", NamedTextColor.GRAY))
                                             .append(Component.text(" your ultimate cooldown has been reduced by " + reduction + " seconds",
@@ -292,9 +292,9 @@ public class OrderOfEviscerate extends AbstractAbility implements OrangeAbilityI
                 .text("Successfully killing your mark will ");
         if (inPve) {
             // 2 for shadow
-            int killReduction = pveMasterUpgrade ? 12 : 8;
+            int killReduction = pveMasterUpgrade ? 10 : 6;
             // 0 for shadow
-            int assistReduction = pveMasterUpgrade ? 6 : 4;
+            int assistReduction = pveMasterUpgrade ? 5 : 3;
             builder.text("reduce", NamedTextColor.YELLOW)
                    .text(" your Shadow Step cooldown by ")
                    .text(2, NamedTextColor.GOLD)

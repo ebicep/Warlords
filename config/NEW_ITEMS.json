@@ -643,7 +643,7 @@
           },
           "description": "Allies within {{blocks}} have their cooldowns tick down {{blue;%}} faster.",
           "radius": 8,
-          "cdrBoost": 50
+          "cdrBoost": 35
         },
         "gravemind": {
           "tier": "LEGENDARY",
@@ -917,7 +917,8 @@
             "HEALTH": 25,
             "REGEN": 20
           },
-          "description": "Healing allies above {{heal;%}} health converts excess healing into energy (max {{energy}}).",
+          "description": "Converts {{heal;%}} of excess healing above {{heal;%}} health on allies into energy (max {{energy}}).",
+          "excessHealingConversionPercent": 10,
           "excessHealingHealthThresholdPercent": 90,
           "excessHealingEnergyCap": 5
         },
@@ -1330,7 +1331,7 @@
           "attributes": {
             "HEALTH": 25
           },
-          "description": "Each kill permanently increases your damage dealt and damage taken by {{damage;%}}. All stacks are lost on death. (max 300 stacks)",
+          "description": "Each kill permanently increases your damage dealt and damage taken by {{damage;%}}. All stacks are lost on death. (max 250 stacks)",
           "damagePerKillPercent": 0.4,
           "loseStacksOnDeath": true
         },
