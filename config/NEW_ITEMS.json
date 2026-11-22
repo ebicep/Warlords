@@ -917,7 +917,8 @@
             "HEALTH": 25,
             "REGEN": 20
           },
-          "description": "Healing allies above {{heal;%}} health converts excess healing into energy (max {{energy}}).",
+          "description": "Converts {{heal;%}} of excess healing above {{heal;%}} health on allies into energy (max {{energy}}).",
+          "excessHealingConversionPercent": 10,
           "excessHealingHealthThresholdPercent": 90,
           "excessHealingEnergyCap": 5
         },
