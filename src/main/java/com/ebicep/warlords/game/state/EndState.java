@@ -706,7 +706,7 @@ public class EndState implements State, TimerDebugAble {
             Map<Spendable, Long> syntheticPouch = playerPveRewards.getSyntheticPouch();
             Map<Spendable, Long> aspirantPouch = playerPveRewards.getAspirantPouch();
             Map<Spendable, Long> ascendantPouch = playerPveRewards.getAscendantPouch();
-            if (!syntheticPouch.isEmpty() || !aspirantPouch.isEmpty()) {
+            if (!syntheticPouch.isEmpty() || !aspirantPouch.isEmpty() || !ascendantPouch.isEmpty()) {
                 if (gotAnyDrops) {
                     ChatUtils.sendCenteredMessage(player, Component.empty());
                 }

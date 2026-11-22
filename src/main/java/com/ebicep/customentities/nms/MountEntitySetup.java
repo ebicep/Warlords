@@ -48,6 +48,16 @@ public final class MountEntitySetup {
         float yaw = player.getYRot();
         mount.setRot(yaw, player.getXRot() * 0.5F);
         mount.yRotO = mount.yBodyRot = mount.yHeadRot = yaw;
+        requestImmediatePosition(mount);
+    }
+
+    /**
+     * These mobs are moved on the server, and the client otherwise eases each update over three ticks.
+     * A precise position sync every ridden tick makes the client take the new position immediately.
+     */
+    public static void requestImmediatePosition(Mob mount) {
+        mount.setRequiresPrecisePosition(true);
+        mount.needsSync = true;
     }
 
     /**

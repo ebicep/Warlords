@@ -749,6 +749,9 @@ public class DamageInstanceProcessor {
         );
 
         shield.addShieldHealth(-damageHealValueBeforeShieldReduction);
+        // Shields that clamp at zero (Overgrowth) no longer store overkill as negative health.
+        // Overflow is the damage past the health this hit started with, same as a negative remainder.
+        float overflowDamage = Math.max(0, damageHealValueBeforeShieldReduction - preShieldHealth);
         debugMessage.append(InstanceDebugHoverable.LevelBuilder
                 .create(1)
                 .prefix(ComponentBuilder.create("Post Health: ", NamedTextColor.LIGHT_PURPLE))
@@ -761,16 +764,16 @@ public class DamageInstanceProcessor {
 
         damageValue.callGlobalContributionCallbacks();
 
-        if (shield.isBroken()) {
-            handleBrokenShield(shield, cooldown, preShieldHealth);
+        if (overflowDamage > 0) {
+            handleBrokenShield(shield, cooldown, preShieldHealth, overflowDamage);
         } else {
             handleActiveShield(shield, cooldown);
         }
     }
 
-    private void handleBrokenShield(Shield shield, RegularCooldown<Shield> cooldown, float preShieldHealth) {
+    private void handleBrokenShield(Shield shield, RegularCooldown<Shield> cooldown, float preShieldHealth, float overflowDamage) {
         cooldown.getFrom().addAbsorbed(preShieldHealth);
-        float newDamage = -shield.getShieldHealth();
+        float newDamage = overflowDamage;
 
         CustomInstanceFlags.InstanceShieldsInstanceFlag flag = null;
         for (CustomInstanceFlags f : customFlags) {

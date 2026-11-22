@@ -16,14 +16,6 @@ public class MountProfile {
         ensureDefaults();
     }
 
-    public boolean unlock(MountType type) {
-        ensureDefaults();
-        if (type == MountType.BROWN) {
-            return false;
-        }
-        return unlockedTypes.add(type);
-    }
-
     public boolean unlock(MountArmor armor) {
         ensureDefaults();
         return unlockedArmors.add(armor);
@@ -107,7 +99,7 @@ public class MountProfile {
             unlockedArmors = new HashSet<>();
         }
         unlockedTypes.add(MountType.BROWN);
-        if (selectedType == null || (selectedType != MountType.BROWN && !selectedType.isSupporterExclusive() && !unlockedTypes.contains(selectedType))) {
+        if (selectedType == null) {
             selectedType = MountType.BROWN;
         }
         if (selectedArmor != null && !selectedArmor.isSupporterExclusive() && !unlockedArmors.contains(selectedArmor)) {
@@ -120,9 +112,9 @@ public class MountProfile {
             return false;
         }
         if (type.isSupporterExclusive()) {
-            return hasSupporter && unlockedTypes.contains(type);
+            return hasSupporter;
         }
-        return type == MountType.BROWN || unlockedTypes.contains(type);
+        return true;
     }
 
     private boolean canEquip(@Nullable MountArmor armor, boolean hasSupporter) {

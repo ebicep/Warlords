@@ -2,6 +2,7 @@ package com.ebicep.warlords.game.option.pve.anomaly;
 
 import com.ebicep.warlords.database.repositories.events.pojos.GameEventReward;
 import com.ebicep.warlords.database.repositories.player.pojos.general.DatabasePlayer;
+import com.ebicep.warlords.honorifics.HonorificManager;
 import com.ebicep.warlords.pve.Spendable;
 import com.ebicep.warlords.pve.newitems.NewItem;
 import net.kyori.adventure.text.Component;
@@ -32,9 +33,13 @@ public class AnomalyRewardCache extends GameEventReward {
 
     @Override
     public void giveToPlayer(DatabasePlayer databasePlayer) {
+        boolean firstClaim = !claimed();
         super.giveToPlayer(databasePlayer);
         if (newItem != null) {
             databasePlayer.getPveStats().getNewItemsManager().addItem(new NewItem(newItem));
+        }
+        if (firstClaim) {
+            HonorificManager.recordAnomalyCacheUnlock(databasePlayer, HonorificManager.isLegendaryOrSovereignItem(newItem));
         }
     }
 

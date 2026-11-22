@@ -185,7 +185,10 @@ public class NewItemSearchMenu extends Menu {
                         .lore(filterLore)
                         .get(),
                 (m, e) -> {
-                    NewItemFilterMenu.openItemFilterMenu(player, databasePlayer, (m2, e2) -> open());
+                    NewItemFilterMenu.openItemFilterMenu(player, databasePlayer, (m2, e2) -> {
+                        menuSettings.setPage(1);
+                        open();
+                    });
                 }
         );
     }
@@ -202,6 +205,7 @@ public class NewItemSearchMenu extends Menu {
                         .get(),
                 (m, e) -> {
                     menuSettings.setSortOption(sortedBy.next());
+                    menuSettings.setPage(1);
                     open();
                 }
         );
@@ -218,6 +222,7 @@ public class NewItemSearchMenu extends Menu {
                         .get(),
                 (m, e) -> {
                     menuSettings.setAscending(!menuSettings.isAscending());
+                    menuSettings.setPage(1);
                     open();
                 }
         );

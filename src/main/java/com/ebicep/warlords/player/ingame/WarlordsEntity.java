@@ -1731,7 +1731,11 @@ public abstract class WarlordsEntity {
     }
 
     public void addCurrency(float currency, boolean noMessage) {
-        WarlordsAddCurrencyEvent currencyEvent = new WarlordsAddCurrencyEvent(this, currency);
+        addCurrency(currency, noMessage, null);
+    }
+
+    public void addCurrency(float currency, boolean noMessage, @Nullable WarlordsDeathEvent killSource) {
+        WarlordsAddCurrencyEvent currencyEvent = new WarlordsAddCurrencyEvent(this, currency, killSource);
         Bukkit.getPluginManager().callEvent(currencyEvent);
         float currencyToAdd = currencyEvent.getCurrencyToAdd();
         this.currency += currencyToAdd;

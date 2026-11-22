@@ -117,6 +117,12 @@ public class CustomLlama extends Llama {
         return MountEntitySetup.controllingPassenger(this);
     }
 
+    @Override
+    protected void tickRidden(@Nonnull Player player, @Nonnull Vec3 movementInput) {
+        super.tickRidden(player, movementInput);
+        MountEntitySetup.requestImmediatePosition(this);
+    }
+
     @Nonnull
     @Override
     protected Vec3 getRiddenInput(@Nonnull Player player, @Nonnull Vec3 movementInput) {

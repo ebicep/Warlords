@@ -36,31 +36,31 @@ public class PoisonousHexBranch extends AbstractUpgradeBranch<PoisonousHex> {
                 "Intrusive Hex",
                 "Poisonous Hex - Master Upgrade",
                 """
-                        +20 Pierce
+                        +28 Pierce
                         
                         Poisonous Hex damage occurs every 0.5s instead of 2s.
                         """,
                 50000,
                 () -> {
                     ability.setTicksBetweenDot(10);
-                    ability.setMaxEnemiesHit(ability.getMaxEnemiesHit() + 20);
+                    ability.setMaxEnemiesHit(ability.getMaxEnemiesHit() + 28);
                 }
         );
         masterUpgrade2 = new Upgrade(
                 "Baneful Hex",
                 "Poisonous Hex - Master Upgrade",
                 """
-                        +40% Damage
-                        +10 Pierce
+                        +45% Damage
+                        +12 Pierce
                         
                         PHEX can now stack up to 5 times.
                         """,
                 50000,
                 () -> {
                     Value.RangedValueCritable damage = ability.getDamageValues().getHexDamage();
-                    damage.min().addModifier(FloatModifiable.ModifierType.ADDITIVE_MULTIPLIER, "Master Upgrade Branch", .4f);
-                    damage.max().addModifier(FloatModifiable.ModifierType.ADDITIVE_MULTIPLIER, "Master Upgrade Branch", .4f);
-                    ability.setMaxEnemiesHit(ability.getMaxEnemiesHit() + 8);
+                    damage.min().addModifier(FloatModifiable.ModifierType.ADDITIVE_MULTIPLIER, "Master Upgrade Branch", .45f);
+                    damage.max().addModifier(FloatModifiable.ModifierType.ADDITIVE_MULTIPLIER, "Master Upgrade Branch", .45f);
+                    ability.setMaxEnemiesHit(ability.getMaxEnemiesHit() + 12);
                     ability.setMaxStacks(5);
                 }
         );

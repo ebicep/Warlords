@@ -17,6 +17,8 @@ public final class FeatureFlags {
 
     public static final String HONORIFICS = "honorifics";
     public static final String HONORIFICS_DISPLAY = "honorificsDisplay";
+    public static final String FREEZE_BLINDNESS = "freezeBlindness";
+    public static final String FREEZE_RESTORE_MOMENTUM = "freezeRestoreMomentum";
 
     private FeatureFlags() {
     }
@@ -37,7 +39,11 @@ public final class FeatureFlags {
     }
 
     public static boolean isFeatureEnabled(String featureKey, @Nullable CommandSender sender) {
-        return getFlag("features", featureKey, sender);
+        return isFeatureEnabled(featureKey, true, sender);
+    }
+
+    public static boolean isFeatureEnabled(String featureKey, boolean defaultIfMissing, @Nullable CommandSender sender) {
+        return getFlag("features", featureKey, defaultIfMissing, sender);
     }
 
     public static void sendDisabledMessage(Player player) {
@@ -45,18 +51,22 @@ public final class FeatureFlags {
     }
 
     public static boolean getFlag(String section, String key, @Nullable CommandSender sender) {
+        return getFlag(section, key, true, sender);
+    }
+
+    public static boolean getFlag(String section, String key, boolean defaultIfMissing, @Nullable CommandSender sender) {
         if (sender != null && sender.hasPermission(BYPASS_PERMISSION)) {
             return true;
         }
         Document data = ConfigManager.FEATURE_FLAGS_CONFIG.getConfigDocument();
         if (data == null) {
-            return true;
+            return defaultIfMissing;
         }
         Document sectionDoc = data.get(section, Document.class);
         if (sectionDoc == null) {
-            return true;
+            return defaultIfMissing;
         }
-        return sectionDoc.getBoolean(key, true);
+        return sectionDoc.getBoolean(key, defaultIfMissing);
     }
 
 }

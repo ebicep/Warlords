@@ -78,6 +78,7 @@ public class Warlords extends JavaPlugin {
     private static final ConcurrentHashMap<UUID, WarlordsEntity> PLAYERS = new ConcurrentHashMap<>();
     public static String VERSION = "";
     public static TextColor VERSION_COLOR = TextColor.color(125, 20, 20);
+    //public static TextColor VERSION_COLOR = TextColor.color(51, 171, 249);
     public static String serverIP;
     public static boolean hologramsEnabled = true;
     public static boolean citizensEnabled;

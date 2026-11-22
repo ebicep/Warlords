@@ -60,7 +60,7 @@ public class ItemAdditiveCooldown extends PermanentCooldown<AbstractItem> {
                 false
         );
         this.addModifier(Modifier.MODIFY_OUTGOING_HEALING, (event, currentHealValue) -> {
-            currentHealValue.addModifier(FloatModifiable.ModifierType.MULTIPLICATIVE_MULTIPLIER, name, healMultiplier);
+            currentHealValue.addModifier(FloatModifiable.ModifierType.ADDITIVE_MULTIPLIER, name, healMultiplier);
                 }
         );
         this.addModifier(Modifier.MODIFY_OUTGOING_CRIT_CHANCE, (event, currentCritChance) -> {
@@ -85,7 +85,7 @@ public class ItemAdditiveCooldown extends PermanentCooldown<AbstractItem> {
                         }
                         currentDamageValue.addModifier(FloatModifiable.ModifierType.MULTIPLICATIVE_MULTIPLIER, name, (damageMultiplier + aspectModifier.damageMultiplier - 1));
                     } else {
-                        currentDamageValue.addModifier(FloatModifiable.ModifierType.MULTIPLICATIVE_MULTIPLIER, name, damageMultiplier);
+                        currentDamageValue.addModifier(FloatModifiable.ModifierType.ADDITIVE_MULTIPLIER, name, damageMultiplier);
                     }
                 }
         );
@@ -109,10 +109,12 @@ public class ItemAdditiveCooldown extends PermanentCooldown<AbstractItem> {
                     if (Objects.equals(attacker, from) || event.getFlags().contains(InstanceFlags.RECURSIVE)) {
                         return;
                     }
+                    if (event.getFlags().contains(InstanceFlags.REFLECTIVE_DAMAGE)) {
+                        return;
+                    }
                     if (thorns <= 0) {
                         return;
                     }
-                    // Crown of Thorns is folded in here. The instance ignores other source damage boosts.
                     float thornsDamage = ThornsDamage.calculate(
                             currentDamageValue,
                             thorns,

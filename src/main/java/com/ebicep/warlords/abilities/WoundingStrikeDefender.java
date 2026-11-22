@@ -70,7 +70,10 @@ public class WoundingStrikeDefender extends AbstractStrike<WoundingStrikeDefende
                                 .ability(this)
                                 .source(wp)
                                 .value(damageValues.strikeDamage));
-                    }
+                        if (warlordsEntity instanceof WarlordsNPC npc) {
+                            npc.getMob().setTarget(wp);
+                        }
+            }
             );
             if (nearPlayer instanceof WarlordsNPC) {
                 ((WarlordsNPC) nearPlayer).getMob().setTarget(wp);

@@ -11,6 +11,7 @@ import com.ebicep.warlords.player.ingame.cooldowns.CooldownFilter;
 import com.ebicep.warlords.player.ingame.cooldowns.CooldownTypes;
 import com.ebicep.warlords.player.ingame.cooldowns.cooldowns.PermanentCooldown;
 import com.ebicep.warlords.player.ingame.cooldowns.cooldowns.RegularCooldown;
+import com.ebicep.warlords.player.ingame.instances.InstanceFlags;
 import com.ebicep.warlords.player.ingame.instances.type.Modifier;
 import com.ebicep.warlords.pve.Currencies;
 import com.ebicep.warlords.pve.weapons.weapontypes.legendaries.AbstractLegendaryWeapon;
@@ -38,8 +39,8 @@ public class LegendaryOvergrowth extends AbstractLegendaryWeapon implements Libr
     public static final float DAMAGE_BONUS_PER_150_SHIELD = 5f;
     public static final float DAMAGE_BONUS_PER_150_SHIELD_PER_UPGRADE = 1f;
 
-    public static final float SHIELD_FROM_DAMAGE_PERCENT = 0.75f;
-    public static final float SHIELD_FROM_DAMAGE_PERCENT_PER_UPGRADE = .25f;
+    public static final float SHIELD_FROM_DAMAGE_PERCENT = 2.5f;
+    public static final float SHIELD_FROM_DAMAGE_PERCENT_PER_UPGRADE = .5f;
 
     public static final int SHIELD_HEALTH_INTERVAL = 150;
     public static final int MAX_SHIELD_PERCENT_OF_LINKED_ALLY_HEALTH = 15;
@@ -195,7 +196,7 @@ public class LegendaryOvergrowth extends AbstractLegendaryWeapon implements Libr
                 return;
             }
 
-            float shieldHealth = getOvergrowthShieldHealth(linkedAlly);
+            float shieldHealth = Math.max(0, getOvergrowthShieldHealth(linkedAlly));
             int stacks = (int) (shieldHealth / SHIELD_HEALTH_INTERVAL);
 
             if (stacks <= 0) {
@@ -212,6 +213,9 @@ public class LegendaryOvergrowth extends AbstractLegendaryWeapon implements Libr
                 return;
             }
             if (currentDamageValue <= 0) {
+                return;
+            }
+            if (event.getFlags().contains(InstanceFlags.RECURSIVE)) {
                 return;
             }
 
@@ -285,6 +289,7 @@ public class LegendaryOvergrowth extends AbstractLegendaryWeapon implements Libr
         if (existingShield.isPresent()) {
             RegularCooldown<Shield> cooldown = existingShield.get();
             Shield shield = cooldown.getCooldownObject();
+            shield.setClampHealthAtZero(true);
 
             shield.setMaxShieldHealth(shieldCap);
             shield.addShieldHealth(shieldGain);
@@ -304,6 +309,7 @@ public class LegendaryOvergrowth extends AbstractLegendaryWeapon implements Libr
         }
 
         Shield shield = new Shield(getShieldName(), shieldCap);
+        shield.setClampHealthAtZero(true);
         shield.setShieldHealth(initialShield);
         data.overgrowthShield = shield;
 

@@ -35,9 +35,9 @@ public class ImpalingStrikeBranch extends AbstractUpgradeBranch<ImpalingStrike> 
                 "Impaling Slash",
                 "Impaling Strike - Master Upgrade",
                 """
-                        -10 Additional energy cost
+                        -10 Energy cost
                         
-                        Your Impaling strikes now hit 2 additional targets and triple the damage to enemies afflicted by LEECH""",
+                        Your Impaling strikes now hit 2 additional targets and double the damage to enemies afflicted by LEECH""",
                 50000,
                 () -> {
                     ability.getEnergyCost().addModifier(FloatModifiable.ModifierType.ADDITIVE, "Master Upgrade Branch", -10);

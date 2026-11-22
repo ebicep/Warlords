@@ -14,7 +14,6 @@ public class SupporterShopTrait extends WarlordsTrait {
 
     @Override
     public void rightClick(NPCRightClickEvent event) {
-        event.getClicker().sendMessage(Component.text("Supporter shop coming soon!", NamedTextColor.RED));
-        //SupporterShopMenu.open(event.getClicker());
+        SupporterShopMenu.open(event.getClicker());
     }
 }

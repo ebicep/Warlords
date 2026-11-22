@@ -4,6 +4,7 @@ import com.ebicep.customentities.npc.HasNPCLabelHologram;
 import com.ebicep.customentities.npc.NPCLabelHologram;
 import com.ebicep.customentities.npc.WarlordsTrait;
 import com.ebicep.warlords.game.option.pve.raid.Raid;
+import com.ebicep.warlords.game.option.pve.raid.RaidMenu;
 import com.ebicep.warlords.util.bukkit.ComponentBuilder;
 import net.citizensnpcs.api.event.NPCLeftClickEvent;
 import net.citizensnpcs.api.event.NPCRightClickEvent;
@@ -44,13 +45,13 @@ public class RaidOneStartTrait extends WarlordsTrait implements HasNPCLabelHolog
 
     @Override
     public void rightClick(NPCRightClickEvent event) {
-        event.getClicker().sendMessage(Component.text("This raid is currently in development, check back later!", NamedTextColor.RED));
-        //RaidMenu.openRaidMenu(event.getClicker(), raid);
+        //event.getClicker().sendMessage(Component.text("This raid is currently in development, check back later!", NamedTextColor.RED));
+        RaidMenu.openRaidMenu(event.getClicker(), raid);
     }
 
     @Override
     public void leftClick(NPCLeftClickEvent event) {
-        event.getClicker().sendMessage(Component.text("This raid is currently in development, check back later!", NamedTextColor.RED));
-        //RaidMenu.openRaidMenu(event.getClicker(), raid);
+        //vent.getClicker().sendMessage(Component.text("This raid is currently in development, check back later!", NamedTextColor.RED));
+        RaidMenu.openRaidMenu(event.getClicker(), raid);
     }
 }
