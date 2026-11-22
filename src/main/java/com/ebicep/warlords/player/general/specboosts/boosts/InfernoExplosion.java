@@ -51,7 +51,15 @@ public class InfernoExplosion implements SpecBoostManager.SpecBoost<InfernoExplo
 
     @Override
     public List<Object> getVariables() {
-        return List.of(infernoDurationReductionTicks, infernoSpeedPercent, healthLossPercent, explosionRadius, damageReductionPercent, damageReductionDurationTicks);
+        return List.of(
+                infernoDurationReductionTicks,
+                infernoSpeedPercent,
+                infernoKnockbackResistancePercent,
+                healthLossPercent,
+                explosionRadius,
+                damageReductionPercent,
+                damageReductionDurationTicks
+        );
     }
 
     @Override

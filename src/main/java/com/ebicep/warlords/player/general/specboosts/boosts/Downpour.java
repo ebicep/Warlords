@@ -39,6 +39,7 @@ public class Downpour implements SpecBoostManager.SpecBoost<Downpour> {
     public List<Object> getVariables() {
         return List.of(
                 waterBoltSpeedIncreasePercent,
+                waterBoltHitboxIncreaseBlocks,
                 healingRainMaxCharges,
                 healingRainCooldownReductionPercent,
                 healingRainDurationDecreasePercent,
