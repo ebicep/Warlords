@@ -20,6 +20,7 @@ public class AugmentedChains implements SpecBoostManager.SpecBoost<AugmentedChai
     private float chainHealCooldownReductionSeconds;
     private float chainHealHealingIncreasePercent;
     private float chainHealEnergyCostDecrease;
+    private int chainHealBounceRangeIncrease;
     private float boulderDamageDecreasePercent;
 
     @Override
@@ -27,6 +28,7 @@ public class AugmentedChains implements SpecBoostManager.SpecBoost<AugmentedChai
         this.chainHealCooldownReductionSeconds = getValue("chainHealCooldownReductionSeconds", float.class);
         this.chainHealHealingIncreasePercent = getValue("chainHealHealingIncreasePercent", float.class);
         this.chainHealEnergyCostDecrease = getValue("chainHealEnergyCostDecrease", float.class);
+        this.chainHealBounceRangeIncrease = getValue("chainHealBounceRangeIncrease", int.class);
         this.boulderDamageDecreasePercent = getValue("boulderDamageDecreasePercent", float.class);
     }
 
@@ -37,7 +39,7 @@ public class AugmentedChains implements SpecBoostManager.SpecBoost<AugmentedChai
 
     @Override
     public List<Object> getVariables() {
-        return List.of(chainHealCooldownReductionSeconds, chainHealHealingIncreasePercent, chainHealEnergyCostDecrease, boulderDamageDecreasePercent);
+        return List.of(chainHealCooldownReductionSeconds, chainHealHealingIncreasePercent, chainHealEnergyCostDecrease, chainHealBounceRangeIncrease, boulderDamageDecreasePercent);
     }
 
     @Override
@@ -63,6 +65,7 @@ public class AugmentedChains implements SpecBoostManager.SpecBoost<AugmentedChai
                         floatModifiable.addModifier(FloatModifiable.ModifierType.ADDITIVE_MULTIPLIER, "Spec Boost", chainHealHealingIncreasePercent / 100)
                 );
                 chainHeal.getEnergyCost().addModifier(FloatModifiable.ModifierType.ADDITIVE, "Spec Boost", -chainHealEnergyCostDecrease);
+                chainHeal.setBounceRange(chainHeal.getBounceRange() + chainHealBounceRangeIncrease);
             });
             warlordsPlayer.getAbilitiesMatching(Boulder.class).forEach(boulder -> {
                 boulder.getDamageValues().getBoulderDamage().forEachValue(floatModifiable ->

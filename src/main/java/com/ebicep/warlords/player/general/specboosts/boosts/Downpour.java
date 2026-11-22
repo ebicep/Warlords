@@ -12,6 +12,7 @@ import java.util.List;
 public class Downpour implements SpecBoostManager.SpecBoost<Downpour> {
 
     private float waterBoltSpeedIncreasePercent;
+    private float waterBoltHitboxIncreaseBlocks;
     private float waterBreathKnockbackIncrease;
     private int healingRainMaxCharges;
     private float healingRainCooldownReductionPercent;
@@ -21,6 +22,7 @@ public class Downpour implements SpecBoostManager.SpecBoost<Downpour> {
     @Override
     public void init() {
         this.waterBoltSpeedIncreasePercent = getValue("waterBoltSpeedIncreasePercent", float.class);
+        this.waterBoltHitboxIncreaseBlocks = getValue("waterBoltHitboxIncreaseBlocks", float.class);
         this.waterBreathKnockbackIncrease = getValue("waterBreathKnockbackIncrease", float.class);
         this.healingRainMaxCharges = getValue("healingRainMaxCharges", int.class);
         this.healingRainCooldownReductionPercent = getValue("healingRainCooldownReductionPercent", float.class);
@@ -37,6 +39,7 @@ public class Downpour implements SpecBoostManager.SpecBoost<Downpour> {
     public List<Object> getVariables() {
         return List.of(
                 waterBoltSpeedIncreasePercent,
+                waterBoltHitboxIncreaseBlocks,
                 healingRainMaxCharges,
                 healingRainCooldownReductionPercent,
                 healingRainDurationDecreasePercent,
@@ -60,6 +63,7 @@ public class Downpour implements SpecBoostManager.SpecBoost<Downpour> {
         public void apply(WarlordsPlayer warlordsPlayer) {
             warlordsPlayer.getAbilitiesMatching(WaterBolt.class).forEach(waterBolt -> {
                 waterBolt.getProjectileSpeed().addModifier(FloatModifiable.ModifierType.ADDITIVE_MULTIPLIER, "Spec Boost", (waterBoltSpeedIncreasePercent + 100) / 100);
+                waterBolt.getHitBoxRadius().addModifier(FloatModifiable.ModifierType.ADDITIVE, "Spec Boost", waterBoltHitboxIncreaseBlocks);
                 waterBolt.setMaxFullDistance((int) waterBolt.getMaxDistance().getCalculatedValue());
             });
             warlordsPlayer.getAbilitiesMatching(WaterBreath.class).forEach(waterBreath -> {
