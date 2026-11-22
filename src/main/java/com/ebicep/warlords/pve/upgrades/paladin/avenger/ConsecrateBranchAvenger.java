@@ -10,6 +10,20 @@ public class ConsecrateBranchAvenger extends AbstractConsecrateBranch<Consecrate
     public ConsecrateBranchAvenger(AbilityTree abilityTree, ConsecrateAvenger ability) {
         super(abilityTree, ability);
 
+        masterUpgrade = new Upgrade(
+                "Sanctify",
+                "Consecrate - Master Upgrade",
+                """
+                        +2s duration.
+                        
+                        Consecrate damage occurs every 0.5s. Each damage pulse increases range by 0.2 blocks (max 20) and increases Consecrate's crit chance and crit multiplier by 2%.
+                        
+                        For each enemy inside Consecrate, increase your movement speed by 1.5% and your strike damage by 3%, each capped at 30%.
+                        """,
+                50000,
+                () -> ability.setTickDuration(ability.getTickDuration() + 40)
+        );
+
         masterUpgrade2 = new Upgrade(
                 "Sanctifying Ring",
                 "Consecrate - Master Upgrade",
