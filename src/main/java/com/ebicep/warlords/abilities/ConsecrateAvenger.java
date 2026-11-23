@@ -58,22 +58,41 @@ public class ConsecrateAvenger extends AbstractConsecrate implements Damages<Con
                 new DoubleLineEffect(Particle.DUST, new Particle.DustOptions(Color.fromRGB(255, 160, 160), 1))
         );
         HashSet<WarlordsEntity> hit = new HashSet<>();
-        wp.getCooldownManager().addCooldown(new RegularCooldown<>(name, null, AbstractConsecrate.class, null, wp, CooldownTypes.ABILITY, cooldownManager -> {
-        }, cooldownManager -> {
-        }, false, tickDuration, Collections.singletonList((cooldown, ticksLeft, ticksElapsed) -> {
-            Location updatedLocation = wp.getLocation();
-            circleEffect.setCenter(updatedLocation);
-            if (ticksElapsed % 5 == 0) {
-                circleEffect.playEffects();
-            }
-            if (ticksElapsed % 30 == 0) {
-                PlayerFilter.entitiesAround(updatedLocation, radius, 6, radius).aliveEnemiesOf(wp).forEach(enemy -> {
-                    hit.add(enemy);
-                    getAbilityStats().addPlayersHit();
-                    enemy.addInstance(InstanceBuilder.damage().ability(this).source(wp).value(damageValues.consecrateDamage));
-                });
-            }
-        })
+        wp.getCooldownManager().addCooldown(new RegularCooldown<>(
+                name,
+                null,
+                AbstractConsecrate.class,
+                null,
+                wp,
+                CooldownTypes.ABILITY,
+                cooldownManager -> {
+
+                },
+                cooldownManager -> {
+
+                },
+                false,
+                tickDuration,
+                Collections.singletonList((cooldown, ticksLeft, ticksElapsed) -> {
+                    Location updatedLocation = wp.getLocation();
+                    circleEffect.setCenter(updatedLocation);
+                    if (ticksElapsed % 5 == 0) {
+                        circleEffect.playEffects();
+                    }
+                    if (ticksElapsed % 30 == 0) {
+                        PlayerFilter.entitiesAround(updatedLocation, radius, 6, radius).aliveEnemiesOf(wp).forEach(enemy -> {
+                            hit.add(enemy);
+                            getAbilityStats().addPlayersHit();
+                            enemy.addInstance(InstanceBuilder
+                                    .damage()
+                                    .ability(this)
+                                    .source(wp)
+                                    .value(damageValues.consecrateDamage)
+                                    .flags(InstanceFlags.DOT)
+                            );
+                        });
+                    }
+                })
         ).addModifier(Modifier.MODIFY_OUTGOING_DAMAGE_BEFORE_INTERVENE, (event, currentDamageValue) -> {
                     if (event.getFlags().contains(InstanceFlags.STRIKE_IN_CONS)) {
                         return;
@@ -83,9 +102,8 @@ public class ConsecrateAvenger extends AbstractConsecrate implements Damages<Con
                     }
                     event.getFlags().add(InstanceFlags.STRIKE_IN_CONS);
                     addStrikesBoosted();
-            currentDamageValue.addModifier(FloatModifiable.ModifierType.MULTIPLICATIVE_MULTIPLIER, name, convertToMultiplicationDecimal(strikeDamageBoost));
-                }
-        ));
+                    currentDamageValue.addModifier(FloatModifiable.ModifierType.MULTIPLICATIVE_MULTIPLIER, name, convertToMultiplicationDecimal(strikeDamageBoost));
+        }));
         return true;
     }
 
