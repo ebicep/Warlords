@@ -155,16 +155,16 @@ public class ConsecrateAvenger extends AbstractConsecrate implements Damages<Con
                                     getAbilityStats().addPlayersHit();
                                     enemiesHit[0]++;
                                 }));
-                    radius[0] = Math.min(20, radius[0] + enemiesHit[0] * 0.2f);
+                    radius[0] = Math.min(20, radius[0] + enemiesHit[0] * 0.1f);
                     circleEffect.setRadius(radius[0]);
-                    critChance.setModifier(critChance.getModifier() + 2);
-                    critMultiplier.setModifier(critMultiplier.getModifier() + 2);
+                    critChance.setModifier(critChance.getModifier() + 2f);
+                    critMultiplier.setModifier(critMultiplier.getModifier() + 2f);
                     int enemies = (int) PlayerFilter.entitiesAroundInGame(wp.getGame(), location, radius[0], 6, radius[0])
                                                     .aliveEnemiesOf(wp)
                                                     .stream()
                                                     .count();
                     speed.setModifier(Math.min(30, enemies * 1.5f));
-                    strikeBonus[0] = Math.min(30, enemies * 3);
+                    strikeBonus[0] = Math.min(20, enemies * 2);
                 })
         ).addModifier(Modifier.MODIFY_OUTGOING_DAMAGE_BEFORE_INTERVENE, (event, currentDamageValue) -> {
             if (!event.getCause().equals(getStrikeName())) {

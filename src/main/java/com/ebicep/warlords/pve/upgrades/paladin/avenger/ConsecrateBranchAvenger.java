@@ -16,9 +16,9 @@ public class ConsecrateBranchAvenger extends AbstractConsecrateBranch<Consecrate
                 """
                         +2s duration.
                         
-                        Consecrate damage occurs every 0.5s. Each enemy hit increases range by 0.2 blocks (max 20). Each damage pulse increases Consecrate's crit chance and crit multiplier by 2%.
+                        Consecrate damage occurs every 0.5s. Each enemy hit increases range by 0.1 blocks (max 20). Each damage pulse increases Consecrate's crit chance and crit multiplier by 2%.
                         
-                        For each enemy inside Consecrate, increase your movement speed by 1.5% and your strike damage by 3%, each capped at 30%.
+                        For each enemy inside Consecrate, increase your movement speed by 1.5% and your strike damage by 2%, each capped at 20%.
                         """,
                 50000,
                 () -> ability.setTickDuration(ability.getTickDuration() + 40)
