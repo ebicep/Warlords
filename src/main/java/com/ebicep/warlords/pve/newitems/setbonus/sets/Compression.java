@@ -1,9 +1,6 @@
 package com.ebicep.warlords.pve.newitems.setbonus.sets;
 
-import com.ebicep.warlords.abilities.internal.AbstractAbility;
-import com.ebicep.warlords.abilities.internal.AbstractPiercingProjectile;
-import com.ebicep.warlords.abilities.internal.HitBox;
-import com.ebicep.warlords.abilities.internal.Splash;
+import com.ebicep.warlords.abilities.internal.*;
 import com.ebicep.warlords.abilities.internal.icon.WeaponAbilityIcon;
 import com.ebicep.warlords.events.player.ingame.WarlordsDamageHealingEvent;
 import com.ebicep.warlords.player.ingame.WarlordsPlayer;
@@ -58,7 +55,15 @@ public class Compression extends BaseSet {
                             getName(),
                             rangeMultiplier
                     );
-                } else if (ability instanceof HitBox hitBox) {
+                }
+                if (ability instanceof AbstractProjectile<?,?> projectile) {
+                    projectile.getMaxDistance().addModifier(
+                            FloatModifiable.ModifierType.MULTIPLICATIVE_MULTIPLIER,
+                            getName(),
+                            rangeMultiplier
+                    );
+                }
+                if (ability instanceof HitBox hitBox) {
                     hitBox.getHitBoxRadius().addModifier(
                             FloatModifiable.ModifierType.MULTIPLICATIVE_MULTIPLIER,
                             getName(),

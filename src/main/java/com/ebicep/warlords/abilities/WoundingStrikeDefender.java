@@ -69,14 +69,14 @@ public class WoundingStrikeDefender extends AbstractStrike<WoundingStrikeDefende
                                 .damage()
                                 .ability(this)
                                 .source(wp)
-                                .value(damageValues.strikeDamage));
+                                .value(damageValues.strikeDamage)
+                        );
                         if (warlordsEntity instanceof WarlordsNPC npc) {
                             npc.getMob().setTarget(wp);
                         }
-            }
-            );
-            if (nearPlayer instanceof WarlordsNPC) {
-                ((WarlordsNPC) nearPlayer).getMob().setTarget(wp);
+            });
+            if (nearPlayer instanceof WarlordsNPC npc) {
+                npc.getMob().setTarget(wp);
             }
             nearPlayer.getCooldownManager().removeCooldown(WoundingStrikeDefender.class, false);
             nearPlayer.getCooldownManager().addCooldown(new RegularCooldown<>(
@@ -92,8 +92,7 @@ public class WoundingStrikeDefender extends AbstractStrike<WoundingStrikeDefende
                     4 * 20
             ).addModifier(Modifier.MODIFY_OUTGOING_DAMAGE_BEFORE_INTERVENE, (event, currentDamageValue) -> {
                 currentDamageValue.addModifier(FloatModifiable.ModifierType.MULTIPLICATIVE_MULTIPLIER, name, 0.85f);
-                    }
-            ));
+            }));
             new CooldownFilter<>(wp, RegularCooldown.class)
                     .filter(cd -> cd.getCooldownClass().equals(LastStand.LastStandData.class))
                     .forEach(cd -> cd.setTicksLeft(cd.getTicksLeft() + 10));
