@@ -5,6 +5,7 @@ import com.ebicep.warlords.abilities.internal.icon.OrangeAbilityIcon;
 import com.ebicep.warlords.database.repositories.config.ConfigManager;
 import com.ebicep.warlords.effects.EffectUtils;
 import com.ebicep.warlords.events.player.ingame.WarlordsAddCooldownEvent;
+import com.ebicep.warlords.events.player.ingame.WarlordsDamageHealingEvent;
 import com.ebicep.warlords.game.Game;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
 import com.ebicep.warlords.player.ingame.cooldowns.AbstractCooldown;
@@ -36,6 +37,8 @@ import java.util.List;
 import java.util.Objects;
 
 public class DivineBlessing extends AbstractAbility implements OrangeAbilityIcon, Duration, Heals<DivineBlessing.HealingValues>, AbilityStats<DivineBlessing, DivineBlessing.DivineBlessingStats> {
+
+    private static final float RESISTANCE_SHRED = 0.25f;
 
     private final DivineBlessingStats stats = new DivineBlessingStats();
     private final HealingValues healingValues = new HealingValues();
@@ -78,17 +81,6 @@ public class DivineBlessing extends AbstractAbility implements OrangeAbilityIcon
         }.runTaskTimer(0, 1);
         DivineBlessingData data = new DivineBlessingData(this);
         int maxStacks = MercifulHex.getFromHex(wp).getMaxStacks();
-        List<FloatModifiable.FloatModifier> modifiers;
-        if (pveMasterUpgrade2) {
-            modifiers = wp.getAbilitiesMatching(RayOfLight.class)
-                          .stream()
-                          .map(ability -> ability.getCooldown().addModifier(FloatModifiable.ModifierType.MULTIPLICATIVE_MULTIPLIER,
-                                  name + " Master", 0.55f
-                          ))
-                          .toList();
-        } else {
-            modifiers = Collections.emptyList();
-        }
         wp.getCooldownManager().addCooldown(new RegularCooldown<DivineBlessingData>(
                 name,
                 "BLESS",
@@ -102,7 +94,6 @@ public class DivineBlessing extends AbstractAbility implements OrangeAbilityIcon
                     if (pveMasterUpgrade) {
                         healAllies(wp);
                     }
-                    modifiers.forEach(FloatModifiable.FloatModifier::forceEnd);
                 },
                 tickDuration,
                 Collections.singletonList((cooldown, ticksLeft, ticksElapsed) -> {
@@ -141,6 +132,8 @@ public class DivineBlessing extends AbstractAbility implements OrangeAbilityIcon
                                                     convertToMultiplicationDecimal(hexHealingBonus),
                                                     contribution -> stats.healingIncreased += Math.abs(contribution)
                                             );
+                                        }).addModifier(Modifier.ON_OUTGOING_DAMAGE, (event, currentDamageValue, isCrit) -> {
+                                            shredResistance(event);
                                         }));
                                     });
                     }
@@ -171,6 +164,12 @@ public class DivineBlessing extends AbstractAbility implements OrangeAbilityIcon
                                 contribution -> stats.healingIncreased += Math.abs(contribution)
                         );
                     }
+                }
+        ).addModifier(Modifier.ON_OUTGOING_DAMAGE, (event, currentDamageValue, isCrit) -> {
+                    if (new CooldownFilter<>(wp, RegularCooldown.class).filterCooldownFrom(wp).filterCooldownClass(MercifulHex.class).stream().count() < maxStacks) {
+                        return;
+                    }
+                    shredResistance(event);
                 }
         ));
         PlayerFilter.playingGame(game).teammatesOf(wp).forEach(enemy -> {
@@ -218,6 +217,14 @@ public class DivineBlessing extends AbstractAbility implements OrangeAbilityIcon
     @Override
     public AbstractUpgradeBranch<?> getUpgradeBranch(AbilityTree abilityTree) {
         return new DivineBlessingBranch(abilityTree, this);
+    }
+
+    private void shredResistance(WarlordsDamageHealingEvent event) {
+        if (!pveMasterUpgrade2 || event.getFlags().contains(InstanceFlags.DOT)) {
+            return;
+        }
+        WarlordsEntity victim = event.getWarlordsEntity();
+        victim.setDamageResistance(victim.getSpec().getDamageResistance() - RESISTANCE_SHRED);
     }
 
     private void healAllies(@Nonnull WarlordsEntity wp) {
