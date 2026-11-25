@@ -92,9 +92,9 @@ public class RallyingPresence implements SpecBoostManager.SpecBoost<RallyingPres
             }
             float damagePercent = Math.min(alliesHitCount * damagePerAllyHitPercent, damageCapPercent);
             regularCooldown.addModifier(Modifier.MODIFY_OUTGOING_DAMAGE_BEFORE_INTERVENE, (e, currentDamageValue) -> {
-                        currentDamageValue.addModifier(FloatModifiable.ModifierType.MULTIPLICATIVE_MULTIPLIER,
+                        currentDamageValue.addModifier(FloatModifiable.ModifierType.ADDITIVE_MULTIPLIER,
                                 getStringName(),
-                                AbstractAbility.convertToMultiplicationDecimal(damagePercent)
+                                damagePercent / 100f
                         );
                     }
             );

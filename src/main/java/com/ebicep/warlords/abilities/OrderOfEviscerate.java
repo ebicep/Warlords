@@ -120,7 +120,7 @@ public class OrderOfEviscerate extends AbstractAbility implements OrangeAbilityI
                         stats.numberOfBackstabs++;
                         damageBonus += 70;
                     }
-                    currentDamageValue.addModifier(FloatModifiable.ModifierType.MULTIPLICATIVE_MULTIPLIER, name, 1 + damageBonus / 100f);
+                    currentDamageValue.addModifier(FloatModifiable.ModifierType.ADDITIVE_MULTIPLIER, name, damageBonus / 100f);
         });
         orderOfEviscerateCooldown.addModifier(Modifier.DAMAGE_BEFORE_ANY_REDUCTION_ATTACKER, event -> {
                     //mark message here so it displays before damage
@@ -192,8 +192,8 @@ public class OrderOfEviscerate extends AbstractAbility implements OrangeAbilityI
                                                     8 * 20
                                             );
                                             regularCooldown.addModifier(Modifier.MODIFY_OUTGOING_DAMAGE_BEFORE_INTERVENE, (event, currentDamageValue) -> {
-                                                currentDamageValue.addModifier(FloatModifiable.ModifierType.MULTIPLICATIVE_MULTIPLIER,
-                                                        "Cloaked Engagement", 1 + 0.3f * stacks.get()
+                                                currentDamageValue.addModifier(FloatModifiable.ModifierType.ADDITIVE_MULTIPLIER,
+                                                        "Cloaked Engagement", 0.3f * stacks.get()
                                                 );
                                                     }
                                             );

@@ -96,9 +96,8 @@ public class BurstChain implements SpecBoostManager.SpecBoost<BurstChain> {
                                   .noneMatch(damageReductionAbilities::contains)
                         ) {
                             boolean hasInferno = warlordsPlayer.getCooldownManager().hasCooldown(Inferno.class);
-                            currentDamageValue.addModifier(FloatModifiable.ModifierType.MULTIPLICATIVE_MULTIPLIER, getStringName(),
-                                    AbstractAbility.convertToMultiplicationDecimal(hasInferno ? infernoDamageIncreasePercent :
-                                                                                   damageIncreasePercent)
+                            currentDamageValue.addModifier(FloatModifiable.ModifierType.ADDITIVE_MULTIPLIER, getStringName(),
+                                    (hasInferno ? infernoDamageIncreasePercent : damageIncreasePercent) / 100f
                             );
                         }
                     }

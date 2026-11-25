@@ -81,9 +81,9 @@ public class ArmOfTheAlmighty implements SpecBoostManager.SpecBoost<ArmOfTheAlmi
                         if (!(event.getAbility() instanceof AvengersStrike) || !warlordsPlayer.getCooldownManager().hasCooldown(AvengersWrath.AvengersWrathData.class)) {
                             return;
                         }
-                currentDamageValue.addModifier(FloatModifiable.ModifierType.MULTIPLICATIVE_MULTIPLIER,
+                currentDamageValue.addModifier(FloatModifiable.ModifierType.ADDITIVE_MULTIPLIER,
                         getStringName(),
-                        AbstractAbility.convertToMultiplicationDecimal(wrathDamageBoostPercent)
+                        wrathDamageBoostPercent / 100f
                 );
                     }
             ));

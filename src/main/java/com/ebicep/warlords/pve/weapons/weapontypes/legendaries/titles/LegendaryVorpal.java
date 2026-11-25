@@ -94,7 +94,7 @@ public class LegendaryVorpal extends AbstractLegendaryWeapon implements PassiveC
         super.applyToWarlordsPlayer(player, pveOption);
         this.meleeCounter = 0;
 
-        float meleeDamageBoost = 1 + (MELEE_DAMAGE_BOOST + MELEE_DAMAGE_BOOST_PER_UPGRADE * getTitleLevel()) / 100;
+        float meleeDamageBoost = (MELEE_DAMAGE_BOOST + MELEE_DAMAGE_BOOST_PER_UPGRADE * getTitleLevel()) / 100;
         float procChanceIncrease = PROC_CHANCE_INCREASE + PROC_CHANCE_INCREASE_PER_UPGRADE * getTitleLevel();
 
         for (AbstractAbility ability : player.getSpec().getAbilities()) {
@@ -123,7 +123,7 @@ public class LegendaryVorpal extends AbstractLegendaryWeapon implements PassiveC
                                 cooldownManager.hasCooldownFromName("Earthliving Weapon") && ability.equals("Earthliving Weapon")
                 ) {
                     event.applyToMinMax(floatModifiable ->
-                            floatModifiable.addModifier(FloatModifiable.ModifierType.MULTIPLICATIVE_MULTIPLIER, getTitleName(), meleeDamageBoost)
+                            floatModifiable.addModifier(FloatModifiable.ModifierType.ADDITIVE_MULTIPLIER, getTitleName(), meleeDamageBoost)
                     );
                     return;
                 }
@@ -137,13 +137,13 @@ public class LegendaryVorpal extends AbstractLegendaryWeapon implements PassiveC
                         cooldownManager.hasCooldownFromName("Soulbinding Weapon")
                 ) {
                     event.applyToMinMax(floatModifiable ->
-                            floatModifiable.addModifier(FloatModifiable.ModifierType.MULTIPLICATIVE_MULTIPLIER, getTitleName(), meleeDamageBoost)
+                            floatModifiable.addModifier(FloatModifiable.ModifierType.ADDITIVE_MULTIPLIER, getTitleName(), meleeDamageBoost)
                     );
                 }
                 if (meleeCounter % 4 == 0) {
                     player.playSound(player.getLocation(), Sound.BLOCK_NOTE_BLOCK_PLING, 1, 2);
                     event.applyToMinMax(floatModifiable ->
-                            floatModifiable.addModifier(FloatModifiable.ModifierType.MULTIPLICATIVE_MULTIPLIER, getTitleName(), 5)
+                            floatModifiable.addModifier(FloatModifiable.ModifierType.ADDITIVE_MULTIPLIER, getTitleName(), 4f)
                     );
                     event.getFlags().add(InstanceFlags.PIERCE);
                 }

@@ -203,8 +203,8 @@ public class LegendaryOvergrowth extends AbstractLegendaryWeapon implements Libr
                 return;
             }
 
-            float multiplier = 1 + stacks * getDamageBonusPerShieldInterval() / 100f;
-            currentDamageValue.addModifier(FloatModifiable.ModifierType.MULTIPLICATIVE_MULTIPLIER, getTitleName(), multiplier);
+            float multiplier = stacks * getDamageBonusPerShieldInterval() / 100f;
+            currentDamageValue.addModifier(FloatModifiable.ModifierType.ADDITIVE_MULTIPLIER, getTitleName(), multiplier);
         }).addModifier(Modifier.ON_OUTGOING_DAMAGE, (event, currentDamageValue, isCrit) -> {
             if (!isLinkActiveFor(event.getSource())) {
                 return;

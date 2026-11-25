@@ -56,9 +56,9 @@ public class Obelisk extends BaseSet {
             ).addModifier(Modifier.MODIFY_OUTGOING_DAMAGE_BEFORE_INTERVENE, (event, currentDamageValue) -> {
                 if (event.getWarlordsEntity() instanceof WarlordsNPC npc && npc.getMob() instanceof BossLike) {
                     currentDamageValue.addModifier(
-                            FloatModifiable.ModifierType.MULTIPLICATIVE_MULTIPLIER,
+                            FloatModifiable.ModifierType.ADDITIVE_MULTIPLIER,
                             getName(),
-                            1 + bossDamageIncreasePercent / 100f
+                            bossDamageIncreasePercent / 100f
                     );
                 }
             }).addModifier(Modifier.MODIFY_INCOMING_DAMAGE_AFTER_INTERVENE, (event, currentDamageValue) -> {

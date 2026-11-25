@@ -151,7 +151,7 @@ public class LegendaryDivine extends AbstractLegendaryWeapon implements PassiveC
                                 DURATION * 20
                         );
                         regularCooldown.addModifier(Modifier.MODIFY_OUTGOING_DAMAGE_BEFORE_INTERVENE, (e, currentDamageValue) -> {
-                            currentDamageValue.addModifier(FloatModifiable.ModifierType.MULTIPLICATIVE_MULTIPLIER, getTitleName(), 1 + session.damageBoost * DAMAGE_BOOST / 100f);
+                            currentDamageValue.addModifier(FloatModifiable.ModifierType.ADDITIVE_MULTIPLIER, getTitleName(), session.damageBoost * DAMAGE_BOOST / 100f);
                                 }
                         );
                         session.stackCooldown = regularCooldown;
@@ -212,7 +212,7 @@ public class LegendaryDivine extends AbstractLegendaryWeapon implements PassiveC
                                 10 * 20
                         );
                         divineCooldown.addModifier(Modifier.MODIFY_OUTGOING_DAMAGE_BEFORE_INTERVENE, (event, currentDamageValue) -> {
-                            currentDamageValue.addModifier(FloatModifiable.ModifierType.MULTIPLICATIVE_MULTIPLIER, getTitleName(), 1 + ABILITY_DAMAGE_BOOST / 100f);
+                            currentDamageValue.addModifier(FloatModifiable.ModifierType.ADDITIVE_MULTIPLIER, getTitleName(), ABILITY_DAMAGE_BOOST / 100f);
                                 }
                         );
                         divineCooldown.addModifier(Modifier.ENERGY_GAIN_PER_TICK, energyGainPerTick -> energyGainPerTick.addModifier(FloatModifiable.ModifierType.ADDITIVE,

@@ -89,8 +89,8 @@ public class Haze extends AbstractAbility implements OrangeAbilityIcon, Damages<
                                             },
                                             vulnerableTickDuration
                                     ).addModifier(Modifier.INCOMING_DAMAGE_BEFORE_INTERVENE, (event, currentDamageValue) -> {
-                                        currentDamageValue.addModifier(FloatModifiable.ModifierType.MULTIPLICATIVE_MULTIPLIER,
-                                                "Vulernable", convertToMultiplicationDecimal(vulnerableDamageBonus)
+                                        currentDamageValue.addModifier(FloatModifiable.ModifierType.ADDITIVE_MULTIPLIER,
+                                                "Vulernable", vulnerableDamageBonus / 100f
                                         );
                                             }
                                     ));

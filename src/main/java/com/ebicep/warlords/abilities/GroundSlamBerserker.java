@@ -42,12 +42,12 @@ public class GroundSlamBerserker extends AbstractGroundSlam implements Damages<G
     @Override
     protected void onSecondSlamHit(WarlordsEntity wp, Set<WarlordsEntity> playersHit) {
         if (pveMasterUpgrade2) {
-            float damageBoost = 1 + Math.min(5, playersHit.size()) * .05f;
+            float damageBoost = Math.min(5, playersHit.size()) * .05f;
             wp.getCooldownManager()
               .addCooldown(new RegularCooldown<>("Reverberation", "REVERB", GroundSlamBerserker.class, new GroundSlamBerserker(), wp, CooldownTypes.BUFF, cooldownManager -> {
               }, 5 * 20
               ).addModifier(Modifier.MODIFY_OUTGOING_DAMAGE_BEFORE_INTERVENE, (event, currentDamageValue) -> {
-                  currentDamageValue.addModifier(FloatModifiable.ModifierType.MULTIPLICATIVE_MULTIPLIER, name, damageBoost);
+                  currentDamageValue.addModifier(FloatModifiable.ModifierType.ADDITIVE_MULTIPLIER, name, damageBoost);
                       }
               ));
         }

@@ -61,9 +61,9 @@ public class Oathkeeper extends BaseSet {
                     return;
                 }
                 currentDamageValue.addModifier(
-                        FloatModifiable.ModifierType.MULTIPLICATIVE_MULTIPLIER,
+                        FloatModifiable.ModifierType.ADDITIVE_MULTIPLIER,
                         getName(),
-                        1 + meleeDamageIncreasePercent / 100f
+                        meleeDamageIncreasePercent / 100f
                 );
                 if (event.getFlags().contains(InstanceFlags.RECURSIVE) ||
                         ThreadLocalRandom.current().nextDouble() > meleeAttackTwiceChancePercent / 100.0

@@ -81,7 +81,7 @@ public class LegendaryArbalest extends AbstractLegendaryWeapon implements EventT
         super.applyToWarlordsPlayer(player, pveOption);
 
         float playerHPCheck = player.getMaxHealth() * ((LESS_THAN_HP_CHECK + LESS_THAN_HP_CHECK_PER_UPGRADE * getTitleLevel()) / 100f + 1);
-        float damageBoost = 1 + (DAMAGE_BOOST + DAMAGE_BOOST_PER_UPGRADE * getTitleLevel()) / 100f;
+        float damageBoost = (DAMAGE_BOOST + DAMAGE_BOOST_PER_UPGRADE * getTitleLevel()) / 100f;
         player.getCooldownManager().addCooldown(new PermanentCooldown<>(
                 "Arbalest",
                 null,
@@ -94,7 +94,7 @@ public class LegendaryArbalest extends AbstractLegendaryWeapon implements EventT
                 false
         ).addModifier(Modifier.MODIFY_OUTGOING_DAMAGE_BEFORE_INTERVENE, (event, currentDamageValue) -> {
                     if (event.getWarlordsEntity().getCurrentHealth() < playerHPCheck) {
-                        currentDamageValue.addModifier(FloatModifiable.ModifierType.MULTIPLICATIVE_MULTIPLIER, getTitleName(), damageBoost);
+                        currentDamageValue.addModifier(FloatModifiable.ModifierType.ADDITIVE_MULTIPLIER, getTitleName(), damageBoost);
                     }
                 }
         ));

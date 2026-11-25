@@ -109,8 +109,8 @@ public class SwiftJustice implements SpecBoostManager.SpecBoost<SwiftJustice> {
                                                     .filter(regularCooldown -> !regularCooldown.getFlags().contains(CooldownFlag.CANNOT_BE_REDUCED) &&
                                                             !regularCooldown.getFlags().contains(CooldownFlag.CANNOT_BE_REDUCED_VIND))
                                                     .forEach(regularCooldown -> regularCooldown.subtractTime(nextStrikeCooldownReductionTicks));
-                                            currentDamageValue.addModifier(FloatModifiable.ModifierType.MULTIPLICATIVE_MULTIPLIER, getStringName(),
-                                                    AbstractAbility.convertToMultiplicationDecimal(nextStrikeDamageIncreasePercent)
+                                            currentDamageValue.addModifier(FloatModifiable.ModifierType.ADDITIVE_MULTIPLIER, getStringName(),
+                                                    nextStrikeDamageIncreasePercent / 100f
                                             );
                                         }
                                     }

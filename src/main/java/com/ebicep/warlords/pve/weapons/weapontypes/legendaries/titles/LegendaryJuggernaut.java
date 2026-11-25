@@ -116,7 +116,7 @@ public class LegendaryJuggernaut extends AbstractLegendaryWeapon implements Figh
                     for (int i = KILL_MILESTONES.size() - 1; i >= 0; i--) {
                         int killMilestone = KILL_MILESTONES.get(i);
                         if (playerKills >= killMilestone) {
-                            currentDamageValue.addModifier(FloatModifiable.ModifierType.MULTIPLICATIVE_MULTIPLIER, getTitleName(), 1 + (getDamageBoost() * (i + 1)) / 100f);
+                            currentDamageValue.addModifier(FloatModifiable.ModifierType.ADDITIVE_MULTIPLIER, getTitleName(), (getDamageBoost() * (i + 1)) / 100f);
                             return;
                         }
                     }

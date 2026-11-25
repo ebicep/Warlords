@@ -188,7 +188,7 @@ public class LegendaryParadox extends AbstractLegendaryWeapon implements GardenO
             return;
         }
         secondCounter = 15;
-        float damageBoost = 1 + Math.min(
+        float damageBoost = Math.min(
                 (DAMAGE_BOOST_MAX + DAMAGE_BOOST_MAX_PER_UPGRADE * getTitleLevel()) / 100f,
                 player.getCurrentHealth() / (HP_INTERVAL + HP_INTERVAL_PER_UPGRADE * getTitleLevel()) * .004f
         );
@@ -208,7 +208,7 @@ public class LegendaryParadox extends AbstractLegendaryWeapon implements GardenO
                     }
                 })
         ).addModifier(Modifier.MODIFY_OUTGOING_DAMAGE_BEFORE_INTERVENE, (event, currentDamageValue) -> {
-            currentDamageValue.addModifier(FloatModifiable.ModifierType.MULTIPLICATIVE_MULTIPLIER, getTitleName(), damageBoost);
+            currentDamageValue.addModifier(FloatModifiable.ModifierType.ADDITIVE_MULTIPLIER, getTitleName(), damageBoost);
                 }
         ));
     }

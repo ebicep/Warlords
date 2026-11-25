@@ -174,9 +174,9 @@ public class Gambler extends BaseSet {
 
                         currentDamageValue.addModifier(
                                 FloatModifiable.ModifierType
-                                        .MULTIPLICATIVE_MULTIPLIER,
+                                        .ADDITIVE_MULTIPLIER,
                                 getName(),
-                                2
+                                1f
                         );
                     }
             );

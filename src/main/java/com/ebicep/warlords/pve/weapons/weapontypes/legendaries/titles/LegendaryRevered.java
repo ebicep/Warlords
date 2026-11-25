@@ -171,9 +171,9 @@ public class LegendaryRevered extends AbstractLegendaryWeapon implements EventTi
                 (int) ((DURATION + DURATION_INCREASE_PER_UPGRADE * getTitleLevel()) * 20)
         );
         cooldown.addModifier(Modifier.MODIFY_OUTGOING_DAMAGE_BEFORE_INTERVENE, (event, currentDamageValue) -> {
-            currentDamageValue.addModifier(FloatModifiable.ModifierType.MULTIPLICATIVE_MULTIPLIER,
+            currentDamageValue.addModifier(FloatModifiable.ModifierType.ADDITIVE_MULTIPLIER,
                     getTitleName(),
-                    1 + (DAMAGE_INCREASE + DAMAGE_INCREASE_PER_UPGRADE * getTitleLevel()) / 100f
+                    (DAMAGE_INCREASE + DAMAGE_INCREASE_PER_UPGRADE * getTitleLevel()) / 100f
             );
                 }
         );

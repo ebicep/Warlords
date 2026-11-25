@@ -371,7 +371,7 @@ public class HammerOfLight extends AbstractAbility implements OrangeAbilityIcon,
                 },
                 20
         ).addModifier(Modifier.INCOMING_DAMAGE_BEFORE_INTERVENE, (event, currentDamageValue) -> {
-            currentDamageValue.addModifier(FloatModifiable.ModifierType.MULTIPLICATIVE_MULTIPLIER, "Hammer of Disillusion", 1.15f);
+            currentDamageValue.addModifier(FloatModifiable.ModifierType.ADDITIVE_MULTIPLIER, "Hammer of Disillusion", 0.15f);
                 }
         ));
     }

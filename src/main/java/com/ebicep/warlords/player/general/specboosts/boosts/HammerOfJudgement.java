@@ -142,8 +142,8 @@ public class HammerOfJudgement implements SpecBoostManager.SpecBoost<HammerOfJud
                                                 }
                                                 e.getFlags().add(InstanceFlags.STRIKE_IN_CONS);
                                                 consecrateProtector.addStrikesBoosted();
-                                        currentDamageValue.addModifier(FloatModifiable.ModifierType.MULTIPLICATIVE_MULTIPLIER,
-                                                cooldownName, convertToMultiplicationDecimal(consecrateProtector.getStrikeDamageBoost())
+                                        currentDamageValue.addModifier(FloatModifiable.ModifierType.ADDITIVE_MULTIPLIER,
+                                                cooldownName, consecrateProtector.getStrikeDamageBoost() / 100f
                                         );
                                             }
                                     ));

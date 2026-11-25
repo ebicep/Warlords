@@ -125,7 +125,8 @@ public class NewItemCooldown extends PermanentCooldown<NewItemCooldown> {
     }
 
     public void multiplyThornsDamage(float multiplier) {
-        this.thornsDamageMultiplier *= multiplier;
+        // Crown bonuses add: 1.5 contributes +0.5 on top of the base 1.
+        this.thornsDamageMultiplier += multiplier - 1;
     }
 
     public void multiplyMaxThornsDamage(int multiplier) {

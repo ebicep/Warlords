@@ -177,7 +177,7 @@ public class RecklessCharge extends AbstractAbility implements RedAbilityIcon, H
                                     getStunTimeInTicks()
                             ).addModifier(Modifier.INCOMING_DAMAGE_BEFORE_INTERVENE, (event, currentDamageValue) -> {
                                         if (event.getCause().contains("Strike")) {
-                                            currentDamageValue.addModifier(FloatModifiable.ModifierType.MULTIPLICATIVE_MULTIPLIER, "Reckless Rampage", 1.25f);
+                                            currentDamageValue.addModifier(FloatModifiable.ModifierType.ADDITIVE_MULTIPLIER, "Reckless Rampage", 0.25f);
                                         }
                                     }
                             ));

@@ -65,9 +65,9 @@ public class Bellicose extends BaseSet {
 
                         float perStackMultiplier = meleeDamageIncrease / 100f;
                         currentDamageValue.addModifier(
-                                FloatModifiable.ModifierType.MULTIPLICATIVE_MULTIPLIER,
+                                FloatModifiable.ModifierType.ADDITIVE_MULTIPLIER,
                                 getName(),
-                                1 + (stacks * perStackMultiplier)
+                                stacks * perStackMultiplier
                         );
                     }
             ));

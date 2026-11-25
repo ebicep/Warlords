@@ -86,9 +86,9 @@ public class ArcaneReflection implements SpecBoostManager.SpecBoost<ArcaneReflec
                     false
             ).addModifier(Modifier.MODIFY_OUTGOING_DAMAGE_BEFORE_INTERVENE, (event, currentDamageValue) -> {
                         if (event.getCause().isEmpty()) {
-                            currentDamageValue.addModifier(FloatModifiable.ModifierType.MULTIPLICATIVE_MULTIPLIER,
+                            currentDamageValue.addModifier(FloatModifiable.ModifierType.ADDITIVE_MULTIPLIER,
                                     getStringName(),
-                                    AbstractAbility.convertToMultiplicationDecimal(meleeDamageIncreasePercent)
+                                    meleeDamageIncreasePercent / 100f
                             );
                         }
                     }

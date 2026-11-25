@@ -118,8 +118,8 @@ public class MirrorBlossom extends AbstractAbility implements BlueAbilityIcon, H
                                             return;
                                         }
                                         if (event.getCause().contains("Judgement")) {
-                                            float multiplier = Math.clamp(1 + (stacks.get() * .05f), 1, 1.6f);
-                                            currentDamageValue.addModifier(FloatModifiable.ModifierType.MULTIPLICATIVE_MULTIPLIER, name, multiplier);
+                                            float multiplier = Math.clamp(stacks.get() * .05f, 0, 0.6f);
+                                            currentDamageValue.addModifier(FloatModifiable.ModifierType.ADDITIVE_MULTIPLIER, name, multiplier);
                                         }
                                     }));
                                 });

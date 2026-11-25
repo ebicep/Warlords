@@ -60,9 +60,9 @@ public class HeartOfGlass extends BaseSet {
                     false
             ).addModifier(Modifier.MODIFY_OUTGOING_DAMAGE_BEFORE_INTERVENE, (event, currentDamageValue) ->
                     currentDamageValue.addModifier(
-                            FloatModifiable.ModifierType.MULTIPLICATIVE_MULTIPLIER,
+                            FloatModifiable.ModifierType.ADDITIVE_MULTIPLIER,
                             getName(),
-                            1 + damageIncreasePercent / 100f
+                            damageIncreasePercent / 100f
                     )
             ));
         }

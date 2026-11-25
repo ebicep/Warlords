@@ -87,8 +87,8 @@ public class IceBarrier extends AbstractAbility implements OrangeAbilityIcon, Du
                                                     },
                                                     ticksLeft
                                             ).addModifier(Modifier.INCOMING_DAMAGE_BEFORE_INTERVENE, (event, currentDamageValue) -> {
-                                                currentDamageValue.addModifier(FloatModifiable.ModifierType.MULTIPLICATIVE_MULTIPLIER,
-                                                        "Ice Wall", 1.35f
+                                                currentDamageValue.addModifier(FloatModifiable.ModifierType.ADDITIVE_MULTIPLIER,
+                                                        "Ice Wall", 0.35f
                                                 );
                                                     }
                                             ));

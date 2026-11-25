@@ -87,7 +87,7 @@ public class LegendaryReliquary extends AbstractLegendaryWeapon implements Event
         super.applyToWarlordsPlayer(player, pveOption);
 
         float incomingDamageIncrease = 1 + (INCOMING_DAMAGE_INCREASE - INCOMING_DAMAGE_INCREASE_PER_UPGRADE * getTitleLevel()) / 100f;
-        float outgoingDamageIncrease = 1 + (OUTGOING_DAMAGE_INCREASE + OUTGOING_DAMAGE_INCREASE_PER_UPGRADE * getTitleLevel()) / 100f;
+        float outgoingDamageIncrease = (OUTGOING_DAMAGE_INCREASE + OUTGOING_DAMAGE_INCREASE_PER_UPGRADE * getTitleLevel()) / 100f;
         player.getCooldownManager().addCooldown(new PermanentCooldown<>(
                 "Reliquary",
                 null,
@@ -99,7 +99,7 @@ public class LegendaryReliquary extends AbstractLegendaryWeapon implements Event
                 },
                 false
         ).addModifier(Modifier.MODIFY_OUTGOING_DAMAGE_BEFORE_INTERVENE, (event, currentDamageValue) -> {
-            currentDamageValue.addModifier(FloatModifiable.ModifierType.MULTIPLICATIVE_MULTIPLIER, getTitleName(), outgoingDamageIncrease);
+            currentDamageValue.addModifier(FloatModifiable.ModifierType.ADDITIVE_MULTIPLIER, getTitleName(), outgoingDamageIncrease);
                 }
         ).addModifier(Modifier.INCOMING_DAMAGE_BEFORE_INTERVENE, (event, currentDamageValue) -> {
             currentDamageValue.addModifier(FloatModifiable.ModifierType.MULTIPLICATIVE_MULTIPLIER, getTitleName(), incomingDamageIncrease);

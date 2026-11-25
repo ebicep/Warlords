@@ -173,7 +173,7 @@ public class RemedicChains extends AbstractAbility implements BlueAbilityIcon, D
         );
         remedicChainsCooldown.addModifier(Modifier.MODIFY_OUTGOING_DAMAGE_BEFORE_INTERVENE, (event, currentDamageValue) -> {
             currentDamageValue.addModifier(FloatModifiable.ModifierType.ADDITIVE, name, damageValues.getBonusDamage().getValue());
-            currentDamageValue.addModifier(FloatModifiable.ModifierType.MULTIPLICATIVE_MULTIPLIER, name, pveMasterUpgrade2 ? 1.15f : 1);
+            currentDamageValue.addModifier(FloatModifiable.ModifierType.ADDITIVE_MULTIPLIER, name, pveMasterUpgrade2 ? 0.15f : 0);
                 }
         );
         wp.getCooldownManager().removeCooldown(RemedicChains.class, false);

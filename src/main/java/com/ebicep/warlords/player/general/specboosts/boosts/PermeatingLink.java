@@ -66,9 +66,9 @@ public class PermeatingLink implements SpecBoostManager.SpecBoost<PermeatingLink
                     false
             ).addModifier(Modifier.MODIFY_OUTGOING_DAMAGE_BEFORE_INTERVENE, (event, currentDamageValue) -> {
                         if (event.getCause().isEmpty()) {
-                            currentDamageValue.addModifier(FloatModifiable.ModifierType.MULTIPLICATIVE_MULTIPLIER,
+                            currentDamageValue.addModifier(FloatModifiable.ModifierType.ADDITIVE_MULTIPLIER,
                                     getStringName(),
-                                    AbstractAbility.convertToMultiplicationDecimal(meleeDamageIncreasePercent)
+                                    meleeDamageIncreasePercent / 100f
                             );
                             return;
                         }
@@ -77,8 +77,8 @@ public class PermeatingLink implements SpecBoostManager.SpecBoost<PermeatingLink
                                     .filterCooldownClassAndMapToObjectsOfClass(Soulbinding.SoulbindingData.class)
                                     .anyMatch(soulbindingData -> soulbindingData.hasBoundPlayer(event.getWarlordsEntity()));
                             if (boundPlayer) {
-                                currentDamageValue.addModifier(FloatModifiable.ModifierType.MULTIPLICATIVE_MULTIPLIER, getStringName(),
-                                        AbstractAbility.convertToMultiplicationDecimal(spiritLinkDamageToSoulboundIncreasePercent)
+                                currentDamageValue.addModifier(FloatModifiable.ModifierType.ADDITIVE_MULTIPLIER, getStringName(),
+                                        spiritLinkDamageToSoulboundIncreasePercent / 100f
                                 );
                             }
                         }

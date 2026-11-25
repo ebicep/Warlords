@@ -57,9 +57,9 @@ public class Sanguineous extends BaseSet {
                     Modifier.MODIFY_OUTGOING_DAMAGE_BEFORE_INTERVENE,
                     (event, currentDamageValue) -> {
                         currentDamageValue.addModifier(
-                                FloatModifiable.ModifierType.MULTIPLICATIVE_MULTIPLIER,
+                                FloatModifiable.ModifierType.ADDITIVE_MULTIPLIER,
                                 getName(),
-                                1 + 0.05f * numberOfPlayersAbove75(warlordsPlayer)
+                                0.05f * numberOfPlayersAbove75(warlordsPlayer)
                         );
                     })
             );

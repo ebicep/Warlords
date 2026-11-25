@@ -91,7 +91,7 @@ public class TimeWarpCryomancer extends AbstractTimeWarp {
                             },
                             duration
                     ).addModifier(Modifier.INCOMING_DAMAGE_BEFORE_INTERVENE, (event, currentDamageValue) -> {
-                        currentDamageValue.addModifier(FloatModifiable.ModifierType.MULTIPLICATIVE_MULTIPLIER, "Freezing Cold", 1.15f);
+                        currentDamageValue.addModifier(FloatModifiable.ModifierType.ADDITIVE_MULTIPLIER, "Freezing Cold", 0.15f);
                             }
                     ));
                 });

@@ -390,7 +390,7 @@ public class PowerupOption implements Option {
                         },
                         getTickDuration()
                 ).addModifier(Modifier.MODIFY_OUTGOING_DAMAGE_BEFORE_INTERVENE, (event, currentDamageValue) -> {
-                    currentDamageValue.addModifier(FloatModifiable.ModifierType.MULTIPLICATIVE_MULTIPLIER, "Damage", 1.2f);
+                    currentDamageValue.addModifier(FloatModifiable.ModifierType.ADDITIVE_MULTIPLIER, "Damage", 0.2f);
                         }
                 ));
                 we.sendMessage(Component.text("You activated the ", NamedTextColor.GOLD)

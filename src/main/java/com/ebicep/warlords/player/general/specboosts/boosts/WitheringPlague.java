@@ -84,9 +84,9 @@ public class WitheringPlague implements SpecBoostManager.SpecBoost<WitheringPlag
                         if (hexStacks < maxStacks) {
                             return;
                         }
-                currentDamageValue.addModifier(FloatModifiable.ModifierType.MULTIPLICATIVE_MULTIPLIER,
+                currentDamageValue.addModifier(FloatModifiable.ModifierType.ADDITIVE_MULTIPLIER,
                         getStringName(),
-                        AbstractAbility.convertToMultiplicationDecimal(damageIncrease)
+                        damageIncrease / 100f
                 );
                     }
             );

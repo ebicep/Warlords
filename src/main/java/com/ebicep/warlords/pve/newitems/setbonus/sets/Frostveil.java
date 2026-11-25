@@ -60,9 +60,9 @@ public class Frostveil extends BaseSet {
             ).addModifier(Modifier.MODIFY_OUTGOING_DAMAGE_BEFORE_INTERVENE, (event, currentDamageValue) -> {
                 if (event.getWarlordsEntity() instanceof WarlordsNPC npc && npc.getStunTicks() > 0) {
                     currentDamageValue.addModifier(
-                            FloatModifiable.ModifierType.MULTIPLICATIVE_MULTIPLIER,
+                            FloatModifiable.ModifierType.ADDITIVE_MULTIPLIER,
                             getName(),
-                            1 + frozenDamageBoost / 100f
+                            frozenDamageBoost / 100f
                     );
                 }
             }).addModifier(Modifier.ON_OUTGOING_DAMAGE, (event, currentDamageValue, isCrit) -> {

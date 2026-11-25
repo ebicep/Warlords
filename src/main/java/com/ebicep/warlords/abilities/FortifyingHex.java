@@ -252,7 +252,7 @@ public class FortifyingHex extends AbstractPiercingProjectile<FortifyingHex, For
                         .filterCooldownClass(WeakeningHex.class)
                         .stream()
                         .count();
-                currentDamageValue.addModifier(FloatModifiable.ModifierType.MULTIPLICATIVE_MULTIPLIER,"Weakening Hex", (1 + 0.05f * stacks));
+                currentDamageValue.addModifier(FloatModifiable.ModifierType.ADDITIVE_MULTIPLIER,"Weakening Hex", 0.05f * stacks);
             }));
         }
         stats.addPlayersHit();

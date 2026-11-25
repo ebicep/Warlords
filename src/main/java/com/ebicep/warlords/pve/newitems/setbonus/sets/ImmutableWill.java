@@ -68,7 +68,7 @@ public class ImmutableWill extends BaseSet {
                         float damageBonus = (missingHealthPercentValue / missingHealthPercent) * extraDamagePercent;
 
                         if (damageBonus > 0) {
-                            currentDamageValue.addModifier(FloatModifiable.ModifierType.MULTIPLICATIVE_MULTIPLIER, getName(), 1 + (damageBonus / 100f));
+                            currentDamageValue.addModifier(FloatModifiable.ModifierType.ADDITIVE_MULTIPLIER, getName(), damageBonus / 100f);
                         }
                     }
             ));

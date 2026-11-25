@@ -147,7 +147,7 @@ public class LegendaryFervent extends AbstractLegendaryWeapon implements Passive
                         regularCooldown.addModifier(
                                 Modifier.MODIFY_OUTGOING_DAMAGE_BEFORE_INTERVENE,
                                 (e, currentDamageValue) -> {
-                                    currentDamageValue.addModifier(FloatModifiable.ModifierType.MULTIPLICATIVE_MULTIPLIER, getTitleName(), 1 + session.damageBoost * DAMAGE_BOOST / 100f);
+                                    currentDamageValue.addModifier(FloatModifiable.ModifierType.ADDITIVE_MULTIPLIER, getTitleName(), session.damageBoost * DAMAGE_BOOST / 100f);
                                 }
                         );
                         session.stackCooldown = regularCooldown;
@@ -209,8 +209,8 @@ public class LegendaryFervent extends AbstractLegendaryWeapon implements Passive
                                         return;
                                     }
 
-                                    float strikeDamageBoost = 1 + (ABILITY_STRIKE_DAMAGE_BOOST + ABILITY_STRIKE_DAMAGE_BOOST_PER_UPGRADE * getTitleLevel()) / 100f;
-                                    currentDamageValue.addModifier(FloatModifiable.ModifierType.MULTIPLICATIVE_MULTIPLIER, getTitleName(), strikeDamageBoost);
+                                    float strikeDamageBoost = (ABILITY_STRIKE_DAMAGE_BOOST + ABILITY_STRIKE_DAMAGE_BOOST_PER_UPGRADE * getTitleLevel()) / 100f;
+                                    currentDamageValue.addModifier(FloatModifiable.ModifierType.ADDITIVE_MULTIPLIER, getTitleName(), strikeDamageBoost);
                                 }
                         ));
                         passiveCooldown = 40 * GameRunnable.SECOND;

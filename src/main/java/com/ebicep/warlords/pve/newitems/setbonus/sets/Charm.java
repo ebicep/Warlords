@@ -74,8 +74,8 @@ public class Charm extends BaseSet {
                                                 },
                                                 3
                                         ).addModifier(Modifier.INCOMING_DAMAGE_BEFORE_INTERVENE, (event, currentDamageValue) -> {
-                                                    currentDamageValue.addModifier(FloatModifiable.ModifierType.MULTIPLICATIVE_MULTIPLIER,
-                                                            getName() + " Damage", 1 + damage / 100f
+                                                    currentDamageValue.addModifier(FloatModifiable.ModifierType.ADDITIVE_MULTIPLIER,
+                                                            getName() + " Damage", damage / 100f
                                                     );
                                                 }
                                         ));

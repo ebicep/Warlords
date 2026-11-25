@@ -177,7 +177,7 @@ public class Fireball extends AbstractProjectile<Fireball, Fireball.FireballStat
                     }
                 })
         ).addModifier(Modifier.INCOMING_DAMAGE_BEFORE_INTERVENE, (event, currentDamageValue) -> {
-            currentDamageValue.addModifier(FloatModifiable.ModifierType.MULTIPLICATIVE_MULTIPLIER, "Burn", 1.15f);
+            currentDamageValue.addModifier(FloatModifiable.ModifierType.ADDITIVE_MULTIPLIER, "Burn", 0.15f);
                 }
         ));
     }

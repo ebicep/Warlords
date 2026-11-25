@@ -40,7 +40,7 @@ public class Synergy extends BaseSet {
 
         @Override
         public void apply(WarlordsPlayer warlordsPlayer) {
-            float multiplier = 1 + dotEffectivenessIncreasePercent / 100f;
+            float multiplier = dotEffectivenessIncreasePercent / 100f;
             warlordsPlayer.getCooldownManager().addCooldown(new PermanentCooldown<>(
                     getName(),
                     null,
@@ -55,14 +55,14 @@ public class Synergy extends BaseSet {
                     Modifier.MODIFY_OUTGOING_HEALING,
                     (event, currentHealValue) -> {
                         if (event.getFlags().contains(InstanceFlags.DOT)) {
-                            currentHealValue.addModifier(FloatModifiable.ModifierType.MULTIPLICATIVE_MULTIPLIER, getName(), multiplier);
+                            currentHealValue.addModifier(FloatModifiable.ModifierType.ADDITIVE_MULTIPLIER, getName(), multiplier);
                         }
                     }
             ).addModifier(
                     Modifier.MODIFY_OUTGOING_DAMAGE_BEFORE_INTERVENE,
                     (event, currentDamageValue) -> {
                         if (event.getFlags().contains(InstanceFlags.DOT)) {
-                            currentDamageValue.addModifier(FloatModifiable.ModifierType.MULTIPLICATIVE_MULTIPLIER, getName(), multiplier);
+                            currentDamageValue.addModifier(FloatModifiable.ModifierType.ADDITIVE_MULTIPLIER, getName(), multiplier);
                         }
                     }
             ));

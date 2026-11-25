@@ -180,7 +180,7 @@ public class PrismGuard extends AbstractAbility implements BlueAbilityIcon, Dura
                                                 cooldownManager -> {},
                                                 6
                                         ).addModifier(Modifier.INCOMING_DAMAGE_BEFORE_INTERVENE, (event, currentDamageValue) -> {
-                                            currentDamageValue.addModifier(FloatModifiable.ModifierType.MULTIPLICATIVE_MULTIPLIER, name, 1.1f);
+                                            currentDamageValue.addModifier(FloatModifiable.ModifierType.ADDITIVE_MULTIPLIER, name, 0.1f);
                                                 }
                                         ));
                                     }

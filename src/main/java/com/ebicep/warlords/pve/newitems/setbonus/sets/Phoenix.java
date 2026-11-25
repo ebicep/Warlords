@@ -61,9 +61,9 @@ public class Phoenix extends BaseSet {
                     (event, currentDamageValue) -> {
                         int mobCount = pveOption.mobCount();
                         currentDamageValue.addModifier(
-                                FloatModifiable.ModifierType.MULTIPLICATIVE_MULTIPLIER,
+                                FloatModifiable.ModifierType.ADDITIVE_MULTIPLIER,
                                 getName(),
-                                1 + (mobCount * damagePerMobPercent / 100f)
+                                mobCount * damagePerMobPercent / 100f
                         );
                     }
             ));

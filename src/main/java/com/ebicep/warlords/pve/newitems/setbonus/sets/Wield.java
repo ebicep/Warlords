@@ -44,9 +44,9 @@ public class Wield extends BaseSet {
                     damages.getDamageValues().getValues().forEach(damageValue -> {
                         damageValue.forEachAllValues(
                                 value -> value.addModifier(
-                                        FloatModifiable.ModifierType.MULTIPLICATIVE_MULTIPLIER,
+                                        FloatModifiable.ModifierType.ADDITIVE_MULTIPLIER,
                                         getName(),
-                                        1 + primaryAbilityDamageIncreasePercent / 100f
+                                        primaryAbilityDamageIncreasePercent / 100f
                                 )
                         );
                     });
