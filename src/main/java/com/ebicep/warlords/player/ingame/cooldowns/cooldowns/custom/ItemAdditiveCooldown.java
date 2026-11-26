@@ -38,8 +38,8 @@ public class ItemAdditiveCooldown extends PermanentCooldown<AbstractItem> {
     }
 
     private final Map<Aspect, AspectModifier> aspectModifiers = new HashMap<>();
-    private float damageMultiplier = 1;
-    private float healMultiplier = 1;
+    private float damageMultiplier = 0;
+    private float healMultiplier = 0;
     private float kbMultiplier = 0;
     private float thorns = 0;
     private float thornsDamageMultiplier = 1;
@@ -60,7 +60,7 @@ public class ItemAdditiveCooldown extends PermanentCooldown<AbstractItem> {
                 false
         );
         this.addModifier(Modifier.MODIFY_OUTGOING_HEALING, (event, currentHealValue) -> {
-            currentHealValue.addModifier(FloatModifiable.ModifierType.MULTIPLICATIVE_MULTIPLIER, name, healMultiplier);
+            currentHealValue.addModifier(FloatModifiable.ModifierType.ADDITIVE_MULTIPLIER, name, healMultiplier);
                 }
         );
         this.addModifier(Modifier.MODIFY_OUTGOING_CRIT_CHANCE, (event, currentCritChance) -> {
@@ -75,7 +75,7 @@ public class ItemAdditiveCooldown extends PermanentCooldown<AbstractItem> {
                     if (event.getWarlordsEntity() instanceof WarlordsNPC warlordsNPC) {
                         Aspect aspect = warlordsNPC.getMob().getAspect();
                         if (aspect == null) {
-                            currentDamageValue.addModifier(FloatModifiable.ModifierType.MULTIPLICATIVE_MULTIPLIER, name, damageMultiplier);
+                            currentDamageValue.addModifier(FloatModifiable.ModifierType.ADDITIVE_MULTIPLIER, name, damageMultiplier);
                             return;
                         }
                         AspectModifier aspectModifier = aspectModifiers.get(aspect);
@@ -83,9 +83,9 @@ public class ItemAdditiveCooldown extends PermanentCooldown<AbstractItem> {
                             currentDamageValue.addModifier(FloatModifiable.ModifierType.MULTIPLICATIVE_MULTIPLIER, name, damageMultiplier);
                             return;
                         }
-                        currentDamageValue.addModifier(FloatModifiable.ModifierType.MULTIPLICATIVE_MULTIPLIER, name, (damageMultiplier + aspectModifier.damageMultiplier - 1));
+                        currentDamageValue.addModifier(FloatModifiable.ModifierType.ADDITIVE_MULTIPLIER, name, (damageMultiplier + aspectModifier.damageMultiplier - 1));
                     } else {
-                        currentDamageValue.addModifier(FloatModifiable.ModifierType.MULTIPLICATIVE_MULTIPLIER, name, damageMultiplier);
+                        currentDamageValue.addModifier(FloatModifiable.ModifierType.ADDITIVE_MULTIPLIER, name, damageMultiplier);
                     }
                 }
         );

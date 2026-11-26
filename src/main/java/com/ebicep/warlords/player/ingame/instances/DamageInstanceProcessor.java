@@ -250,7 +250,7 @@ public class DamageInstanceProcessor {
         isCrit = calculatedCritChance > 0 && crit <= calculatedCritChance && source.isCanCrit();
 
         if (isCrit) {
-            damageValue.addModifier(FloatModifiable.ModifierType.ADDITIVE_MULTIPLIER, "Crit Multiplier", calculatedCritMultiplier / 100f - 1);
+            damageValue.addModifier(75, MultiFloatModifiable.ApplyFloatModifiableType.MULTIPLICATIVE, FloatModifiable.ModifierType.MULTIPLICATIVE_MULTIPLIER, "Crit Multiplier", calculatedCritMultiplier / 100f);
         }
 
         damageHealValueBeforeAllReduction = damageValue.getCalculatedValue();
