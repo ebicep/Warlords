@@ -262,12 +262,12 @@ public class ApplySpecBoostsOption implements Option {
 
     private Component formatSpecForRoster(WarlordsPlayer subject) {
         Specializations spec = subject.getSpecClass();
-        Component specComponent = Component.text(spec.name, spec.specType.getTextColor());
         PlayerSpecAppliedBoost appliedBoost = playerSpecBoosts.get(subject);
         if (appliedBoost != null) {
-            specComponent = specComponent.hoverEvent(HoverEvent.showText(specBoostHover(appliedBoost.specBoost)));
+            return Component.text(appliedBoost.specBoost.getStringName(), spec.specType.getTextColor())
+                    .hoverEvent(HoverEvent.showText(specBoostHover(appliedBoost.specBoost)));
         }
-        return specComponent;
+        return Component.text(spec.name, spec.specType.getTextColor());
     }
 
     private static Component specBoostHover(SpecBoostManager.SpecBoost<?> boost) {
