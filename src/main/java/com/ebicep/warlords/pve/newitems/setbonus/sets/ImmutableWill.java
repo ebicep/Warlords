@@ -19,13 +19,13 @@ import java.util.Objects;
 
 public class ImmutableWill extends BaseSet {
 
-    private int extraDamagePercent;
+    private float extraDamagePercent;
     private int missingHealthPercent;
 
     @Override
     public void init() {
         super.init();
-        this.extraDamagePercent = getValue("extraDamagePercent", int.class);
+        this.extraDamagePercent = getValue("extraDamagePercent", float.class);
         this.missingHealthPercent = getValue("missingHealthPercent", int.class);
     }
 
@@ -68,7 +68,7 @@ public class ImmutableWill extends BaseSet {
                         float damageBonus = (missingHealthPercentValue / missingHealthPercent) * extraDamagePercent;
 
                         if (damageBonus > 0) {
-                            currentDamageValue.addModifier(FloatModifiable.ModifierType.MULTIPLICATIVE_MULTIPLIER, getName(), 1 + (damageBonus / 100f));
+                            currentDamageValue.addModifier(FloatModifiable.ModifierType.ADDITIVE_MULTIPLIER, getName(), damageBonus / 100f);
                         }
                     }
             ));

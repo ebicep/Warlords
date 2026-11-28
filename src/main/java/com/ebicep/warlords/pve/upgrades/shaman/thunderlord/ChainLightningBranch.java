@@ -64,7 +64,7 @@ public class ChainLightningBranch extends AbstractUpgradeBranch<ChainLightning> 
                 """
                         Chain Lightning will now give enemies hit the SHOCKED status for 5s.
                         
-                        SHOCKED: Enemies that are shocked take 20% more damage from the caster and reduces the caster's ultimate ability cooldown by 0.5s if killed by the caster.
+                        SHOCKED: Enemies that are shocked take 25% more damage from the caster and reduces the caster's ultimate ability cooldown by 0.5s if killed by the caster.
                         """,
                 50000,
                 () -> {

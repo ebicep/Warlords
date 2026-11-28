@@ -41,7 +41,7 @@ public class RemedicChainsBranch extends AbstractUpgradeBranch<RemedicChains> {
                 """
                         +20 Block link break radius
                         
-                        Increase linked ally damage by 15% and their EPS by 5.
+                        Increase linked ally damage by 20% and their EPS by 5.
                         """,
                 50000,
                 () -> {

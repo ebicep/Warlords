@@ -62,7 +62,7 @@ public class Madrakan extends BaseSet {
             ).addModifier(
                     Modifier.MODIFY_OUTGOING_DAMAGE_BEFORE_INTERVENE,
                     (event, currentDamageValue) -> {
-                        currentDamageValue.addModifier(FloatModifiable.ModifierType.MULTIPLICATIVE_MULTIPLIER, getName(), 1 + (damageIncreasePercent / 100f));
+                        currentDamageValue.addModifier(FloatModifiable.ModifierType.ADDITIVE_MULTIPLIER, getName(), damageIncreasePercent / 100f);
                     }
             ));
         }

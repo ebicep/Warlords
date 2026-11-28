@@ -37,7 +37,7 @@ public class InfernoBranch extends AbstractUpgradeBranch<Inferno> {
                 """
                         Increase duration by 5s. While inferno is active fireball costs 5 less energy.
                         
-                        Additionally, damaging the same target will cause your damage against that target to increase by 5% (up to 50%) BURN now activates every 0.5s.
+                        Additionally, damaging the same target will cause your damage against that target to increase by 5% (up to 30%) BURN now activates every 0.5s.
                         """,
                 50000,
                 () -> {

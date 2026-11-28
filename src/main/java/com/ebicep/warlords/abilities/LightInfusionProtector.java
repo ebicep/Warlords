@@ -138,9 +138,9 @@ public class LightInfusionProtector extends AbstractLightInfusion {
                         ).addModifier(
                                 Modifier.MODIFY_OUTGOING_DAMAGE_BEFORE_INTERVENE,
                                 (event, currentDamageValue) -> {
-                                    currentDamageValue.addModifier(FloatModifiable.ModifierType.MULTIPLICATIVE_MULTIPLIER,
+                                    currentDamageValue.addModifier(FloatModifiable.ModifierType.ADDITIVE_MULTIPLIER,
                                             "Ornament of Darkness",
-                                            1 + Math.min(200, multiplier.get()) / 100f
+                                            Math.min(200, multiplier.get()) / 100f
                                     );
                                 }
                         ).addModifier(

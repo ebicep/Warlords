@@ -53,7 +53,7 @@ public class Summoner extends BaseSet {
             aspect.apply(npc);
         }
         if (!npc.getCooldownManager().hasCooldown(Summoner.class)) {
-            float damageMultiplier = 1 + configuredMinionDamage / 100f;
+            float damageMultiplier = configuredMinionDamage / 100f;
             npc.getCooldownManager().addCooldown(new PermanentCooldown<>(
                     "Summoner - Damage",
                     null,
@@ -67,7 +67,7 @@ public class Summoner extends BaseSet {
             ).addModifier(
                     Modifier.MODIFY_OUTGOING_DAMAGE_BEFORE_INTERVENE,
                     (damageEvent, currentDamageValue) -> currentDamageValue.addModifier(
-                            FloatModifiable.ModifierType.MULTIPLICATIVE_MULTIPLIER,
+                            FloatModifiable.ModifierType.ADDITIVE_MULTIPLIER,
                             "Summoner - Damage",
                             damageMultiplier
                     )

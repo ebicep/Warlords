@@ -108,9 +108,9 @@ public class Ghostly extends BaseSet {
         private void applyStacks(MultiFloatModifiable value) {
             if (!expirations.isEmpty()) {
                 value.addModifier(
-                        FloatModifiable.ModifierType.MULTIPLICATIVE_MULTIPLIER,
+                        FloatModifiable.ModifierType.ADDITIVE_MULTIPLIER,
                         getName(),
-                        1 + expirations.size() * bonusPerStackPercent / 100f
+                        expirations.size() * bonusPerStackPercent / 100f
                 );
             }
         }

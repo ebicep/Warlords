@@ -69,9 +69,9 @@ public class HorizonThreat extends BaseSet {
                     return;
                 }
                 currentDamageValue.addModifier(
-                        FloatModifiable.ModifierType.MULTIPLICATIVE_MULTIPLIER,
+                        FloatModifiable.ModifierType.ADDITIVE_MULTIPLIER,
                         getName(),
-                        1 + farDamageIncreasePercent / 100f
+                        farDamageIncreasePercent / 100f
                 );
             }).addModifier(Modifier.MODIFY_INCOMING_DAMAGE_AFTER_INTERVENE, (event, currentDamageValue) -> {
                 WarlordsEntity source = event.getSource();

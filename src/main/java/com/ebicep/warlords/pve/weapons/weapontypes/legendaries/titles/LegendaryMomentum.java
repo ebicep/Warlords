@@ -121,8 +121,8 @@ public class LegendaryMomentum extends AbstractLegendaryWeapon implements Passiv
         ).addModifier(
                 Modifier.MODIFY_OUTGOING_DAMAGE_BEFORE_INTERVENE,
                 (event, currentDamageValue) -> {
-                    float mul = 1f + (stacks * DMG_PER_STACK_PERCENT) / 100f;
-                    currentDamageValue.addModifier(FloatModifiable.ModifierType.MULTIPLICATIVE_MULTIPLIER, getTitleName(), mul);
+                    float mul = (stacks * DMG_PER_STACK_PERCENT) / 100f;
+                    currentDamageValue.addModifier(FloatModifiable.ModifierType.ADDITIVE_MULTIPLIER, getTitleName(), mul);
                 }
         ).addModifier(
                 Modifier.MODIFY_INCOMING_DAMAGE_AFTER_INTERVENE,

@@ -127,7 +127,7 @@ public class LegendaryHuntsman extends AbstractLegendaryWeapon implements Passiv
                 false
         ).addModifier(Modifier.MODIFY_OUTGOING_DAMAGE_BEFORE_INTERVENE, (event, currentDamageValue) -> {
                     if (isTargetFar(player, event, RANGED_MIN_DISTANCE_BLOCKS)) {
-                        currentDamageValue.addModifier(FloatModifiable.ModifierType.MULTIPLICATIVE_MULTIPLIER, getTitleName(), (1f + getRangedBonusPercent() / 100f));
+                        currentDamageValue.addModifier(FloatModifiable.ModifierType.ADDITIVE_MULTIPLIER, getTitleName(), getRangedBonusPercent() / 100f);
                     }
 
                     if (isMeleeHit(event)) {

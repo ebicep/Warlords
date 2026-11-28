@@ -151,7 +151,7 @@ public class LegendaryDivine extends AbstractLegendaryWeapon implements PassiveC
                                 DURATION * 20
                         );
                         regularCooldown.addModifier(Modifier.MODIFY_OUTGOING_DAMAGE_BEFORE_INTERVENE, (e, currentDamageValue) -> {
-                            currentDamageValue.addModifier(FloatModifiable.ModifierType.MULTIPLICATIVE_MULTIPLIER, getTitleName(), 1 + session.damageBoost * DAMAGE_BOOST / 100f);
+                            currentDamageValue.addModifier(FloatModifiable.ModifierType.ADDITIVE_MULTIPLIER, getTitleName(), session.damageBoost * DAMAGE_BOOST / 100f);
                                 }
                         );
                         session.stackCooldown = regularCooldown;

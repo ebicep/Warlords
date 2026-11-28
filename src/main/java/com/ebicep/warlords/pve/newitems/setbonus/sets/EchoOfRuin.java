@@ -85,12 +85,12 @@ public class EchoOfRuin extends BaseSet {
             ).addModifier(
                     Modifier.MODIFY_OUTGOING_DAMAGE_BEFORE_INTERVENE,
                     (event, currentDamageValue) -> {
-                        currentDamageValue.addModifier(FloatModifiable.ModifierType.MULTIPLICATIVE_MULTIPLIER, "Echo of Ruin", 1 + (damagePerKillPercent * stacks / 100f));
+                        currentDamageValue.addModifier(FloatModifiable.ModifierType.ADDITIVE_MULTIPLIER, "Echo of Ruin", damagePerKillPercent * stacks / 100f);
                     }
             ).addModifier(
                     Modifier.MODIFY_INCOMING_DAMAGE_AFTER_INTERVENE,
                     (event, currentDamageValue) -> {
-                        currentDamageValue.addModifier(FloatModifiable.ModifierType.MULTIPLICATIVE_MULTIPLIER, "Echo of Ruin", 1 + (damagePerKillPercent * stacks / 100f));
+                        currentDamageValue.addModifier(FloatModifiable.ModifierType.ADDITIVE_MULTIPLIER, "Echo of Ruin", damagePerKillPercent * stacks / 100f);
                     }
             ));
         }

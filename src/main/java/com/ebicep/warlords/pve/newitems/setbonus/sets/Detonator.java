@@ -45,9 +45,9 @@ public class Detonator extends BaseSet {
                     ((Damages<?>) ability).getDamageValues().getValues().forEach(damageValue -> {
                         damageValue.forEachAllValues(
                                 value -> value.addModifier(
-                                        FloatModifiable.ModifierType.MULTIPLICATIVE_MULTIPLIER,
+                                        FloatModifiable.ModifierType.ADDITIVE_MULTIPLIER,
                                         getName(),
-                                        1 + redRuneAbilityDamageIncreasePercent / 100f));
+                                        redRuneAbilityDamageIncreasePercent / 100f));
                     });
                 }
             }

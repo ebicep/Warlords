@@ -38,7 +38,7 @@ public class SoulShackleBranch extends AbstractUpgradeBranch<SoulShackle> {
                 "Oppressive Chains",
                 "Soul Shackle - Master Upgrade",
                 """
-                        Soul Shackle now hits up to 8 enemies, all enemies hit take 25% more damage from all sources for 3s.
+                        Soul Shackle now hits up to 8 enemies, all enemies hit take 20% more damage from all sources for 3s.
                         """,
                 50000,
                 () -> {

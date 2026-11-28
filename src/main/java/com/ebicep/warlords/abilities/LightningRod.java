@@ -151,7 +151,7 @@ public class LightningRod extends AbstractAbility implements BlueAbilityIcon, He
         we.getCooldownManager().addCooldown(new RegularCooldown<>(name, "ROD DMG", LightningRod.class, new LightningRod(), we, CooldownTypes.ABILITY, cooldownManager -> {
         }, 12 * 20
         ).addModifier(Modifier.MODIFY_OUTGOING_DAMAGE_BEFORE_INTERVENE, (event, currentDamageValue) -> {
-            currentDamageValue.addModifier(FloatModifiable.ModifierType.MULTIPLICATIVE_MULTIPLIER, name, 1.2f);
+            currentDamageValue.addModifier(FloatModifiable.ModifierType.ADDITIVE_MULTIPLIER, name, 0.2f);
                 }
         ));
     }

@@ -706,7 +706,7 @@
             "REGEN": 15
           },
           "description": "Increase the damage you deal against bosses by {{damage;%}}. Additionally, take {{damage;%}} less damage from boss attacks.",
-          "bossDamageIncreasePercent": 30,
+          "bossDamageIncreasePercent": 25,
           "bossDamageTakenReductionPercent": 15
         },
         "sanguineous": {
@@ -1074,7 +1074,7 @@
           "bonusAttributeRanges": {},
           "description": "{{gold;%}} chance to deal {{damage;%}} more damage when hitting any target.",
           "bonusDamageChancePercent": 10,
-          "bonusDamagePercent": 30
+          "bonusDamagePercent": 25
         },
         "pillage": {
           "tier": "LEGENDARY",
@@ -1150,7 +1150,7 @@
             "CDR": 2
           },
           "description": "Deal {{damage;%}} more damage for every {{damage;%}} of missing health.",
-          "extraDamagePercent": 1,
+          "extraDamagePercent": 1.2,
           "missingHealthPercent": 2
         },
         "swift": {
@@ -1189,7 +1189,7 @@
           ],
           "attributes": {},
           "description": "Increase your damage by {{damage;%}} but you can no longer land critical hits.",
-          "damageIncreasePercent": 40,
+          "damageIncreasePercent": 60,
           "disableCriticalHits": true
         },
         "ironChains": {
@@ -1493,7 +1493,7 @@
             "HEALTH": 10
           },
           "description": "Attacking an enemy from behind causes your hits to deal {{damage;%}} more damage.",
-          "damageIncreasePercent": 30
+          "damageIncreasePercent": 25
         },
         "regenerate": {
           "tier": "SOVEREIGN",
